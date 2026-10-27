@@ -1,0 +1,5935 @@
+openapi: 3.0.3
+info:
+  title: miniteam-pms
+  version: 0.1.0
+  description: '小型软件团队项目管理系统接口。
+
+
+    - 鉴权：除登录、注册外，请求头带 `Authorization: Bearer <token>`。
+
+    - 响应：`{ "code": 200, "message": "ok", "data": ... }`，出错时 HTTP 状态码与 `code` 一致。
+
+    - 时间：日期 `yyyy-MM-dd`，时间 `yyyy-MM-dd HH:mm:ss`，时区 Asia/Shanghai。
+
+    - 分页：`page` 从 1 开始，`size` 默认 20，返回 `{ total, list }`。
+
+
+    | code | 含义 |
+
+    |---|---|
+
+    | 200 | 成功 |
+
+    | 400 | 参数错误 |
+
+    | 401 | 未登录或登录已过期 |
+
+    | 403 | 无权限 |
+
+    | 404 | 不存在 |
+
+    | 409 | 业务冲突（依赖成环、仍被引用、重复） |
+
+    | 500 | 服务器错误 |
+
+    '
+servers:
+- url: /api
+  description: 相对路径，开发时由 Vite 代理
+- url: http://47.108.234.233/api
+  description: 线上
+tags:
+- name: 认证
+- name: 用户管理
+- name: 角色权限
+- name: 项目
+- name: 成员
+- name: 里程碑
+- name: 任务
+- name: 依赖
+- name: 进度
+- name: 统计报表
+- name: 团队协作
+- name: 缺陷
+- name: 文档
+- name: 通知
+- name: 往期日报
+- name: 系统管理
+security:
+- bearerAuth: []
+paths:
+  /auth/login:
+    post:
+      tags:
+      - 认证
+      summary: 登录
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/LoginResult'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+      security: []
+  /auth/register:
+    post:
+      tags:
+      - 认证
+      summary: 注册
+      operationId: register
+      description: 注册后角色为普通成员。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+      security: []
+  /auth/logout:
+    post:
+      tags:
+      - 认证
+      summary: 退出登录
+      operationId: logout
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /auth/me:
+    get:
+      tags:
+      - 认证
+      summary: 当前用户
+      operationId: getMe
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/CurrentUser'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 认证
+      summary: 修改个人信息
+      operationId: updateMe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /auth/password:
+    put:
+      tags:
+      - 认证
+      summary: 修改密码
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /users:
+    get:
+      tags:
+      - 用户管理
+      summary: 用户列表
+      operationId: listUsers
+      parameters:
+      - name: keyword
+        in: query
+        required: false
+        schema:
+          type: string
+        description: 姓名或账号
+      - name: dept
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: roleId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        description: 页码，从 1 开始
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        description: 每页条数
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        total:
+                          type: integer
+                          format: int64
+                        list:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/User'
+                      required:
+                      - total
+                      - list
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 用户管理
+      summary: 新增用户
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /users/search:
+    get:
+      tags:
+      - 用户管理
+      summary: 搜索用户
+      operationId: searchUsers
+      description: 邀请成员时使用，项目经理可调用。
+      parameters:
+      - name: keyword
+        in: query
+        required: true
+        schema:
+          type: string
+        description: 姓名或账号
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserBrief'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /users/{userId}:
+    get:
+      tags:
+      - 用户管理
+      summary: 用户详情
+      operationId: getUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 用户管理
+      summary: 修改用户
+      operationId: updateUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 用户管理
+      summary: 删除用户
+      operationId: deleteUser
+      description: 用户仍负责任务、项目或有评论时返回 409。
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /users/{userId}/status:
+    put:
+      tags:
+      - 用户管理
+      summary: 启用/停用
+      operationId: setUserStatus
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserStatusChange'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /users/{userId}/reset-password:
+    post:
+      tags:
+      - 用户管理
+      summary: 重置密码
+      operationId: resetPassword
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        password:
+                          type: string
+                          description: 新的随机密码
+                      required:
+                      - password
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /roles:
+    get:
+      tags:
+      - 角色权限
+      summary: 角色列表
+      operationId: listRoles
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Role'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 角色权限
+      summary: 新增角色
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Role'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /roles/{roleId}:
+    put:
+      tags:
+      - 角色权限
+      summary: 修改角色
+      operationId: updateRole
+      parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Role'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 角色权限
+      summary: 删除角色
+      operationId: deleteRole
+      description: 仍有用户时返回 409。
+      parameters:
+      - name: roleId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /permissions:
+    get:
+      tags:
+      - 角色权限
+      summary: 全部权限项
+      operationId: listPermissions
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Permission'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects:
+    get:
+      tags:
+      - 项目
+      summary: 我的项目
+      operationId: listProjects
+      description: 项目切换浮层。管理员返回全部项目。
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ProjectStatus'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ProjectSummary'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 项目
+      summary: 新建项目
+      operationId: createProject
+      description: 创建人自动成为项目经理。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Project'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}:
+    get:
+      tags:
+      - 项目
+      summary: 项目详情
+      operationId: getProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Project'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 项目
+      summary: 修改项目
+      operationId: updateProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Project'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 项目
+      summary: 删除项目
+      operationId: deleteProject
+      description: 项目仍有任务时返回 409。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/archive:
+    post:
+      tags:
+      - 项目
+      summary: 归档
+      operationId: archiveProject
+      description: 归档后只读。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/restore:
+    post:
+      tags:
+      - 项目
+      summary: 取消归档
+      operationId: restoreProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/overview:
+    get:
+      tags:
+      - 项目
+      summary: 概览
+      operationId: getOverview
+      description: 今日实时数据。往期见「往期日报」。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Overview'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/members:
+    get:
+      tags:
+      - 成员
+      summary: 成员列表
+      operationId: listMembers
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Member'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 成员
+      summary: 邀请成员
+      operationId: addMember
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberAdd'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Member'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/members/{userId}:
+    put:
+      tags:
+      - 成员
+      summary: 修改角色与岗位
+      operationId: updateMember
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Member'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 成员
+      summary: 移出项目
+      operationId: removeMember
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/members/{userId}/permissions:
+    put:
+      tags:
+      - 成员
+      summary: 修改权限
+      operationId: updateMemberPermissions
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberPermissions'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Member'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/milestones:
+    get:
+      tags:
+      - 里程碑
+      summary: 里程碑列表
+      operationId: listMilestones
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Milestone'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 里程碑
+      summary: 新建里程碑
+      operationId: createMilestone
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilestoneSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Milestone'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /milestones/{milestoneId}:
+    put:
+      tags:
+      - 里程碑
+      summary: 修改里程碑
+      operationId: updateMilestone
+      parameters:
+      - name: milestoneId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilestoneSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Milestone'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 里程碑
+      summary: 删除里程碑
+      operationId: deleteMilestone
+      description: 其下任务的 milestoneId 置空。
+      parameters:
+      - name: milestoneId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/tasks:
+    get:
+      tags:
+      - 任务
+      summary: 任务列表
+      operationId: listTasks
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/TaskStatus'
+      - name: assigneeId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: mine
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: 只看我的
+      - name: criticalOnly
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: 只看关键路径
+      - name: milestoneId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: parentId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: keyword
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 任务
+      summary: 新建任务
+      operationId: createTask
+      description: 带 predecessorIds 时同时建立依赖，成环返回 409。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/board:
+    get:
+      tags:
+      - 任务
+      summary: 看板
+      operationId: getBoard
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - all
+          - mine
+          - critical
+          default: all
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Board'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/todo:
+    get:
+      tags:
+      - 任务
+      summary: 今日待办
+      operationId: getTodo
+      description: 当前用户未完成任务按优先级评分排序。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          description: 默认取系统参数 priority.top_n
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TodoItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/priority-ranking:
+    get:
+      tags:
+      - 任务
+      summary: 优先级排序
+      operationId: getPriorityRanking
+      description: 项目内全部未完成任务的评分与排序。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PriorityItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}:
+    get:
+      tags:
+      - 任务
+      summary: 任务详情
+      operationId: getTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 任务
+      summary: 编辑任务
+      operationId: updateTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 任务
+      summary: 删除任务
+      operationId: deleteTask
+      description: 依赖随之删除；子任务、讨论、文档、缺陷的关联置空。
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/status:
+    put:
+      tags:
+      - 任务
+      summary: 修改状态
+      operationId: changeTaskStatus
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskStatusChange'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/position:
+    put:
+      tags:
+      - 任务
+      summary: 看板拖动
+      operationId: moveTask
+      description: 改变状态并调整列内顺序。
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskPosition'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/progress:
+    put:
+      tags:
+      - 任务
+      summary: 更新进度
+      operationId: updateTaskProgress
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskProgress'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/assignee:
+    put:
+      tags:
+      - 任务
+      summary: 指派负责人
+      operationId: assignTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskAssign'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/activities:
+    get:
+      tags:
+      - 任务
+      summary: 任务操作记录
+      operationId: listTaskActivities
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Activity'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/dependencies:
+    get:
+      tags:
+      - 依赖
+      summary: 依赖列表
+      operationId: listDependencies
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Dependency'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 依赖
+      summary: 新增依赖
+      operationId: createDependency
+      description: 跨项目或成环返回 409，message 为「依赖存在环」。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DependencyCreate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Dependency'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /dependencies/{dependencyId}:
+    delete:
+      tags:
+      - 依赖
+      summary: 删除依赖
+      operationId: deleteDependency
+      parameters:
+      - name: dependencyId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /tasks/{taskId}/predecessors:
+    put:
+      tags:
+      - 依赖
+      summary: 设置前置任务
+      operationId: setPredecessors
+      description: 整体替换该任务的前置任务，成环返回 409。
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredecessorsSet'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DependencyTask'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/gantt:
+    get:
+      tags:
+      - 进度
+      summary: 甘特图
+      operationId: getGantt
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: milestoneId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+        description: 为空则当前阶段
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2026-10-22'
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2026-10-22'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Gantt'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/critical-path:
+    get:
+      tags:
+      - 进度
+      summary: 关键路径计算
+      operationId: getCriticalPath
+      description: 已完成任务按实际耗时、未完成按计划工期重算。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: milestoneId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/CriticalPath'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/summary:
+    get:
+      tags:
+      - 统计报表
+      summary: 完成率、按期率、延期率
+      operationId: getReportSummary
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportSummary'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/burndown:
+    get:
+      tags:
+      - 统计报表
+      summary: 燃尽图
+      operationId: getBurndown
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: range
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - week
+          - all
+          default: all
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Burndown'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/weekly-completed:
+    get:
+      tags:
+      - 统计报表
+      summary: 每周完成任务
+      operationId: getWeeklyCompleted
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/WeeklyCompleted'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/duration-deviation:
+    get:
+      tags:
+      - 统计报表
+      summary: 工期偏差
+      operationId: getDurationDeviation
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: milestoneId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DurationDeviation'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/forecast:
+    get:
+      tags:
+      - 统计报表
+      summary: 全项目预测完工
+      operationId: getForecast
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Forecast'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/defect-density:
+    get:
+      tags:
+      - 统计报表
+      summary: 缺陷密度
+      operationId: getDefectDensity
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DefectDensity'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/reports/export:
+    get:
+      tags:
+      - 统计报表
+      summary: 导出报表
+      operationId: exportReport
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Excel 文件
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/workload:
+    get:
+      tags:
+      - 统计报表
+      summary: 成员负载
+      operationId: getWorkload
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Workload'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/assign-suggestions:
+    post:
+      tags:
+      - 统计报表
+      summary: 分配建议
+      operationId: getAssignSuggestions
+      description: 技能匹配 + 负载最小优先，只计算不保存。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignSuggestionRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/AssignSuggestionResult'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/assign-suggestions/apply:
+    post:
+      tags:
+      - 统计报表
+      summary: 确认分配
+      operationId: applyAssignSuggestions
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignApply'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TaskCard'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/discussions:
+    get:
+      tags:
+      - 团队协作
+      summary: 讨论列表
+      operationId: listDiscussions
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: taskId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DiscussionBrief'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 团队协作
+      summary: 发起讨论
+      operationId: createDiscussion
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscussionCreate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DiscussionDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /discussions/{discussionId}:
+    get:
+      tags:
+      - 团队协作
+      summary: 讨论内容
+      operationId: getDiscussion
+      parameters:
+      - name: discussionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DiscussionDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 团队协作
+      summary: 删除讨论
+      operationId: deleteDiscussion
+      parameters:
+      - name: discussionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /discussions/{discussionId}/comments:
+    post:
+      tags:
+      - 团队协作
+      summary: 回复
+      operationId: createComment
+      description: 被 @ 的用户收到通知。
+      parameters:
+      - name: discussionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Comment'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /comments/{commentId}:
+    delete:
+      tags:
+      - 团队协作
+      summary: 删除评论
+      operationId: deleteComment
+      parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/activities:
+    get:
+      tags:
+      - 团队协作
+      summary: 项目动态
+      operationId: listActivities
+      description: 协作页动态栏、成员页权限变更（targetType=MEMBER）。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: targetType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: targetId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: before
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+        description: 取此 ID 之前的记录，翻页用
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Activity'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/defects:
+    get:
+      tags:
+      - 缺陷
+      summary: 缺陷列表
+      operationId: listDefects
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/DefectStatus'
+      - name: severity
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/DefectSeverity'
+      - name: taskId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: assigneeId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        description: 页码，从 1 开始
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        description: 每页条数
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        total:
+                          type: integer
+                          format: int64
+                        list:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Defect'
+                      required:
+                      - total
+                      - list
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 缺陷
+      summary: 登记缺陷
+      operationId: createDefect
+      description: 测试人员和项目经理可调用。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefectSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Defect'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/defects/stats:
+    get:
+      tags:
+      - 缺陷
+      summary: 缺陷统计
+      operationId: getDefectStats
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DefectStats'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /defects/{defectId}:
+    get:
+      tags:
+      - 缺陷
+      summary: 缺陷详情
+      operationId: getDefect
+      parameters:
+      - name: defectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Defect'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 缺陷
+      summary: 修改缺陷
+      operationId: updateDefect
+      parameters:
+      - name: defectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefectSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Defect'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 缺陷
+      summary: 删除缺陷
+      operationId: deleteDefect
+      parameters:
+      - name: defectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /defects/{defectId}/status:
+    put:
+      tags:
+      - 缺陷
+      summary: 流转状态
+      operationId: changeDefectStatus
+      description: 修复人：PENDING → FIXED；测试人员：FIXED → CLOSED（回归通过）或 FIXED → PENDING（回归不通过）。
+      parameters:
+      - name: defectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefectStatusChange'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Defect'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/documents:
+    get:
+      tags:
+      - 文档
+      summary: 文档列表
+      operationId: listDocuments
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/DocStatus'
+      - name: keyword
+        in: query
+        required: false
+        schema:
+          type: string
+        description: 文档名称
+      - name: taskId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DocumentItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 文档
+      summary: 上传文档
+      operationId: uploadDocument
+      description: 新建文档并作为第一个版本。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentUpload'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DocumentDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /documents/{documentId}:
+    get:
+      tags:
+      - 文档
+      summary: 文档详情与版本记录
+      operationId: getDocument
+      parameters:
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DocumentDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - 文档
+      summary: 修改文档信息
+      operationId: updateDocument
+      parameters:
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DocumentDetail'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 文档
+      summary: 删除文档
+      operationId: deleteDocument
+      description: 所有版本一并删除。
+      parameters:
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /documents/{documentId}/status:
+    put:
+      tags:
+      - 文档
+      summary: 修订中/定稿
+      operationId: changeDocumentStatus
+      parameters:
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentStatusChange'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DocumentItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /documents/{documentId}/versions:
+    post:
+      tags:
+      - 文档
+      summary: 上传新版本
+      operationId: uploadVersion
+      parameters:
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VersionUpload'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DocumentVersion'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /document-versions/{versionId}/download:
+    get:
+      tags:
+      - 文档
+      summary: 下载
+      operationId: downloadVersion
+      parameters:
+      - name: versionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 文件内容
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: '#/components/responses/Error'
+  /notifications:
+    get:
+      tags:
+      - 通知
+      summary: 通知列表
+      operationId: listNotifications
+      parameters:
+      - name: unreadOnly
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        description: 页码，从 1 开始
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        description: 每页条数
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        total:
+                          type: integer
+                          format: int64
+                        list:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Notification'
+                      required:
+                      - total
+                      - list
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /notifications/unread-count:
+    get:
+      tags:
+      - 通知
+      summary: 未读数
+      operationId: getUnreadCount
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: integer
+                      format: int32
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /notifications/{notificationId}/read:
+    put:
+      tags:
+      - 通知
+      summary: 标为已读
+      operationId: markRead
+      parameters:
+      - name: notificationId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /notifications/read-all:
+    put:
+      tags:
+      - 通知
+      summary: 全部已读
+      operationId: markAllRead
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/issues:
+    get:
+      tags:
+      - 往期日报
+      summary: 往期列表
+      operationId: listIssues
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/IssueSummary'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /projects/{projectId}/issues/{issueDate}:
+    get:
+      tags:
+      - 往期日报
+      summary: 某期快照
+      operationId: getIssue
+      description: 只读。每日零点生成。
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: issueDate
+        in: path
+        required: true
+        schema:
+          type: string
+          format: date
+          example: '2026-10-22'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/IssueSnapshot'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /logs:
+    get:
+      tags:
+      - 系统管理
+      summary: 操作日志
+      operationId: listLogs
+      parameters:
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: projectId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: targetType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2026-10-22'
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2026-10-22'
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        description: 页码，从 1 开始
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        description: 每页条数
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        total:
+                          type: integer
+                          format: int64
+                        list:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/LogItem'
+                      required:
+                      - total
+                      - list
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /dicts:
+    get:
+      tags:
+      - 系统管理
+      summary: 字典
+      operationId: listDicts
+      parameters:
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+        description: 为空返回全部
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DictItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - 系统管理
+      summary: 新增字典项
+      operationId: createDict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DictSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DictItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /dicts/{dictId}:
+    put:
+      tags:
+      - 系统管理
+      summary: 修改字典项
+      operationId: updateDict
+      parameters:
+      - name: dictId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DictSave'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DictItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - 系统管理
+      summary: 删除字典项
+      operationId: deleteDict
+      parameters:
+      - name: dictId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        default:
+          $ref: '#/components/responses/Error'
+  /configs:
+    get:
+      tags:
+      - 系统管理
+      summary: 系统参数
+      operationId: listConfigs
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ConfigItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+  /configs/{key}:
+    put:
+      tags:
+      - 系统管理
+      summary: 修改参数
+      operationId: updateConfig
+      description: 四个优先级权重之和须为 1，否则返回 400。
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigUpdate'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ConfigItem'
+                  required:
+                  - data
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Error:
+      description: 错误，code 见说明
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+  schemas:
+    Result:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: 200 成功，其余见错误码
+          example: 200
+        message:
+          type: string
+          example: ok
+        data:
+          nullable: true
+          description: 业务数据
+      required:
+      - code
+      - message
+      description: 统一响应体
+    TaskStatus:
+      type: string
+      enum:
+      - TODO
+      - DOING
+      - BLOCKED
+      - DONE
+      description: TODO 待开始 / DOING 进行中 / BLOCKED 阻塞 / DONE 已完成
+    ProjectStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - ARCHIVED
+      description: ACTIVE 进行中 / ARCHIVED 已归档
+    ProjectRole:
+      type: string
+      enum:
+      - PM
+      - MEMBER
+      - TESTER
+      description: PM 项目经理 / MEMBER 普通成员 / TESTER 测试人员
+    MilestoneStatus:
+      type: string
+      enum:
+      - PENDING
+      - DONE
+      description: PENDING 未完成 / DONE 已完成
+    DocStatus:
+      type: string
+      enum:
+      - REVISING
+      - FINAL
+      description: REVISING 修订中 / FINAL 定稿
+    DefectStatus:
+      type: string
+      enum:
+      - PENDING
+      - FIXED
+      - CLOSED
+      description: PENDING 待确认 / FIXED 已修复 / CLOSED 已关闭
+    DefectSeverity:
+      type: string
+      enum:
+      - FATAL
+      - SEVERE
+      - NORMAL
+      - MINOR
+      description: FATAL 致命 / SEVERE 严重 / NORMAL 一般 / MINOR 轻微
+    NotificationType:
+      type: string
+      enum:
+      - ASSIGN
+      - MENTION
+      - DELAY
+      - DEFECT
+      - SYSTEM
+      description: ASSIGN 指派 / MENTION 被@ / DELAY 延期预警 / DEFECT 缺陷 / SYSTEM 系统
+    UserBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+          description: 账号
+        realName:
+          type: string
+          description: 姓名
+      required:
+      - id
+      - username
+      - realName
+    TaskRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        taskNo:
+          type: integer
+          format: int32
+          description: 项目内编号，显示为 T-编号
+        title:
+          type: string
+      required:
+      - id
+      - taskNo
+      - title
+    ProjectRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+      - id
+      - name
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - username
+      - password
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        realName:
+          type: string
+      required:
+      - username
+      - password
+      - realName
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        realName:
+          type: string
+        dept:
+          type: string
+          nullable: true
+          description: 部门/小组
+        roleId:
+          type: integer
+          format: int64
+        roleCode:
+          type: string
+          example: PM
+        roleName:
+          type: string
+          example: 项目经理
+        email:
+          type: string
+          nullable: true
+        skillTags:
+          type: array
+          items:
+            type: string
+          description: 技能标签
+        weeklyCapacity:
+          type: integer
+          format: int32
+          description: 每周工时上限（小时）
+        status:
+          type: integer
+          format: int32
+          description: 1 启用 0 停用
+        lastLoginAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - username
+      - realName
+      - dept
+      - roleId
+      - roleCode
+      - roleName
+      - email
+      - skillTags
+      - weeklyCapacity
+      - status
+      - lastLoginAt
+      - createdAt
+    CurrentUser:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        permissions:
+          type: array
+          items:
+            type: string
+          description: 系统权限编码
+      required:
+      - user
+      - permissions
+    LoginResult:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT
+        expiresIn:
+          type: integer
+          format: int32
+          description: 有效期（秒）
+        me:
+          $ref: '#/components/schemas/CurrentUser'
+      required:
+      - token
+      - expiresIn
+      - me
+    ProfileUpdate:
+      type: object
+      properties:
+        realName:
+          type: string
+        email:
+          type: string
+        skillTags:
+          type: array
+          items:
+            type: string
+    PasswordChange:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+      - oldPassword
+      - newPassword
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        realName:
+          type: string
+        dept:
+          type: string
+        roleId:
+          type: integer
+          format: int64
+        email:
+          type: string
+        skillTags:
+          type: array
+          items:
+            type: string
+        weeklyCapacity:
+          type: integer
+          format: int32
+      required:
+      - username
+      - password
+      - realName
+      - roleId
+    UserUpdate:
+      type: object
+      properties:
+        realName:
+          type: string
+        dept:
+          type: string
+        roleId:
+          type: integer
+          format: int64
+        email:
+          type: string
+        skillTags:
+          type: array
+          items:
+            type: string
+        weeklyCapacity:
+          type: integer
+          format: int32
+    UserStatusChange:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: 1 启用 0 停用
+      required:
+      - status
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        code:
+          type: string
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        sort:
+          type: integer
+          format: int32
+        userCount:
+          type: integer
+          format: int32
+          description: 该角色用户数
+      required:
+      - id
+      - code
+      - name
+      - permissions
+      - sort
+      - userCount
+    RoleSave:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        sort:
+          type: integer
+          format: int32
+      required:
+      - code
+      - name
+    Permission:
+      type: object
+      properties:
+        code:
+          type: string
+          example: task:edit
+        name:
+          type: string
+        group:
+          type: string
+          description: 分组，如 任务
+      required:
+      - code
+      - name
+      - group
+    ProjectSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        startDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        planEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        issueNo:
+          type: integer
+          format: int32
+          description: 今日期号
+        headline:
+          type: string
+          nullable: true
+          description: 今日头条，项目切换浮层显示
+        myProjectRole:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRole'
+          nullable: true
+          description: 当前用户在项目中的角色
+      required:
+      - id
+      - name
+      - status
+      - startDate
+      - planEnd
+      - issueNo
+      - headline
+      - myProjectRole
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        owner:
+          $ref: '#/components/schemas/UserBrief'
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        startDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        planEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        actualEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        issueNo:
+          type: integer
+          format: int32
+          description: 今日期号
+        totalWeeks:
+          type: integer
+          format: int32
+          description: 总周数，顶栏进度格
+        currentWeek:
+          type: integer
+          format: int32
+          description: 当前第几周
+        myProjectRole:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRole'
+          nullable: true
+        myPermissions:
+          $ref: '#/components/schemas/MemberPermissions'
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - name
+      - description
+      - owner
+      - status
+      - startDate
+      - planEnd
+      - actualEnd
+      - issueNo
+      - totalWeeks
+      - currentWeek
+      - myProjectRole
+      - myPermissions
+      - createdAt
+    ProjectSave:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        planEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+      required:
+      - name
+      - startDate
+      - planEnd
+    Priority:
+      type: object
+      properties:
+        label:
+          type: string
+          description: 高 / 中 / 低
+          example: 高
+        score:
+          type: number
+          description: 0-100
+          example: 86
+      required:
+      - label
+      - score
+    HeadlineBlock:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 接口文档逾期两天，两项任务因此受阻
+        risk:
+          type: boolean
+          description: true 橙色风险块，false 黑色
+        delayDays:
+          type: integer
+          format: int32
+          description: 预测延期天数
+        plannedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        blockedTasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskRef'
+          description: 受阻任务
+        targetTaskId:
+          type: integer
+          format: int64
+          nullable: true
+          description: 「查看」跳转的任务
+      required:
+      - title
+      - risk
+      - delayDays
+      - plannedEnd
+      - predictedEnd
+      - blockedTasks
+      - targetTaskId
+    ScheduleBar:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        start:
+          type: string
+          format: date
+          example: '2026-10-22'
+        end:
+          type: string
+          format: date
+          example: '2026-10-22'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+      required:
+      - taskId
+      - title
+      - start
+      - end
+      - status
+    ScheduleRow:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserBrief'
+        bars:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleBar'
+      required:
+      - user
+      - bars
+    TodoItem:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/TaskRef'
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        score:
+          type: number
+          description: 优先级得分
+        dueTag:
+          type: string
+          description: 逾期 / 今天 / 周几 / 下周几
+          example: 今天
+        overdueDays:
+          type: integer
+          format: int32
+      required:
+      - task
+      - dueDate
+      - score
+      - dueTag
+      - overdueDays
+    CriticalNode:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+        label:
+          type: string
+          description: 甘特图字母
+          example: C
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        overrunDays:
+          type: integer
+          format: int32
+          description: 预计超期天数
+      required:
+      - taskId
+      - label
+      - title
+      - status
+      - overrunDays
+    Overview:
+      type: object
+      properties:
+        issueNo:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date
+          example: '2026-10-22'
+        stats:
+          type: object
+          properties:
+            done:
+              type: integer
+              format: int32
+            total:
+              type: integer
+              format: int32
+            remaining:
+              type: integer
+              format: int32
+            criticalRemaining:
+              type: integer
+              format: int32
+              description: 剩余任务中在关键路径上的
+            overdue:
+              type: integer
+              format: int32
+            remainingDays:
+              type: integer
+              format: int32
+              description: 距计划结束天数
+            planEnd:
+              type: string
+              format: date
+              example: '2026-10-22'
+          required:
+          - done
+          - total
+          - remaining
+          - criticalRemaining
+          - overdue
+          - remainingDays
+          - planEnd
+        headline:
+          $ref: '#/components/schemas/HeadlineBlock'
+        schedule:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date
+              example: '2026-10-22'
+            to:
+              type: string
+              format: date
+              example: '2026-10-22'
+            rows:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScheduleRow'
+          description: 成员排期
+          required:
+          - from
+          - to
+          - rows
+        todo:
+          type: array
+          items:
+            $ref: '#/components/schemas/TodoItem'
+          description: 当前用户今日待办 Top N
+        todoTotal:
+          type: integer
+          format: int32
+          description: 待办总数
+        progress:
+          type: object
+          properties:
+            percent:
+              type: integer
+              format: int32
+            done:
+              type: integer
+              format: int32
+            remaining:
+              type: integer
+              format: int32
+            total:
+              type: integer
+              format: int32
+          required:
+          - percent
+          - done
+          - remaining
+          - total
+        criticalPath:
+          type: object
+          properties:
+            nodes:
+              type: array
+              items:
+                $ref: '#/components/schemas/CriticalNode'
+            plannedEnd:
+              type: string
+              format: date
+              example: '2026-10-22'
+            predictedEnd:
+              type: string
+              format: date
+              example: '2026-10-22'
+          required:
+          - nodes
+          - plannedEnd
+          - predictedEnd
+      required:
+      - issueNo
+      - date
+      - stats
+      - headline
+      - schedule
+      - todo
+      - todoTotal
+      - progress
+      - criticalPath
+    MemberPermissions:
+      type: object
+      properties:
+        canEditTask:
+          type: boolean
+          description: 新建、修改任务，拖动看板
+        canEditSchedule:
+          type: boolean
+          description: 修改工期和依赖
+        canEditDoc:
+          type: boolean
+          description: 上传新版本，修改文档状态
+        canManageMember:
+          type: boolean
+          description: 邀请成员，修改权限
+      required:
+      - canEditTask
+      - canEditSchedule
+      - canEditDoc
+      - canManageMember
+    Member:
+      allOf:
+      - $ref: '#/components/schemas/MemberPermissions'
+      - type: object
+        properties:
+          user:
+            $ref: '#/components/schemas/UserBrief'
+          projectRole:
+            $ref: '#/components/schemas/ProjectRole'
+          position:
+            type: string
+            nullable: true
+            description: 岗位，如 后端开发
+          weeklyHours:
+            type: number
+            description: 本周工时（按任务预估工时折算）
+          weeklyCapacity:
+            type: integer
+            format: int32
+          overCapacity:
+            type: boolean
+          taskCount:
+            type: integer
+            format: int32
+            description: 负责中的任务数
+          joinedAt:
+            type: string
+            example: '2026-10-22 09:30:00'
+            description: yyyy-MM-dd HH:mm:ss
+        required:
+        - user
+        - projectRole
+        - position
+        - weeklyHours
+        - weeklyCapacity
+        - overCapacity
+        - taskCount
+        - joinedAt
+    MemberAdd:
+      allOf:
+      - $ref: '#/components/schemas/MemberPermissions'
+      - type: object
+        properties:
+          userId:
+            type: integer
+            format: int64
+          projectRole:
+            $ref: '#/components/schemas/ProjectRole'
+          position:
+            type: string
+        required:
+        - userId
+    MemberUpdate:
+      type: object
+      properties:
+        projectRole:
+          $ref: '#/components/schemas/ProjectRole'
+        position:
+          type: string
+    Milestone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        status:
+          $ref: '#/components/schemas/MilestoneStatus'
+        completedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+        sort:
+          type: integer
+          format: int32
+        taskCount:
+          type: integer
+          format: int32
+        doneCount:
+          type: integer
+          format: int32
+      required:
+      - id
+      - name
+      - description
+      - dueDate
+      - status
+      - completedAt
+      - sort
+      - taskCount
+      - doneCount
+    MilestoneSave:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        status:
+          $ref: '#/components/schemas/MilestoneStatus'
+        sort:
+          type: integer
+          format: int32
+      required:
+      - name
+      - dueDate
+    TaskCard:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        taskNo:
+          type: integer
+          format: int32
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+          description: 空为未分配
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        progress:
+          type: integer
+          format: int32
+          description: 0-100
+        priority:
+          $ref: '#/components/schemas/Priority'
+        critical:
+          type: boolean
+          description: 在关键路径上
+        overdueDays:
+          type: integer
+          format: int32
+          description: 已逾期天数，未逾期为 0
+        sortOrder:
+          type: integer
+          format: int32
+        parentId:
+          type: integer
+          format: int64
+          nullable: true
+        milestoneId:
+          type: integer
+          format: int64
+          nullable: true
+        actualEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+      required:
+      - id
+      - taskNo
+      - title
+      - status
+      - assignee
+      - dueDate
+      - progress
+      - priority
+      - critical
+      - overdueDays
+      - sortOrder
+      - parentId
+      - milestoneId
+      - actualEnd
+    DependencyTask:
+      type: object
+      properties:
+        dependencyId:
+          type: integer
+          format: int64
+        task:
+          $ref: '#/components/schemas/TaskRef'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+      required:
+      - dependencyId
+      - task
+      - assignee
+      - status
+    TaskDetail:
+      allOf:
+      - $ref: '#/components/schemas/TaskCard'
+      - type: object
+        properties:
+          projectId:
+            type: integer
+            format: int64
+          description:
+            type: string
+            nullable: true
+          creator:
+            $ref: '#/components/schemas/UserBrief'
+          importance:
+            type: integer
+            format: int32
+            description: 1-5
+          urgency:
+            type: integer
+            format: int32
+            description: 1-5
+          planDays:
+            type: integer
+            format: int32
+            description: 计划工期（工作日）
+          usedDays:
+            type: integer
+            format: int32
+            description: 已用工作日
+          estHours:
+            type: number
+            description: 预估工时（小时）
+          requiredSkills:
+            type: array
+            items:
+              type: string
+          planStart:
+            type: string
+            format: date
+            example: '2026-10-22'
+            nullable: true
+          actualStart:
+            type: string
+            format: date
+            example: '2026-10-22'
+            nullable: true
+          parent:
+            allOf:
+            - $ref: '#/components/schemas/TaskRef'
+            nullable: true
+          milestone:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+            nullable: true
+            required:
+            - id
+            - name
+          predecessors:
+            type: array
+            items:
+              $ref: '#/components/schemas/DependencyTask'
+            description: 前置任务
+          successors:
+            type: array
+            items:
+              $ref: '#/components/schemas/DependencyTask'
+            description: 后续任务（等它的任务）
+          subtasks:
+            type: array
+            items:
+              $ref: '#/components/schemas/TaskCard'
+          documents:
+            type: array
+            items:
+              $ref: '#/components/schemas/DocumentBrief'
+          discussions:
+            type: array
+            items:
+              $ref: '#/components/schemas/DiscussionBrief'
+          createdAt:
+            type: string
+            example: '2026-10-22 09:30:00'
+            description: yyyy-MM-dd HH:mm:ss
+          updatedAt:
+            type: string
+            example: '2026-10-22 09:30:00'
+            description: yyyy-MM-dd HH:mm:ss
+        required:
+        - projectId
+        - description
+        - creator
+        - importance
+        - urgency
+        - planDays
+        - usedDays
+        - estHours
+        - requiredSkills
+        - planStart
+        - actualStart
+        - parent
+        - milestone
+        - predecessors
+        - successors
+        - subtasks
+        - documents
+        - discussions
+        - createdAt
+        - updatedAt
+    TaskCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        milestoneId:
+          type: integer
+          format: int64
+        parentId:
+          type: integer
+          format: int64
+        assigneeId:
+          type: integer
+          format: int64
+        importance:
+          type: integer
+          format: int32
+          description: 1-5，默认 3
+        urgency:
+          type: integer
+          format: int32
+          description: 1-5，默认 3
+        planDays:
+          type: integer
+          format: int32
+          description: 计划工期（工作日）
+        estHours:
+          type: number
+          description: 预估工时（小时）
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        planStart:
+          type: string
+          format: date
+          example: '2026-10-22'
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        predecessorIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 前置任务 ID
+      required:
+      - title
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        milestoneId:
+          type: integer
+          format: int64
+        parentId:
+          type: integer
+          format: int64
+        assigneeId:
+          type: integer
+          format: int64
+        importance:
+          type: integer
+          format: int32
+          description: 1-5，默认 3
+        urgency:
+          type: integer
+          format: int32
+          description: 1-5，默认 3
+        planDays:
+          type: integer
+          format: int32
+          description: 计划工期（工作日）
+        estHours:
+          type: number
+          description: 预估工时（小时）
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        planStart:
+          type: string
+          format: date
+          example: '2026-10-22'
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+    TaskStatusChange:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+      required:
+      - status
+    TaskPosition:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        index:
+          type: integer
+          format: int32
+          description: 目标列内位置，从 0 开始
+      required:
+      - status
+      - index
+    TaskProgress:
+      type: object
+      properties:
+        progress:
+          type: integer
+          format: int32
+          description: 0-100
+      required:
+      - progress
+    TaskAssign:
+      type: object
+      properties:
+        assigneeId:
+          type: integer
+          format: int64
+          nullable: true
+          description: 空为取消分配
+    Board:
+      type: object
+      properties:
+        columns:
+          type: object
+          properties:
+            TODO:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskCard'
+            DOING:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskCard'
+            BLOCKED:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskCard'
+            DONE:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskCard'
+          required:
+          - TODO
+          - DOING
+          - BLOCKED
+          - DONE
+        blockedImpacts:
+          type: array
+          items:
+            type: object
+            properties:
+              task:
+                $ref: '#/components/schemas/TaskRef'
+              dueDate:
+                type: string
+                format: date
+                example: '2026-10-22'
+                nullable: true
+              blockedBy:
+                $ref: '#/components/schemas/TaskRef'
+            required:
+            - task
+            - dueDate
+            - blockedBy
+          description: 因此受阻：阻塞任务的后续任务
+      required:
+      - columns
+      - blockedImpacts
+    PriorityItem:
+      type: object
+      properties:
+        rank:
+          type: integer
+          format: int32
+        task:
+          $ref: '#/components/schemas/TaskRef'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+        score:
+          type: number
+          description: 综合得分 0-100
+        importance:
+          type: integer
+          format: int32
+        urgency:
+          type: integer
+          format: int32
+        timeUrgency:
+          type: number
+          description: 时间紧迫度 0-1
+        blockImpact:
+          type: number
+          description: 阻塞影响度 0-1
+        critical:
+          type: boolean
+      required:
+      - rank
+      - task
+      - assignee
+      - score
+      - importance
+      - urgency
+      - timeUrgency
+      - blockImpact
+      - critical
+    Dependency:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        preTaskId:
+          type: integer
+          format: int64
+        nextTaskId:
+          type: integer
+          format: int64
+      required:
+      - id
+      - preTaskId
+      - nextTaskId
+    DependencyCreate:
+      type: object
+      properties:
+        preTaskId:
+          type: integer
+          format: int64
+        nextTaskId:
+          type: integer
+          format: int64
+      required:
+      - preTaskId
+      - nextTaskId
+    PredecessorsSet:
+      type: object
+      properties:
+        preTaskIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+      required:
+      - preTaskIds
+    GanttTask:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+        label:
+          type: string
+          description: 字母编号
+          example: C
+        title:
+          type: string
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+        planDays:
+          type: integer
+          format: int32
+        planStart:
+          type: string
+          format: date
+          example: '2026-10-22'
+        planEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        actualStart:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        actualEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        critical:
+          type: boolean
+        totalFloat:
+          type: integer
+          format: int32
+          description: 总时差（工作日）
+        overrunDays:
+          type: integer
+          format: int32
+          description: 预计超期天数
+      required:
+      - taskId
+      - label
+      - title
+      - assignee
+      - planDays
+      - planStart
+      - planEnd
+      - actualStart
+      - actualEnd
+      - predictedEnd
+      - status
+      - critical
+      - totalFloat
+      - overrunDays
+    Gantt:
+      type: object
+      properties:
+        scope:
+          type: string
+          description: 范围说明
+          example: 本阶段
+        from:
+          type: string
+          format: date
+          example: '2026-10-22'
+        to:
+          type: string
+          format: date
+          example: '2026-10-22'
+        today:
+          type: string
+          format: date
+          example: '2026-10-22'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/GanttTask'
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+        totalDuration:
+          type: integer
+          format: int32
+          description: 总工期（工作日）
+        plannedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        delayDays:
+          type: integer
+          format: int32
+      required:
+      - scope
+      - from
+      - to
+      - today
+      - tasks
+      - dependencies
+      - totalDuration
+      - plannedEnd
+      - predictedEnd
+      - delayDays
+    CpmRow:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+        label:
+          type: string
+        title:
+          type: string
+        duration:
+          type: integer
+          format: int32
+          description: 工期
+        es:
+          type: integer
+          format: int32
+          description: 最早开始
+        ef:
+          type: integer
+          format: int32
+          description: 最早完成
+        ls:
+          type: integer
+          format: int32
+          description: 最迟开始
+        lf:
+          type: integer
+          format: int32
+          description: 最迟完成
+        totalFloat:
+          type: integer
+          format: int32
+          description: 总时差
+        critical:
+          type: boolean
+      required:
+      - taskId
+      - label
+      - title
+      - duration
+      - es
+      - ef
+      - ls
+      - lf
+      - totalFloat
+      - critical
+    CriticalPath:
+      type: object
+      properties:
+        unit:
+          type: string
+          example: 工作日
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/CpmRow'
+        path:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关键路径任务 ID，按顺序
+        pathLabels:
+          type: array
+          items:
+            type: string
+          example:
+          - A
+          - B
+          - C
+          - E
+        totalDuration:
+          type: integer
+          format: int32
+        plannedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        delayDays:
+          type: integer
+          format: int32
+        delayCause:
+          allOf:
+          - $ref: '#/components/schemas/TaskRef'
+          nullable: true
+          description: 导致延期的关键任务
+      required:
+      - unit
+      - rows
+      - path
+      - pathLabels
+      - totalDuration
+      - plannedEnd
+      - predictedEnd
+      - delayDays
+      - delayCause
+    ReportSummary:
+      type: object
+      properties:
+        weekNo:
+          type: integer
+          format: int32
+        totalWeeks:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int32
+        done:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        completionRate:
+          type: number
+          description: 完成率 0-1
+        onTimeRate:
+          type: number
+          description: 按期率 0-1
+        delayRate:
+          type: number
+          description: 延期率 0-1
+      required:
+      - weekNo
+      - totalWeeks
+      - total
+      - done
+      - remaining
+      - completionRate
+      - onTimeRate
+      - delayRate
+    BurndownPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: '2026-10-22'
+        planned:
+          type: number
+          description: 计划剩余
+        actual:
+          type: number
+          nullable: true
+          description: 实际剩余，今天之后为空
+        predicted:
+          type: number
+          nullable: true
+          description: 预测剩余，今天之前为空
+      required:
+      - date
+      - planned
+      - actual
+      - predicted
+    Burndown:
+      type: object
+      properties:
+        unit:
+          type: string
+          description: 项 或 小时
+          example: 项
+        today:
+          type: string
+          format: date
+          example: '2026-10-22'
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/BurndownPoint'
+        plannedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+      required:
+      - unit
+      - today
+      - points
+      - plannedEnd
+      - predictedEnd
+    WeeklyCompleted:
+      type: object
+      properties:
+        weekStart:
+          type: string
+          format: date
+          example: '2026-10-22'
+        count:
+          type: integer
+          format: int32
+        current:
+          type: boolean
+          description: 本周
+      required:
+      - weekStart
+      - count
+      - current
+    DurationDeviation:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/TaskRef'
+        label:
+          type: string
+        planDays:
+          type: integer
+          format: int32
+        actualDays:
+          type: integer
+          format: int32
+        deviationDays:
+          type: integer
+          format: int32
+          description: 正数为超期
+      required:
+      - task
+      - label
+      - planDays
+      - actualDays
+      - deviationDays
+    Forecast:
+      type: object
+      properties:
+        plannedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+        delayDays:
+          type: integer
+          format: int32
+        remaining:
+          type: integer
+          format: int32
+        risk:
+          type: boolean
+        basis:
+          type: string
+          example: 按当前燃尽速度推算
+      required:
+      - plannedEnd
+      - predictedEnd
+      - delayDays
+      - remaining
+      - risk
+      - basis
+    DefectDensity:
+      type: object
+      properties:
+        module:
+          type: string
+        defectCount:
+          type: integer
+          format: int32
+        taskCount:
+          type: integer
+          format: int32
+        density:
+          type: number
+      required:
+      - module
+      - defectCount
+      - taskCount
+      - density
+    WorkloadMember:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserBrief'
+        loadHours:
+          type: number
+          description: 未完成任务预估工时之和
+        weeklyHours:
+          type: number
+        capacity:
+          type: integer
+          format: int32
+        taskCount:
+          type: integer
+          format: int32
+        overCapacity:
+          type: boolean
+      required:
+      - user
+      - loadHours
+      - weeklyHours
+      - capacity
+      - taskCount
+      - overCapacity
+    Workload:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkloadMember'
+        variance:
+          type: number
+          description: 负载方差
+      required:
+      - members
+      - variance
+    AssignSuggestionRequest:
+      type: object
+      properties:
+        taskIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 为空则对全部未分配任务给建议
+    UserLoad:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        hours:
+          type: number
+      required:
+      - userId
+      - hours
+    AssignSuggestion:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/TaskRef'
+        suggested:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+        reason:
+          type: string
+          example: 技能匹配，当前负载最低（12 小时）
+        candidates:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                $ref: '#/components/schemas/UserBrief'
+              loadHours:
+                type: number
+            required:
+            - user
+            - loadHours
+      required:
+      - task
+      - suggested
+      - reason
+      - candidates
+    AssignSuggestionResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignSuggestion'
+        unmatched:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskRef'
+          description: 无技能匹配，需人工指派
+        loadBefore:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLoad'
+        loadAfter:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLoad'
+        varianceBefore:
+          type: number
+        varianceAfter:
+          type: number
+      required:
+      - items
+      - unmatched
+      - loadBefore
+      - loadAfter
+      - varianceBefore
+      - varianceAfter
+    AssignApply:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              taskId:
+                type: integer
+                format: int64
+              userId:
+                type: integer
+                format: int64
+            required:
+            - taskId
+            - userId
+      required:
+      - items
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+          description: 系统操作为空
+        targetType:
+          type: string
+          description: TASK / DOCUMENT / MEMBER / PROJECT / DEFECT / DISCUSSION
+        targetId:
+          type: integer
+          format: int64
+          nullable: true
+        action:
+          type: string
+        detail:
+          type: string
+          example: 测试经理 A 把任务移到阻塞
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - user
+      - targetType
+      - targetId
+      - action
+      - detail
+      - createdAt
+    DiscussionBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        task:
+          allOf:
+          - $ref: '#/components/schemas/TaskRef'
+          nullable: true
+        commentCount:
+          type: integer
+          format: int32
+        lastCommentAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+      required:
+      - id
+      - title
+      - task
+      - commentCount
+      - lastCommentAt
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/UserBrief'
+        content:
+          type: string
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserBrief'
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - user
+      - content
+      - mentions
+      - createdAt
+    DiscussionDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        creator:
+          $ref: '#/components/schemas/UserBrief'
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+        task:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            taskNo:
+              type: integer
+              format: int32
+            title:
+              type: string
+            status:
+              $ref: '#/components/schemas/TaskStatus'
+            overdueDays:
+              type: integer
+              format: int32
+          nullable: true
+          required:
+          - id
+          - taskNo
+          - title
+          - status
+          - overdueDays
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      required:
+      - id
+      - title
+      - creator
+      - createdAt
+      - task
+      - comments
+    DiscussionCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        taskId:
+          type: integer
+          format: int64
+        content:
+          type: string
+          description: 第一条评论
+      required:
+      - title
+      - content
+    CommentCreate:
+      type: object
+      properties:
+        content:
+          type: string
+        mentionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: '@ 的用户'
+      required:
+      - content
+    Defect:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        task:
+          allOf:
+          - $ref: '#/components/schemas/TaskRef'
+          nullable: true
+        module:
+          type: string
+          nullable: true
+        title:
+          type: string
+        steps:
+          type: string
+          nullable: true
+          description: 复现说明
+        severity:
+          $ref: '#/components/schemas/DefectSeverity'
+        status:
+          $ref: '#/components/schemas/DefectStatus'
+        reporter:
+          $ref: '#/components/schemas/UserBrief'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+          description: 修复人
+        fixedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+        closedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+        updatedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - task
+      - module
+      - title
+      - steps
+      - severity
+      - status
+      - reporter
+      - assignee
+      - fixedAt
+      - closedAt
+      - createdAt
+      - updatedAt
+    DefectSave:
+      type: object
+      properties:
+        title:
+          type: string
+        steps:
+          type: string
+        severity:
+          $ref: '#/components/schemas/DefectSeverity'
+        taskId:
+          type: integer
+          format: int64
+        module:
+          type: string
+        assigneeId:
+          type: integer
+          format: int64
+      required:
+      - title
+    DefectStatusChange:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DefectStatus'
+        note:
+          type: string
+          description: 回归说明
+      required:
+      - status
+    DefectStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int32
+        byStatus:
+          type: object
+          properties:
+            PENDING:
+              type: integer
+              format: int32
+            FIXED:
+              type: integer
+              format: int32
+            CLOSED:
+              type: integer
+              format: int32
+          required:
+          - PENDING
+          - FIXED
+          - CLOSED
+        bySeverity:
+          type: object
+          properties:
+            FATAL:
+              type: integer
+              format: int32
+            SEVERE:
+              type: integer
+              format: int32
+            NORMAL:
+              type: integer
+              format: int32
+            MINOR:
+              type: integer
+              format: int32
+          required:
+          - FATAL
+          - SEVERE
+          - NORMAL
+          - MINOR
+        density:
+          type: number
+          description: 缺陷数 / 任务数
+      required:
+      - total
+      - byStatus
+      - bySeverity
+      - density
+    DocumentBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        currentVersion:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/DocStatus'
+        overdueDays:
+          type: integer
+          format: int32
+      required:
+      - id
+      - name
+      - currentVersion
+      - status
+      - overdueDays
+    DocumentItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        category:
+          type: string
+          description: 见字典 doc_category
+        task:
+          allOf:
+          - $ref: '#/components/schemas/TaskRef'
+          nullable: true
+        owner:
+          $ref: '#/components/schemas/UserBrief'
+        status:
+          $ref: '#/components/schemas/DocStatus'
+        currentVersion:
+          type: string
+          example: v0.6
+          nullable: true
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        overdueDays:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+        updatedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+        finalizedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+          nullable: true
+      required:
+      - id
+      - name
+      - category
+      - task
+      - owner
+      - status
+      - currentVersion
+      - dueDate
+      - overdueDays
+      - createdAt
+      - updatedAt
+      - finalizedAt
+    DocumentVersion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        version:
+          type: string
+          example: v0.6
+        changeNote:
+          type: string
+          example: 补充登录接口
+          nullable: true
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+          description: 字节
+        contentType:
+          type: string
+          nullable: true
+        uploader:
+          $ref: '#/components/schemas/UserBrief'
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+        downloadUrl:
+          type: string
+      required:
+      - id
+      - version
+      - changeNote
+      - fileName
+      - fileSize
+      - contentType
+      - uploader
+      - createdAt
+      - downloadUrl
+    DocumentDetail:
+      allOf:
+      - $ref: '#/components/schemas/DocumentItem'
+      - type: object
+        properties:
+          versions:
+            type: array
+            items:
+              $ref: '#/components/schemas/DocumentVersion'
+        required:
+        - versions
+    DocumentUpload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        name:
+          type: string
+        category:
+          type: string
+        taskId:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+          description: 默认上传人
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        version:
+          type: string
+          example: v0.1
+        changeNote:
+          type: string
+      required:
+      - file
+      - name
+      - version
+    DocumentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        taskId:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+        dueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+    DocumentStatusChange:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DocStatus'
+      required:
+      - status
+    VersionUpload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        version:
+          type: string
+        changeNote:
+          type: string
+      required:
+      - file
+      - version
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        title:
+          type: string
+        content:
+          type: string
+          nullable: true
+        link:
+          type: string
+          nullable: true
+          description: 前端路由
+        isRead:
+          type: boolean
+        projectId:
+          type: integer
+          format: int64
+          nullable: true
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - type
+      - title
+      - content
+      - link
+      - isRead
+      - projectId
+      - createdAt
+    IssueSummary:
+      type: object
+      properties:
+        issueNo:
+          type: integer
+          format: int32
+        issueDate:
+          type: string
+          format: date
+          example: '2026-10-22'
+        headline:
+          type: string
+          nullable: true
+        predictedEnd:
+          type: string
+          format: date
+          example: '2026-10-22'
+          nullable: true
+        delayDays:
+          type: integer
+          format: int32
+        risk:
+          type: boolean
+      required:
+      - issueNo
+      - issueDate
+      - headline
+      - predictedEnd
+      - delayDays
+      - risk
+    IssueSnapshot:
+      allOf:
+      - $ref: '#/components/schemas/IssueSummary'
+      - type: object
+        properties:
+          snapshot:
+            type: object
+            additionalProperties: true
+            description: 当日各页面数据，键为 overview、board、gantt、criticalPath、reports、discussions、documents，值的结构与对应实时接口的 data 相同
+        required:
+        - snapshot
+    LogItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          nullable: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRef'
+          nullable: true
+        targetType:
+          type: string
+        targetId:
+          type: integer
+          format: int64
+          nullable: true
+        action:
+          type: string
+        detail:
+          type: string
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - id
+      - user
+      - project
+      - targetType
+      - targetId
+      - action
+      - detail
+      - ip
+      - createdAt
+    DictItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        dictType:
+          type: string
+        label:
+          type: string
+        value:
+          type: string
+        sort:
+          type: integer
+          format: int32
+        status:
+          type: integer
+          format: int32
+      required:
+      - id
+      - dictType
+      - label
+      - value
+      - sort
+      - status
+    DictSave:
+      type: object
+      properties:
+        dictType:
+          type: string
+        label:
+          type: string
+        value:
+          type: string
+        sort:
+          type: integer
+          format: int32
+        status:
+          type: integer
+          format: int32
+      required:
+      - dictType
+      - label
+      - value
+    ConfigItem:
+      type: object
+      properties:
+        key:
+          type: string
+          example: priority.weight.importance
+        value:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          example: '2026-10-22 09:30:00'
+          description: yyyy-MM-dd HH:mm:ss
+      required:
+      - key
+      - value
+      - name
+      - remark
+      - updatedAt
+    ConfigUpdate:
+      type: object
+      properties:
+        value:
+          type: string
+      required:
+      - value

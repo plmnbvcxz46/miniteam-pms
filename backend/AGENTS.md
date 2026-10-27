@@ -8,6 +8,16 @@
 - 注意是 Spring Boot **4.x**：网上很多教程和 AI 默认按 2.x/3.x 写，遇到包名、starter 名或配置项对不上时，以 4.x 官方文档为准，不要降级依赖版本。
 - 根包 `org.miniteam.pms`，启动类 `BackendApplication`。配置文件 `src/main/resources/application.yaml`。
 
+## 包结构
+
+- 根包 `org.miniteam.pms`，按业务模块分包：`auth` `user` `project` `task` `progress` `report` `collab` `defect` `document` `system`，模块职责见各包 `package-info.java` 和 `docs/features.md`。
+- 模块内分层：`controller` `service` `mapper` `entity` `dto`，按需建子包。只改自己任务所属的模块。
+- 通用代码放 `common`，不放业务逻辑。
+- MyBatis XML 放 `src/main/resources/mapper/<模块>/`。
+- Controller 返回 `Result<T>`，分页返回 `Result<PageResult<T>>`。
+- 业务错误抛 `BusinessException(ResultCode.XXX, "给用户看的原因")`，由全局异常处理转换，不要在 Controller 里自己拼错误响应。
+- 日期时间字段用 `LocalDate` / `LocalDateTime`，DTO 上加 `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")`（日期为 `yyyy-MM-dd`）。
+
 ## 常用命令（在仓库根目录执行）
 
 | 做什么 | 命令 |
