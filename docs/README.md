@@ -6,6 +6,7 @@
 
 | 文档 | 内容 |
 |---|---|
+| [features.md](features.md) | 业务功能：角色、主流程、模块与 Java 包/数据表/接口/页面的对应、核心算法、系统边界 |
 | [architecture.md](architecture.md) | 总体设计：技术栈、仓库结构、部署架构、环境、CI/CD、接口约定 |
 | [database.md](database.md) | 数据库设计：表清单、表间关系、业务流程与数据、页面与数据、字段 |
 | [api/](api/README.md) | 接口：`openapi.yaml`、Apifox 导入、前端类型生成 |

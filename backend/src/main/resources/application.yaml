@@ -1,6 +1,8 @@
 spring:
   application:
     name: backend
+  jackson:
+    time-zone: Asia/Shanghai
   config:
     # 本机私人配置（数据库密码等），放在 backend/application-local.yaml，已被 .gitignore 忽略
     import: optional:file:./application-local.yaml
@@ -19,5 +21,6 @@ server:
   port: ${SERVER_PORT:8080}
 
 mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true

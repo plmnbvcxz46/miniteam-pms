@@ -18,9 +18,15 @@
 miniteam-pms/
 ├── frontend/               前端工程
 ├── backend/                后端工程
-│   └── src/main/resources/
-│       ├── application.yaml
-│       └── db/migration/   Flyway 建表脚本 V*.sql
+│   └── src/main/
+│       ├── java/org/miniteam/pms/
+│       │   ├── common/     统一响应体、异常处理
+│       │   └── auth/ user/ project/ task/ progress/
+│       │       report/ collab/ defect/ document/ system/   业务模块，见 features.md
+│       └── resources/
+│           ├── application.yaml
+│           ├── mapper/     MyBatis XML，按模块分子目录
+│           └── db/migration/   Flyway 建表脚本 V*.sql
 ├── docs/                   文档
 ├── .github/workflows/      format.yml、ci.yml、deploy.yml
 ├── AGENTS.md               AI 编程工具约定
