@@ -1,0 +1,36 @@
+name: 自动格式化
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.FORMAT_TOKEN }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: 格式化 Java
+        run: mvn -B -q -f backend spotless:apply
+
+      - name: 有改动就提交回 PR 分支
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "format-bot"
+            git config user.email "format-bot@users.noreply.github.com"
+            git commit -am "style: 自动格式化"
+            git push
+          fi

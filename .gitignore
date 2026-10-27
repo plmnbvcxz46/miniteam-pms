@@ -1,0 +1,52 @@
+# ===== 依赖和构建产物 =====
+node_modules/
+dist/
+dist-ssr/
+target/
+build/
+out/
+*.class
+*.jar
+!**/.mvn/wrapper/maven-wrapper.jar
+
+# ===== 密码和本地配置（绝对不能提交） =====
+.env
+.env.*
+!.env.example
+# Vite 的这两个文件只放公开配置（VITE_ 开头的变量会被打进前端），可以提交
+!.env.development
+!.env.production
+*.local
+application-local.yml
+application-local.yaml
+application-local.properties
+*.pem
+*.key
+
+# ===== 本地数据库、日志 =====
+*.db
+*.sqlite
+*.log
+logs/
+
+# ===== IDE =====
+# IDEA 只提交代码风格，其他都是个人设置
+**/.idea/*
+!**/.idea/codeStyles/
+*.iml
+*.iws
+# VS Code 设置是个人的，不提交
+**/.vscode/
+
+# ===== 系统垃圾 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 文档：只放 Markdown 和小图，Word/PPT 放飞书或群文件 =====
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+~$*

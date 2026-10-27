@@ -1,0 +1,57 @@
+name: 部署
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - run: mvn -B -f backend package -DskipTests
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm -C frontend install --frozen-lockfile
+      - run: pnpm -C frontend build
+
+      - name: 准备 SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 上传前端
+        run: rsync -az --delete frontend/dist/ deploy@${{ secrets.SSH_HOST }}:/var/www/app/
+
+      - name: 上传后端并重启
+        run: |
+          JAR=$(ls backend/target/*.jar | head -1)
+          scp "$JAR" deploy@${{ secrets.SSH_HOST }}:/opt/app/app.jar.new
+          ssh deploy@${{ secrets.SSH_HOST }} '
+            set -e
+            cd /opt/app
+            if [ -f app.jar ]; then cp app.jar backup/app-$(date +%m%d-%H%M).jar; fi
+            ls -t backup/*.jar 2>/dev/null | tail -n +4 | xargs -r rm
+            mv app.jar.new app.jar
+            sudo systemctl restart app
+            sleep 25
+            sudo systemctl is-active app
+          '

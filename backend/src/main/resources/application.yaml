@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: backend
+  config:
+    # 本机私人配置（数据库密码等），放在 backend/application-local.yaml，已被 .gitignore 忽略
+    import: optional:file:./application-local.yaml
+  datasource:
+    # 本机默认连服务器上的开发库 app_dev；服务器上由环境变量覆盖成线上库 app
+    url: ${DB_URL:jdbc:mysql://47.108.234.233:3306/app_dev?sslMode=REQUIRED&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME:app_dev}
+    # 开发库密码不进仓库：写在 backend/application-local.yaml（找组长要）
+    password: ${DB_PASSWORD}
+    hikari:
+      # 多人共用一个库：每人最多 10 个连接，MySQL 上限 100
+      maximum-pool-size: 10
+      minimum-idle: 1
+
+server:
+  port: ${SERVER_PORT:8080}
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
