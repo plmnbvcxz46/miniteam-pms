@@ -2,7 +2,7 @@
 
 小型软件团队项目管理系统（软件工程课程设计，第 8 组）。Monorepo：前端、后端、文档放在同一个仓库。
 
-本文件是给所有 AI 编程工具（Cursor、Trae、通义灵码、Copilot、Claude 等）和组员看的总约定。`frontend/AGENTS.md`、`backend/AGENTS.md` 只写各自的补充，不和这里冲突；冲突时以本文件为准。
+给组员看的上手说明和注意事项在 `README.md`。本文件是给所有 AI 编程工具（Cursor、Trae、通义灵码、Copilot、Claude 等）和组员看的总约定。`frontend/AGENTS.md`、`backend/AGENTS.md` 只写各自的补充，不和这里冲突；冲突时以本文件为准。
 
 ## 目录
 
@@ -40,9 +40,10 @@
 
 ## 前后端怎么对接
 
+- 接口定义以 `docs/api/openapi.yaml` 为准，新增或修改接口先改这个文件。
 - 所有后端接口路径以 `/api` 开头，例如 `GET /api/projects`。线上 nginx 把 `/api/` 原样转发给后端，其余请求都是前端页面。
 - 前端请求一律写相对路径 `/api/...`，不要写死 `http://localhost:8080` 或服务器 IP。本地开发靠 Vite 的 `server.proxy` 把 `/api` 转到 `http://localhost:8080`。
-- 接口统一返回 JSON：`{ "code": 200, "msg": "ok", "data": ... }`，出错时 `code` 非 200，`msg` 写给用户看的原因。
+- 接口统一返回 JSON：`{ "code": 200, "message": "ok", "data": ... }`，出错时 `code` 非 200，`message` 写给用户看的原因。
 - 时间统一用 `yyyy-MM-dd HH:mm:ss` 字符串，时区 Asia/Shanghai。
 
 ## 配置和环境变量
@@ -68,7 +69,7 @@
 
 ## Git 协作
 
-- `main` 受保护，不能直接 push。每个人从 `main` 拉分支：`名字/功能`，例如 `zhangsan/task-board`。
+- `main` 受保护，不能直接 push。每个人从 `main` 拉分支：`类型/描述`，小写、`-` 连接，例如 `feat/task-board`、`fix/kanban-drag`。
 - 改完提 Pull Request，CI 编译通过、组长看过后合并。
 - 提交说明格式：`类型: 做了什么`，类型用 `feat`（新功能）、`fix`（修 bug）、`docs`、`style`、`refactor`、`chore`。例如 `feat: 任务看板支持拖拽排序`。
 - 提交前先 `git pull --rebase origin main`，有冲突自己解决，拿不准就问。
