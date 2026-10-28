@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import SettingsDrawer from "../overlays/settings/SettingDrawer";
 
 export default function Shell() {
   return (
@@ -58,7 +59,6 @@ export default function Shell() {
         <div className="arch-card">
           <i aria-hidden="true" />
           <b>往期日报</b>
-          <p>每天一份只读快照，回看预测怎么变化。</p>
           <button type="button" className="open-issues">
             查看往期 <span aria-hidden="true">→</span>
           </button>
@@ -149,6 +149,9 @@ export default function Shell() {
       <main>
         <Outlet />
       </main>
+
+      {/* 设置抽屉 */}
+      <SettingsDrawer />
     </div>
   );
 }
