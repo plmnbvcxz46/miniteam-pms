@@ -19,11 +19,11 @@ const panels: Record<SectionId, JSX.Element> = {
   params: <ParamsPanel />,
 };
 
-export default function SettingsDrawer() {
+export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
   const active: SectionId = "people"; // 静态阶段写死
 
   return (
-    <Drawer className="ov drawer" label="设置">
+    <Drawer className="ov drawer" label="设置" onClose={onClose}>
       <header className="ov-head">
         <svg className="logo" viewBox="0 0 34 34" aria-hidden="true">
           <rect x="0" y="0" width="15" height="34" fill="currentColor" />
@@ -45,7 +45,7 @@ export default function SettingsDrawer() {
           ))}
         </nav>
 
-        <button className="ov-close" type="button">
+        <button className="ov-close" type="button" onClick={onClose}>
           关闭<span aria-hidden="true">×</span>
         </button>
       </header>

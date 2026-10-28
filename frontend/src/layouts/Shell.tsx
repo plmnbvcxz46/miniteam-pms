@@ -1,9 +1,11 @@
 import { NavLink, Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
+import { useState } from "react";
 
 export default function Shell() {
+  const [settingsOpen, setSettingsOpen] = useState(false)
   return (
-    <div className="shell" id="shell">
+    <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
       {/* 左侧边栏 */}
       <aside className="index" id="index">
         <button
@@ -53,7 +55,9 @@ export default function Shell() {
           <NavLink to="/collab">团队协作</NavLink>
           <NavLink to="/documents">文档</NavLink>
           <NavLink to="/members">成员与权限</NavLink>
-          <NavLink to="/settings">系统管理</NavLink>
+          <a href="#" onClick={(e) => { e.preventDefault(); setSettingsOpen(true); }}>
+            系统管理
+          </a>
         </nav>
 
         <div className="arch-card">
@@ -137,7 +141,7 @@ export default function Shell() {
           <i aria-hidden="true" />
         </button>
 
-        <button className="me" type="button" id="me-btn">
+        <button className="me" type="button" id="me-btn" onClick={() => setSettingsOpen(true)}>
           <span>测</span>
           <em>
             测试经理 A<small>pm_a · 项目经理</small>
@@ -151,7 +155,7 @@ export default function Shell() {
       </main>
 
       {/* 设置抽屉 */}
-      <SettingsDrawer />
+      {settingsOpen && <SettingsDrawer onClose={() => setSettingsOpen(false)} />}
     </div>
   );
 }

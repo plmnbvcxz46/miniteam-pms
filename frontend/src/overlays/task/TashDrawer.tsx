@@ -1,8 +1,8 @@
 import Drawer from "../../components/Drawer";
 
-export default function FormDrawer() {
+export default function FormDrawer({ onClose }: { onClose: () => void }) {
   return (
-    <Drawer className="ov fx" labelledBy="fx-title">
+    <Drawer className="ov fx" labelledBy="fx-title" onClose={onClose}>
       <div className="fx-head">
         <h2 className="fx-title" id="fx-title">新建任务</h2>
         <button className="ov-close" type="button">
