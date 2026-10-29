@@ -1,7 +1,26 @@
 /**
- * 文档版本历史条目
- * 元组格式: [版本号, 更新日期, 操作人, 变更说明]
- * 例如: ["v1.2", "10.16", "测试经理 A", "补充非功能需求"]
+ * 文档版本实体结构（对齐后端 OpenAPI 契约）
+ */
+export interface DocumentVersionItem {
+  /** 版本号，例如 "v1.2" */
+  version: string;
+  /** 更新日期或时间戳，例如 "10.16" */
+  date: string;
+  /** 操作人 / 上传者，例如 "测试经理 A" */
+  operator: string;
+  /** 变更说明 / 备注，例如 "补充非功能需求" */
+  comment: string;
+  /** 物理文件名，例如 "需求规格说明书_v1.2.docx" */
+  fileName?: string;
+  /** 文件大小（格式化文字或字节数，例如 "1.8 MB" 或 1887436） */
+  fileSize?: string | number;
+  /** 文件下载地址（对应后端 /document-versions/{id}/download） */
+  downloadUrl?: string;
+}
+
+/**
+ * 原生原型中保留的简写元组格式（用于平滑兼容原型 Mock 数据）
+ * [版本号, 更新日期, 操作人, 变更说明]
  */
 export type DocHistoryTuple = [
   version: string,
@@ -9,6 +28,11 @@ export type DocHistoryTuple = [
   operator: string,
   comment: string,
 ];
+
+/**
+ * 版本项支持对象形式或元组形式
+ */
+export type DocVersionRecord = DocumentVersionItem | DocHistoryTuple;
 
 /**
  * 项目文档数据项定义（底层事实数据模型）
@@ -32,6 +56,6 @@ export interface DocumentItem {
   up: string;
   /** 截止日期，例如 "10.16" */
   due: string;
-  /** 版本历史记录 */
-  hist: DocHistoryTuple[];
+  /** 版本历史记录（兼容元组或对象） */
+  hist: DocVersionRecord[];
 }

@@ -1,20 +1,51 @@
-import type { DocumentItem } from "../../../types/documents";
+import type { DocumentItem, DocVersionRecord, DocumentVersionItem } from "../../../types/documents";
 import { getDocStatus } from "../utils";
 
 interface DocumentDetailProps {
   doc: DocumentItem | null;
   onTaskClick?: (taskId: string) => void;
   onUploadVersion?: () => void;
+  onDownloadVersion?: (version: DocumentVersionItem) => void;
 }
 
 function pad2(n: number) {
   return n < 10 ? `0${n}` : `${n}`;
 }
 
+/**
+ * 格式化文件大小为易读字符串（如 1.8 MB、512 KB）
+ */
+function formatFileSize(size?: string | number): string {
+  if (!size) return "";
+  if (typeof size === "string") return size;
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/**
+ * 将版本记录（元组或对象）统一转换为标准对象
+ */
+function normalizeVersion(record: DocVersionRecord, docName: string): DocumentVersionItem {
+  if (Array.isArray(record)) {
+    // [version, date, operator, comment]
+    return {
+      version: record[0],
+      date: record[1],
+      operator: record[2],
+      comment: record[3],
+      fileName: `${docName}_${record[0]}.docx`,
+      fileSize: "1.2 MB",
+    };
+  }
+  return record;
+}
+
 export default function DocumentDetail({
   doc,
   onTaskClick,
   onUploadVersion,
+  onDownloadVersion,
 }: DocumentDetailProps) {
   if (!doc) {
     return (
@@ -27,6 +58,15 @@ export default function DocumentDetail({
   }
 
   const { status, isLate, lateDays } = getDocStatus(doc);
+
+  const handleDownload = (ver: DocumentVersionItem) => {
+    if (onDownloadVersion) {
+      onDownloadVersion(ver);
+      return;
+    }
+    // 默认提供友好的下载提示交互
+    alert(`准备下载版本【${ver.version}】附件: ${ver.fileName || "文件"}`);
+  };
 
   return (
     <section className="pnl dside">
@@ -99,15 +139,40 @@ export default function DocumentDetail({
       </div>
 
       <div className="hist scroll-y" id="doc-hist">
-        {doc.hist.map((h, idx) => (
-          <div key={idx} className="hv">
-            <b>{h[0]}</b>
-            <span>{h[3]}</span>
-            <small>
-              {h[1]} · {h[2]}
-            </small>
-          </div>
-        ))}
+        {doc.hist.map((record, idx) => {
+          const ver = normalizeVersion(record, doc.n);
+          const sizeStr = formatFileSize(ver.fileSize);
+
+          return (
+            <div key={idx} className="hv">
+              <b>{ver.version}</b>
+              <div className="hv-note">{ver.comment}</div>
+
+              {/* 物理文件附件及下载交互 */}
+              {ver.fileName && (
+                <div className="hv-file">
+                  <div className="hv-file-info" title={ver.fileName}>
+
+                    <span className="hv-file-name">{ver.fileName}</span>
+                    {sizeStr && <span className="hv-file-size">({sizeStr})</span>}
+                  </div>
+                  <button
+                    type="button"
+                    className="hv-download-btn"
+                    onClick={() => handleDownload(ver)}
+                    title={`下载 ${ver.fileName}`}
+                  >
+                    下载 ↓
+                  </button>
+                </div>
+              )}
+
+              <small>
+                {ver.date} · {ver.operator}
+              </small>
+            </div>
+          );
+        })}
       </div>
 
       {/* 底部上传按钮 */}

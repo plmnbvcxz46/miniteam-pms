@@ -79,6 +79,9 @@ export default function DocumentsPage() {
     note: string;
     taskId: string;
   }) => {
+    const uploadedFileName = data.file ? data.file.name : undefined;
+    const uploadedFileSize = data.file ? `${(data.file.size / (1024 * 1024)).toFixed(1)} MB` : "1.5 MB";
+
     if (data.targetDocId === "new") {
       const finalDocName = data.docName || (data.file ? data.file.name.replace(/\.[^.]+$/, "") : "未命名文档");
       const newDoc: DocumentItem = {
@@ -91,7 +94,16 @@ export default function DocumentsPage() {
         up: "10.22",
         due: "10.30",
         final: false,
-        hist: [["v0.1", "10.22", "测试经理 A", data.note]],
+        hist: [
+          {
+            version: "v0.1",
+            date: "10.22",
+            operator: "测试经理 A",
+            comment: data.note,
+            fileName: uploadedFileName || `${finalDocName}_v0.1.docx`,
+            fileSize: uploadedFileSize,
+          },
+        ],
       };
       setDocList((prev) => [...prev, newDoc]);
       setSelectedId(newDoc.id!);
@@ -102,11 +114,19 @@ export default function DocumentsPage() {
           const currentV = d.v.replace("v", "");
           const [maj, min] = currentV.split(".").map(Number);
           const nextV = `v${maj}.${(min || 0) + 1}`;
+          const newVersionItem = {
+            version: nextV,
+            date: "10.22",
+            operator: "测试经理 A",
+            comment: data.note,
+            fileName: uploadedFileName || `${d.n}_${nextV}.docx`,
+            fileSize: uploadedFileSize,
+          };
           return {
             ...d,
             v: nextV,
             up: "10.22",
-            hist: [[nextV, "10.22", "测试经理 A", data.note], ...d.hist],
+            hist: [newVersionItem, ...d.hist],
           };
         })
       );

@@ -181,7 +181,6 @@ export default function UploadDocDrawer({
                   if (errorMsg) setErrorMsg("");
                 }}
               />
-              <div className="hint">业务文档名称，将显示在项目文档列表中</div>
             </div>
           )}
 

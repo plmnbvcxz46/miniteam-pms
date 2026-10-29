@@ -45,7 +45,10 @@ export default function DocumentRevisingItem({
   todayOffset,
   onSelect,
 }: DocumentRevisingItemProps) {
-  const vd = doc.hist.map((h) => getDayOffset(h[1]));
+  const vd = doc.hist.map((h) => {
+    const dateStr = Array.isArray(h) ? h[1] : h.date;
+    return getDayOffset(dateStr);
+  });
   const first = Math.max(0, Math.min(...vd));
   const due = getDayOffset(doc.due);
 
