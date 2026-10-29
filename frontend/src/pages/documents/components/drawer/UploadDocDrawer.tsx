@@ -171,7 +171,7 @@ export default function UploadDocDrawer({
                   aria-pressed={targetDocId === doc.id}
                   onClick={() => handleTargetChange(doc.id)}
                 >
-                  已有 · {doc.n}
+                  {doc.n}
                 </button>
               ))}
             </div>
@@ -184,7 +184,7 @@ export default function UploadDocDrawer({
             </span>
             <input
               type="text"
-              placeholder="例如：系统架构设计说明书"
+              placeholder="..."
               required
               value={docName}
               onChange={(e) => setDocName(e.target.value)}
@@ -199,7 +199,7 @@ export default function UploadDocDrawer({
             </span>
             <input
               type="text"
-              placeholder="例如：补充接口字段说明"
+              placeholder="..."
               required
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -237,7 +237,7 @@ export default function UploadDocDrawer({
           )}
 
           {/* 底部按钮 */}
-          <div className="fx-foot">
+          <div className="fx-acts">
             <button
               className="btn"
               type="button"
