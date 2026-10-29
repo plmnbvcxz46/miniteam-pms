@@ -1,5 +1,5 @@
-import type { DocumentItem } from "../../../types/documents";
-import { getDocStatus } from "../utils";
+import type { DocumentItem } from "../../../../types/documents";
+import { getDocStatus } from "../../utils";
 
 interface DocumentHeaderProps {
   /** 文档列表数据源 */
@@ -22,8 +22,9 @@ export default function DocumentHeader({
   const finalCount = docs.filter((d) => !!d.final).length;
   const lateCount = docs.filter((d) => getDocStatus(d).isLate).length;
 
-  const kickerText = `修订中 ${revisingCount} 份 · 定稿 ${finalCount} 份 · ${lateCount > 0 ? `${lateCount} 份逾期` : "没有逾期"
-    }`;
+  const kickerText = `修订中 ${revisingCount} 份 · 定稿 ${finalCount} 份 · ${
+    lateCount > 0 ? `${lateCount} 份逾期` : "没有逾期"
+  }`;
 
   return (
     <div className="vh">
@@ -58,3 +59,4 @@ export default function DocumentHeader({
     </div>
   );
 }
+

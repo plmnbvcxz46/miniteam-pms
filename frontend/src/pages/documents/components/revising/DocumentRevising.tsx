@@ -1,7 +1,7 @@
-import type { DocumentItem } from "../../../types/documents";
-import { getDayOffset, getTimelinePercent } from "../utils";
-import DocumentRevisingHeader from "./revising/DocumentRevisingHeader";
-import DocumentRevisingItem from "./revising/DocumentRevisingItem";
+import type { DocumentItem } from "../../../../types/documents";
+import { getDayOffset, getTimelinePercent } from "../../utils";
+import DocumentRevisingHeader from "./DocumentRevisingHeader";
+import DocumentRevisingItem from "./DocumentRevisingItem";
 
 interface DocumentRevisingProps {
   /** 修订中的文档列表 */
@@ -64,3 +64,4 @@ export default function DocumentRevising({
     </section>
   );
 }
+

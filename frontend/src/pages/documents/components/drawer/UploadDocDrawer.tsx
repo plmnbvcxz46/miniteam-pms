@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Drawer from "../../../components/Drawer";
-import type { DocumentItem } from "../../../types/documents";
+import Drawer from "../../../../components/Drawer";
+import type { DocumentItem } from "../../../../types/documents";
 
 interface UploadDocDrawerProps {
   /** 是否打开 */
@@ -31,7 +31,9 @@ export default function UploadDocDrawer({
   if (!isOpen) return null;
 
   // 未定稿的文档选项
-  const revisingDocOptions = docs.filter((d) => !d.final && d.id);
+  const revisingDocOptions = docs.filter(
+    (d): d is DocumentItem & { id: string } => !d.final && Boolean(d.id)
+  );
 
   // 默认选中的目标
   const defaultTarget =
@@ -64,6 +66,16 @@ export default function UploadDocDrawer({
       if (targetDocId === "new" && !docName.trim()) {
         const autoName = file.name.replace(/\.[^.]+$/, "");
         setDocName(autoName);
+      }
+    }
+  };
+
+  const handleTargetChange = (newTarget: string) => {
+    setTargetDocId(newTarget);
+    if (newTarget !== "new") {
+      const found = docs.find((d) => d.id === newTarget);
+      if (found) {
+        setDocName(found.n);
       }
     }
   };
@@ -147,86 +159,94 @@ export default function UploadDocDrawer({
                 type="button"
                 role="radio"
                 aria-pressed={isNewDoc}
-                onClick={() => setTargetDocId("new")}
+                onClick={() => handleTargetChange("new")}
               >
-                新文档
+                新建文档
               </button>
-              {revisingDocOptions.map((item) => (
+              {revisingDocOptions.map((doc) => (
                 <button
-                  key={item.id}
+                  key={doc.id}
                   type="button"
                   role="radio"
-                  aria-pressed={targetDocId === item.id}
-                  onClick={() => setTargetDocId(item.id!)}
+                  aria-pressed={targetDocId === doc.id}
+                  onClick={() => handleTargetChange(doc.id)}
                 >
-                  {item.n}
+                  已有 · {doc.n}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* 文档名称：仅在新建文档时展示，支持自定义或修改预填 */}
+          {/* 文档名称 */}
+          <label className="fr">
+            <span className="lb">
+              文档名称<b>*</b>
+            </span>
+            <input
+              type="text"
+              placeholder="例如：系统架构设计说明书"
+              required
+              value={docName}
+              onChange={(e) => setDocName(e.target.value)}
+              disabled={!isNewDoc}
+            />
+          </label>
+
+          {/* 版本说明 */}
+          <label className="fr">
+            <span className="lb">
+              版本说明<b>*</b>
+            </span>
+            <input
+              type="text"
+              placeholder="例如：补充接口字段说明"
+              required
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </label>
+
+          {/* 关联任务（新建文档时显示） */}
           {isNewDoc && (
-            <div className="fr">
-              <label htmlFor="f-doc-name">
-                文档名称<b>*</b>
-              </label>
-              <input
-                className="u"
-                id="f-doc-name"
-                placeholder="输入文档名..."
-                value={docName}
-                onChange={(e) => {
-                  setDocName(e.target.value);
-                  if (errorMsg) setErrorMsg("");
-                }}
-              />
+            <label className="fr">
+              <span className="lb">关联任务</span>
+              <select
+                value={taskId}
+                onChange={(e) => setTaskId(e.target.value)}
+              >
+                {taskOptions.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {/* 错误提示 */}
+          {errorMsg && (
+            <div
+              style={{
+                color: "var(--signal)",
+                fontSize: "12px",
+                padding: "4px 0",
+              }}
+            >
+              {errorMsg}
             </div>
           )}
 
-          {/* 版本说明 */}
-          <div className="fr">
-            <label htmlFor="f-note">
-              版本说明<b>*</b>
-            </label>
-            <input
-              className="u"
-              id="f-note"
-              placeholder="..."
-              value={note}
-              onChange={(e) => {
-                setNote(e.target.value);
-                if (errorMsg) setErrorMsg("");
-              }}
-            />
-            {errorMsg && <div className="err">{errorMsg}</div>}
-          </div>
-
-          {/* 关联任务：新建文档时关联 */}
-          <div className="fr top">
-            <span className="lb">关联任务</span>
-            <div className="chips" role="radiogroup" aria-label="关联任务">
-              {taskOptions.map((task) => (
-                <button
-                  key={task.id}
-                  type="button"
-                  role="radio"
-                  aria-pressed={taskId === task.id}
-                  onClick={() => setTaskId(task.id)}
-                >
-                  {task.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 操作按钮 */}
-          <div className="fx-acts">
-            <button className="btn primary" type="submit">
-              上传
-            </button>
-            <button className="btn" type="button" onClick={onClose}>
+          {/* 底部按钮 */}
+          <div className="fx-foot">
+            <button
+              className="btn"
+              type="button"
+              onClick={onClose}
+            >
               取消
+            </button>
+            <button className="btn primary go" type="submit">
+              确认上传
             </button>
           </div>
         </form>

@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import { docs as initialDocs } from "../../data/documents";
 import type { DocumentItem } from "../../types/documents";
-import DocumentHeader from "./components/DocumentHeader";
-import DocumentRevising from "./components/DocumentRevising";
-import DocumentFinal from "./components/DocumentFinal";
-import DocumentDetail from "./components/DocumentDetail";
-import UploadDocDrawer from "./components/UploadDocDrawer";
+import DocumentHeader from "./components/header/DocumentHeader";
+import DocumentRevising from "./components/revising/DocumentRevising";
+import DocumentFinal from "./components/final/DocumentFinal";
+import DocumentDetail from "./components/detail/DocumentDetail";
+import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
