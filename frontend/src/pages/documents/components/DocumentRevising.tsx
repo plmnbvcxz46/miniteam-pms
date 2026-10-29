@@ -1,22 +1,22 @@
-import { docs } from "../../../data/documents";
+import type { DocumentItem } from "../../../types/documents";
 import { getDayOffset, getTimelinePercent } from "../utils";
 import DocumentRevisingHeader from "./revising/DocumentRevisingHeader";
 import DocumentRevisingItem from "./revising/DocumentRevisingItem";
 
 interface DocumentRevisingProps {
-  selectedIndex?: number;
-  onSelect?: (index: number) => void;
+  /** 修订中的文档列表 */
+  docs: DocumentItem[];
+  /** 当前选中的文档 ID */
+  selectedId: string | null;
+  /** 选中回调 */
+  onSelect?: (id: string) => void;
 }
 
 export default function DocumentRevising({
-  selectedIndex = 2,
+  docs,
+  selectedId,
   onSelect,
 }: DocumentRevisingProps) {
-  // 修订中的文档（包含原数组索引）
-  const revisingDocs = docs
-    .map((d, index) => ({ doc: d, index }))
-    .filter(({ doc }) => !doc.final);
-
   // 原型基准今日：10.22
   const today = getDayOffset("10.22");
 
@@ -25,7 +25,7 @@ export default function DocumentRevising({
 
   return (
     <section className="dsec on">
-      <DocumentRevisingHeader count={revisingDocs.length} />
+      <DocumentRevisingHeader count={docs.length} />
 
       <div className="scroll-x">
         <div className="dx">
@@ -48,15 +48,14 @@ export default function DocumentRevising({
             role="listbox"
             aria-label="修订中的文档"
           >
-            {revisingDocs.map(({ doc, index }, k) => (
+            {docs.map((doc, k) => (
               <DocumentRevisingItem
-                key={doc.tid || doc.n}
+                key={doc.id || doc.tid || doc.n}
                 doc={doc}
-                index={index}
                 orderIndex={k}
-                isSelected={index === selectedIndex}
+                isSelected={Boolean(selectedId && doc.id === selectedId)}
                 todayOffset={today}
-                onSelect={onSelect}
+                onSelect={() => doc.id && onSelect?.(doc.id)}
               />
             ))}
           </div>

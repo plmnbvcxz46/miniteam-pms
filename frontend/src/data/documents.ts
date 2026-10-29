@@ -2,6 +2,7 @@ import type { DocumentItem } from "../types/documents";
 
 export const docs: DocumentItem[] = [
   {
+    id: "doc-1",
     n: "需求规格说明书",
     tid: "t129",
     final: true,
@@ -17,6 +18,7 @@ export const docs: DocumentItem[] = [
     ],
   },
   {
+    id: "doc-2",
     n: "数据库设计说明书",
     tid: "t131",
     final: true,
@@ -31,6 +33,7 @@ export const docs: DocumentItem[] = [
     ],
   },
   {
+    id: "doc-3",
     n: "接口文档",
     tid: "t139",
     task: "C 后端开发",
@@ -46,6 +49,7 @@ export const docs: DocumentItem[] = [
     ],
   },
   {
+    id: "doc-4",
     n: "前端组件说明",
     tid: "t137",
     task: "D 前端开发",
@@ -60,6 +64,7 @@ export const docs: DocumentItem[] = [
     ],
   },
   {
+    id: "doc-5",
     n: "测试计划",
     tid: "t150",
     task: "E 联调测试",
@@ -70,6 +75,7 @@ export const docs: DocumentItem[] = [
     hist: [["v0.1", "10.20", "普通员工 C", "初稿"]],
   },
   {
+    id: "doc-6",
     n: "开题报告",
     final: true,
     task: "—",
@@ -83,6 +89,7 @@ export const docs: DocumentItem[] = [
     ],
   },
   {
+    id: "doc-7",
     n: "周会纪要 10.19",
     tid: "t146",
     final: true,

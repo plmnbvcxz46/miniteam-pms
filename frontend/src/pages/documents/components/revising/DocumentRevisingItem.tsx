@@ -32,16 +32,14 @@ function TimelineBar({ className = "b on", fromOffset, toOffset }: TimelineBarPr
 
 interface DocumentRevisingItemProps {
   doc: DocumentItem;
-  index: number;
   orderIndex: number;
   isSelected: boolean;
   todayOffset: number;
-  onSelect?: (index: number) => void;
+  onSelect?: () => void;
 }
 
 export default function DocumentRevisingItem({
   doc,
-  index,
   orderIndex,
   isSelected,
   todayOffset,
@@ -54,19 +52,22 @@ export default function DocumentRevisingItem({
   // 动态派生状态与逾期判定
   const { status, isLate } = getDocStatus(doc);
 
-  const onSegX1 = isLate ? due + 1 : todayOffset + 1;
-  const overSegX0 = due + 1;
-  const overSegX1 = todayOffset + 1;
+  // 统一整点对齐：
+  // 正常进行阶段：截止于截止日（逾期时）或今天此时（进行中）
+  const onSegX1 = isLate ? due : todayOffset;
+  // 逾期阶段：从截止日整点严格延伸到今天整点线
+  const overSegX0 = due;
+  const overSegX1 = todayOffset;
 
   return (
     <button
       type="button"
       className="dr"
       role="option"
-      data-i={index}
+      data-i={doc.id}
       style={{ "--i": orderIndex } as React.CSSProperties}
       aria-selected={isSelected}
-      onClick={() => onSelect?.(index)}
+      onClick={onSelect}
     >
       <span className="dn">
         <b>{doc.n}</b>
@@ -75,17 +76,17 @@ export default function DocumentRevisingItem({
         </small>
       </span>
       <span className="trk" aria-hidden="true">
-        {/* 今日指示线 */}
+        {/* 今日指示线：对齐到 todayOffset */}
         <i
           className="now"
-          style={{ left: getTimelinePercent(todayOffset + 0.5) }}
+          style={{ left: getTimelinePercent(todayOffset) }}
         />
 
-        {/* 截止线与标签 */}
-        <i className="cap" style={{ left: getTimelinePercent(due + 1) }} />
+        {/* 截止虚线与标签：对齐到 due */}
+        <i className="cap" style={{ left: getTimelinePercent(due) }} />
         <i
           className={`duelb${isLate ? " late" : ""}`}
-          style={{ left: getTimelinePercent(due + 1) }}
+          style={{ left: getTimelinePercent(due) }}
         >
           截止 {doc.due}
         </i>
@@ -93,7 +94,7 @@ export default function DocumentRevisingItem({
         {/* 已进行进度条 */}
         <TimelineBar className="b on" fromOffset={first} toOffset={onSegX1} />
 
-        {/* 逾期进度条 */}
+        {/* 逾期进度条：严格终止在今天指示线 */}
         {isLate && (
           <TimelineBar
             className="b over"

@@ -1,20 +1,20 @@
 import React from "react";
-import { docs } from "../../../data/documents";
+import type { DocumentItem } from "../../../types/documents";
 
 interface DocumentFinalProps {
-  selectedIndex?: number;
-  onSelect?: (index: number) => void;
+  /** 定稿文档列表 */
+  docs: DocumentItem[];
+  /** 当前选中的文档 ID */
+  selectedId: string | null;
+  /** 选中回调 */
+  onSelect?: (id: string) => void;
 }
 
 export default function DocumentFinal({
-  selectedIndex = 2,
+  docs,
+  selectedId,
   onSelect,
 }: DocumentFinalProps) {
-  // 定稿的文档（包含原数组索引）
-  const finalDocs = docs
-    .map((d, index) => ({ doc: d, index }))
-    .filter(({ doc }) => !!doc.final);
-
   return (
     <section className="dsec fin">
       <header className="dsec-h">
@@ -23,7 +23,7 @@ export default function DocumentFinal({
           <h3>定稿</h3>
         </div>
         <span className="count" id="dc-fin">
-          {finalDocs.length}
+          {docs.length}
         </span>
       </header>
       <div
@@ -32,20 +32,20 @@ export default function DocumentFinal({
         role="listbox"
         aria-label="已定稿的文档"
       >
-        {finalDocs.map(({ doc, index }, k) => {
-          const isSelected = index === selectedIndex;
+        {docs.map((doc, k) => {
+          const isSelected = Boolean(selectedId && doc.id === selectedId);
           const taskLabel = doc.task === "—" ? "项目文档" : doc.task;
 
           return (
             <button
-              key={doc.tid || doc.n}
+              key={doc.id || doc.tid || doc.n}
               type="button"
               className="df"
               role="option"
-              data-i={index}
+              data-i={doc.id}
               style={{ "--i": k } as React.CSSProperties}
               aria-selected={isSelected}
-              onClick={() => onSelect?.(index)}
+              onClick={() => doc.id && onSelect?.(doc.id)}
             >
               <span className="dn">
                 <b>{doc.n}</b>

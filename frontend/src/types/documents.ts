@@ -14,6 +14,8 @@ export type DocHistoryTuple = [
  * 项目文档数据项定义（底层事实数据模型）
  */
 export interface DocumentItem {
+  /** 唯一标识（支持基于 ID 选中和状态更新） */
+  id?: string;
   /** 文档名称 */
   n: string;
   /** 关联任务ID（可选，如 t129） */
