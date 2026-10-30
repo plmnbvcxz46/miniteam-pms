@@ -21,3 +21,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 项目原型禁止进git，只是方便开发
+项目原型.html

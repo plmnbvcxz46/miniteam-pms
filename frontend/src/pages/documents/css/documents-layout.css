@@ -1,0 +1,103 @@
+/* ==========================================================================
+   项目文档 - 页面布局与通用区块 (Documents Page Layout & General Sections)
+   ========================================================================== */
+
+/* ---------- 主页面双栏网格容器 ---------- */
+.dg {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+.dleft {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ---------- 文档区域通用区块 (.dsec) ---------- */
+.dsec {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+}
+
+.dsec.on {
+  flex-shrink: 0;
+}
+
+.dsec.fin {
+  flex: 1;
+  border-width: 1px;
+}
+
+.dsec-h {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1.5px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.dsec-h > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+}
+
+.dsec-h .k {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mute);
+}
+
+.dsec-h h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.dsec-h .count {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 0.85;
+  letter-spacing: -3px;
+}
+
+.dsec.on .dsec-h {
+  background: #0a0a0a;
+  color: #fafaf7;
+}
+
+.dsec.on .dsec-h > * {
+  --ink: #fafaf7;
+  --paper: #0a0a0a;
+}
+
+.dsec-h .legend {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.dsec.on .dsec-h .k {
+  color: #cfcfca;
+}
+
+.dsec.fin .dsec-h {
+  border-bottom-width: 1px;
+}
+
+.dsec.fin .dsec-h .count {
+  font-weight: 400;
+}
+

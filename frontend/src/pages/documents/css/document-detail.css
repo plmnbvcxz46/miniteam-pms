@@ -1,0 +1,218 @@
+/* ==========================================================================
+   项目文档 - 详情侧边栏与版本记录 (Document Detail Sidebar & History)
+   ========================================================================== */
+
+.dside {
+  padding: 0;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部状态 Hero 卡片 */
+.dhero {
+  padding: 12px 16px;
+  border-bottom: 1.5px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dhero .hk {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.dhero .hk h2 {
+  margin: 0;
+  font: inherit;
+}
+
+.dhero .hk .chip {
+  color: var(--signal);
+}
+
+.dhero .row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.dhero .row b {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.85;
+  letter-spacing: -3px;
+}
+
+.dhero .row span {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.dhero.late {
+  background: var(--signal);
+}
+
+.dhero:not(.late) .hk .chip {
+  display: none;
+}
+
+/* 属性元数据列表 */
+.facts {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 8px 12px;
+  margin: 0;
+  padding: 12px 16px;
+  border-bottom: 1.5px solid var(--ink);
+  font-size: 13px;
+}
+
+.facts dt {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+  align-self: center;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.facts dd.late {
+  color: var(--signal-text);
+}
+
+/* 版本记录区头部 */
+.hhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 16px 6px;
+  border-bottom: 1.5px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.hhead b {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+/* 版本记录滚动列表 */
+.hist {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+
+.hv {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 3px 10px;
+  padding: 10px 16px;
+  border-bottom: 1px dashed var(--ink);
+  font-size: 13px;
+}
+
+.hv b {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 800;
+  grid-row: span 3;
+  padding-top: 2px;
+}
+
+.hv .hv-note {
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.hv .hv-file {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+
+.hv .hv-file-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hv .hv-file-name {
+  color: var(--ink);
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hv .hv-file-size {
+  color: var(--mute);
+  flex-shrink: 0;
+  font-size: 10px;
+}
+
+.hv .hv-download-btn {
+  all: unset;
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  border-bottom: 1px solid currentColor;
+}
+
+.hv .hv-download-btn:hover {
+  color: var(--signal-text);
+  border-bottom-color: var(--signal-text);
+}
+
+.hv small {
+  grid-column: 2;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+}
+
+/* 底部上传按钮区 */
+.dside .up {
+  padding: 12px 16px;
+  border-top: 1.5px solid var(--ink);
+  margin-top: auto;
+}
+
+.dside .up .btn {
+  width: 100%;
+  justify-content: space-between;
+}
+

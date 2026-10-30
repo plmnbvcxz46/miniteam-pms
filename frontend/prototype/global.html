@@ -1,0 +1,1662 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <title>项目日报原型</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+    />
+    <link rel="stylesheet" href="../src/styles/index.css" />
+  </head>
+  <body>
+    <div class="shell" id="shell">
+      <aside class="index" id="index">
+        <button
+          class="project"
+          type="button"
+          id="mh-project"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-label="切换项目"
+        >
+          <svg class="logo" viewBox="0 0 34 34" aria-hidden="true">
+            <rect x="0" y="0" width="15" height="34" fill="#FAFAF7"></rect>
+            <rect x="19" y="0" width="15" height="18" fill="#FF5A1F"></rect>
+          </svg>
+          <span id="proj-name">测试项目 App</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <path d="M2 4l4 4 4-4"></path>
+          </svg>
+        </button>
+        <div class="issues projs" id="projs" hidden>
+          <h4>我参与的项目</h4>
+          <div id="proj-list"></div>
+          <button type="button" class="pnew" data-form="project">
+            新建项目
+          </button>
+        </div>
+        <nav class="grp" aria-label="项目" data-l="// 项目">
+          <a href="#overview" data-view="overview">概览</a>
+          <a href="#board" data-view="board"
+            >任务<span class="risk" id="risk-count" hidden></span
+          ></a>
+          <a href="#gantt" data-view="gantt">进度</a>
+          <a href="#reports" data-view="reports">统计报表</a>
+        </nav>
+        <nav class="grp" aria-label="团队" data-l="// 团队">
+          <a href="#team" data-view="team">团队协作</a>
+          <a href="#docs" data-view="docs">文档</a>
+          <a href="#members" data-view="members">成员与权限</a>
+          <a href="#sys" data-view="system">系统管理</a>
+        </nav>
+        <div class="arch-card">
+          <i aria-hidden="true"></i>
+          <b>往期日报</b>
+          <p>每天一份只读快照，回看预测怎么变化。</p>
+          <button type="button" class="open-issues">
+            查看往期 <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </aside>
+
+      <header class="masthead" id="masthead">
+        <h1 class="sys-title" id="mh-system" hidden>系统管理</h1>
+        <div id="issue-wrap">
+          <button
+            class="issue"
+            type="button"
+            id="issue-btn"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <b id="issue-no">第 32 期</b
+            ><span id="issue-date">2026 年 10 月 22 日 周四</span
+            ><svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <path d="M2 4l4 4 4-4"></path>
+            </svg>
+          </button>
+          <button class="back" type="button" id="back" hidden>回到今天</button>
+          <div class="issues" id="issues" hidden>
+            <h4>往期</h4>
+            <div id="issue-list"></div>
+          </div>
+        </div>
+        <div class="slot">
+          <div id="mid-weeks" class="weekline">
+            <span>9.21</span>
+            <div class="weeks" aria-label="项目共 10 周，当前第 5 周">
+              <span class="past"></span><span class="past"></span
+              ><span class="past"></span><span class="past"></span
+              ><span class="now"></span><span></span><span></span><span></span
+              ><span></span><span></span>
+            </div>
+            <span>11.29</span>
+          </div>
+          <nav class="subtabs" id="mid-subtabs" aria-label="设置" hidden></nav>
+        </div>
+        <button class="bell" type="button" aria-label="通知">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            aria-hidden="true"
+          >
+            <path d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z"></path>
+            <path d="M6.5 14h3"></path>
+          </svg>
+          <i aria-hidden="true"></i>
+        </button>
+        <button class="me" type="button" id="me-btn">
+          <span>测</span><em>测试经理 A<small>pm_a · 项目经理</small></em>
+        </button>
+      </header>
+
+      <main>
+        <!-- 概览 = 头版 -->
+        <section class="view" id="view-overview" data-view="overview">
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="ov-kicker">
+                第 32 期 · 2026.10.22 周四 · 第 05/10 周
+              </div>
+              <h1 class="vt">项目<em>日报</em></h1>
+              <div class="vd" id="ov-deck">
+                计划 · 追踪 · 交付 — 今天 18 项已完成，24 项待推进，1 项逾期。
+              </div>
+            </div>
+            <div class="va">
+              <button class="btn open-issues" type="button">往期 ▾</button
+              ><button class="btn go" type="button" data-form="task">
+                + 新建任务
+              </button>
+            </div>
+          </div>
+          <div class="figures">
+            <div class="figure">
+              <div class="lbl">已完成</div>
+              <div class="num" id="f-done">18</div>
+              <div class="sub" id="f-done-s">共 42 项</div>
+            </div>
+            <div class="figure">
+              <div class="lbl">剩余任务</div>
+              <div class="num" id="f-left">24</div>
+              <div class="sub">4 项在关键路径上</div>
+            </div>
+            <div class="figure" id="f-late-box">
+              <div class="lbl">逾期<span class="chip">风险</span></div>
+              <div class="num" id="f-late">01</div>
+              <div class="sub" id="f-late-s">补全接口文档 · 2 天</div>
+            </div>
+            <div class="figure">
+              <div class="lbl">剩余天数</div>
+              <div class="num" id="f-days">38</div>
+              <div class="sub">截止 11.29</div>
+            </div>
+          </div>
+          <div class="ov1">
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 本周</span>
+                  <h2>成员排期</h2>
+                </div>
+                <div class="legend">
+                  <span><i class="key on"></i>进行中</span
+                  ><span><i class="key"></i>待开始</span
+                  ><span><i class="key stuck"></i>阻塞</span>
+                </div>
+              </div>
+              <div class="tl">
+                <div class="days">
+                  <span class="gut"></span>
+                  <div class="cols" id="tl-days">
+                    <span>19</span><span>20</span><span>21</span
+                    ><span class="on">22</span><span>23</span
+                    ><span class="we">24</span><span class="we">25</span>
+                  </div>
+                </div>
+                <div class="rows">
+                  <div class="today" id="tl-today" aria-hidden="true"></div>
+                  <div class="row">
+                    <span class="who">测试经理 A</span>
+                    <div class="lane">
+                      <div class="bar on" style="left: 14.3%; width: 41.4%">
+                        权限模块联调
+                      </div>
+                      <div class="bar next" style="left: 60%; width: 26%">
+                        按钮权限
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <span class="who">普通员工 A</span>
+                    <div class="lane">
+                      <div class="bar stuck" style="left: 0; width: 24%">
+                        <span>接口文档</span>
+                      </div>
+                      <div class="bar next" style="left: 40%; width: 46%">
+                        菜单接口
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <span class="who">普通员工 B</span>
+                    <div class="lane">
+                      <div class="bar on" style="left: 30%; width: 56%">
+                        甘特图组件
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <span class="who">普通员工 C</span>
+                    <div class="lane">
+                      <div class="bar on" style="left: 14.3%; width: 41.4%">
+                        答辩 PPT
+                      </div>
+                      <div class="bar next" style="left: 70%; width: 16%">
+                        彩排
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="hero" id="ov-hero">
+              <div class="hk">
+                <span>// 今日头条</span><span class="chip">风险</span>
+              </div>
+              <p class="headline" id="ov-headline">
+                <span>接口文档逾期两天，</span><span>两项任务因此受阻</span>
+              </p>
+              <div class="big">
+                <b id="hero-n">+02</b
+                ><span id="hero-sub">天 · 预测完成<br />10.28 → 10.30</span>
+              </div>
+              <div class="tags" id="hero-tags">
+                <span data-t="t144">菜单接口</span
+                ><span data-t="t148">按钮权限</span>
+              </div>
+              <a class="go" id="hero-go" data-t="t139"
+                >查看受阻任务 <span aria-hidden="true">→</span></a
+              >
+            </section>
+          </div>
+          <div class="ov2">
+            <section class="pnl todo-list">
+              <div class="phd">
+                <div>
+                  <span class="k">// 今日</span>
+                  <h2 id="todo-title">今日待办</h2>
+                </div>
+                <span class="n" id="todo-n">04</span>
+              </div>
+              <div id="todo"></div>
+            </section>
+            <section class="pnl pg">
+              <div class="phd">
+                <div>
+                  <span class="k">// 整体</span>
+                  <h2>项目进度</h2>
+                </div>
+                <span class="u">共 42 项</span>
+              </div>
+              <div class="big" id="pg-n">43<em>%</em></div>
+              <div class="pbar" aria-hidden="true">
+                <span id="pg-a" style="width: 43%">18</span
+                ><span id="pg-b">24</span>
+              </div>
+              <div class="legend">
+                <span><i class="key on"></i>已完成 <b id="pg-la">18</b></span
+                ><span><i class="key"></i>剩余 <b id="pg-lb">24</b></span>
+              </div>
+            </section>
+            <section class="pnl dark cp">
+              <div class="phd">
+                <div>
+                  <span class="k">// 依赖计算</span>
+                  <h2>关键路径</h2>
+                </div>
+                <span
+                  class="chip"
+                  style="background: var(--paper); color: var(--ink)"
+                  >总时差 0</span
+                >
+              </div>
+              <div class="chain">
+                <span>A 需求</span>→<span>B 数据库</span>→<span class="hot"
+                  ><b>C 后端</b><i id="cp-over"></i></span
+                ><em id="cp-over-n">+2</em>→<span>E 联调</span>
+              </div>
+              <div class="foot">
+                <span id="cp-l">计划 10.28<br />预测</span
+                ><b id="cp-date">10.30</b>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- 任务 -->
+        <section class="view" id="view-board" data-view="board" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="bd-kicker">
+                共 11 项 · 1 项阻塞 · 4 项在关键路径
+              </div>
+              <h1 class="vt">任务<em>看板</em></h1>
+            </div>
+            <div class="va">
+              <div class="seg" id="bd-filter" role="group" aria-label="筛选">
+                <button type="button" data-f="all" aria-pressed="true">
+                  全部</button
+                ><button type="button" data-f="mine" aria-pressed="false">
+                  我的</button
+                ><button type="button" data-f="crit" aria-pressed="false">
+                  关键路径
+                </button>
+              </div>
+              <button class="btn go" type="button" data-form="task">
+                + 新建任务
+              </button>
+            </div>
+          </div>
+          <div class="scroll-x">
+            <div class="board" id="board">
+              <div class="col todo">
+                <header>
+                  <div>
+                    <span class="k">// TODO</span>
+                    <h3>待开始</h3>
+                  </div>
+                  <span class="count">0</span>
+                </header>
+                <button class="addcard" type="button" data-form="task">
+                  新建任务
+                </button>
+                <div class="drop">
+                  <article class="card" id="t148">
+                    <div class="top">
+                      <span class="tag">T-148</span
+                      ><span class="score p-h" title="优先级得分 72"
+                        >高<small>72</small></span
+                      >
+                    </div>
+                    <span class="title">按钮权限指令</span>
+                    <div class="meta">
+                      <span>测试经理 A</span><span>10.27</span>
+                    </div>
+                  </article>
+                  <article class="card crit" id="t144">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span
+                      ><span class="score p-m" title="优先级得分 68"
+                        >中<small>68</small></span
+                      >
+                    </div>
+                    <span class="title">菜单接口</span>
+                    <div class="meta">
+                      <span>普通员工 A</span><span>10.28</span>
+                    </div>
+                  </article>
+                  <article class="card" id="t146">
+                    <div class="top">
+                      <span class="tag">T-146</span
+                      ><span class="score p-l" title="优先级得分 31"
+                        >低<small>31</small></span
+                      >
+                    </div>
+                    <span class="title">周会纪要</span>
+                    <div class="meta">
+                      <span>普通员工 C</span><span>10.22</span>
+                    </div>
+                  </article>
+                  <article class="card" id="t150">
+                    <div class="top">
+                      <span class="tag">T-150</span
+                      ><span class="score p-l" title="优先级得分 24"
+                        >低<small>24</small></span
+                      >
+                    </div>
+                    <span class="title">部署脚本</span>
+                    <div class="meta">
+                      <span>未分配</span><span>11.02</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+              <div class="col doing">
+                <header>
+                  <div>
+                    <span class="k">// DOING</span>
+                    <h3>进行中</h3>
+                  </div>
+                  <span class="count">0</span>
+                </header>
+                <div class="drop">
+                  <article class="card crit" id="t142">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span
+                      ><span class="score p-h" title="优先级得分 86"
+                        >高<small>86</small></span
+                      >
+                    </div>
+                    <span class="title">权限模块联调</span
+                    ><i class="prog" aria-hidden="true"
+                      ><b style="width: 70%"></b
+                    ></i>
+                    <div class="meta">
+                      <span>测试经理 A</span><span class="now">今天</span>
+                    </div>
+                  </article>
+                  <article class="card crit" id="t137">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span
+                      ><span class="score p-h" title="优先级得分 74"
+                        >高<small>74</small></span
+                      >
+                    </div>
+                    <span class="title">甘特图组件</span
+                    ><i class="prog" aria-hidden="true"
+                      ><b style="width: 60%"></b
+                    ></i>
+                    <div class="meta">
+                      <span>普通员工 B</span><span>10.23</span>
+                    </div>
+                  </article>
+                  <article class="card" id="t135">
+                    <div class="top">
+                      <span class="tag">T-135</span
+                      ><span class="score p-m" title="优先级得分 55"
+                        >中<small>55</small></span
+                      >
+                    </div>
+                    <span class="title">答辩 PPT 第二版</span
+                    ><i class="prog" aria-hidden="true"
+                      ><b style="width: 35%"></b
+                    ></i>
+                    <div class="meta">
+                      <span>普通员工 C</span><span>10.24</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+              <div class="col blocked">
+                <header>
+                  <div>
+                    <span class="k">// BLOCKED</span>
+                    <h3>阻塞</h3>
+                  </div>
+                  <span class="count">0</span>
+                </header>
+                <div class="drop">
+                  <article class="card crit" id="t139">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span
+                      ><span class="score p-h" title="优先级得分 91"
+                        >高<small>91</small></span
+                      >
+                    </div>
+                    <span class="title">补全接口文档</span>
+                    <div class="meta">
+                      <span>普通员工 A</span><span class="late">逾期 2 天</span>
+                    </div>
+                  </article>
+                </div>
+                <div class="bby" id="blocked-by"></div>
+              </div>
+              <div class="col done">
+                <header>
+                  <div>
+                    <span class="k">// DONE</span>
+                    <h3>已完成</h3>
+                  </div>
+                  <span class="count">0</span>
+                </header>
+                <div class="drop">
+                  <article class="card crit" id="t131">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span>
+                    </div>
+                    <span class="title">数据库表设计</span>
+                    <div class="meta">
+                      <span>普通员工 B</span><span>10.17</span>
+                    </div>
+                  </article>
+                  <article class="card crit" id="t129">
+                    <div class="top">
+                      <span class="tag crit">■ 关键路径</span>
+                    </div>
+                    <span class="title">需求分析</span>
+                    <div class="meta">
+                      <span>测试经理 A</span><span>10.16</span>
+                    </div>
+                  </article>
+                  <article class="card" id="t128">
+                    <div class="top"><span class="tag">T-128</span></div>
+                    <span class="title">登录接口</span>
+                    <div class="meta">
+                      <span>普通员工 A</span><span>10.18</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 进度 -->
+        <section class="view" id="view-gantt" data-view="gantt" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k">
+                5 项任务 · 4 项在关键路径 · 总工期 13 个工作日
+              </div>
+              <h1 class="vt">进度<em>甘特</em></h1>
+            </div>
+            <div class="va">
+              <div class="seg" role="group" aria-label="刻度">
+                <button type="button" aria-pressed="true">按周</button
+                ><button type="button" aria-pressed="false">按月</button>
+              </div>
+              <button class="btn go" type="button" data-form="task">
+                + 新建任务
+              </button>
+            </div>
+          </div>
+          <section class="pnl gp">
+            <div class="phd">
+              <div>
+                <span class="k">// 依赖排期 · 本阶段</span>
+                <h2>关键路径甘特图</h2>
+              </div>
+              <div class="r">
+                <div class="legend">
+                  <span><i class="key on"></i>关键路径</span
+                  ><span><i class="key"></i>非关键</span
+                  ><span><i class="key dash"></i>总时差</span
+                  ><span><i class="key over"></i>预计超期</span>
+                </div>
+                <div class="pred">
+                  <span id="gp-l">本阶段预测<br />计划 10.28 · 晚 2 天</span
+                  ><b id="gp-d">10.30</b>
+                </div>
+              </div>
+            </div>
+            <div class="scroll-x">
+              <div class="gantt">
+                <div class="g-head">
+                  <span class="gut"></span>
+                  <div class="cols">
+                    <span class="wk" style="grid-column: 1 / span 5"
+                      >10.12 – 10.16</span
+                    >
+                    <span class="wk" style="grid-column: 6 / span 5"
+                      >10.19 – 10.23</span
+                    >
+                    <span class="wk" style="grid-column: 11 / span 5"
+                      >10.26 – 10.30</span
+                    >
+                    <span class="wk" style="grid-column: 16 / span 1"
+                      >11 月</span
+                    >
+                    <span class="d">12</span><span class="d">13</span
+                    ><span class="d">14</span><span class="d">15</span
+                    ><span class="d">16</span> <span class="d">19</span
+                    ><span class="d">20</span><span class="d">21</span
+                    ><span class="d today">22</span><span class="d">23</span>
+                    <span class="d">26</span><span class="d">27</span
+                    ><span class="d">28</span><span class="d">29</span
+                    ><span class="d">30</span><span class="d">2</span>
+                  </div>
+                </div>
+                <div class="g-body">
+                  <div class="g-row">
+                    <div class="name">
+                      <b>A 需求分析</b><small>测试经理 A · 3 天</small>
+                    </div>
+                    <div class="lane">
+                      <span
+                        class="g-bar crit"
+                        data-id="A"
+                        style="grid-column: 1 / 4; --d: 0s; --dur: 0.22s"
+                        >已完成</span
+                      >
+                    </div>
+                  </div>
+                  <div class="g-row">
+                    <div class="name">
+                      <b>B 数据库设计</b><small>普通员工 B · 2 天</small>
+                    </div>
+                    <div class="lane">
+                      <span
+                        class="g-bar crit"
+                        data-id="B"
+                        style="grid-column: 4 / 6; --d: 0.38s; --dur: 0.18s"
+                        >已完成</span
+                      >
+                    </div>
+                  </div>
+                  <div class="g-row">
+                    <div class="name">
+                      <b>C 后端开发</b><small>普通员工 A · 5 天</small>
+                    </div>
+                    <div class="lane">
+                      <span
+                        class="g-bar crit"
+                        data-id="C"
+                        style="grid-column: 6 / 11; --d: 0.72s; --dur: 0.35s"
+                        >进行中</span
+                      ><span
+                        class="g-bar over"
+                        data-id="Cend"
+                        style="grid-column: 11 / 13; --d: 1.05s; --dur: 0.18s"
+                        title="预计多用 2 天"
+                      ></span>
+                    </div>
+                  </div>
+                  <div class="g-row">
+                    <div class="name">
+                      <b>D 前端开发</b><small>测试经理 A · 4 天</small>
+                    </div>
+                    <div class="lane">
+                      <span
+                        class="g-bar free"
+                        data-id="D"
+                        style="grid-column: 4 / 8; --d: 1.83s; --dur: 0.28s"
+                        >进行中</span
+                      ><span
+                        class="g-bar slack"
+                        data-id="Dend"
+                        style="grid-column: 8 / 11; --d: 2.09s; --dur: 0.22s"
+                        title="总时差 3 天"
+                      ></span>
+                    </div>
+                  </div>
+                  <div class="g-row last">
+                    <div class="name">
+                      <b>E 联调测试</b><small>普通员工 C · 3 天</small>
+                    </div>
+                    <div class="lane">
+                      <span
+                        class="g-bar ghost"
+                        id="g-ghost"
+                        style="grid-column: 11 / 14; --d: 1.05s; --dur: 0.22s"
+                        >原计划</span
+                      ><span
+                        class="g-bar crit"
+                        data-id="E"
+                        style="grid-column: 13 / 16; --d: 1.38s; --dur: 0.22s"
+                        >预测</span
+                      >
+                    </div>
+                  </div>
+                  <svg class="deps" id="deps" aria-hidden="true"></svg>
+                  <div
+                    class="g-line today"
+                    id="gl-today"
+                    data-at="8.5"
+                    style="
+                      left: calc(var(--name) + (100% - var(--name)) * 8.5 / 16);
+                    "
+                  >
+                    <span class="g-flag">今天</span>
+                  </div>
+                  <div
+                    class="g-line plan"
+                    id="gl-plan"
+                    data-at="13"
+                    style="
+                      left: calc(var(--name) + (100% - var(--name)) * 13 / 16);
+                    "
+                  >
+                    <span class="g-flag left">计划 10.28</span>
+                  </div>
+                  <div
+                    class="g-line pred"
+                    id="gl-pred"
+                    data-at="15"
+                    style="
+                      left: calc(var(--name) + (100% - var(--name)) * 15 / 16);
+                    "
+                  >
+                    <span class="g-flag left" style="color: var(--signal-text)"
+                      >预测 10.30</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="pnl cpmp">
+            <div class="phd">
+              <div>
+                <span class="k">// CPM · 单位：工作日</span>
+                <h2>关键路径计算</h2>
+              </div>
+              <span class="u" id="cpm-sum"
+                >关键路径 A → B → C → E　·　总工期 13　·　C 预计超期
+                <em>+2</em></span
+              >
+            </div>
+            <div class="scroll-x">
+              <table class="tbl cpm">
+                <thead>
+                  <tr>
+                    <th>任务</th>
+                    <th>工期</th>
+                    <th>最早开始</th>
+                    <th>最早完成</th>
+                    <th>最迟开始</th>
+                    <th>最迟完成</th>
+                    <th>总时差</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="crit">
+                    <td>A 需求分析</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td>0</td>
+                  </tr>
+                  <tr class="crit">
+                    <td>B 数据库设计</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>0</td>
+                  </tr>
+                  <tr class="crit">
+                    <td>C 后端开发</td>
+                    <td>5</td>
+                    <td>5</td>
+                    <td>10</td>
+                    <td>5</td>
+                    <td>10</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <td>D 前端开发</td>
+                    <td>4</td>
+                    <td>3</td>
+                    <td>7</td>
+                    <td>6</td>
+                    <td>10</td>
+                    <td>3</td>
+                  </tr>
+                  <tr class="crit">
+                    <td>E 联调测试</td>
+                    <td>3</td>
+                    <td>10</td>
+                    <td>13</td>
+                    <td>10</td>
+                    <td>13</td>
+                    <td>0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <!-- 统计报表 -->
+        <section class="view" id="view-reports" data-view="reports" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="rp-kicker">
+                第 05/10 周 · 已完成 18 / 42 项 · 剩余 24 项
+              </div>
+              <h1 class="vt">统计<em>报表</em></h1>
+            </div>
+            <div class="va">
+              <div class="seg" role="group" aria-label="范围">
+                <button type="button" aria-pressed="true">本周</button
+                ><button type="button" aria-pressed="false">全周期</button>
+              </div>
+              <button class="btn" type="button">导出</button>
+            </div>
+          </div>
+          <div class="rpt">
+            <section class="pnl span2">
+              <div class="phd">
+                <div>
+                  <span class="k">// 燃尽 · 全项目</span>
+                  <h2>剩余任务</h2>
+                </div>
+                <div class="legend">
+                  <span><i class="key on" style="height: 3px"></i>实际</span
+                  ><span
+                    ><i
+                      class="key dash"
+                      style="height: 0; border-width: 1.5px 0 0"
+                    ></i
+                    >计划</span
+                  ><span
+                    ><i
+                      class="key"
+                      style="
+                        height: 0;
+                        border-width: 3px 0 0;
+                        border-color: var(--signal);
+                        border-style: dashed;
+                      "
+                    ></i
+                    >预测</span
+                  >
+                </div>
+              </div>
+              <div class="chartbox">
+                <svg
+                  id="burn"
+                  class="chart"
+                  viewBox="0 0 815 262"
+                  preserveAspectRatio="xMidYMid meet"
+                  role="img"
+                  aria-label="燃尽图：实际进度落后计划，预测 12 月 1 日完成，计划 11 月 27 日"
+                ></svg>
+              </div>
+            </section>
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 本周</span>
+                  <h2>成员工时</h2>
+                </div>
+                <span class="u">单位：小时 · 虚线为上限 40</span>
+              </div>
+              <div class="load" id="load"></div>
+            </section>
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 每周</span>
+                  <h2>完成任务</h2>
+                </div>
+                <span class="u">单位：项</span>
+              </div>
+              <div class="weekly" id="weekly"></div>
+            </section>
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 计划 vs 实际</span>
+                  <h2>工期偏差</h2>
+                </div>
+                <div class="legend">
+                  <span><i class="key dash"></i>计划</span
+                  ><span><i class="key on"></i>实际</span>
+                </div>
+              </div>
+              <div class="dev" id="dev"></div>
+            </section>
+            <section class="hero" id="rp-hero">
+              <div class="hk">
+                <span>// 全项目预测完工</span><span class="chip">风险</span>
+              </div>
+              <span class="huge" id="rp-n">12.1</span>
+              <div class="hsub" id="rp-sub">
+                计划 11.27 · 晚 4 天<br />按当前燃尽速度推算，剩余 24 项
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- 团队协作 -->
+        <section class="view" id="view-team" data-view="team" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="tm-kicker">
+                5 个讨论 · 今天 3 条动态 · 1 个关联逾期
+              </div>
+              <h1 class="vt">团队<em>协作</em></h1>
+            </div>
+          </div>
+          <div class="tg">
+            <section class="pnl flat">
+              <div class="phd">
+                <div>
+                  <span class="k">// 讨论</span>
+                  <h2>全部讨论</h2>
+                </div>
+                <span class="n" id="th-count">5</span>
+              </div>
+              <div class="threads scroll-y" id="threads"></div>
+            </section>
+            <section class="pnl flat" id="thread">
+              <div class="phd">
+                <div>
+                  <span class="k">// 讨论内容</span>
+                  <h2 id="th-title">接口文档字段命名统一</h2>
+                </div>
+              </div>
+              <div class="th-meta" id="th-meta"></div>
+              <div class="msgs scroll-y" id="msgs"></div>
+              <form class="reply" id="reply">
+                <label class="sr" for="reply-text">回复</label>
+                <textarea
+                  id="reply-text"
+                  rows="2"
+                  placeholder="写回复，@ 可提及成员"
+                ></textarea>
+                <button class="btn primary" type="submit">发送</button>
+              </form>
+            </section>
+            <section class="pnl flat dark">
+              <div class="phd">
+                <div>
+                  <span class="k">// 项目动态</span>
+                  <h2>动态</h2>
+                </div>
+                <span class="n" id="fd-count">06</span>
+              </div>
+              <div class="feed scroll-y" id="feed">
+                <div class="ev">
+                  <time>10:52</time>
+                  <p>普通员工 B 把 <b>甘特图组件</b> 的进度更新为 60%</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- 文档 -->
+        <section class="view" id="view-docs" data-view="docs" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="dc-kicker">
+                修订中 3 份 · 定稿 4 份 · 1 份逾期
+              </div>
+              <h1 class="vt">项目<em>文档</em></h1>
+            </div>
+            <div class="va toolbar">
+              <label class="field" for="dq"
+                >文档名称<input id="dq" type="search" placeholder="输入后回车"
+              /></label>
+              <button class="btn primary go" type="button">+ 上传文档</button>
+            </div>
+          </div>
+          <div class="dg">
+            <div class="dleft">
+              <section class="dsec on">
+                <header class="dsec-h">
+                  <div>
+                    <span class="k">// REVISING</span>
+                    <h3>修订中</h3>
+                  </div>
+                  <div class="legend">
+                    <span><i class="key on"></i>已进行</span
+                    ><span><i class="key over"></i>逾期</span
+                    ><span
+                      ><i
+                        class="key dash"
+                        style="
+                          width: 0;
+                          height: 12px;
+                          border-width: 0 0 0 1.5px;
+                        "
+                      ></i
+                      >截止日</span
+                    ><span
+                      ><i
+                        class="key"
+                        style="
+                          width: 0;
+                          height: 12px;
+                          border-width: 0 0 0 1.5px;
+                          border-color: var(--signal);
+                        "
+                      ></i
+                      >今天</span
+                    >
+                  </div>
+                  <span class="count" id="dc-on">0</span>
+                </header>
+                <div class="scroll-x">
+                  <div class="dx">
+                    <div class="dx-head">
+                      <span></span>
+                      <div class="dx-axis" id="dx-axis"></div>
+                      <span></span><span></span>
+                    </div>
+                    <div
+                      class="dx-rows"
+                      id="docs"
+                      role="listbox"
+                      aria-label="修订中的文档"
+                    ></div>
+                  </div>
+                </div>
+              </section>
+              <section class="dsec fin">
+                <header class="dsec-h">
+                  <div>
+                    <span class="k">// FINAL</span>
+                    <h3>定稿</h3>
+                  </div>
+                  <span class="count" id="dc-fin">0</span>
+                </header>
+                <div
+                  class="dfin"
+                  id="docs-fin"
+                  role="listbox"
+                  aria-label="已定稿的文档"
+                ></div>
+              </section>
+            </div>
+            <section class="pnl dside">
+              <div class="dhero" id="doc-hero">
+                <div class="hk">
+                  <h2 id="doc-title">接口文档</h2>
+                  <span class="chip">风险</span>
+                </div>
+                <div class="row">
+                  <b id="dh-n">02</b
+                  ><span id="dh-sub">天 逾期<br />截止 10.20</span>
+                </div>
+              </div>
+              <dl class="facts" id="doc-facts"></dl>
+              <div class="hhead">
+                <b>版本记录</b
+                ><span
+                  class="u mono"
+                  style="font-size: 10px; color: var(--mute)"
+                  id="doc-hn"
+                ></span>
+              </div>
+              <div class="hist scroll-y" id="doc-hist"></div>
+              <div class="up">
+                <button class="btn primary" type="button" data-form="doc">
+                  上传新版本 <span aria-hidden="true">↑</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- 成员与权限（本项目） -->
+        <section class="view" id="view-members" data-view="members" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k" id="mb-kicker">
+                4 名成员 · 本周 1 人超出工时上限
+              </div>
+              <h1 class="vt">成员<em>权限</em></h1>
+            </div>
+            <div class="va">
+              <button class="btn go" type="button" data-form="member">
+                + 邀请成员
+              </button>
+            </div>
+          </div>
+          <div class="scroll-x" style="flex-shrink: 0">
+            <div class="crew" id="crew"></div>
+          </div>
+          <section class="plogw">
+            <div><span class="k">// 变更记录</span><b>权限变更</b></div>
+            <div class="plog" id="perm-log">
+              <div class="hv">
+                <b>10.21</b><span>测试经理 A 授予 普通员工 B 编辑文档</span>
+              </div>
+              <div class="hv">
+                <b>10.15</b><span>测试经理 A 收回 普通员工 C 调整排期</span>
+              </div>
+              <div class="hv">
+                <b>9.22</b><span>测试经理 A 邀请 普通员工 C 加入项目</span>
+              </div>
+              <div class="hv"><b>9.21</b><span>测试经理 A 创建项目</span></div>
+            </div>
+          </section>
+        </section>
+
+        <!-- 任务详情 -->
+        <section class="view" id="view-task" data-view="task" hidden>
+          <div class="vh">
+            <div class="vl">
+              <div class="k">
+                <button class="tk-back" type="button" id="tk-back">返回</button
+                ><span class="tk-crumb" id="tk-crumb"></span>
+              </div>
+              <h1 class="vt" id="tk-title"></h1>
+              <p class="tk-meta" id="tk-meta"></p>
+            </div>
+            <div class="va tk-acts">
+              <div
+                class="chips"
+                id="tk-status"
+                role="group"
+                aria-label="任务状态"
+              ></div>
+              <button class="btn" type="button" id="tk-edit">编辑</button>
+            </div>
+          </div>
+          <div class="figures" id="tk-figs"></div>
+          <div class="tkg">
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 时间</span>
+                  <h2>排期与依赖</h2>
+                </div>
+                <span class="u">每格一天</span>
+              </div>
+              <div class="tt" id="tk-time"></div>
+              <div class="scroll-y" id="tk-deps"></div>
+            </section>
+            <section class="pnl">
+              <div class="phd">
+                <div>
+                  <span class="k">// 说明</span>
+                  <h2>任务说明</h2>
+                </div>
+              </div>
+              <p class="tk-desc" id="tk-desc"></p>
+              <div class="phd" style="margin-top: 16px">
+                <div>
+                  <span class="k">// 关联</span>
+                  <h2>文档与讨论</h2>
+                </div>
+              </div>
+              <div id="tk-links"></div>
+            </section>
+            <section class="pnl flat dark">
+              <div class="phd">
+                <div>
+                  <span class="k">// 记录</span>
+                  <h2>操作记录</h2>
+                </div>
+              </div>
+              <div class="feed scroll-y" id="tk-log"></div>
+            </section>
+          </div>
+        </section>
+        <section class="pstate" id="pstate" hidden></section>
+
+        <!-- 设置内容：一份内容，四种容器 -->
+        <div id="ss-src" hidden>
+          <section
+            class="ss"
+            id="ss-me"
+            data-sub="me"
+            data-g="我的"
+            data-name="个人"
+          >
+            <h2 class="ss-h">个人</h2>
+            <div class="blk">
+              <h2>身份</h2>
+              <div class="rows">
+                <div class="srow">
+                  <label for="s-name">姓名</label>
+                  <div>
+                    <input class="in" id="s-name" value="测试经理 A" />
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">账号</span>
+                  <div><code>pm_a</code></div>
+                </div>
+                <div class="srow">
+                  <span class="lb">密码</span>
+                  <div>
+                    <button class="btn" type="button">修改密码</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="blk">
+              <h2>偏好</h2>
+              <div class="rows">
+                <div class="srow">
+                  <label for="s-proj">默认打开</label>
+                  <div>
+                    <select class="in" id="s-proj">
+                      <option>测试项目 App</option>
+                      <option>测试项目 Web</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">消息提醒</span>
+                  <div>
+                    <span class="sw2" role="group" aria-label="消息提醒"
+                      ><button type="button" aria-pressed="true">开</button
+                      ><button type="button" aria-pressed="false">
+                        关
+                      </button></span
+                    >
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">减少动态效果</span>
+                  <div>
+                    <span
+                      class="sw2"
+                      role="group"
+                      aria-label="减少动态效果"
+                      id="sw-calm"
+                      ><button type="button" aria-pressed="false">开</button
+                      ><button type="button" aria-pressed="true">
+                        关
+                      </button></span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-proj"
+            data-sub="proj"
+            data-g="本项目"
+            data-name="刊物规则"
+          >
+            <h2 class="ss-h">刊物规则</h2>
+            <div class="blk">
+              <h2>日历</h2>
+              <div class="rows">
+                <div class="srow">
+                  <span class="lb">项目周期</span>
+                  <div class="inl">
+                    <input
+                      class="in sm"
+                      value="2026-09-21"
+                      aria-label="开始日期"
+                    /><span>至</span
+                    ><input
+                      class="in sm"
+                      value="2026-11-29"
+                      aria-label="结束日期"
+                    />
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">工作日</span>
+                  <div class="inl days7">
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="true"
+                      aria-label="周一"
+                      data-d="一"
+                    ></button
+                    ><span>一</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="true"
+                      aria-label="周二"
+                      data-d="二"
+                    ></button
+                    ><span>二</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="true"
+                      aria-label="周三"
+                      data-d="三"
+                    ></button
+                    ><span>三</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="true"
+                      aria-label="周四"
+                      data-d="四"
+                    ></button
+                    ><span>四</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="true"
+                      aria-label="周五"
+                      data-d="五"
+                    ></button
+                    ><span>五</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="周六"
+                      data-d="六"
+                    ></button
+                    ><span>六</span>
+                    <button
+                      class="perm"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="周日"
+                      data-d="日"
+                    ></button
+                    ><span>日</span>
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">节假日</span>
+                  <div class="inl">
+                    <span class="v">10.01 – 10.07 国庆节</span
+                    ><button class="btn" type="button">添加</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="blk">
+              <h2>出版</h2>
+              <div class="rows">
+                <div class="srow">
+                  <label for="s-cap">每周工时上限</label>
+                  <div class="inl">
+                    <input class="in xs" id="s-cap" value="40" /><span
+                      >小时</span
+                    >
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">每日快照</span>
+                  <div class="inl">
+                    <span class="sw2" role="group" aria-label="每日快照"
+                      ><button type="button" aria-pressed="true">开</button
+                      ><button type="button" aria-pressed="false">
+                        关
+                      </button></span
+                    ><span>生成时间</span
+                    ><input class="in xs" value="00:00" aria-label="生成时间" />
+                  </div>
+                </div>
+                <div class="srow top">
+                  <span class="lb">头条规则</span>
+                  <div>
+                    <ol class="rank">
+                      <li>有逾期时报逾期</li>
+                      <li>有阻塞时报阻塞</li>
+                      <li>都没有时报按计划推进</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="blk">
+              <h2>存档</h2>
+              <div class="rows">
+                <div class="srow">
+                  <span class="lb">归档项目</span>
+                  <div>
+                    <button class="btn risk" type="button">
+                      归档测试项目 App
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-people"
+            data-sub="people"
+            data-g="系统"
+            data-name="人员"
+          >
+            <h2 class="ss-h">人员</h2>
+            <div class="g4">
+              <div class="block span2">
+                <div class="toolbar">
+                  <label class="field" for="pq"
+                    >搜索<input
+                      id="pq"
+                      type="search"
+                      placeholder="姓名或账号" /></label
+                  ><button class="btn primary" type="button">新增人员</button>
+                </div>
+                <div class="roster" id="roster"></div>
+              </div>
+              <div class="block span2 cl" id="person"></div>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-roles"
+            data-sub="roles"
+            data-g="系统"
+            data-name="角色与权限"
+          >
+            <h2 class="ss-h">角色与权限</h2>
+            <div class="scroll-x">
+              <table class="tbl matrix" id="matrix">
+                <thead>
+                  <tr>
+                    <th>菜单</th>
+                    <th>权限标识</th>
+                    <th class="p">超级管理员</th>
+                    <th class="p">项目经理</th>
+                    <th class="p">开发</th>
+                    <th class="p">测试</th>
+                    <th class="p">只读</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-dict"
+            data-sub="dict"
+            data-g="系统"
+            data-name="字典"
+          >
+            <h2 class="ss-h">字典</h2>
+            <div class="g4">
+              <div class="block span2">
+                <h2>字典类型</h2>
+                <table class="tbl plain pick" id="dict-types">
+                  <thead>
+                    <tr>
+                      <th>字典名称</th>
+                      <th>字典类型</th>
+                      <th>数据项</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-k="task_status" aria-selected="true">
+                      <td>任务状态</td>
+                      <td><code>task_status</code></td>
+                      <td>4</td>
+                    </tr>
+                    <tr data-k="task_priority">
+                      <td>任务优先级</td>
+                      <td><code>task_priority</code></td>
+                      <td>3</td>
+                    </tr>
+                    <tr data-k="doc_status">
+                      <td>文档状态</td>
+                      <td><code>doc_status</code></td>
+                      <td>3</td>
+                    </tr>
+                    <tr data-k="project_role">
+                      <td>项目角色</td>
+                      <td><code>project_role</code></td>
+                      <td>4</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="block span2 cl">
+                <h2 id="dict-name">任务状态</h2>
+                <table class="tbl plain">
+                  <thead>
+                    <tr>
+                      <th>标签</th>
+                      <th>键值</th>
+                      <th>排序</th>
+                      <th>样式</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dict-data"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-logs"
+            data-sub="logs"
+            data-g="系统"
+            data-name="日志"
+          >
+            <h2 class="ss-h">日志</h2>
+            <div class="logday">
+              <h3>10 月 22 日 周四</h3>
+              <div class="lg">
+                <time>10:52</time><span>普通员工 B</span>
+                <p>任务 · 更新进度</p>
+                <b>成功</b>
+              </div>
+              <div class="lg">
+                <time>10:41</time><span>普通员工 A</span>
+                <p>协作 · 发表回复</p>
+                <b>成功</b>
+              </div>
+              <div class="lg">
+                <time>09:30</time><span>测试经理 A</span>
+                <p>任务 · 移动任务</p>
+                <b>成功</b>
+              </div>
+              <div class="lg fail">
+                <time>09:02</time><span>guest</span>
+                <p>登录 · 账号登录</p>
+                <b>失败：账号已停用</b>
+              </div>
+            </div>
+            <div class="logday">
+              <h3>10 月 21 日 周三</h3>
+              <div class="lg">
+                <time>18:02</time><span>普通员工 C</span>
+                <p>文档 · 上传文档</p>
+                <b>成功</b>
+              </div>
+              <div class="lg">
+                <time>15:20</time><span>测试经理 A</span>
+                <p>任务 · 新建任务</p>
+                <b>成功</b>
+              </div>
+              <div class="lg">
+                <time>09:12</time><span>普通员工 B</span>
+                <p>文档 · 修订文档</p>
+                <b>成功</b>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="ss"
+            id="ss-params"
+            data-sub="params"
+            data-g="系统"
+            data-name="系统参数"
+          >
+            <h2 class="ss-h">系统参数</h2>
+            <div class="blk">
+              <h2>账号安全</h2>
+              <div class="rows">
+                <div class="srow">
+                  <span class="lb">新用户默认密码</span>
+                  <div class="inl">
+                    <code>••••••••</code
+                    ><button class="btn" type="button">重新设置</button>
+                  </div>
+                </div>
+                <div class="srow">
+                  <span class="lb">允许自助注册</span>
+                  <div>
+                    <span class="sw2" role="group" aria-label="允许自助注册"
+                      ><button type="button" aria-pressed="false">开</button
+                      ><button type="button" aria-pressed="true">
+                        关
+                      </button></span
+                    >
+                  </div>
+                </div>
+                <div class="srow">
+                  <label for="s-lock">登录失败锁定</label>
+                  <div class="inl">
+                    <input class="in xs" id="s-lock" value="5" /><span>次</span>
+                  </div>
+                </div>
+                <div class="srow">
+                  <label for="s-sess">会话超时</label>
+                  <div class="inl">
+                    <input class="in xs" id="s-sess" value="120" /><span
+                      >分钟</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="blk">
+              <h2>版面</h2>
+              <div class="rows">
+                <div class="srow">
+                  <label for="s-hl">头条字数上限</label>
+                  <div class="inl">
+                    <input class="in xs" id="s-hl" value="24" /><span>字</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+      <div class="ov-bd" id="fx-bd" hidden></div>
+      <div
+        class="ov fx"
+        id="fx"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="fx-title"
+      >
+        <div class="fx-head">
+          <h2 class="fx-title" id="fx-title">新建任务</h2>
+          <button class="ov-close" type="button" id="fx-close">
+            关闭<span aria-hidden="true">x</span>
+          </button>
+        </div>
+        <div class="double"><i></i><i></i></div>
+        <form class="fx-body" id="fx-form" novalidate></form>
+      </div>
+      <div class="ov-bd" id="ov-bd" hidden></div>
+      <div
+        class="ov"
+        id="ov"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-label="设置"
+      >
+        <header class="ov-head">
+          <svg class="logo" viewBox="0 0 34 34" aria-hidden="true">
+            <rect x="0" y="0" width="15" height="34" fill="currentColor"></rect>
+            <rect x="19" y="0" width="15" height="18" fill="#FF5A1F"></rect>
+          </svg>
+          <h1 class="ov-title">系统<em>设置</em></h1>
+          <nav class="ov-tabs" id="ov-tabs" aria-label="设置分区"></nav>
+          <button class="ov-close" type="button" id="ov-close">
+            关闭<span aria-hidden="true">x</span>
+          </button>
+        </header>
+        <div class="double ov-rule"><i></i><i></i></div>
+        <div class="ov-main">
+          <aside class="ov-index" id="ov-index"></aside>
+          <div class="ov-body" id="ov-host"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab" id="lab" role="group" aria-label="演示开关，不属于设计">
+      <b>演示</b><span>页面</span
+      ><button type="button" data-st="ok" aria-pressed="true">正常</button
+      ><button type="button" data-st="empty" aria-pressed="false">空</button
+      ><button type="button" data-st="loading" aria-pressed="false">加载</button
+      ><button type="button" data-st="error" aria-pressed="false">出错</button
+      ><span>数据</span
+      ><button type="button" data-vol="std" aria-pressed="true">标准</button
+      ><button type="button" data-vol="full" aria-pressed="false">满载</button
+      ><button type="button" id="lab-t" aria-expanded="true">收起</button>
+    </div>
+
+    <script src="./global.js"></script>
+  </body>
+</html>
