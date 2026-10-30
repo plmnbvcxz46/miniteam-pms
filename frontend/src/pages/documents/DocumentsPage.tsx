@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { docs as initialDocs } from "../../data/documents";
+import { docs as initialDocs, todayDate as mockTodayDate } from "../../data/documents";
 import type { DocumentItem } from "../../types/documents";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";
@@ -9,8 +9,10 @@ import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
-  // 顶层维护的文档数据集
+  // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
   const [docList, setDocList] = useState<DocumentItem[]>(initialDocs);
+  const [currentDate, setCurrentDate] = useState<string>(mockTodayDate);
+  void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
   // 选中文档的 ID（默认选中 "doc-3"，即 "接口文档"）
   const [selectedId, setSelectedId] = useState<string | null>("doc-3");
@@ -91,13 +93,13 @@ export default function DocumentsPage() {
         task: taskMap[data.taskId] || "未指定任务",
         v: "v0.1",
         who: "测试经理 A",
-        up: "10.22",
+        up: currentDate,
         due: "10.30",
         final: false,
         hist: [
           {
             version: "v0.1",
-            date: "10.22",
+            date: currentDate,
             operator: "测试经理 A",
             comment: data.note,
             fileName: uploadedFileName || `${finalDocName}_v0.1.docx`,
@@ -116,7 +118,7 @@ export default function DocumentsPage() {
           const nextV = `v${maj}.${(min || 0) + 1}`;
           const newVersionItem = {
             version: nextV,
-            date: "10.22",
+            date: currentDate,
             operator: "测试经理 A",
             comment: data.note,
             fileName: uploadedFileName || `${d.n}_${nextV}.docx`,
@@ -125,7 +127,7 @@ export default function DocumentsPage() {
           return {
             ...d,
             v: nextV,
-            up: "10.22",
+            up: currentDate,
             hist: [newVersionItem, ...d.hist],
           };
         })
@@ -137,6 +139,7 @@ export default function DocumentsPage() {
     <section className="view" id="view-docs">
       <DocumentHeader
         docs={docList}
+        currentDate={currentDate}
         searchKeyword={searchKeyword}
         onSearchChange={setSearchKeyword}
         onUploadClick={handleOpenNewUpload}
@@ -147,6 +150,7 @@ export default function DocumentsPage() {
           <DocumentRevising
             docs={revisingDocs}
             selectedId={selectedId}
+            currentDate={currentDate}
             onSelect={setSelectedId}
           />
           <DocumentFinal
@@ -158,6 +162,7 @@ export default function DocumentsPage() {
 
         <DocumentDetail
           doc={selectedDoc}
+          currentDate={currentDate}
           onTaskClick={(taskId) => {
             console.log("跳转任务:", taskId);
           }}

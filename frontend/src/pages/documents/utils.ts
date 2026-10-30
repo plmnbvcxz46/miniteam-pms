@@ -1,3 +1,5 @@
+import { todayDate as defaultTodayDate } from "../../data/documents";
+
 /**
  * 时间跨度（天数）
  */
@@ -34,7 +36,7 @@ export interface DocStatusInfo {
  */
 export function getDocStatus(
   doc: { final?: boolean; due: string },
-  currentDate = "10.22"
+  currentDate = defaultTodayDate
 ): DocStatusInfo {
   if (doc.final) {
     return { status: "定稿", isLate: false, lateDays: 0 };

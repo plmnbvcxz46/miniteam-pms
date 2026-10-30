@@ -8,6 +8,8 @@ interface DocumentRevisingProps {
   docs: DocumentItem[];
   /** 当前选中的文档 ID */
   selectedId: string | null;
+  /** 今日基准日期（从假数据快照注入） */
+  currentDate?: string;
   /** 选中回调 */
   onSelect?: (id: string) => void;
 }
@@ -15,10 +17,11 @@ interface DocumentRevisingProps {
 export default function DocumentRevising({
   docs,
   selectedId,
+  currentDate = "10.22",
   onSelect,
 }: DocumentRevisingProps) {
-  // 原型基准今日：10.22
-  const today = getDayOffset("10.22");
+  // 今日基准偏移
+  const today = getDayOffset(currentDate);
 
   // 时间轴刻度
   const axisDates = ["10.12", "10.19", "10.26"];

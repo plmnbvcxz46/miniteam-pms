@@ -9,6 +9,8 @@ import DocumentDetailHistory from "./DocumentDetailHistory";
 
 interface DocumentDetailProps {
   doc: DocumentItem | null;
+  /** 今日基准日期（从假数据快照注入） */
+  currentDate?: string;
   onTaskClick?: (taskId: string) => void;
   onUploadVersion?: () => void;
   onDownloadVersion?: (version: DocumentVersionItem) => void;
@@ -16,6 +18,7 @@ interface DocumentDetailProps {
 
 export default function DocumentDetail({
   doc,
+  currentDate,
   onTaskClick,
   onUploadVersion,
   onDownloadVersion,
@@ -30,7 +33,7 @@ export default function DocumentDetail({
     );
   }
 
-  const { status, isLate, lateDays } = getDocStatus(doc);
+  const { status, isLate, lateDays } = getDocStatus(doc, currentDate);
 
   return (
     <section className="pnl dside">

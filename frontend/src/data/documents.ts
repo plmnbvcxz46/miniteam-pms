@@ -1,5 +1,21 @@
 import type { DocumentItem } from "../types/documents";
 
+/**
+ * 假数据快照对应的“今天”基准日期（格式："MM.DD"）
+ * 后续支持切换往期快照时，可以直接从对应快照数据包中读取此字段
+ */
+export const todayDate = "10.22";
+
+/**
+ * 快照数据结构（预留快照切换功能使用）
+ */
+export interface DocumentSnapshot {
+  issueNo: string;
+  todayDate: string;
+  fullDate: string;
+  docs: DocumentItem[];
+}
+
 export const docs: DocumentItem[] = [
   {
     id: "doc-1",
@@ -101,3 +117,13 @@ export const docs: DocumentItem[] = [
     hist: [["v1.0", "10.19", "普通员工 C", "会议记录"]],
   },
 ];
+
+/**
+ * 当前默认期数快照对象
+ */
+export const currentSnapshot: DocumentSnapshot = {
+  issueNo: "第 32 期",
+  todayDate: "10.22",
+  fullDate: "2026 年 10 月 22 日 周四",
+  docs,
+};
