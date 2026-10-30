@@ -6,10 +6,11 @@ import { todayDate as defaultTodayDate } from "../../data/documents";
 export const DSPAN = 21;
 
 /**
- * 将 "MM.DD" 日期字符串转换为相对于基准日（10.12）的天数偏移量
+ * 将 "MM.DD" 或 "MM-DD" 日期字符串转换为相对于基准日（10.12）的天数偏移量
  */
 export function getDayOffset(str: string): number {
-  const p = str.split(".");
+  if (!str) return 0;
+  const p = str.split(/[.-]/);
   const m = +p[0];
   const d = +p[1];
   return m === 9 ? d - 42 : m === 10 ? d - 12 : d + 19;

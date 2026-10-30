@@ -58,6 +58,7 @@ export default function DocumentRevising({
                 orderIndex={k}
                 isSelected={Boolean(selectedId && doc.id === selectedId)}
                 todayOffset={today}
+                currentDate={currentDate}
                 onSelect={() => doc.id && onSelect?.(doc.id)}
               />
             ))}

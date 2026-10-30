@@ -4,7 +4,7 @@ import type { DocumentItem } from "../types/documents";
  * 假数据快照对应的“今天”基准日期（格式："MM.DD"）
  * 后续支持切换往期快照时，可以直接从对应快照数据包中读取此字段
  */
-export const todayDate = "10.22";
+export const todayDate = new Date().toLocaleDateString("sv-SE").slice(5); // 输出如 "10-30"
 
 /**
  * 快照数据结构（预留快照切换功能使用）

@@ -35,6 +35,7 @@ interface DocumentRevisingItemProps {
   orderIndex: number;
   isSelected: boolean;
   todayOffset: number;
+  currentDate?: string;
   onSelect?: () => void;
 }
 
@@ -43,6 +44,7 @@ export default function DocumentRevisingItem({
   orderIndex,
   isSelected,
   todayOffset,
+  currentDate,
   onSelect,
 }: DocumentRevisingItemProps) {
   const vd = doc.hist.map((h) => {
@@ -53,7 +55,7 @@ export default function DocumentRevisingItem({
   const due = getDayOffset(doc.due);
 
   // 动态派生状态与逾期判定
-  const { status, isLate } = getDocStatus(doc);
+  const { status, isLate } = getDocStatus(doc, currentDate);
 
   // 统一整点对齐：
   // 正常进行阶段：截止于截止日（逾期时）或今天此时（进行中）
