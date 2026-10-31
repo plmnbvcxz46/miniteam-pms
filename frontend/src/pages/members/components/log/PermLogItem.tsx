@@ -8,7 +8,7 @@ interface PermLogItemProps {
 
 export default function PermLogItem({ log }: PermLogItemProps) {
   return (
-    <div className="hv">
+    <div className="hv" title={log.detail}>
       <b>{formatLogDate(log.createdAt)}</b>
       <span>{log.detail}</span>
     </div>
