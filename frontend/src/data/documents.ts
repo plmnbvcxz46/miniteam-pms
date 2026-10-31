@@ -1,18 +1,12 @@
 import type { DocumentItem } from "../types/documents";
-
-/**
- * 假数据快照对应的“今天”基准日期（格式："MM.DD"）
- * 后续支持切换往期快照时，可以直接从对应快照数据包中读取此字段
- */
-export const todayDate = new Date().toLocaleDateString("sv-SE").slice(5); // 输出如 "10-30"
+import type { IssueInfo } from "../types/global";
+import { currentIssue } from "./global";
 
 /**
  * 快照数据结构（预留快照切换功能使用）
+ * “今天”基准日期统一取 data/global.ts 的 currentIssue.todayDate
  */
-export interface DocumentSnapshot {
-  issueNo: string;
-  todayDate: string;
-  fullDate: string;
+export interface DocumentSnapshot extends IssueInfo {
   docs: DocumentItem[];
 }
 
@@ -122,8 +116,6 @@ export const docs: DocumentItem[] = [
  * 当前默认期数快照对象
  */
 export const currentSnapshot: DocumentSnapshot = {
-  issueNo: "第 32 期",
-  todayDate: "10.22",
-  fullDate: "2026 年 10 月 22 日 周四",
+  ...currentIssue,
   docs,
 };

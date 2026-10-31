@@ -1,4 +1,4 @@
-import { todayDate as defaultTodayDate } from "../../data/documents";
+import { currentIssue } from "../../data/global";
 
 /**
  * 时间跨度（天数）
@@ -37,7 +37,7 @@ export interface DocStatusInfo {
  */
 export function getDocStatus(
   doc: { final?: boolean; due: string },
-  currentDate = defaultTodayDate
+  currentDate = currentIssue.todayDate
 ): DocStatusInfo {
   if (doc.final) {
     return { status: "定稿", isLate: false, lateDays: 0 };

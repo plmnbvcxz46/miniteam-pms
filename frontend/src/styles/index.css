@@ -804,6 +804,21 @@ main {
 .scroll-x {
   overflow-x: auto;
   overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+.scroll-x::-webkit-scrollbar,
+.scroll-y::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-x::-webkit-scrollbar-track,
+.scroll-y::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-x::-webkit-scrollbar-thumb,
+.scroll-y::-webkit-scrollbar-thumb {
+  background: var(--ink);
 }
 .scroll-y {
   overflow-y: auto;
@@ -2331,208 +2346,7 @@ body.dragging * {
 
 /* ---------- docs (styles moved to src/pages/documents/css/documents.css) ---------- */
 
-/* ---------- members ---------- */
-.crew {
-  display: grid;
-  grid-template-columns: 230px repeat(4, minmax(150px, 1fr));
-  grid-template-rows: 84px 104px 46px repeat(4, 50px);
-  column-gap: 14px;
-  min-width: 900px;
-}
-.crew > * {
-  min-width: 0;
-}
-.c-lb {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  border-bottom: 1px solid var(--ink);
-  padding-right: 8px;
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  background: var(--ground);
-}
-.c-lb b {
-  font-size: 13px;
-  font-weight: 900;
-}
-.c-lb small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
-  line-height: 1.45;
-}
-.c-tools {
-  justify-content: flex-end;
-  padding-bottom: 12px;
-  border-bottom: 0;
-}
-.c-tools .field input {
-  width: 100%;
-}
-.c-who,
-.c-load,
-.c-n,
-.c-p {
-  background: var(--paper);
-  border-left: 1.5px solid var(--ink);
-  border-right: 1.5px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-  padding: 0 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.c-who {
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  justify-content: flex-end;
-  padding-bottom: 12px;
-  gap: 4px;
-}
-.c-who b {
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-}
-.c-who span {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-}
-.c-who em {
-  font-style: normal;
-  color: var(--mute);
-}
-.c-who.hot {
-  background: var(--signal);
-}
-.c-who.hot em {
-  color: var(--ink);
-}
-.c-load {
-  gap: 8px;
-}
-.c-load .big {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 52px;
-  line-height: 0.85;
-  letter-spacing: -3px;
-}
-.c-load .big.late {
-  color: var(--signal);
-}
-.c-load .track {
-  height: 12px;
-}
-.c-n {
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 6px;
-  padding-top: 10px;
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 22px;
-}
-.c-n small {
-  font-size: 10px;
-  font-weight: 400;
-  color: var(--mute);
-}
-.c-p.last {
-  border-bottom: 1.5px solid var(--ink);
-}
-.pm {
-  all: unset;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 32px;
-  padding: 0 8px;
-  margin-left: -8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--mute);
-}
-.pm i,
-.pk {
-  display: inline-block;
-  width: 34px;
-  height: 7px;
-  border: 1.5px dashed var(--ink);
-  flex-shrink: 0;
-}
-.pm[aria-pressed="true"] {
-  color: var(--ink);
-  font-weight: 700;
-}
-.pm[aria-pressed="true"] i,
-.pk.on {
-  background: var(--ink);
-  border-style: solid;
-  height: 6px;
-}
-.pm:not(:disabled):hover {
-  background: var(--wash);
-}
-.pm:disabled {
-  cursor: default;
-}
-.pm:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 0;
-}
-.plogw {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  column-gap: 14px;
-  border-top: 2.5px solid var(--ink);
-  padding-top: 8px;
-}
-.plogw > div:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.plogw .k {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
-}
-.plogw b {
-  font-size: 13px;
-  font-weight: 900;
-}
-.plog {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 28px;
-  align-content: start;
-  overflow-y: auto;
-  min-height: 0;
-}
-.plog .hv {
-  grid-template-columns: 52px 1fr;
-  padding: 8px 0;
-  border-bottom: 1px dashed var(--ink);
-}
-.plog .hv b {
-  grid-row: auto;
-  font-size: 11px;
-}
-.plog .hv span {
-  font-weight: 400;
-}
+/* ---------- members (styles moved to src/pages/members/css/members.css) ---------- */
 
 /* ---------- task detail ---------- */
 .tk-back {
