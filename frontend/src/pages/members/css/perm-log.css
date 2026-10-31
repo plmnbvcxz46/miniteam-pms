@@ -1,0 +1,61 @@
+/* ==========================================================================
+   成员权限变更记录样式 (Permission Change Log)
+   ========================================================================== */
+
+.plogw {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  column-gap: 14px;
+  border-top: 2.5px solid var(--ink);
+  padding-top: 8px;
+}
+
+.plogw > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plogw .k {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mute);
+}
+
+.plogw b {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.plog {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  align-content: start;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.plog .hv {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--ink);
+}
+
+.plog .hv b {
+  grid-row: auto;
+  font-size: 11px;
+  font-family: var(--mono);
+}
+
+.plog .hv span {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.4;
+}
+

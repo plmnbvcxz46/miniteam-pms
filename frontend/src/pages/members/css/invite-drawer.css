@@ -1,0 +1,31 @@
+/* ==========================================================================
+   邀请成员抽屉定制样式 (Invite Member Drawer)
+   ========================================================================== */
+
+.member-perm-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.member-perm-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.member-perm-check input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ink);
+}
+
+.member-perm-check span {
+  font-weight: 700;
+}
+

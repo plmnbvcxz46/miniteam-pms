@@ -30,7 +30,7 @@ export const members: Member[] = [
   {
     user: pmA,
     projectRole: "PM",
-    position: "项目总监",
+    position: "项目经理",
     weeklyHours: 46,
     weeklyCapacity: 40,
     overCapacity: true,
@@ -51,7 +51,7 @@ export const members: Member[] = [
     taskCount: 5,
     joinedAt: "2026-09-21 10:12:00",
     canEditTask: true,
-    canEditSchedule: true,
+    canEditSchedule: false,
     canEditDoc: true,
     canManageMember: false,
   },
