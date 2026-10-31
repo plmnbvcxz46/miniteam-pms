@@ -804,6 +804,21 @@ main {
 .scroll-x {
   overflow-x: auto;
   overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+.scroll-x::-webkit-scrollbar,
+.scroll-y::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-x::-webkit-scrollbar-track,
+.scroll-y::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-x::-webkit-scrollbar-thumb,
+.scroll-y::-webkit-scrollbar-thumb {
+  background: var(--ink);
 }
 .scroll-y {
   overflow-y: auto;

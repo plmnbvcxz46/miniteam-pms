@@ -91,7 +91,7 @@ export default function InviteMemberDrawer({
   };
 
   return (
-    <Drawer className="ov fx opening" labelledBy="fx-title" onClose={onClose}>
+    <Drawer className="ov fx opening invite-drawer" labelledBy="fx-title" onClose={onClose}>
       <header className="fx-head">
         <h1 className="fx-title" id="fx-title">
           邀请<em>成员</em>
@@ -171,7 +171,7 @@ export default function InviteMemberDrawer({
           </div>
 
           {/* 岗位名称 */}
-          <label className="fr">
+          <div className="fr top">
             <span className="lb">岗位名称</span>
             <input
               type="text"
@@ -179,7 +179,7 @@ export default function InviteMemberDrawer({
               value={position}
               onChange={(e) => setPosition(e.target.value)}
             />
-          </label>
+          </div>
 
           {/* 初始权限分配 */}
           <div className="fr top">

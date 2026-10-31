@@ -2,6 +2,23 @@
    成员网格表格样式 (Member Crew Grid)
    ========================================================================== */
 
+.scroll-x {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+
+.scroll-x::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scroll-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-x::-webkit-scrollbar-thumb {
+  background: var(--ink);
+}
+
 .crew {
   display: grid;
   grid-auto-flow: column;

@@ -19,7 +19,7 @@ export default function MembersHeader({
     <div className="vh">
       <div className="vl">
         <div className="k" id="mb-kicker">
-          [ {memberCount} 名成员 · 本周 {overCapacityCount} 人超出工时上限 ]
+          {memberCount} 名成员 · 本周 {overCapacityCount} 人超出工时上限
         </div>
         <h1 className="vt">
           成员<em>权限</em>
