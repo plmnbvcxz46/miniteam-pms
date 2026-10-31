@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { docs as initialDocs, todayDate as mockTodayDate } from "../../data/documents";
+import { docs as initialDocs } from "../../data/documents";
+import { currentIssue } from "../../data/global";
 import type { DocumentItem } from "../../types/documents";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";
@@ -11,7 +12,7 @@ import "./css/documents.css";
 export default function DocumentsPage() {
   // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
   const [docList, setDocList] = useState<DocumentItem[]>(initialDocs);
-  const [currentDate, setCurrentDate] = useState<string>(mockTodayDate);
+  const [currentDate, setCurrentDate] = useState<string>(currentIssue.todayDate);
   void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
   // 选中文档的 ID（默认选中 "doc-3"，即 "接口文档"）
