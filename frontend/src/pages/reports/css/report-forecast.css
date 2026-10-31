@@ -1,0 +1,18 @@
+/* ==========================================================================
+   全项目预测完工 (Forecast Hero)
+   ========================================================================== */
+
+.hero .hsub {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.hero .huge {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 76px;
+  line-height: 0.85;
+  letter-spacing: -4px;
+  margin-top: auto;
+}

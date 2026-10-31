@@ -1,0 +1,50 @@
+/* ==========================================================================
+   成员工时 (Member Load)，.track 与成员页共用，仍在 styles/index.css
+   ========================================================================== */
+
+.load {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 4px;
+}
+.lrow {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px dashed var(--ink);
+}
+.lrow b {
+  font-size: 13px;
+  font-weight: 700;
+}
+.lrow .v {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 800;
+}
+.lrow .v.late {
+  color: var(--signal);
+}
+.load .axisrow {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 34px;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--mute);
+  padding-top: 6px;
+}
+.load .axisrow span:nth-child(2) {
+  position: relative;
+  height: 12px;
+}
+.load .axisrow i {
+  position: absolute;
+  font-style: normal;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}

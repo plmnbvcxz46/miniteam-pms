@@ -1,0 +1,55 @@
+/* ==========================================================================
+   每周完成任务 (Weekly Completed)
+   ========================================================================== */
+
+.weekly {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 8px;
+  align-items: end;
+  padding-top: 10px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.wk {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+.wk .bar {
+  position: static;
+  height: var(--h);
+  border: 0;
+  padding: 0;
+}
+.wk .bar.done {
+  background: var(--ink);
+}
+.wk .bar.now {
+  border: 2.5px solid var(--signal);
+  background: transparent;
+}
+.wk .bar.none {
+  height: 0;
+}
+.wk:has(.bar.now) > span:first-child {
+  color: var(--signal-text);
+}
+.wk-ax {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  padding-top: 5px;
+}

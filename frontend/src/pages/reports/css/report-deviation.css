@@ -1,0 +1,60 @@
+/* ==========================================================================
+   工期偏差 (Duration Deviation)
+   ========================================================================== */
+
+.dev {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.drow {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px dashed var(--ink);
+}
+.drow:last-child {
+  border-bottom: 0;
+}
+.drow > span:first-child {
+  font-size: 12px;
+  font-weight: 700;
+}
+.drow .v {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 800;
+}
+.drow .v.late {
+  color: var(--signal);
+}
+.dbars {
+  position: relative;
+  height: 22px;
+}
+.dbars span {
+  position: absolute;
+  left: 0;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+}
+.dbars .p {
+  top: 0;
+  border-style: dashed;
+  background: transparent;
+}
+.dbars .a {
+  bottom: 0;
+  background: var(--ink);
+}
+.dbars .a.free {
+  background: var(--paper);
+}
+.dbars .o {
+  bottom: 0;
+  border-left: 0;
+  background: var(--over);
+}

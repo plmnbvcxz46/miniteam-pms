@@ -1,0 +1,23 @@
+/* ==========================================================================
+   统计报表页面布局 (Reports Layout)
+   ========================================================================== */
+
+.rpt {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .rpt {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    height: auto;
+  }
+  .rpt > * {
+    min-height: 240px;
+  }
+}

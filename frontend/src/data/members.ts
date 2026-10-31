@@ -1,6 +1,6 @@
 import type { Activity, UserBrief } from "../types/global";
 import type { Member, MemberSnapshot, PermDef } from "../types/members";
-import { currentIssue, currentProjectId, currentUser } from "./global";
+import { currentIssue, currentProjectId, users } from "./global";
 
 /* 全局数据（登录用户、项目 ID、期号、角色名）见 ./global */
 
@@ -20,10 +20,7 @@ export const permDefs: PermDef[] = [
  * 二、接口假数据
  * ========================================================= */
 
-const pmA: UserBrief = currentUser;
-const devA: UserBrief = { id: 2, username: "dev_a", realName: "普通员工 A" };
-const devB: UserBrief = { id: 3, username: "dev_b", realName: "普通员工 B" };
-const qaC: UserBrief = { id: 4, username: "qa_c", realName: "普通员工 C" };
+const { pmA, devA, devB, qaC } = users;
 
 /** GET /projects/{projectId}/members */
 export const members: Member[] = [
