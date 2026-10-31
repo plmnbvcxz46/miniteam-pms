@@ -33,7 +33,7 @@ export default function CrewLabels({
       {/* 行 2：本周工时 */}
       <div className="c-lb">
         <b>本周工时</b>
-        <small>单位：小时，虚线为上限 40</small>
+        <small>单位：小时（上限40）</small>
       </div>
 
       {/* 行 3：负责任务 */}
