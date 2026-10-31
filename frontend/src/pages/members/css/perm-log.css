@@ -36,10 +36,9 @@
   column-gap: 28px;
   align-content: start;
   overflow-y: auto;
-  min-height: 110px;
-  max-height: clamp(140px, 20vh, 180px);
+  min-height: 0;
+  max-height: 92px;
   padding-right: 8px;
-  padding-bottom: 4px;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--ink) transparent;
@@ -61,7 +60,7 @@
   display: grid;
   grid-template-columns: 52px 1fr;
   align-items: baseline;
-  padding: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px dashed var(--ink);
 }
 
