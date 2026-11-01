@@ -205,8 +205,7 @@ export default function CollabPage() {
 
   // 点击任务跳转到 /board/task
   const handleTaskClick = (taskId: number) => {
-    void taskId;
-    navigate("/board/task");
+    navigate(`/board/task?id=${taskId}`);
   };
 
   return (

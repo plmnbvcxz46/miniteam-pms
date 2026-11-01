@@ -1,0 +1,53 @@
+/* ==========================================================================
+   任务详情头部样式 (Task Header)
+   ========================================================================== */
+
+.tk-back {
+  all: unset;
+  cursor: pointer;
+  border-bottom: 1.5px solid var(--ink);
+  line-height: 16px;
+}
+.tk-back::before {
+  content: "← ";
+}
+.tk-crumb {
+  color: var(--mute);
+}
+#view-task .vt {
+  font-size: 44px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+.tk-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.tk-meta .st {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+.tk-meta .late {
+  background: var(--signal);
+  padding: 1px 6px;
+  font-weight: 800;
+}
+.tk-meta .crit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+.tk-meta .crit::before {
+  content: "";
+  width: 16px;
+  height: 5px;
+  background: var(--ink);
+}

@@ -36,7 +36,7 @@ src/
 | 统计报表 reports       | ✓   | ✓     | ✓     |                   |
 | 团队协作 collab        | ✓   | ✓     | ✓     |                   |
 | 概览 overview          | ✓   |        |        |                   |
-| 任务详情 board/task    | ✓   |        |        |                   |
+| 任务详情 board/task    | ✓   | ✓     | ✓     | 状态切换、跳转 ✓ |
 | 进度 progress          | ✓   |        |        |                   |
 | 看板 board             | ✓   |        |        |                   |
 | 设置 overlays/settings | ✓   |        |        | 开关 ✓，分区切换 |

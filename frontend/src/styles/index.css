@@ -1931,143 +1931,9 @@ body.dragging * {
 
 /* ---------- members (styles moved to src/pages/members/css/members.css) ---------- */
 
-/* ---------- task detail ---------- */
-.tk-back {
-  all: unset;
-  cursor: pointer;
-  border-bottom: 1.5px solid var(--ink);
-  line-height: 16px;
-}
-.tk-back::before {
-  content: "← ";
-}
-.tk-crumb {
-  color: var(--mute);
-}
-#view-task .vt {
-  font-size: 44px;
-  letter-spacing: -1px;
-  line-height: 1.1;
-}
-.tk-meta {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 16px;
-  font-family: var(--mono);
-  font-size: 11px;
-}
-.tk-meta .st {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 800;
-}
-.tk-meta .late {
-  background: var(--signal);
-  padding: 1px 6px;
-  font-weight: 800;
-}
-.tk-meta .crit {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-}
-.tk-meta .crit::before {
-  content: "";
-  width: 16px;
-  height: 5px;
-  background: var(--ink);
-}
-.tkg {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
-  gap: 14px;
-  flex: 1;
-  min-height: 0;
-}
-.tt {
-  padding-top: 8px;
-}
-.tt-trk {
-  height: 52px;
-  border-bottom: 1px solid var(--ink);
-}
-.tk-desc {
-  margin: 10px 0 0;
-  font-size: 13px;
-  line-height: 1.7;
-}
-.dep {
-  all: unset;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 20px minmax(0, 1fr) auto auto;
-  gap: 10px;
-  align-items: center;
-  width: 100%;
-  min-height: 40px;
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--ink);
-  font-size: 13px;
-}
-.dep b {
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.dep small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
-}
-.dep .s {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-align: right;
-  min-width: 4em;
-}
-.dep .s.late {
-  color: var(--signal-text);
-  font-weight: 800;
-}
-.dep .tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 800;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 1px 4px;
-  white-space: nowrap;
-}
-#tk-links .dep {
-  grid-template-columns: 36px minmax(0, 1fr) auto auto;
-}
-.dep:hover b {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.dep-h {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
-  padding: 12px 0 2px;
-}
-.dep-h::before {
-  content: "// ";
-}
-.dep-none {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--mute);
-  padding: 8px 0;
-}
+/* ---------- task detail (styles moved to src/pages/board/task/css/task.css) ---------- */
+
+/* ---------- chips ---------- */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -3186,8 +3052,7 @@ body.calm * {
   .ov1,
   .ov2,
   .tg,
-  .dg,
-  .tkg {
+  .dg {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
     height: auto;
