@@ -1888,110 +1888,9 @@ body.dragging * {
   margin-right: 10px;
 }
 
-/* ---------- reports ---------- */
-.rpt {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 14px;
-  flex: 1;
-  min-height: 0;
-}
+/* ---------- reports (styles moved to src/pages/reports/css/reports.css；.span2、.track 为多页共用，保留在此) ---------- */
 .span2 {
   grid-column: span 2;
-}
-.chartbox {
-  flex: 1;
-  min-height: 0;
-  padding-top: 8px;
-}
-.chart {
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: visible;
-}
-.chart .t {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  fill: var(--ink);
-}
-.chart .t.m {
-  fill: var(--mute);
-}
-.chart .t.sig {
-  fill: var(--signal-text);
-}
-.chart .grid {
-  stroke: rgba(10, 10, 10, 0.14);
-  stroke-width: 1;
-}
-.chart .axis {
-  stroke: var(--ink);
-  stroke-width: 1.5;
-  fill: none;
-}
-.chart .plan {
-  stroke: var(--ink);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 5;
-  fill: none;
-}
-.chart .actual {
-  stroke: var(--ink);
-  stroke-width: 3;
-  fill: none;
-  stroke-linejoin: round;
-}
-.chart .pred {
-  stroke: var(--signal);
-  stroke-width: 3;
-  stroke-dasharray: 7 5;
-  fill: none;
-}
-.chart .now {
-  stroke: var(--signal);
-  stroke-width: 1.5;
-}
-.chart .pred.ok {
-  stroke: var(--ink);
-  stroke-width: 1.5;
-  stroke-dasharray: 2 4;
-}
-.chart .mk {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 12;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-.load {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding-top: 4px;
-}
-.lrow {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 34px;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px dashed var(--ink);
-}
-.lrow b {
-  font-size: 13px;
-  font-weight: 700;
-}
-.lrow .v {
-  text-align: right;
-  font-family: var(--mono);
-  font-size: 18px;
-  font-weight: 800;
-}
-.lrow .v.late {
-  color: var(--signal);
 }
 .track {
   position: relative;
@@ -2024,146 +1923,6 @@ body.dragging * {
   border: 1.5px solid var(--ink);
   border-left: 0;
   background: var(--over);
-}
-.load .axisrow {
-  display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 34px;
-  gap: 12px;
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--mute);
-  padding-top: 6px;
-}
-.load .axisrow span:nth-child(2) {
-  position: relative;
-  height: 12px;
-}
-.load .axisrow i {
-  position: absolute;
-  font-style: normal;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-.weekly {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 8px;
-  align-items: end;
-  padding-top: 10px;
-  border-bottom: 1.5px solid var(--ink);
-}
-.wk {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-end;
-  height: 100%;
-  gap: 4px;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 800;
-  text-align: center;
-}
-.wk .bar {
-  position: static;
-  height: var(--h);
-  border: 0;
-  padding: 0;
-}
-.wk .bar.done {
-  background: var(--ink);
-}
-.wk .bar.now {
-  border: 2.5px solid var(--signal);
-  background: transparent;
-}
-.wk .bar.none {
-  height: 0;
-}
-.wk:has(.bar.now) > span:first-child {
-  color: var(--signal-text);
-}
-.wk-ax {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  text-align: center;
-  padding-top: 5px;
-}
-.dev {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.drow {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) 34px;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px dashed var(--ink);
-}
-.drow:last-child {
-  border-bottom: 0;
-}
-.drow > span:first-child {
-  font-size: 12px;
-  font-weight: 700;
-}
-.drow .v {
-  text-align: right;
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 800;
-}
-.drow .v.late {
-  color: var(--signal);
-}
-.dbars {
-  position: relative;
-  height: 22px;
-}
-.dbars span {
-  position: absolute;
-  left: 0;
-  height: 8px;
-  border: 1.5px solid var(--ink);
-}
-.dbars .p {
-  top: 0;
-  border-style: dashed;
-  background: transparent;
-}
-.dbars .a {
-  bottom: 0;
-  background: var(--ink);
-}
-.dbars .a.free {
-  background: var(--paper);
-}
-.dbars .o {
-  bottom: 0;
-  border-left: 0;
-  background: var(--over);
-}
-.hero .hsub {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.6;
-}
-.hero .huge {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 76px;
-  line-height: 0.85;
-  letter-spacing: -4px;
-  margin-top: auto;
 }
 
 /* ---------- team ---------- */
@@ -3602,7 +3361,6 @@ body.calm * {
   }
   .ov1,
   .ov2,
-  .rpt,
   .tg,
   .dg,
   .tkg {
@@ -3610,8 +3368,7 @@ body.calm * {
     grid-template-rows: none;
     height: auto;
   }
-  .ov1 > *,
-  .rpt > * {
+  .ov1 > * {
     min-height: 240px;
   }
   .span2 {

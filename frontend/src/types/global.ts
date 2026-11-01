@@ -12,6 +12,14 @@ export interface UserBrief {
   realName: string;
 }
 
+/** 任务引用（TaskRef），报表、文档、讨论等处引用任务时共用 */
+export interface TaskRef {
+  id: number;
+  /** 项目内编号，显示为 T-编号 */
+  taskNo: number;
+  title: string;
+}
+
 /** 项目内角色（ProjectRole）：PM 项目经理 / MEMBER 普通成员 / TESTER 测试人员 */
 export type ProjectRole = "PM" | "MEMBER" | "TESTER";
 

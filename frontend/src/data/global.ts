@@ -20,6 +20,17 @@ export const currentUser: UserBrief = {
   realName: "测试经理 A",
 };
 
+/**
+ * 当前项目的成员用户（UserBrief），各模块假数据统一从这里取，避免重复定义
+ * 将来由 GET /projects/{projectId}/members 的 user 字段提供
+ */
+export const users = {
+  pmA: currentUser,
+  devA: { id: 2, username: "dev_a", realName: "普通员工 A" },
+  devB: { id: 3, username: "dev_b", realName: "普通员工 B" },
+  qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
+} satisfies Record<string, UserBrief>;
+
 /** 我在当前项目的角色（对应 ProjectDetail.myProjectRole） */
 export const myProjectRole: ProjectRole = "PM";
 
