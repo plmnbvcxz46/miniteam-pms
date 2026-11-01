@@ -15,7 +15,7 @@ export default function DeviationPanel({ items }: DeviationPanelProps) {
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// 计划 vs 实际</span>
+          <span className="k">// DEVIATION</span>
           <h2>工期偏差</h2>
         </div>
         <div className="legend">

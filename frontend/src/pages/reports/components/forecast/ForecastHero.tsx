@@ -13,7 +13,10 @@ export default function ForecastHero({ forecast }: ForecastHeroProps) {
   return (
     <section className={`hero${forecast.risk ? "" : " calm"}`} id="rp-hero">
       <div className="hk">
-        <span>// 全项目预测完工</span>
+        <div>
+          <span className="k">// FORECAST</span>
+          <h2>预测完工</h2>
+        </div>
         <span className="chip">{forecast.risk ? "风险" : "正常"}</span>
       </div>
       <span className="huge" id="rp-n">

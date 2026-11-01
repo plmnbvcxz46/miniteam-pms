@@ -11,7 +11,7 @@ export default function LoadPanel({ workload }: LoadPanelProps) {
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// 本周</span>
+          <span className="k">// WORKLOAD</span>
           <h2>成员工时</h2>
         </div>
         <span className="u">单位：小时 · 虚线为上限 40</span>

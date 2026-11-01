@@ -7,13 +7,11 @@ interface BurndownPanelProps {
 }
 
 export default function BurndownPanel({ burndown, range }: BurndownPanelProps) {
-  const rangeTitle = range === "week" ? "本周" : "全周期";
-
   return (
     <section className="pnl span2">
       <div className="phd">
         <div>
-          <span className="k">// 燃尽 · {rangeTitle}</span>
+          <span className="k">// BURNDOWN</span>
           <h2>剩余任务</h2>
         </div>
         <div className="legend">

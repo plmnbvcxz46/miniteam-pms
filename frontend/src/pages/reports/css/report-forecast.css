@@ -6,6 +6,25 @@
   padding: 12px 14px;
   gap: 6px;
 }
+#rp-hero .hk {
+  align-items: flex-start;
+}
+#rp-hero .hk > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#rp-hero .hk .k {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+#rp-hero .hk h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 900;
+}
 .hero .hsub {
   font-family: var(--mono);
   font-size: 11px;

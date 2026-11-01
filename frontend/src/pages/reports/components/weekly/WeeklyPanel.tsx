@@ -13,7 +13,7 @@ export default function WeeklyPanel({ items }: WeeklyPanelProps) {
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// 每周</span>
+          <span className="k">// TASKS</span>
           <h2>完成任务</h2>
         </div>
         <span className="u">单位：项</span>
