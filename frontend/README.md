@@ -34,7 +34,7 @@ src/
 | 文档 documents         | ✓   | ✓     | ✓     |                   |
 | 成员与权限 members     | ✓   | ✓     | ✓     |                   |
 | 统计报表 reports       | ✓   | ✓     | ✓     |                   |
-| 团队协作 collab        | ✓   |        |        |                   |
+| 团队协作 collab        | ✓   | ✓     | ✓     |                   |
 | 概览 overview          | ✓   |        |        |                   |
 | 任务详情 board/task    | ✓   |        |        |                   |
 | 进度 progress          | ✓   |        |        |                   |
