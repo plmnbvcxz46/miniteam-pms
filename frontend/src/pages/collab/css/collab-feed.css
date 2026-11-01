@@ -13,6 +13,29 @@
   border-bottom: 1px solid var(--hair);
   font-size: 12px;
   line-height: 1.55;
+  outline: none;
+}
+
+.ev.clickable {
+  cursor: pointer;
+  transition:
+    background-color 0.12s,
+    padding-left 0.12s;
+}
+
+.ev.clickable:hover {
+  background: rgba(246, 243, 236, 0.08);
+}
+
+.ev.active {
+  border-left: 2px solid var(--signal);
+  padding-left: 14px;
+  background: rgba(255, 79, 17, 0.12);
+}
+
+.ev.clickable:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -2px;
 }
 
 .ev time {

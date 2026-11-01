@@ -6,22 +6,39 @@ import ThreadTaskMeta from "./ThreadTaskMeta";
 
 interface ThreadDetailPanelProps {
   detail?: DiscussionDetail;
+  flashComment?: { commentId: number; triggerKey: number } | null;
   onTaskClick?: (taskId: number) => void;
   onSendReply: (content: string) => void;
 }
 
 export default function ThreadDetailPanel({
   detail,
+  flashComment,
   onTaskClick,
   onSendReply,
 }: ThreadDetailPanelProps) {
   const msgsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (msgsRef.current) {
-      msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
+    if (!msgsRef.current) return;
+
+    if (
+      flashComment &&
+      detail?.comments.some((c) => c.id === flashComment.commentId)
+    ) {
+      const targetEl = msgsRef.current.querySelector<HTMLElement>(
+        `[data-comment-id="${flashComment.commentId}"]`,
+      );
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        targetEl.focus({ preventScroll: true });
+        return;
+      }
     }
-  }, [detail?.id, detail?.comments.length]);
+
+    // 默认或普通切换时滚动到底部
+    msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
+  }, [detail?.id, detail?.comments, flashComment]);
 
   return (
     <section className="pnl flat" id="thread">
@@ -35,9 +52,20 @@ export default function ThreadDetailPanel({
         <ThreadTaskMeta task={detail.task} onTaskClick={onTaskClick} />
       )}
       <div className="msgs scroll-y" id="msgs" ref={msgsRef}>
-        {detail?.comments.map((comment: Comment) => (
-          <MessageItem key={comment.id} comment={comment} />
-        ))}
+        {detail?.comments.map((comment: Comment) => {
+          const isTargetFlash = flashComment?.commentId === comment.id;
+          return (
+            <MessageItem
+              key={
+                isTargetFlash
+                  ? `${comment.id}-${flashComment.triggerKey}`
+                  : comment.id
+              }
+              comment={comment}
+              isFlashing={isTargetFlash}
+            />
+          );
+        })}
       </div>
       <ReplyForm onSend={onSendReply} />
     </section>

@@ -18,7 +18,7 @@ import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
 import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";
 import CollabHeader from "./components/header/CollabHeader";
 import ThreadsPanel from "./components/threads/ThreadsPanel";
-import { formatCollabKicker } from "./utils";
+import { findCommentIdByActivity, formatCollabKicker } from "./utils";
 import "./css/collab.css";
 
 export default function CollabPage() {
@@ -33,6 +33,10 @@ export default function CollabPage() {
   const [activityList, setActivityList] =
     useState<Activity[]>(initialActivities);
   const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
+  const [flashComment, setFlashComment] = useState<{
+    commentId: number;
+    triggerKey: number;
+  } | null>(null);
 
   // 当前选中讨论的详情
   const currentDetail = detailMap[selectedId];
@@ -61,9 +65,25 @@ export default function CollabPage() {
     );
   }, [discussionList.length, todayActivityCount, overdueCount]);
 
-  // 切换选中讨论
+  // 切换选中讨论（清空聚焦高亮）
   const handleSelectDiscussion = (id: number) => {
     setSelectedId(id);
+    setFlashComment(null);
+  };
+
+  // 处理右侧动态点击跳转并聚焦对应评论
+  const handleSelectActivity = (
+    activity: Activity,
+    targetDiscussionId: number,
+  ) => {
+    setSelectedId(targetDiscussionId);
+    const targetDetail = detailMap[targetDiscussionId];
+    const commentId = findCommentIdByActivity(activity, targetDetail);
+    if (commentId !== null) {
+      setFlashComment({ commentId, triggerKey: Date.now() });
+    } else {
+      setFlashComment(null);
+    }
   };
 
   // 发送回复
@@ -136,6 +156,7 @@ export default function CollabPage() {
         />
         <ThreadDetailPanel
           detail={currentDetail}
+          flashComment={flashComment}
           onTaskClick={handleTaskClick}
           onSendReply={handleSendReply}
         />
@@ -144,6 +165,7 @@ export default function CollabPage() {
           discussions={discussionList}
           selectedDiscussionId={selectedId}
           onSelectDiscussion={handleSelectDiscussion}
+          onSelectActivity={handleSelectActivity}
         />
       </div>
     </section>

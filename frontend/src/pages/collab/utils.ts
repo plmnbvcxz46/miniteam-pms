@@ -1,6 +1,10 @@
 import { collabTodayDate } from "../../data/collab";
 import { taskStatusLabel } from "../../data/global";
-import type { DiscussionBrief, DiscussionTask } from "../../types/collab";
+import type {
+  DiscussionBrief,
+  DiscussionDetail,
+  DiscussionTask,
+} from "../../types/collab";
 import type { Activity, TaskStatus } from "../../types/global";
 
 /**
@@ -212,3 +216,89 @@ export function findDiscussionIdByActivity(
   return null;
 }
 
+/**
+ * 解析日期时间字符串为时间戳毫秒数
+ */
+function parseTimestamp(dateStr: string): number {
+  if (!dateStr) return 0;
+  if (dateStr === "刚刚" || dateStr.endsWith("刚刚")) {
+    return Date.now();
+  }
+  const iso = dateStr.includes(" ") ? dateStr.replace(" ", "T") : dateStr;
+  const time = new Date(iso).getTime();
+  return isNaN(time) ? 0 : time;
+}
+
+/**
+ * 根据项目动态在讨论详情中查找最相关的评论消息 ID
+ * - 优先级 1（精确时间匹配）：查找同一用户且时间完全吻合（或同为“刚刚”）的评论；
+ * - 优先级 2（发起讨论动态）：若是 DISCUSSION 的 CREATE 动作，定位到首条评论；
+ * - 优先级 3（最接近时间匹配）：同用户发表的评论中，与动态时间差绝对值最小的那条；
+ * - 优先级 4（兜底）：返回最后一条评论。
+ */
+export function findCommentIdByActivity(
+  activity: Activity,
+  detail?: DiscussionDetail,
+): number | null {
+  if (!detail || !detail.comments || detail.comments.length === 0) {
+    return null;
+  }
+
+  const comments = detail.comments;
+
+  // 优先级 1（精确时间匹配）
+  if (activity.user) {
+    const isActivityJustNow =
+      activity.createdAt === "刚刚" || activity.createdAt.endsWith("刚刚");
+
+    if (isActivityJustNow) {
+      const justNowComments = comments.filter(
+        (c) =>
+          c.user.id === activity.user?.id &&
+          (c.createdAt === "刚刚" || c.createdAt.endsWith("刚刚")),
+      );
+      if (justNowComments.length > 0) {
+        return justNowComments[justNowComments.length - 1].id;
+      }
+    } else {
+      const exact = comments.find(
+        (c) =>
+          c.user.id === activity.user?.id && c.createdAt === activity.createdAt,
+      );
+      if (exact) return exact.id;
+    }
+  }
+
+  // 优先级 2（若 action === "CREATE" 且 targetType === "DISCUSSION"）
+  if (activity.action === "CREATE" && activity.targetType === "DISCUSSION") {
+    return comments[0].id;
+  }
+
+  // 优先级 3（同用户时间最接近的评论）
+  if (activity.user) {
+    const userComments = comments.filter(
+      (c) => c.user.id === activity.user?.id,
+    );
+    if (userComments.length > 0) {
+      const actTime = parseTimestamp(activity.createdAt);
+      let closestComment = userComments[0];
+      let minDiff = Math.abs(
+        parseTimestamp(closestComment.createdAt) - actTime,
+      );
+
+      for (let i = 1; i < userComments.length; i++) {
+        const diff = Math.abs(
+          parseTimestamp(userComments[i].createdAt) - actTime,
+        );
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestComment = userComments[i];
+        }
+      }
+      return closestComment.id;
+    }
+  }
+
+  // 优先级 4（兜底）
+  return comments[comments.length - 1].id;
+}

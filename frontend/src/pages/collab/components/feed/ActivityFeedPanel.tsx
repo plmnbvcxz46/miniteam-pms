@@ -7,7 +7,8 @@ interface ActivityFeedPanelProps {
   activities: Activity[];
   discussions: DiscussionBrief[];
   selectedDiscussionId: number;
-  onSelectDiscussion: (id: number) => void;
+  onSelectDiscussion?: (id: number) => void;
+  onSelectActivity?: (activity: Activity, discussionId: number) => void;
 }
 
 export default function ActivityFeedPanel({
@@ -15,6 +16,7 @@ export default function ActivityFeedPanel({
   discussions,
   selectedDiscussionId,
   onSelectDiscussion,
+  onSelectActivity,
 }: ActivityFeedPanelProps) {
   return (
     <section className="pnl flat dark">
@@ -31,7 +33,7 @@ export default function ActivityFeedPanel({
         {activities.map((activity) => {
           const targetDiscussionId = findDiscussionIdByActivity(
             activity,
-            discussions
+            discussions,
           );
           const isActive =
             targetDiscussionId !== null &&
@@ -44,6 +46,7 @@ export default function ActivityFeedPanel({
               targetDiscussionId={targetDiscussionId}
               isActive={isActive}
               onSelectDiscussion={onSelectDiscussion}
+              onSelectActivity={onSelectActivity}
             />
           );
         })}

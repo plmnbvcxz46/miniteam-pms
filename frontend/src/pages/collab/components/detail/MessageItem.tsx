@@ -4,13 +4,21 @@ import { formatMessageTime, parseRichInline } from "../../utils";
 
 interface MessageItemProps {
   comment: Comment;
+  isFlashing?: boolean;
 }
 
-export default function MessageItem({ comment }: MessageItemProps) {
+export default function MessageItem({
+  comment,
+  isFlashing = false,
+}: MessageItemProps) {
   const segments = parseRichInline(comment.content);
 
+  const classNames = ["msg", isFlashing ? "msg-flash" : ""]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <article className="msg">
+    <article className={classNames} data-comment-id={comment.id} tabIndex={-1}>
       <header>
         <b>{comment.user.realName}</b>
         <time>{formatMessageTime(comment.createdAt)}</time>

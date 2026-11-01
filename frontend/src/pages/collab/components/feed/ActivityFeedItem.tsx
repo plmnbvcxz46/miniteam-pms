@@ -7,6 +7,7 @@ interface ActivityFeedItemProps {
   targetDiscussionId: number | null;
   isActive?: boolean;
   onSelectDiscussion?: (discussionId: number) => void;
+  onSelectActivity?: (activity: Activity, discussionId: number) => void;
 }
 
 export default function ActivityFeedItem({
@@ -14,6 +15,7 @@ export default function ActivityFeedItem({
   targetDiscussionId,
   isActive = false,
   onSelectDiscussion,
+  onSelectActivity,
 }: ActivityFeedItemProps) {
   const segments = parseRichInline(activity.detail);
   const isClickable = targetDiscussionId !== null;
@@ -26,10 +28,19 @@ export default function ActivityFeedItem({
     .filter(Boolean)
     .join(" ");
 
+  const handleSelect = () => {
+    if (!isClickable) return;
+    if (onSelectActivity) {
+      onSelectActivity(activity, targetDiscussionId);
+    } else {
+      onSelectDiscussion?.(targetDiscussionId);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isClickable && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
-      onSelectDiscussion?.(targetDiscussionId);
+      handleSelect();
     }
   };
 
@@ -39,11 +50,7 @@ export default function ActivityFeedItem({
       role={isClickable ? "button" : undefined}
       tabIndex={isClickable ? 0 : undefined}
       title={isClickable ? "点击切换到对应讨论" : undefined}
-      onClick={
-        isClickable
-          ? () => onSelectDiscussion?.(targetDiscussionId)
-          : undefined
-      }
+      onClick={isClickable ? handleSelect : undefined}
       onKeyDown={isClickable ? handleKeyDown : undefined}
     >
       <time>{formatMessageTime(activity.createdAt)}</time>
