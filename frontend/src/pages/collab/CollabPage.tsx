@@ -6,7 +6,6 @@ import {
   defaultDiscussionId,
   discussionDetails as initialDiscussionDetails,
   discussions as initialDiscussions,
-  initialUnreadIds,
 } from "../../data/collab";
 import { currentUser } from "../../data/global";
 import type {
@@ -34,7 +33,6 @@ export default function CollabPage() {
   const [activityList, setActivityList] =
     useState<Activity[]>(initialActivities);
   const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
-  const [unreadIds, setUnreadIds] = useState<number[]>(initialUnreadIds);
 
   // 当前选中讨论的详情
   const currentDetail = detailMap[selectedId];
@@ -63,10 +61,9 @@ export default function CollabPage() {
     );
   }, [discussionList.length, todayActivityCount, overdueCount]);
 
-  // 切换选中讨论并消除未读
+  // 切换选中讨论
   const handleSelectDiscussion = (id: number) => {
     setSelectedId(id);
-    setUnreadIds((prev) => prev.filter((unreadId) => unreadId !== id));
   };
 
   // 发送回复
@@ -134,7 +131,6 @@ export default function CollabPage() {
         <ThreadsPanel
           discussions={discussionList}
           selectedId={selectedId}
-          unreadIds={unreadIds}
           detailMap={detailMap}
           onSelectDiscussion={handleSelectDiscussion}
         />
@@ -143,7 +139,12 @@ export default function CollabPage() {
           onTaskClick={handleTaskClick}
           onSendReply={handleSendReply}
         />
-        <ActivityFeedPanel activities={activityList} />
+        <ActivityFeedPanel
+          activities={activityList}
+          discussions={discussionList}
+          selectedDiscussionId={selectedId}
+          onSelectDiscussion={handleSelectDiscussion}
+        />
       </div>
     </section>
   );

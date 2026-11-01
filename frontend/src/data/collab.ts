@@ -25,9 +25,6 @@ export const collabTodayDate = "2026-10-22";
 /** 默认选中的讨论 ID */
 export const defaultDiscussionId = 1;
 
-/** 初始未读的讨论 ID 列表（纯前端会话红点状态，点击切换后消除） */
-export const initialUnreadIds: number[] = [1];
-
 /* =========================================================
  * 二、接口假数据
  * ========================================================= */

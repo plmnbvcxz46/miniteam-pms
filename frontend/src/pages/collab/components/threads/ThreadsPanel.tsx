@@ -8,7 +8,6 @@ import ThreadItem from "./ThreadItem";
 interface ThreadsPanelProps {
   discussions: DiscussionBrief[];
   selectedId: number;
-  unreadIds: number[];
   detailMap: Record<number, DiscussionDetail>;
   onSelectDiscussion: (id: number) => void;
 }
@@ -16,7 +15,6 @@ interface ThreadsPanelProps {
 export default function ThreadsPanel({
   discussions,
   selectedId,
-  unreadIds,
   detailMap,
   onSelectDiscussion,
 }: ThreadsPanelProps) {
@@ -24,8 +22,8 @@ export default function ThreadsPanel({
     <section className="pnl flat">
       <div className="phd">
         <div>
-          <span className="k">// THREADS</span>
-          <h2>全部讨论</h2>
+          <span className="k">// TOPICS</span>
+          <h2>讨论话题</h2>
         </div>
         <span className="n" id="th-count">
           {formatPadCount(discussions.length)}
@@ -33,17 +31,18 @@ export default function ThreadsPanel({
       </div>
       <div className="threads scroll-y" id="threads">
         {discussions.map((item) => {
-          const isClosed = detailMap[item.id]?.task?.status === "DONE";
-          const isUnread = unreadIds.includes(item.id);
+          const task = detailMap[item.id]?.task;
+          const isClosed = task?.status === "DONE";
           const isSelected = item.id === selectedId;
+          const overdueDays = task?.overdueDays ?? 0;
 
           return (
             <ThreadItem
               key={item.id}
               discussion={item}
               isSelected={isSelected}
-              isUnread={isUnread}
               isClosed={isClosed}
+              overdueDays={overdueDays}
               onClick={() => onSelectDiscussion(item.id)}
             />
           );

@@ -4,19 +4,19 @@ import { formatThreadShortTime } from "../../utils";
 interface ThreadItemProps {
   discussion: DiscussionBrief;
   isSelected: boolean;
-  isUnread: boolean;
   isClosed: boolean;
+  overdueDays: number;
   onClick: () => void;
 }
 
 export default function ThreadItem({
   discussion,
   isSelected,
-  isUnread,
   isClosed,
+  overdueDays,
   onClick,
 }: ThreadItemProps) {
-  const classNames = ["thr", isUnread ? "unread" : "", isClosed ? "closed" : ""]
+  const classNames = ["thr", isClosed ? "closed" : ""]
     .filter(Boolean)
     .join(" ");
 
@@ -27,7 +27,12 @@ export default function ThreadItem({
       aria-current={isSelected ? "true" : undefined}
       onClick={onClick}
     >
-      <b>{discussion.title}</b>
+      <div className="thr-top">
+        <b>{discussion.title}</b>
+        {overdueDays > 0 && (
+          <span className="thr-late">逾期 {overdueDays} 天</span>
+        )}
+      </div>
       <small>
         <span>{discussion.task?.title ?? "未关联任务"}</span>
         <span>

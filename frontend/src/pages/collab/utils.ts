@@ -1,7 +1,7 @@
 import { collabTodayDate } from "../../data/collab";
 import { taskStatusLabel } from "../../data/global";
-import type { DiscussionTask } from "../../types/collab";
-import type { TaskStatus } from "../../types/global";
+import type { DiscussionBrief, DiscussionTask } from "../../types/collab";
+import type { Activity, TaskStatus } from "../../types/global";
 
 /**
  * 两位补零格式化（例如 5 -> "05"，10 -> "10"）
@@ -178,3 +178,37 @@ export function parseRichInline(text: string): RichInlineSegment[] {
 
   return result;
 }
+
+/**
+ * 根据项目动态推导对应的讨论话题 ID
+ * - 若 activity.targetType === "DISCUSSION" 且 activity.targetId !== null，直接匹配讨论 ID；
+ * - 否则若 activity.targetId !== null，根据讨论关联的任务 ID 匹配；
+ * - 兜底：从 activity.detail 中提取 <b>...</b> 文本，与讨论标题或关联任务标题匹配；
+ * - 若均未匹配则返回 null。
+ */
+export function findDiscussionIdByActivity(
+  activity: Activity,
+  discussions: DiscussionBrief[],
+): number | null {
+  if (activity.targetType === "DISCUSSION" && activity.targetId !== null) {
+    const found = discussions.find((d) => d.id === activity.targetId);
+    if (found) return found.id;
+  }
+
+  if (activity.targetId !== null) {
+    const found = discussions.find((d) => d.task?.id === activity.targetId);
+    if (found) return found.id;
+  }
+
+  const match = activity.detail.match(/<b>(.*?)<\/b>/);
+  if (match && match[1]) {
+    const boldText = match[1].trim();
+    const found = discussions.find(
+      (d) => d.title === boldText || d.task?.title === boldText,
+    );
+    if (found) return found.id;
+  }
+
+  return null;
+}
+

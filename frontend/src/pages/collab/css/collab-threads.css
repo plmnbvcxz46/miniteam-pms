@@ -18,25 +18,38 @@
   width: 100%;
 }
 
+.thr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .thr b {
   font-weight: 700;
   font-size: 14px;
   line-height: 1.4;
 }
 
-.thr.unread b::after {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
+.thr-late {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.4;
+  padding: 2px 6px;
   background: var(--signal);
-  margin-left: 8px;
-  vertical-align: middle;
+  color: var(--paper);
+}
+
+.thr[aria-current="true"] .thr-late {
+  color: var(--ink);
 }
 
 .thr small {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--mute);

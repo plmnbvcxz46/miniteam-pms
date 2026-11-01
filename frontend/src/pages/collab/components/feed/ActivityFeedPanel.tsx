@@ -1,13 +1,20 @@
+import type { DiscussionBrief } from "../../../../types/collab";
 import type { Activity } from "../../../../types/global";
-import { formatPadCount } from "../../utils";
+import { findDiscussionIdByActivity, formatPadCount } from "../../utils";
 import ActivityFeedItem from "./ActivityFeedItem";
 
 interface ActivityFeedPanelProps {
   activities: Activity[];
+  discussions: DiscussionBrief[];
+  selectedDiscussionId: number;
+  onSelectDiscussion: (id: number) => void;
 }
 
 export default function ActivityFeedPanel({
   activities,
+  discussions,
+  selectedDiscussionId,
+  onSelectDiscussion,
 }: ActivityFeedPanelProps) {
   return (
     <section className="pnl flat dark">
@@ -21,9 +28,25 @@ export default function ActivityFeedPanel({
         </span>
       </div>
       <div className="feed scroll-y" id="feed">
-        {activities.map((activity) => (
-          <ActivityFeedItem key={activity.id} activity={activity} />
-        ))}
+        {activities.map((activity) => {
+          const targetDiscussionId = findDiscussionIdByActivity(
+            activity,
+            discussions
+          );
+          const isActive =
+            targetDiscussionId !== null &&
+            targetDiscussionId === selectedDiscussionId;
+
+          return (
+            <ActivityFeedItem
+              key={activity.id}
+              activity={activity}
+              targetDiscussionId={targetDiscussionId}
+              isActive={isActive}
+              onSelectDiscussion={onSelectDiscussion}
+            />
+          );
+        })}
       </div>
     </section>
   );
