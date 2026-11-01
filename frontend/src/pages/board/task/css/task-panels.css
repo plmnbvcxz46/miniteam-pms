@@ -1,0 +1,84 @@
+/* ==========================================================================
+   任务详情面板样式 (Task Panels)
+   ========================================================================== */
+
+.tt {
+  padding-top: 8px;
+}
+.tt-trk {
+  height: 52px;
+  border-bottom: 1px solid var(--ink);
+}
+.tk-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.dep {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--ink);
+  font-size: 13px;
+}
+.dep b {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dep small {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+}
+.dep .s {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: right;
+  min-width: 4em;
+}
+.dep .s.late {
+  color: var(--signal-text);
+  font-weight: 800;
+}
+.dep .tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+#tk-links .dep {
+  grid-template-columns: 36px minmax(0, 1fr) auto auto;
+}
+.dep:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.dep-h {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mute);
+  padding: 12px 0 2px;
+}
+.dep-h::before {
+  content: "// ";
+}
+.dep-none {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+  padding: 8px 0;
+}

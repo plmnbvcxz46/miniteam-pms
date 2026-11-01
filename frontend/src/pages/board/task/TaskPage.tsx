@@ -1,76 +1,94 @@
+import { useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { currentUser, taskStatusLabel } from "../../../data/global";
+import {
+  defaultTaskId,
+  taskActivities as initialTaskActivities,
+  taskDetails as initialTaskDetails,
+  taskTodayDate,
+} from "../../../data/task";
+import type { Activity, TaskStatus } from "../../../types/global";
+import type { TaskDetail } from "../../../types/task";
+import TaskFigures from "./components/figures/TaskFigures";
+import TaskHeader from "./components/header/TaskHeader";
+import TaskInfoPanel from "./components/info/TaskInfoPanel";
+import TaskLogPanel from "./components/log/TaskLogPanel";
+import SchedulePanel from "./components/schedule/SchedulePanel";
+import { applyTaskStatus } from "./utils";
+import "./css/task.css";
+
 export default function TaskPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  // 顶层状态
+  const [taskMap, setTaskMap] =
+    useState<Record<number, TaskDetail>>(initialTaskDetails);
+  const [activityMap, setActivityMap] = useState<Record<number, Activity[]>>(
+    initialTaskActivities,
+  );
+  // 只在进入页面时判断一次：任务之间跳转会换掉 location.key
+  const [openedDirectly] = useState(location.key === "default");
+
+  // 当前任务由地址栏 ?id= 决定，没带或不存在时打开默认任务
+  const task =
+    taskMap[Number(searchParams.get("id"))] ?? taskMap[defaultTaskId];
+
+  // 返回进入任务详情之前的页面，直接打开地址时回看板
+  const handleBack = () => {
+    if (openedDirectly) navigate("/board");
+    else navigate(-1);
+  };
+
+  // 任务之间跳转不新增历史记录，这样“返回”不用一层层退
+  const handleOpenTask = (taskId: number) => {
+    navigate(`/board/task?id=${taskId}`, { replace: true });
+  };
+
+  // 切换任务状态，并追加一条操作记录
+  const handleChangeStatus = (status: TaskStatus) => {
+    if (status === task.status) return;
+
+    setTaskMap((prev) => applyTaskStatus(prev, task.id, status, taskTodayDate));
+
+    const newActivity: Activity = {
+      id: Date.now(),
+      user: currentUser,
+      targetType: "TASK",
+      targetId: task.id,
+      action: "STATUS",
+      detail: `${currentUser.realName} 把任务移到${taskStatusLabel[status]}`,
+      createdAt: `${taskTodayDate} 刚刚`,
+    };
+
+    setActivityMap((prev) => ({
+      ...prev,
+      [task.id]: [newActivity, ...prev[task.id]],
+    }));
+  };
+
   return (
     <section className="view" id="view-task" data-view="task">
-      <div className="vh">
-        <div className="vl">
-          <div className="k">
-            <button className="tk-back" type="button" id="tk-back">
-              返回
-            </button>
-            <span className="tk-crumb" id="tk-crumb" />
-          </div>
-          <h1 className="vt" id="tk-title" />
-          <p className="tk-meta" id="tk-meta" />
-        </div>
-        <div className="va tk-acts">
-          <div
-            className="chips"
-            id="tk-status"
-            role="group"
-            aria-label="任务状态"
-          />
-          <button className="btn" type="button" id="tk-edit">
-            编辑
-          </button>
-        </div>
-      </div>
-
-      <div className="figures" id="tk-figs" />
-
+      <TaskHeader
+        task={task}
+        onBack={handleBack}
+        onChangeStatus={handleChangeStatus}
+      />
+      <TaskFigures task={task} />
       <div className="tkg">
-        {/* 时间 */}
-        <section className="pnl">
-          <div className="phd">
-            <div>
-              <span className="k">// 时间</span>
-              <h2>排期与依赖</h2>
-            </div>
-            <span className="u">每格一天</span>
-          </div>
-          <div className="tt" id="tk-time" />
-          <div className="scroll-y" id="tk-deps" />
-        </section>
-
-        {/* 说明 */}
-        <section className="pnl">
-          <div className="phd">
-            <div>
-              <span className="k">// 说明</span>
-              <h2>任务说明</h2>
-            </div>
-          </div>
-          <p className="tk-desc" id="tk-desc" />
-          <div className="phd" style={{ marginTop: "16px" }}>
-            <div>
-              <span className="k">// 关联</span>
-              <h2>文档与讨论</h2>
-            </div>
-          </div>
-          <div id="tk-links" />
-        </section>
-
-        {/* 记录 */}
-        <section className="pnl flat dark">
-          <div className="phd">
-            <div>
-              <span className="k">// 记录</span>
-              <h2>操作记录</h2>
-            </div>
-          </div>
-          <div className="feed scroll-y" id="tk-log" />
-        </section>
+        <SchedulePanel
+          task={task}
+          today={taskTodayDate}
+          onOpenTask={handleOpenTask}
+        />
+        <TaskInfoPanel
+          task={task}
+          onOpenDocument={() => navigate("/documents")}
+          onOpenDiscussion={() => navigate("/collab")}
+        />
+        <TaskLogPanel activities={activityMap[task.id]} today={taskTodayDate} />
       </div>
     </section>
   );
 }
-

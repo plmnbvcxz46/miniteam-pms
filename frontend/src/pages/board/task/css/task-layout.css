@@ -1,0 +1,19 @@
+/* ==========================================================================
+   任务详情布局样式 (Task Layout)
+   ========================================================================== */
+
+.tkg {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .tkg {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    height: auto;
+  }
+}
