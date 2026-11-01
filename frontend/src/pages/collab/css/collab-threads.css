@@ -1,0 +1,66 @@
+/* ==========================================================================
+   讨论列表样式 (Collab Threads Panel)
+   ========================================================================== */
+
+.threads {
+  min-height: 0;
+}
+
+.thr {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ink);
+  width: 100%;
+}
+
+.thr b {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.thr.unread b::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--signal);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.thr small {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.thr.closed b {
+  font-weight: 500;
+  color: var(--mute);
+}
+
+.thr:not([aria-current="true"]):hover {
+  background: var(--wash);
+}
+
+.thr[aria-current="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.thr[aria-current="true"] small {
+  color: #cfcfca;
+}
+
+.thr:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -2px;
+}

@@ -20,6 +20,9 @@ export interface TaskRef {
   title: string;
 }
 
+/** 任务状态（TaskStatus）：TODO 待开始 / DOING 进行中 / BLOCKED 阻塞 / DONE 已完成 */
+export type TaskStatus = "TODO" | "DOING" | "BLOCKED" | "DONE";
+
 /** 项目内角色（ProjectRole）：PM 项目经理 / MEMBER 普通成员 / TESTER 测试人员 */
 export type ProjectRole = "PM" | "MEMBER" | "TESTER";
 

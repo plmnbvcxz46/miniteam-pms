@@ -1,0 +1,37 @@
+/* ==========================================================================
+   动态列表样式 (Collab Activity Feed Panel)
+   ========================================================================== */
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ev {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.ev time {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+  margin-bottom: 3px;
+}
+
+.ev p {
+  margin: 0;
+}
+
+.ev b {
+  font-weight: 900;
+}
+
+.enter .ev,
+.enter .msg {
+  animation: rise 0.32s ease-out both;
+}

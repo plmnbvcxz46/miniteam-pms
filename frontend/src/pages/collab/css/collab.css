@@ -1,0 +1,9 @@
+/* ==========================================================================
+   团队协作模块样式总入口 (Collab Page Main Styles)
+   通过模块化拆分管理各个子模块样式
+   ========================================================================== */
+
+@import "./collab-layout.css";
+@import "./collab-threads.css";
+@import "./collab-detail.css";
+@import "./collab-feed.css";
