@@ -2,6 +2,7 @@ import type {
   IssueInfo,
   MemberPermissions,
   ProjectRole,
+  TaskStatus,
   UserBrief,
 } from "../types/global";
 
@@ -65,4 +66,13 @@ export const roleLabel: Record<ProjectRole, string> = {
   MEMBER: "普通成员",
   TESTER: "测试人员",
 };
+
+/** 任务状态中文名 */
+export const taskStatusLabel: Record<TaskStatus, string> = {
+  TODO: "待开始",
+  DOING: "进行中",
+  BLOCKED: "阻塞",
+  DONE: "已完成",
+};
+
 
