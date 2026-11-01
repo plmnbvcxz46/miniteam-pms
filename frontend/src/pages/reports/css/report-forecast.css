@@ -2,17 +2,21 @@
    全项目预测完工 (Forecast Hero)
    ========================================================================== */
 
+#rp-hero {
+  padding: 12px 14px;
+  gap: 6px;
+}
 .hero .hsub {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
-  line-height: 1.6;
+  line-height: 1.45;
 }
 .hero .huge {
   font-family: var(--mono);
   font-weight: 800;
-  font-size: 76px;
+  font-size: 56px;
   line-height: 0.85;
-  letter-spacing: -4px;
+  letter-spacing: -3px;
   margin-top: auto;
 }

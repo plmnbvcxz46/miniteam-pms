@@ -2,22 +2,45 @@
    统计报表页面布局 (Reports Layout)
    ========================================================================== */
 
+#view-reports {
+  height: calc(100vh - 94px);
+  min-height: 480px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+#view-reports > .vh {
+  padding-bottom: 14px;
+}
+
 .rpt {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 14px;
+  grid-template-rows: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 12px;
   flex: 1;
   min-height: 0;
 }
 
+.rpt > .pnl {
+  padding: 10px 14px;
+}
+
+.rpt > .pnl > .phd {
+  padding-bottom: 6px;
+}
+
 @media (max-width: 900px) {
+  #view-reports {
+    height: auto;
+    overflow: visible;
+  }
   .rpt {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
     height: auto;
   }
   .rpt > * {
-    min-height: 240px;
+    min-height: 220px;
   }
 }

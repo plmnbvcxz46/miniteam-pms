@@ -4,28 +4,36 @@
 
 .dev {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
 }
 .drow {
   flex: 1;
+  min-height: 26px;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) 34px;
+  grid-template-columns: 84px minmax(0, 1fr) 30px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   border-bottom: 1px dashed var(--ink);
 }
 .drow:last-child {
   border-bottom: 0;
 }
 .drow > span:first-child {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .drow .v {
   text-align: right;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 800;
 }
 .drow .v.late {
@@ -33,12 +41,12 @@
 }
 .dbars {
   position: relative;
-  height: 22px;
+  height: 16px;
 }
 .dbars span {
   position: absolute;
   left: 0;
-  height: 8px;
+  height: 6px;
   border: 1.5px solid var(--ink);
 }
 .dbars .p {

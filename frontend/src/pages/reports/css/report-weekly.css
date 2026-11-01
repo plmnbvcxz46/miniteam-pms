@@ -7,9 +7,10 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 6px;
   align-items: end;
-  padding-top: 10px;
+  padding-top: 6px;
   border-bottom: 1.5px solid var(--ink);
 }
 .wk {
@@ -18,9 +19,10 @@
   align-items: stretch;
   justify-content: flex-end;
   height: 100%;
-  gap: 4px;
+  min-height: 0;
+  gap: 2px;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
   text-align: center;
 }
@@ -35,6 +37,7 @@
 }
 .wk .bar.now {
   border: 2.5px solid var(--signal);
+  border-bottom: 0;
   background: transparent;
 }
 .wk .bar.none {
@@ -44,12 +47,13 @@
   color: var(--signal-text);
 }
 .wk-ax {
+  flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
   text-align: center;
-  padding-top: 5px;
+  padding-top: 4px;
 }

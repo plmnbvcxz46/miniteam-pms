@@ -7,7 +7,7 @@ interface WeeklyPanelProps {
 }
 
 export default function WeeklyPanel({ items }: WeeklyPanelProps) {
-  const maxCount = Math.max(7, ...items.map((i) => i.count));
+  const maxCount = Math.max(1, ...items.map((i) => i.count)) + 1;
 
   return (
     <section className="pnl">

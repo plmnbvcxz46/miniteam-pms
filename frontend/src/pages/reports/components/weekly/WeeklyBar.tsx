@@ -9,7 +9,7 @@ interface WeeklyBarProps {
 export default function WeeklyBar({
   item,
   index,
-  maxCount = 7,
+  maxCount = 6,
 }: WeeklyBarProps) {
   const isNone = item.count === 0 && !item.current;
   const cls = isNone ? "none" : item.current ? "now" : "done";
@@ -18,7 +18,7 @@ export default function WeeklyBar({
 
   return (
     <div className="wk">
-      {item.count > 0 ? <span>{item.count}</span> : null}
+      {!isNone ? <span>{item.count}</span> : null}
       <span
         className={`bar ${cls}`}
         style={
@@ -31,4 +31,3 @@ export default function WeeklyBar({
     </div>
   );
 }
-

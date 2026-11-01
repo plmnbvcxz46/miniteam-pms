@@ -6,37 +6,53 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding-top: 4px;
+  min-height: 0;
+  padding-top: 2px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
 }
 .lrow {
   flex: 1;
+  min-height: 28px;
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 34px;
+  grid-template-columns: 78px minmax(0, 1fr) 30px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   border-bottom: 1px dashed var(--ink);
 }
 .lrow b {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lrow .track {
+  height: 13px;
+}
+.lrow .track .cap {
+  top: -4px;
+  bottom: -4px;
 }
 .lrow .v {
   text-align: right;
   font-family: var(--mono);
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
 }
 .lrow .v.late {
   color: var(--signal);
 }
 .load .axisrow {
+  flex-shrink: 0;
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 34px;
-  gap: 12px;
+  grid-template-columns: 78px minmax(0, 1fr) 30px;
+  gap: 10px;
   font-family: var(--mono);
   font-size: 9px;
   color: var(--mute);
-  padding-top: 6px;
+  padding-top: 4px;
 }
 .load .axisrow span:nth-child(2) {
   position: relative;
