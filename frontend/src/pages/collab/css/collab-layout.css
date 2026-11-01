@@ -1,6 +1,17 @@
 /* ==========================================================================
-   团队协作布局样式 (Collab Page Grid Layout)
+   团队协作页面布局 (Collab Layout)
    ========================================================================== */
+
+#view-team {
+  height: calc(100vh - 94px);
+  min-height: 480px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+#view-team > .vh {
+  padding-bottom: 14px;
+}
 
 .tg {
   display: grid;
@@ -8,8 +19,37 @@
   gap: 14px;
   flex: 1;
   min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .tg > .pnl {
   min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  #view-team {
+    height: auto;
+    overflow: visible;
+  }
+
+  .tg {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  .tg > .pnl {
+    height: auto;
+    overflow: visible;
+  }
+
+  .threads,
+  .msgs,
+  .feed {
+    max-height: 360px;
+  }
 }
