@@ -7,15 +7,17 @@ interface ActivityFeedPanelProps {
   activities: Activity[];
   discussions: DiscussionBrief[];
   selectedDiscussionId: number;
-  onSelectDiscussion?: (id: number) => void;
-  onSelectActivity?: (activity: Activity, discussionId: number) => void;
+  activeActivityId: number | null;
+  isDraftActive: boolean;
+  onSelectActivity: (activity: Activity) => void;
 }
 
 export default function ActivityFeedPanel({
   activities,
   discussions,
   selectedDiscussionId,
-  onSelectDiscussion,
+  activeActivityId,
+  isDraftActive,
   onSelectActivity,
 }: ActivityFeedPanelProps) {
   return (
@@ -36,8 +38,11 @@ export default function ActivityFeedPanel({
             discussions,
           );
           const isActive =
-            targetDiscussionId !== null &&
-            targetDiscussionId === selectedDiscussionId;
+            activeActivityId !== null
+              ? activity.id === activeActivityId
+              : !isDraftActive &&
+                targetDiscussionId !== null &&
+                targetDiscussionId === selectedDiscussionId;
 
           return (
             <ActivityFeedItem
@@ -45,7 +50,6 @@ export default function ActivityFeedPanel({
               activity={activity}
               targetDiscussionId={targetDiscussionId}
               isActive={isActive}
-              onSelectDiscussion={onSelectDiscussion}
               onSelectActivity={onSelectActivity}
             />
           );

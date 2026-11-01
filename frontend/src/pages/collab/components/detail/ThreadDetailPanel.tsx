@@ -52,22 +52,28 @@ export default function ThreadDetailPanel({
         <ThreadTaskMeta task={detail.task} onTaskClick={onTaskClick} />
       )}
       <div className="msgs scroll-y" id="msgs" ref={msgsRef}>
-        {detail?.comments.map((comment: Comment) => {
-          const isTargetFlash = flashComment?.commentId === comment.id;
-          return (
-            <MessageItem
-              key={
-                isTargetFlash
-                  ? `${comment.id}-${flashComment.triggerKey}`
-                  : comment.id
-              }
-              comment={comment}
-              isFlashing={isTargetFlash}
-            />
-          );
-        })}
+        {!detail?.comments || detail.comments.length === 0 ? (
+          <div className="msgs-empty">
+            该动态尚无讨论记录，在下方发送第一条消息即可开启对话
+          </div>
+        ) : (
+          detail.comments.map((comment: Comment) => {
+            const isTargetFlash = flashComment?.commentId === comment.id;
+            return (
+              <MessageItem
+                key={
+                  isTargetFlash
+                    ? `${comment.id}-${flashComment.triggerKey}`
+                    : comment.id
+                }
+                comment={comment}
+                isFlashing={isTargetFlash}
+              />
+            );
+          })
+        )}
       </div>
-      <ReplyForm onSend={onSendReply} />
+      <ReplyForm onSend={onSendReply} autoFocusTrigger={detail?.id} />
     </section>
   );
 }

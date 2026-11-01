@@ -5,7 +5,7 @@ import type {
   DiscussionDetail,
   DiscussionTask,
 } from "../../types/collab";
-import type { Activity, TaskStatus } from "../../types/global";
+import type { Activity, TaskStatus, UserBrief } from "../../types/global";
 
 /**
  * 两位补零格式化（例如 5 -> "05"，10 -> "10"）
@@ -301,4 +301,35 @@ export function findCommentIdByActivity(
 
   // 优先级 4（兜底）
   return comments[comments.length - 1].id;
+}
+
+/**
+ * 根据未关联讨论的动态生成草稿空讨论会话（临时负数 ID）
+ */
+export function createDraftDiscussionFromActivity(
+  activity: Activity,
+  creator: UserBrief,
+): DiscussionDetail {
+  const match = activity.detail.match(/<b>(.*?)<\/b>/);
+  const title = match && match[1] ? match[1].trim() : "新建讨论";
+
+  const task: DiscussionTask | null =
+    activity.targetType === "TASK" && activity.targetId !== null
+      ? {
+          id: activity.targetId,
+          taskNo: activity.targetId,
+          title,
+          status: "TODO",
+          overdueDays: 0,
+        }
+      : null;
+
+  return {
+    id: -activity.id,
+    title,
+    creator,
+    createdAt: `${collabTodayDate} 刚刚`,
+    task,
+    comments: [],
+  };
 }

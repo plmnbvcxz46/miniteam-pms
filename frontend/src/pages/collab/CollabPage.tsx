@@ -18,7 +18,12 @@ import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
 import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";
 import CollabHeader from "./components/header/CollabHeader";
 import ThreadsPanel from "./components/threads/ThreadsPanel";
-import { findCommentIdByActivity, formatCollabKicker } from "./utils";
+import {
+  createDraftDiscussionFromActivity,
+  findCommentIdByActivity,
+  findDiscussionIdByActivity,
+  formatCollabKicker,
+} from "./utils";
 import "./css/collab.css";
 
 export default function CollabPage() {
@@ -33,13 +38,16 @@ export default function CollabPage() {
   const [activityList, setActivityList] =
     useState<Activity[]>(initialActivities);
   const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
+  const [draftDiscussion, setDraftDiscussion] =
+    useState<DiscussionDetail | null>(null);
+  const [activeActivityId, setActiveActivityId] = useState<number | null>(null);
   const [flashComment, setFlashComment] = useState<{
     commentId: number;
     triggerKey: number;
   } | null>(null);
 
-  // 当前选中讨论的详情
-  const currentDetail = detailMap[selectedId];
+  // 当前展示的讨论详情（草稿会话优先）
+  const currentDetail = draftDiscussion ?? detailMap[selectedId];
 
   // 顶栏 kicker 统计
   const todayActivityCount = useMemo(() => {
@@ -65,23 +73,36 @@ export default function CollabPage() {
     );
   }, [discussionList.length, todayActivityCount, overdueCount]);
 
-  // 切换选中讨论（清空聚焦高亮）
+  // 切换左侧讨论（退出草稿与动态高亮，清空闪烁）
   const handleSelectDiscussion = (id: number) => {
+    setDraftDiscussion(null);
+    setActiveActivityId(null);
     setSelectedId(id);
     setFlashComment(null);
   };
 
-  // 处理右侧动态点击跳转并聚焦对应评论
-  const handleSelectActivity = (
-    activity: Activity,
-    targetDiscussionId: number,
-  ) => {
-    setSelectedId(targetDiscussionId);
-    const targetDetail = detailMap[targetDiscussionId];
-    const commentId = findCommentIdByActivity(activity, targetDetail);
-    if (commentId !== null) {
-      setFlashComment({ commentId, triggerKey: Date.now() });
+  // 点击右侧动态项：若有真对话则跳转并聚焦高亮，若无则打开空草稿对话
+  const handleSelectActivity = (activity: Activity) => {
+    setActiveActivityId(activity.id);
+
+    const targetDiscussionId = findDiscussionIdByActivity(
+      activity,
+      discussionList,
+    );
+
+    if (targetDiscussionId !== null) {
+      setDraftDiscussion(null);
+      setSelectedId(targetDiscussionId);
+      const targetDetail = detailMap[targetDiscussionId];
+      const commentId = findCommentIdByActivity(activity, targetDetail);
+      if (commentId !== null) {
+        setFlashComment({ commentId, triggerKey: Date.now() });
+      } else {
+        setFlashComment(null);
+      }
     } else {
+      const draft = createDraftDiscussionFromActivity(activity, currentUser);
+      setDraftDiscussion(draft);
       setFlashComment(null);
     }
   };
@@ -98,7 +119,53 @@ export default function CollabPage() {
       createdAt: `${collabTodayDate} 刚刚`,
     };
 
-    // 1. 追加到当前讨论的 comments 列表
+    // 1. 若当前处于草稿空对话，发送首条消息时正式转为真对话
+    if (draftDiscussion !== null) {
+      const newId = Math.max(0, ...discussionList.map((d) => d.id)) + 1;
+      const newDetail: DiscussionDetail = {
+        ...draftDiscussion,
+        id: newId,
+        comments: [newComment],
+      };
+
+      setDetailMap((prev) => ({
+        ...prev,
+        [newId]: newDetail,
+      }));
+
+      const newBrief: DiscussionBrief = {
+        id: newId,
+        title: draftDiscussion.title,
+        task: draftDiscussion.task
+          ? {
+              id: draftDiscussion.task.id,
+              taskNo: draftDiscussion.task.taskNo,
+              title: draftDiscussion.task.title,
+            }
+          : null,
+        commentCount: 1,
+        lastCommentAt: "刚刚",
+      };
+
+      setDiscussionList((prev) => [newBrief, ...prev]);
+      setDraftDiscussion(null);
+      setSelectedId(newId);
+
+      const newActivity: Activity = {
+        id: Date.now(),
+        user: currentUser,
+        targetType: "DISCUSSION",
+        targetId: newId,
+        action: "CREATE",
+        detail: `${currentUser.realName} 发起讨论 <b>${draftDiscussion.title}</b>`,
+        createdAt: "刚刚",
+      };
+
+      setActivityList((prev) => [newActivity, ...prev]);
+      return;
+    }
+
+    // 2. 正常既有讨论追加评论
     setDetailMap((prev) => {
       const cur = prev[selectedId];
       if (!cur) return prev;
@@ -111,7 +178,6 @@ export default function CollabPage() {
       };
     });
 
-    // 2. 更新左侧讨论列表项的评论数和最新回复时间
     setDiscussionList((prev) =>
       prev.map((item) =>
         item.id === selectedId
@@ -124,7 +190,6 @@ export default function CollabPage() {
       ),
     );
 
-    // 3. 追加一条动态至右侧列表顶部
     const newActivity: Activity = {
       id: Date.now(),
       user: currentUser,
@@ -150,7 +215,7 @@ export default function CollabPage() {
       <div className="tg">
         <ThreadsPanel
           discussions={discussionList}
-          selectedId={selectedId}
+          selectedId={draftDiscussion !== null ? -1 : selectedId}
           detailMap={detailMap}
           onSelectDiscussion={handleSelectDiscussion}
         />
@@ -164,7 +229,8 @@ export default function CollabPage() {
           activities={activityList}
           discussions={discussionList}
           selectedDiscussionId={selectedId}
-          onSelectDiscussion={handleSelectDiscussion}
+          activeActivityId={activeActivityId}
+          isDraftActive={draftDiscussion !== null}
           onSelectActivity={handleSelectActivity}
         />
       </div>

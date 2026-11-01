@@ -6,39 +6,29 @@ interface ActivityFeedItemProps {
   activity: Activity;
   targetDiscussionId: number | null;
   isActive?: boolean;
-  onSelectDiscussion?: (discussionId: number) => void;
-  onSelectActivity?: (activity: Activity, discussionId: number) => void;
+  onSelectActivity?: (activity: Activity) => void;
 }
 
 export default function ActivityFeedItem({
   activity,
   targetDiscussionId,
   isActive = false,
-  onSelectDiscussion,
   onSelectActivity,
 }: ActivityFeedItemProps) {
   const segments = parseRichInline(activity.detail);
-  const isClickable = targetDiscussionId !== null;
+  const title =
+    targetDiscussionId !== null ? "点击切换到对应讨论" : "点击发起相关讨论";
 
-  const classNames = [
-    "ev",
-    isClickable ? "clickable" : "",
-    isActive ? "active" : "",
-  ]
+  const classNames = ["ev", "clickable", isActive ? "active" : ""]
     .filter(Boolean)
     .join(" ");
 
   const handleSelect = () => {
-    if (!isClickable) return;
-    if (onSelectActivity) {
-      onSelectActivity(activity, targetDiscussionId);
-    } else {
-      onSelectDiscussion?.(targetDiscussionId);
-    }
+    onSelectActivity?.(activity);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isClickable && (e.key === "Enter" || e.key === " ")) {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleSelect();
     }
@@ -47,11 +37,11 @@ export default function ActivityFeedItem({
   return (
     <div
       className={classNames}
-      role={isClickable ? "button" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      title={isClickable ? "点击切换到对应讨论" : undefined}
-      onClick={isClickable ? handleSelect : undefined}
-      onKeyDown={isClickable ? handleKeyDown : undefined}
+      role="button"
+      tabIndex={0}
+      title={title}
+      onClick={handleSelect}
+      onKeyDown={handleKeyDown}
     >
       <time>{formatMessageTime(activity.createdAt)}</time>
       <p>
