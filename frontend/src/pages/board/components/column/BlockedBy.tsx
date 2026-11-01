@@ -1,0 +1,23 @@
+import type { TaskDetail } from "../../../../types/task";
+import { formatMonthDay } from "../../task/utils";
+
+interface BlockedByProps {
+  tasks: TaskDetail[];
+  onOpenTask: (taskId: number) => void;
+}
+
+export default function BlockedBy({ tasks, onOpenTask }: BlockedByProps) {
+  if (tasks.length === 0) return null;
+
+  return (
+    <div className="bby">
+      <span className="k">// 因此受阻</span>
+      {tasks.map((task) => (
+        <div className="r" key={task.id} onClick={() => onOpenTask(task.id)}>
+          <b>{task.title}</b>
+          <span>{task.dueDate ? formatMonthDay(task.dueDate) : "—"}</span>
+        </div>
+      ))}
+    </div>
+  );
+}

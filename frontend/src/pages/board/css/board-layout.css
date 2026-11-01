@@ -1,0 +1,103 @@
+/* ==========================================================================
+   看板布局样式 (Board Layout)
+   ========================================================================== */
+
+#view-board > .scroll-x {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+}
+.board {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  gap: 14px;
+  min-width: 900px;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+}
+.col header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.col header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.col header .k {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mute);
+}
+.col header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+}
+.col header .count {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.85;
+  letter-spacing: -3px;
+}
+.col.doing header {
+  background: var(--ink);
+  color: var(--paper);
+}
+.col.doing header .k {
+  color: #cfcfca;
+}
+.col.blocked header {
+  background: var(--signal);
+}
+.col.blocked header .k {
+  color: var(--ink);
+  font-weight: 800;
+}
+.col.done {
+  border-width: 1px;
+}
+.col.done header {
+  border-bottom-width: 1px;
+}
+.col.done header .count {
+  font-weight: 400;
+}
+.drop {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 12px 12px;
+}
+.drop .card {
+  flex-shrink: 0;
+}
+
+@media (max-width: 1099px) {
+  #view-board > .scroll-x {
+    flex: none;
+    display: block;
+  }
+  .drop {
+    overflow: visible;
+  }
+}

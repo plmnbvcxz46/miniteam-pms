@@ -93,3 +93,15 @@ export interface TaskDetail extends TaskCard {
   /** yyyy-MM-dd HH:mm:ss */
   updatedAt: string;
 }
+
+/** 任务表单的值，对应 TaskCreate / TaskUpdate 里页面能填的字段 */
+export interface TaskFormValues {
+  title: string;
+  description: string;
+  milestoneId: number | null;
+  assigneeId: number | null;
+  /** yyyy-MM-dd */
+  planStart: string;
+  planDays: number;
+  predecessorIds: number[];
+}

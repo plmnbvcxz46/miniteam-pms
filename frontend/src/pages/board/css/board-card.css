@@ -1,0 +1,168 @@
+/* ==========================================================================
+   看板卡片与拖拽样式 (Board Card)
+   ========================================================================== */
+
+.card {
+  position: relative;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  padding: 10px 12px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.card .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.card .tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--mute);
+}
+.card .tag.crit {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 800;
+  padding: 2px 5px;
+}
+.card .title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card .score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  border: 1.5px solid var(--ink);
+  padding: 1px 5px;
+}
+.card .score small {
+  font-size: 9px;
+}
+.card .score small::before {
+  content: "· ";
+}
+.card .score.p-l {
+  font-weight: 500;
+  color: var(--mute);
+  border-width: 1px;
+  border-color: var(--mute);
+}
+.card .prog {
+  display: none;
+  height: 6px;
+  border: 1.5px solid var(--ink);
+}
+.card .prog b {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+.col.doing .card .prog {
+  display: block;
+}
+.card .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.card .meta .late {
+  background: var(--signal);
+  border: 1.5px solid var(--ink);
+  padding: 0 4px;
+  font-weight: 800;
+}
+.card .meta .now {
+  border: 1.5px solid var(--signal);
+  padding: 0 5px;
+  font-weight: 800;
+}
+.card.lifted {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 var(--ink);
+  cursor: grabbing;
+}
+.card.floating {
+  position: absolute;
+  z-index: 50;
+  pointer-events: none;
+  margin: 0;
+}
+.card.fresh {
+  outline: 2.5px solid var(--signal);
+  outline-offset: 3px;
+}
+.card.dimmed {
+  opacity: 0.22;
+}
+.ph {
+  flex-shrink: 0;
+  border: 1.5px dashed var(--ink);
+}
+body.dragging,
+body.dragging * {
+  cursor: grabbing !important;
+}
+@media (hover: hover) {
+  body:not(.dragging):not(.past) .card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+}
+.past .card {
+  cursor: default;
+}
+.col.blocked .card {
+  background: var(--hatch);
+}
+.col.blocked .card .title {
+  align-self: flex-start;
+  background: var(--paper);
+  padding: 2px 6px;
+}
+.col.blocked .card .top > *:not(.crit),
+.col.blocked .card .meta > * {
+  background: var(--paper);
+}
+.col.blocked .card .meta > * {
+  padding: 1px 4px;
+}
+.col.blocked .card .meta .late {
+  background: var(--signal);
+}
+.col.done .card {
+  border-width: 1px;
+}
+.col.done .card .title {
+  text-decoration: line-through;
+  font-weight: 500;
+}
+.col.done .card .tag,
+.col.done .card .score {
+  display: none;
+}
+.col.done .card .meta {
+  color: var(--mute);
+}
+.col.done .card .meta span:last-child::before {
+  content: "✓ ";
+}
