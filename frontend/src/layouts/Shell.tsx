@@ -1,9 +1,13 @@
 import { NavLink, Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import { useState } from "react";
+import { useTaskStore } from "../pages/board/taskStore";
+import { getColumnTasks } from "../pages/board/utils";
 
 export default function Shell() {
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const { taskMap } = useTaskStore();
+  const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
   return (
     <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
       {/* 左侧边栏 */}
@@ -45,7 +49,10 @@ export default function Shell() {
         <nav className="grp" aria-label="项目" data-l="// 项目">
           <NavLink to="/overview">概览</NavLink>
           <NavLink to="/board">
-            任务<span className="risk" id="risk-count" hidden />
+            任务
+            <span className="risk" id="risk-count" hidden={riskCount === 0}>
+              {riskCount}
+            </span>
           </NavLink>
           <NavLink to="/progress">进度</NavLink>
           <NavLink to="/reports">统计报表</NavLink>

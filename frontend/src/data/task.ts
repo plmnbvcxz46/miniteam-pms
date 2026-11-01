@@ -365,7 +365,7 @@ const taskSeeds: TaskSeed[] = [
     assignee: devB,
     milestone: milestones.D,
     score: 74,
-    critical: false,
+    critical: true,
     progress: 60,
     planStart: "2026-10-20",
     dueDate: "2026-10-23",

@@ -2,6 +2,7 @@ import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
 import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
+import TaskProvider from "./pages/board/TaskProvider";
 import ReportsPage from "./pages/reports/ReportsPage";
 import DocumentsPage from "./pages/documents/DocumentsPage";
 import MembersPage from "./pages/members/MembersPage";
@@ -28,5 +29,9 @@ const router = createHashRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <TaskProvider>
+      <RouterProvider router={router} />
+    </TaskProvider>
+  );
 }
