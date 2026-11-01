@@ -5,6 +5,11 @@
 #rp-hero {
   padding: 12px 14px;
   gap: 6px;
+  justify-content: space-between;
+}
+#rp-hero.calm {
+  background: var(--signal);
+  color: var(--paper);
 }
 #rp-hero .hk {
   align-items: flex-start;
@@ -25,17 +30,120 @@
   font-size: 14px;
   font-weight: 900;
 }
-.hero .hsub {
-  font-family: var(--mono);
+#rp-hero .fstatus {
+  font-family: var(--sans);
   font-size: 11px;
-  font-weight: 700;
-  line-height: 1.45;
+  font-weight: 900;
 }
+
+/* ---------- 进度条与日期刻度 ---------- */
+.ftrack {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+}
+.fbar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 9px;
+}
+.fbar-solid {
+  height: 100%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+/* 实心块与斜纹块平齐拼接，交界处保持垂直直线 */
+.fbar-over {
+  flex: 1;
+  height: 100%;
+  background: repeating-linear-gradient(
+    135deg,
+    currentColor 0 3px,
+    transparent 3px 6px
+  );
+}
+.fbar-early {
+  flex: 1;
+  height: 0;
+  align-self: center;
+  border-top: 2px dashed currentColor;
+  margin-left: 3px;
+}
+.fdates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ---------- 大号日期与延期天数 ---------- */
 .hero .huge {
   font-family: var(--mono);
   font-weight: 800;
-  font-size: 56px;
-  line-height: 0.85;
+  font-size: 58px;
+  line-height: 0.88;
   letter-spacing: -3px;
   margin-top: auto;
+}
+.fdelay {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+/* ---------- 底部超期任务摘要栏 ---------- */
+.ffoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 7px;
+  border-top: 1px solid currentColor;
+  font-size: 11px;
+  line-height: 1.2;
+  min-width: 0;
+}
+.ffoot-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ftask {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+.ftask .fname {
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ftask b {
+  font-family: var(--mono);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.fsep {
+  font-style: normal;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+.fmore {
+  font-family: var(--mono);
+  flex-shrink: 0;
+}
+.fnone {
+  font-weight: 700;
 }

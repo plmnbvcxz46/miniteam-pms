@@ -10,6 +10,7 @@ import {
   weeklyCompleted,
   workload,
 } from "../../data/reports";
+import { toMonthDay } from "./utils";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";
 import LoadPanel from "./components/load/LoadPanel";
@@ -45,7 +46,11 @@ export default function ReportsPage() {
         <LoadPanel workload={workload} />
         <WeeklyPanel items={weeklyCompleted} />
         <DeviationPanel items={durationDeviation} />
-        <ForecastHero forecast={forecast} />
+        <ForecastHero
+          forecast={forecast}
+          todayDate={toMonthDay(currentBurndown.today, true)}
+          deviations={durationDeviation}
+        />
       </div>
     </section>
   );

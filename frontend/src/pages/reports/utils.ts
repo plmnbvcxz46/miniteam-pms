@@ -44,7 +44,7 @@ export function formatKicker(summary: ReportSummary): string {
  */
 export function formatDelayText(delayDays: number): string {
   if (delayDays > 0) return `晚 ${delayDays} 天`;
-  if (delayDays < 0) return `提前 ${Math.abs(delayDays)} 天`;
+  if (delayDays < 0) return `早 ${Math.abs(delayDays)} 天`;
   return "按计划";
 }
 
