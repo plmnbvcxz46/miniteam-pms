@@ -17,7 +17,7 @@ const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 export default function BoardPage() {
   const navigate = useNavigate();
-  const { taskMap, moveTask } = useTaskStore();
+  const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 
   const handleDrop = (taskId: number, target: DropTarget) => {
@@ -48,7 +48,12 @@ export default function BoardPage() {
 
   return (
     <section className="view" id="view-board" data-view="board">
-      <BoardHeader kicker={kicker} filter={filter} onChangeFilter={setFilter} />
+      <BoardHeader
+        kicker={kicker}
+        filter={filter}
+        onChangeFilter={setFilter}
+        onCreateTask={() => openTaskForm()}
+      />
 
       <div className="scroll-x">
         <div className="board" id="board">
@@ -59,11 +64,16 @@ export default function BoardPage() {
               tasks={getColumnTasks(taskMap, status)}
               drag={drag}
               isDimmed={isDimmed}
+              freshTaskId={freshTaskId}
               onPressCard={handlePress}
               onOpenTask={handleOpenTask}
               head={
                 status === "TODO" && (
-                  <button className="addcard" type="button">
+                  <button
+                    className="addcard"
+                    type="button"
+                    onClick={() => openTaskForm()}
+                  >
                     新建任务
                   </button>
                 )

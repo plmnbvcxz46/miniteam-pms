@@ -14,7 +14,7 @@ export default function TaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { taskMap, activityMap, moveTask } = useTaskStore();
+  const { taskMap, activityMap, moveTask, openTaskForm } = useTaskStore();
 
   // 只在进入页面时判断一次：任务之间跳转会换掉 location.key
   const [openedDirectly] = useState(location.key === "default");
@@ -45,6 +45,7 @@ export default function TaskPage() {
         task={task}
         onBack={handleBack}
         onChangeStatus={handleChangeStatus}
+        onEdit={() => openTaskForm(task.id)}
       />
       <TaskFigures task={task} />
       <div className="tkg">

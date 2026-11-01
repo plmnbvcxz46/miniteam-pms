@@ -8,12 +8,14 @@ interface TaskHeaderProps {
   task: TaskDetail;
   onBack: () => void;
   onChangeStatus: (status: TaskStatus) => void;
+  onEdit: () => void;
 }
 
 export default function TaskHeader({
   task,
   onBack,
   onChangeStatus,
+  onEdit,
 }: TaskHeaderProps) {
   return (
     <div className="vh">
@@ -46,7 +48,7 @@ export default function TaskHeader({
       </div>
       <div className="va tk-acts">
         <StatusChips status={task.status} onChange={onChangeStatus} />
-        <button className="btn" type="button">
+        <button className="btn" type="button" onClick={onEdit}>
           编辑
         </button>
       </div>

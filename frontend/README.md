@@ -36,9 +36,9 @@ src/
 | 统计报表 reports       | ✓   | ✓     | ✓     |                   |
 | 团队协作 collab        | ✓   | ✓     | ✓     |                   |
 | 概览 overview          | ✓   |        |        |                   |
-| 任务详情 board/task    | ✓   | ✓     | ✓     | 状态切换、跳转 ✓ |
+| 任务详情 board/task    | ✓   | ✓     | ✓     | 状态、跳转、编辑 ✓ |
 | 进度 progress          | ✓   |        |        |                   |
-| 看板 board             | ✓   | ✓     | ✓     | 拖拽、筛选、跳转 ✓ |
+| 看板 board             | ✓   | ✓     | ✓     | 拖拽、筛选、新建 ✓ |
 | 设置 overlays/settings | ✓   |        |        | 开关 ✓，分区切换 |
 
 表按建议顺序排列，先易后难。
@@ -85,6 +85,5 @@ pages/*/XxxPage.css
 ## 待定
 
 - 无样式组件库：Base UI 或 Radix（加交互前定）
-- 表单抽屉：页面通过 Context 让 Shell 打开，5 种表单（新建任务、编辑任务、上传文档、邀请成员、新建项目）
-- `overlays/task/TashDrawer.tsx` 改名为 `TaskDrawer.tsx`
+- 表单抽屉：新建项目还没做
 - 全部页面填完后删除 `prototype/`

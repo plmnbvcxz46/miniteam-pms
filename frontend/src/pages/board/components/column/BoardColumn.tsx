@@ -17,6 +17,7 @@ interface BoardColumnProps {
   tasks: TaskDetail[];
   drag: CardDrag | null;
   isDimmed: (task: TaskDetail) => boolean;
+  freshTaskId: number | null;
   onPressCard: (
     e: PointerEvent<HTMLElement>,
     taskId: number,
@@ -34,6 +35,7 @@ export default function BoardColumn({
   tasks,
   drag,
   isDimmed,
+  freshTaskId,
   onPressCard,
   onOpenTask,
   head,
@@ -62,7 +64,7 @@ export default function BoardColumn({
             {index === placeholderIndex && placeholder}
             <TaskCard
               task={task}
-              className={isDimmed(task) ? "dimmed" : ""}
+              className={`${isDimmed(task) ? "dimmed" : ""} ${task.id === freshTaskId ? "fresh" : ""}`.trim()}
               onPointerDown={(e) => onPressCard(e, task.id, { status, index })}
               onClick={() => onOpenTask(task.id)}
             />

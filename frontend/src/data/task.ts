@@ -28,6 +28,11 @@ export const taskStatusKey: Record<TaskStatus, string> = {
   DONE: "done",
 };
 
+/** 优先级得分对应的档位 */
+export function getPriorityLabel(score: number): string {
+  return score >= 70 ? "高" : score >= 40 ? "中" : "低";
+}
+
 /* =========================================================
  * 二、接口假数据
  * ========================================================= */
@@ -35,7 +40,7 @@ export const taskStatusKey: Record<TaskStatus, string> = {
 const { pmA, devA, devB, qaC } = users;
 
 /** 里程碑（阶段） */
-const milestones = {
+export const milestones = {
   A: { id: 1, name: "A 需求分析" },
   B: { id: 2, name: "B 数据库设计" },
   C: { id: 3, name: "C 后端开发" },
@@ -561,7 +566,7 @@ function toTaskDetail(seed: TaskSeed, index: number): TaskDetail {
   return {
     ...fields,
     taskNo: seed.id,
-    priority: { label: score >= 70 ? "高" : score >= 40 ? "中" : "低", score },
+    priority: { label: getPriorityLabel(score), score },
     sortOrder: index,
     parentId: null,
     milestoneId: seed.milestone?.id ?? null,

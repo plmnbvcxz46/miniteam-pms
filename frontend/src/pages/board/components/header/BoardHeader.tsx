@@ -10,12 +10,14 @@ interface BoardHeaderProps {
   kicker: string;
   filter: BoardFilter;
   onChangeFilter: (filter: BoardFilter) => void;
+  onCreateTask: () => void;
 }
 
 export default function BoardHeader({
   kicker,
   filter,
   onChangeFilter,
+  onCreateTask,
 }: BoardHeaderProps) {
   return (
     <div className="vh">
@@ -38,7 +40,7 @@ export default function BoardHeader({
             </button>
           ))}
         </div>
-        <button className="btn go" type="button">
+        <button className="btn go" type="button" onClick={onCreateTask}>
           + 新建任务
         </button>
       </div>

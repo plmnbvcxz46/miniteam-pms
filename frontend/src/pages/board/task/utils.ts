@@ -60,6 +60,18 @@ function countWorkdays(start: string, today: string): number {
   return count;
 }
 
+/** 从开始日算起第 planDays 个工作日，跳过周末 */
+export function getDueDate(start: string, planDays: number): string {
+  let time = Date.parse(start);
+  let left = planDays;
+  for (;;) {
+    const weekday = new Date(time).getUTCDay();
+    if (weekday !== 0 && weekday !== 6) left--;
+    if (left <= 0) return new Date(time).toISOString().slice(0, 10);
+    time += DAY_MS;
+  }
+}
+
 function getUsedDays(
   task: TaskDetail,
   status: TaskStatus,
