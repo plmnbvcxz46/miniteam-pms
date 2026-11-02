@@ -17,15 +17,31 @@ export default function TaskHeader({
   onChangeStatus,
   onEdit,
 }: TaskHeaderProps) {
+  const milestoneLabel = task.milestone?.name
+    ? task.milestone.name.replace(/^([A-Za-z0-9]+)\s+/, "$1 · ")
+    : "未归入阶段";
+  const taskCode = `T-${task.taskNo ?? task.id}`;
+
   return (
     <div className="vh">
       <div className="vl">
-        <div className="k">
+        <div className="k raw tk-nav">
           <button className="tk-back" type="button" onClick={onBack}>
-            返回
+            ← 返回
           </button>
+          <span className="tk-sep" aria-hidden="true">
+            |
+          </span>
           <span className="tk-crumb">
-            任务 / {task.milestone?.name ?? "未归入阶段"}
+            <span>任务</span>
+            <span className="tk-slash" aria-hidden="true">
+              /
+            </span>
+            <span>{milestoneLabel}</span>
+            <span className="tk-slash" aria-hidden="true">
+              /
+            </span>
+            <span className="tk-code">{taskCode}</span>
           </span>
         </div>
         <h1 className="vt">{task.title}</h1>

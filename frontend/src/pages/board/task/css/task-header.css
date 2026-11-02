@@ -2,17 +2,60 @@
    任务详情头部样式 (Task Header)
    ========================================================================== */
 
+.tk-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .tk-back {
   all: unset;
+  box-sizing: border-box;
   cursor: pointer;
-  border-bottom: 1.5px solid var(--ink);
-  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
 }
-.tk-back::before {
-  content: "← ";
+.tk-back:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.tk-back:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+.tk-sep,
+.tk-slash {
+  color: var(--mute);
+  font-weight: 600;
+  user-select: none;
 }
 .tk-crumb {
-  color: var(--mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+.tk-code {
+  font-family: var(--mono);
+  font-weight: 700;
 }
 #view-task .vt {
   font-size: 44px;
