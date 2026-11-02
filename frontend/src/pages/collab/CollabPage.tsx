@@ -295,14 +295,16 @@ export default function CollabPage() {
 
   return (
     <section className="view" id="view-team" data-view="team">
-      <CollabHeader kicker={kicker} />
+      <CollabHeader
+        kicker={kicker}
+        onCreate={() => setDrawer({ taskId: null, lockTask: false })}
+      />
       <div className="tg">
         <ThreadsPanel
           discussions={discussionList}
           selectedId={draftDiscussion !== null ? -1 : selectedId}
           detailMap={detailMap}
           onSelectDiscussion={handleSelectDiscussion}
-          onCreate={() => setDrawer({ taskId: null, lockTask: false })}
         />
         <ThreadDetailPanel
           detail={currentDetail}

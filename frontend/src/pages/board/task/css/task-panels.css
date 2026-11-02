@@ -73,6 +73,11 @@
 .dep-h::before {
   content: "// ";
 }
+/* 任务详情里的“发起讨论”，沿用看板的虚线新建按钮，只调整外边距 */
+#tk-links .addcard {
+  width: 100%;
+  margin: 12px 0 4px;
+}
 .dep-none {
   font-family: var(--mono);
   font-size: 11px;

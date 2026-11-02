@@ -32,9 +32,6 @@ export default function TaskInfoPanel({
             <span className="k">// LINKS</span>
             <h2>文档与讨论</h2>
           </div>
-          <button className="btn" type="button" onClick={onCreateDiscussion}>
-            + 发起讨论
-          </button>
         </div>
         <div id="tk-links">
           {task.documents.map((doc) => (
@@ -58,6 +55,13 @@ export default function TaskInfoPanel({
             />
           ))}
           {!hasLinks && <div className="dep-none">还没有关联的文档或讨论</div>}
+          <button
+            className="addcard"
+            type="button"
+            onClick={onCreateDiscussion}
+          >
+            发起讨论
+          </button>
         </div>
       </div>
     </section>

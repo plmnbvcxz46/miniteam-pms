@@ -10,7 +10,6 @@ interface ThreadsPanelProps {
   selectedId: number;
   detailMap: Record<number, DiscussionDetail>;
   onSelectDiscussion: (id: number) => void;
-  onCreate: () => void;
 }
 
 export default function ThreadsPanel({
@@ -18,7 +17,6 @@ export default function ThreadsPanel({
   selectedId,
   detailMap,
   onSelectDiscussion,
-  onCreate,
 }: ThreadsPanelProps) {
   return (
     <section className="pnl flat">
@@ -27,14 +25,9 @@ export default function ThreadsPanel({
           <span className="k">// TOPICS</span>
           <h2>讨论话题</h2>
         </div>
-        <div className="r">
-          <button className="btn" type="button" onClick={onCreate}>
-            + 发起讨论
-          </button>
-          <span className="n" id="th-count">
-            {formatPadCount(discussions.length)}
-          </span>
-        </div>
+        <span className="n" id="th-count">
+          {formatPadCount(discussions.length)}
+        </span>
       </div>
       <div className="threads scroll-y" id="threads">
         {discussions.map((item) => {
