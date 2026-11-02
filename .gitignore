@@ -50,3 +50,6 @@ desktop.ini
 *.ppt
 *.xlsx
 ~$*
+
+# Claude Code 本地目录（worktree、临时配置）
+.claude/

@@ -4,7 +4,7 @@ interface DocumentDetailFactsProps {
   doc: DocumentItem;
   status: string;
   isLate: boolean;
-  onTaskClick?: (taskId: string) => void;
+  onTaskClick?: (taskId: number) => void;
 }
 
 export default function DocumentDetailFacts({
@@ -17,11 +17,11 @@ export default function DocumentDetailFacts({
     <dl className="facts" id="doc-facts">
       <dt>关联任务</dt>
       <dd>
-        {doc.tid ? (
+        {doc.taskId ? (
           <span
             className="lnk"
-            data-t={doc.tid}
-            onClick={() => onTaskClick?.(doc.tid!)}
+            data-t={doc.taskId}
+            onClick={() => onTaskClick?.(doc.taskId!)}
           >
             {doc.task}
           </span>

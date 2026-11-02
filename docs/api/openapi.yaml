@@ -3462,6 +3462,18 @@ components:
       - id
       - taskNo
       - title
+    DocumentRef:
+      type: object
+      description: 文档引用，评论里 @ 文档时用
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+      - id
+      - name
     ProjectRef:
       type: object
       properties:
@@ -5317,6 +5329,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserBrief'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRef'
+          description: 内容里 @ 的文档，只能是讨论所属任务下的文档
         createdAt:
           type: string
           example: '2026-10-22 09:30:00'
@@ -5326,6 +5343,7 @@ components:
       - user
       - content
       - mentions
+      - documents
       - createdAt
     DiscussionDetail:
       type: object
@@ -5386,6 +5404,18 @@ components:
         content:
           type: string
           description: 第一条评论
+        mentionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 第一条评论里 @ 的用户
+        documentIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 第一条评论里 @ 的文档，必须属于 taskId 对应的任务
       required:
       - title
       - content
@@ -5400,6 +5430,12 @@ components:
             type: integer
             format: int64
           description: '@ 的用户'
+        documentIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: '@ 的文档，必须属于讨论所属的任务'
       required:
       - content
     Defect:

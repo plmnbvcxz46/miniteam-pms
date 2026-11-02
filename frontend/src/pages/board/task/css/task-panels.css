@@ -3,11 +3,8 @@
    ========================================================================== */
 
 .tt {
+  flex-shrink: 0;
   padding-top: 8px;
-}
-.tt-trk {
-  height: 52px;
-  border-bottom: 1px solid var(--ink);
 }
 .tk-desc {
   margin: 10px 0 0;
@@ -76,9 +73,43 @@
 .dep-h::before {
   content: "// ";
 }
+/* 任务详情里的“上传文件”“发起讨论”，沿用看板的虚线新建按钮，两个并排 */
+#tk-links .tk-adds {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+#tk-links .tk-adds .addcard {
+  flex: 1;
+  margin: 0;
+}
 .dep-none {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--mute);
   padding: 8px 0;
+}
+
+/* 操作记录列表 */
+.feed {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ev {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 12px;
+  line-height: 1.55;
+  outline: none;
+}
+.ev time {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+  margin-bottom: 3px;
+}
+.ev p {
+  margin: 0;
 }

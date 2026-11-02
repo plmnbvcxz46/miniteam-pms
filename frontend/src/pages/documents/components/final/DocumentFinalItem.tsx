@@ -18,7 +18,7 @@ export default function DocumentFinalItem({
 
   return (
     <button
-      key={doc.id || doc.tid || doc.n}
+      key={doc.id}
       type="button"
       className="df"
       role="option"

@@ -51,13 +51,21 @@ export default function TaskPage() {
       <div className="tkg">
         <SchedulePanel
           task={task}
-          today={taskTodayDate}
+          activities={activityMap[task.id]}
           onOpenTask={handleOpenTask}
         />
         <TaskInfoPanel
           task={task}
-          onOpenDocument={() => navigate("/documents")}
+          onOpenDocument={(documentId) =>
+            navigate(`/documents?id=${documentId}`)
+          }
           onOpenDiscussion={() => navigate("/collab")}
+          onUploadDocument={() =>
+            navigate("/documents", { state: { uploadTaskId: task.id } })
+          }
+          onCreateDiscussion={() =>
+            navigate("/collab", { state: { newDiscussionTaskId: task.id } })
+          }
         />
         <TaskLogPanel activities={activityMap[task.id]} today={taskTodayDate} />
       </div>

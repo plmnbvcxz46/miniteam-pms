@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   activities as initialActivities,
   collabTodayDate,
@@ -7,27 +7,46 @@ import {
   discussionDetails as initialDiscussionDetails,
   discussions as initialDiscussions,
 } from "../../data/collab";
-import { currentUser } from "../../data/global";
+import { currentUser, users } from "../../data/global";
 import type {
   Comment,
   DiscussionBrief,
   DiscussionDetail,
+  DiscussionFormValues,
+  DiscussionTask,
+  MentionValue,
 } from "../../types/collab";
 import type { Activity } from "../../types/global";
+import { useTaskStore } from "../board/taskStore";
 import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
+import NewDiscussionDrawer from "./components/drawer/NewDiscussionDrawer";
 import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";
 import CollabHeader from "./components/header/CollabHeader";
 import ThreadsPanel from "./components/threads/ThreadsPanel";
 import {
-  createDraftDiscussionFromActivity,
+  createDraftFromActivity,
   findCommentIdByActivity,
   findDiscussionIdByActivity,
   formatCollabKicker,
+  getTaskDocumentRefs,
+  toDiscussionTask,
 } from "./utils";
 import "./css/collab.css";
 
+/** 可以 @ 的成员：项目成员里除了自己 */
+const mentionUsers = Object.values(users).filter(
+  (user) => user.id !== currentUser.id,
+);
+
+/** 从任务页跳过来发起讨论时，通过路由 state 带上任务 */
+interface CollabLocationState {
+  newDiscussionTaskId?: number;
+}
+
 export default function CollabPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { taskMap } = useTaskStore();
 
   // 顶层状态
   const [discussionList, setDiscussionList] =
@@ -40,14 +59,38 @@ export default function CollabPage() {
   const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
   const [draftDiscussion, setDraftDiscussion] =
     useState<DiscussionDetail | null>(null);
+  // 草稿对话预先放进回复框的内容（文件动态会带上 @ 这份文件）
+  const [draftInitial, setDraftInitial] = useState<MentionValue | null>(null);
   const [activeActivityId, setActiveActivityId] = useState<number | null>(null);
   const [flashComment, setFlashComment] = useState<{
     commentId: number;
     triggerKey: number;
   } | null>(null);
+  // 发起讨论抽屉：为空是关着，lockTask 是从任务页进来、任务不让改
+  const [drawer, setDrawer] = useState<{
+    taskId: number | null;
+    lockTask: boolean;
+  } | null>(() => {
+    const taskId = (location.state as CollabLocationState | null)
+      ?.newDiscussionTaskId;
+    return taskId !== undefined ? { taskId, lockTask: true } : null;
+  });
+
+  // 路由 state 只用一次，刷新或前进后退不会再弹出抽屉
+  useEffect(() => {
+    if ((location.state as CollabLocationState | null)?.newDiscussionTaskId) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   // 当前展示的讨论详情（草稿会话优先）
   const currentDetail = draftDiscussion ?? detailMap[selectedId];
+
+  // 当前讨论所属任务下可以 @ 的文件
+  const taskDocuments = useMemo(
+    () => getTaskDocumentRefs(currentDetail?.task?.id, taskMap),
+    [currentDetail?.task?.id, taskMap],
+  );
 
   // 顶栏 kicker 统计
   const todayActivityCount = useMemo(() => {
@@ -76,22 +119,25 @@ export default function CollabPage() {
   // 切换左侧讨论（退出草稿与动态高亮，清空闪烁）
   const handleSelectDiscussion = (id: number) => {
     setDraftDiscussion(null);
+    setDraftInitial(null);
     setActiveActivityId(null);
     setSelectedId(id);
     setFlashComment(null);
   };
 
-  // 点击右侧动态项：若有真对话则跳转并聚焦高亮，若无则打开空草稿对话
+  // 点击右侧动态项：有对应讨论就跳转并聚焦高亮，没有就打开空草稿并自动绑定任务
   const handleSelectActivity = (activity: Activity) => {
     setActiveActivityId(activity.id);
 
     const targetDiscussionId = findDiscussionIdByActivity(
       activity,
       discussionList,
+      detailMap,
     );
 
     if (targetDiscussionId !== null) {
       setDraftDiscussion(null);
+      setDraftInitial(null);
       setSelectedId(targetDiscussionId);
       const targetDetail = detailMap[targetDiscussionId];
       const commentId = findCommentIdByActivity(activity, targetDetail);
@@ -101,67 +147,89 @@ export default function CollabPage() {
         setFlashComment(null);
       }
     } else {
-      const draft = createDraftDiscussionFromActivity(activity, currentUser);
+      const { draft, initialValue } = createDraftFromActivity(
+        activity,
+        currentUser,
+        taskMap,
+      );
       setDraftDiscussion(draft);
+      setDraftInitial(initialValue);
       setFlashComment(null);
     }
   };
 
-  // 发送回复
-  const handleSendReply = (content: string) => {
-    if (!currentDetail) return;
+  const toComment = (value: MentionValue): Comment => ({
+    id: Date.now(),
+    user: currentUser,
+    content: value.text,
+    mentions: value.mentions,
+    documents: value.documents,
+    createdAt: `${collabTodayDate} 刚刚`,
+  });
 
-    const newComment: Comment = {
+  // 新建讨论：加进列表、选中、追加一条“发起讨论”动态。草稿发出第一条消息和抽屉提交共用
+  const createDiscussion = (
+    title: string,
+    task: DiscussionTask | null,
+    creator: DiscussionDetail["creator"],
+    comment: Comment,
+  ) => {
+    const newId = Math.max(0, ...discussionList.map((d) => d.id)) + 1;
+
+    setDetailMap((prev) => ({
+      ...prev,
+      [newId]: {
+        id: newId,
+        title,
+        creator,
+        createdAt: comment.createdAt,
+        task,
+        comments: [comment],
+      },
+    }));
+
+    const newBrief: DiscussionBrief = {
+      id: newId,
+      title,
+      task: task
+        ? { id: task.id, taskNo: task.taskNo, title: task.title }
+        : null,
+      commentCount: 1,
+      lastCommentAt: "刚刚",
+    };
+    setDiscussionList((prev) => [newBrief, ...prev]);
+    setDraftDiscussion(null);
+    setDraftInitial(null);
+    setActiveActivityId(null);
+    setFlashComment(null);
+    setSelectedId(newId);
+
+    const newActivity: Activity = {
       id: Date.now(),
       user: currentUser,
-      content,
-      mentions: [],
-      createdAt: `${collabTodayDate} 刚刚`,
+      targetType: "DISCUSSION",
+      targetId: newId,
+      action: "CREATE",
+      detail: `${currentUser.realName} 发起讨论 <b>${title}</b>`,
+      createdAt: "刚刚",
     };
+    setActivityList((prev) => [newActivity, ...prev]);
+  };
+
+  // 发送回复
+  const handleSendReply = (value: MentionValue) => {
+    if (!currentDetail) return;
+
+    const newComment = toComment(value);
 
     // 1. 若当前处于草稿空对话，发送首条消息时正式转为真对话
     if (draftDiscussion !== null) {
-      const newId = Math.max(0, ...discussionList.map((d) => d.id)) + 1;
-      const newDetail: DiscussionDetail = {
-        ...draftDiscussion,
-        id: newId,
-        comments: [newComment],
-      };
-
-      setDetailMap((prev) => ({
-        ...prev,
-        [newId]: newDetail,
-      }));
-
-      const newBrief: DiscussionBrief = {
-        id: newId,
-        title: draftDiscussion.title,
-        task: draftDiscussion.task
-          ? {
-              id: draftDiscussion.task.id,
-              taskNo: draftDiscussion.task.taskNo,
-              title: draftDiscussion.task.title,
-            }
-          : null,
-        commentCount: 1,
-        lastCommentAt: "刚刚",
-      };
-
-      setDiscussionList((prev) => [newBrief, ...prev]);
-      setDraftDiscussion(null);
-      setSelectedId(newId);
-
-      const newActivity: Activity = {
-        id: Date.now(),
-        user: currentUser,
-        targetType: "DISCUSSION",
-        targetId: newId,
-        action: "CREATE",
-        detail: `${currentUser.realName} 发起讨论 <b>${draftDiscussion.title}</b>`,
-        createdAt: "刚刚",
-      };
-
-      setActivityList((prev) => [newActivity, ...prev]);
+      createDiscussion(
+        draftDiscussion.title,
+        draftDiscussion.task,
+        draftDiscussion.creator,
+        newComment,
+      );
       return;
     }
 
@@ -203,14 +271,34 @@ export default function CollabPage() {
     setActivityList((prev) => [newActivity, ...prev]);
   };
 
+  // 抽屉提交：POST /projects/{projectId}/discussions
+  const handleCreateDiscussion = (values: DiscussionFormValues) => {
+    const task = values.taskId !== null ? taskMap[values.taskId] : undefined;
+    createDiscussion(
+      values.title,
+      task ? toDiscussionTask(task) : null,
+      currentUser,
+      toComment(values.content),
+    );
+    setDrawer(null);
+  };
+
   // 点击任务跳转到 /board/task
   const handleTaskClick = (taskId: number) => {
     navigate(`/board/task?id=${taskId}`);
   };
 
+  // 点击消息里的文件标签，跳到文档页并选中这份文档
+  const handleOpenDocument = (documentId: number) => {
+    navigate(`/documents?id=${documentId}`);
+  };
+
   return (
     <section className="view" id="view-team" data-view="team">
-      <CollabHeader kicker={kicker} />
+      <CollabHeader
+        kicker={kicker}
+        onCreate={() => setDrawer({ taskId: null, lockTask: false })}
+      />
       <div className="tg">
         <ThreadsPanel
           discussions={discussionList}
@@ -221,18 +309,33 @@ export default function CollabPage() {
         <ThreadDetailPanel
           detail={currentDetail}
           flashComment={flashComment}
+          users={mentionUsers}
+          taskDocuments={taskDocuments}
+          replyInitial={draftDiscussion !== null ? draftInitial : null}
           onTaskClick={handleTaskClick}
+          onOpenDocument={handleOpenDocument}
           onSendReply={handleSendReply}
         />
         <ActivityFeedPanel
           activities={activityList}
           discussions={discussionList}
+          detailMap={detailMap}
           selectedDiscussionId={selectedId}
           activeActivityId={activeActivityId}
           isDraftActive={draftDiscussion !== null}
           onSelectActivity={handleSelectActivity}
         />
       </div>
+      {drawer && (
+        <NewDiscussionDrawer
+          tasks={taskMap}
+          initialTaskId={drawer.taskId}
+          lockTask={drawer.lockTask}
+          users={mentionUsers}
+          onClose={() => setDrawer(null)}
+          onSubmit={handleCreateDiscussion}
+        />
+      )}
     </section>
   );
 }

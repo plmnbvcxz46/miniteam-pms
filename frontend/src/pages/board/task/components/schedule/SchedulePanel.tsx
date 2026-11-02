@@ -1,16 +1,17 @@
+import TaskBar from "../../../../../components/TaskBar/TaskBar";
+import type { Activity } from "../../../../../types/global";
 import type { DependencyTask, TaskDetail } from "../../../../../types/task";
 import DependencyRow from "./DependencyRow";
-import TaskTimeline from "./TaskTimeline";
 
 interface SchedulePanelProps {
   task: TaskDetail;
-  today: string;
+  activities: Activity[];
   onOpenTask: (taskId: number) => void;
 }
 
 export default function SchedulePanel({
   task,
-  today,
+  activities,
   onOpenTask,
 }: SchedulePanelProps) {
   const renderDeps = (deps: DependencyTask[], emptyText: string) =>
@@ -33,13 +34,15 @@ export default function SchedulePanel({
           <span className="k">// SCHEDULE</span>
           <h2>排期与依赖</h2>
         </div>
-        <span className="u">每格一天</span>
+        <span className="u">单位（天）</span>
       </div>
-      <TaskTimeline task={task} today={today} />
+      <div className="tt">
+        <TaskBar task={task} activities={activities} />
+      </div>
       <div className="scroll-y">
-        <div className="dep-h">前置任务，做完它们才能开始</div>
+        <div className="dep-h">PREDECESSORS</div>
         {renderDeps(task.predecessors, "没有前置任务")}
-        <div className="dep-h">后续任务，在等这项完成</div>
+        <div className="dep-h">SUCCESSORS</div>
         {renderDeps(task.successors, "没有后续任务")}
       </div>
     </section>

@@ -4,6 +4,7 @@
  */
 import type {
   Activity,
+  DocumentRef,
   IssueInfo,
   TaskRef,
   TaskStatus,
@@ -26,6 +27,8 @@ export interface Comment {
   user: UserBrief;
   content: string;
   mentions: UserBrief[];
+  /** 内容里 @ 的文档，只能是讨论所属任务下的文档 */
+  documents: DocumentRef[];
   /** yyyy-MM-dd HH:mm:ss */
   createdAt: string;
 }
@@ -53,6 +56,10 @@ export interface DiscussionCreate {
   taskId?: number;
   /** 第一条评论 */
   content: string;
+  /** 第一条评论里 @ 的用户 ID 列表 */
+  mentionIds?: number[];
+  /** 第一条评论里 @ 的文档 ID 列表，必须属于 taskId 对应的任务 */
+  documentIds?: number[];
 }
 
 /** 发表回复请求体（CommentCreate），POST /discussions/{discussionId}/comments */
@@ -60,6 +67,24 @@ export interface CommentCreate {
   content: string;
   /** @ 的用户 ID 列表 */
   mentionIds?: number[];
+  /** @ 的文档 ID 列表，必须属于讨论所属的任务 */
+  documentIds?: number[];
+}
+
+/** 输入框里的内容和已选中的 @ 对象，回复框和发起讨论表单共用（纯前端） */
+export interface MentionValue {
+  text: string;
+  mentions: UserBrief[];
+  documents: DocumentRef[];
+}
+
+/** 发起讨论表单的值，对应 DiscussionCreate 里页面能填的字段 */
+export interface DiscussionFormValues {
+  title: string;
+  /** 为空是不关联任务 */
+  taskId: number | null;
+  /** 第一条评论的内容和 @ 的对象 */
+  content: MentionValue;
 }
 
 /** 团队协作页快照（预留往期切换使用） */

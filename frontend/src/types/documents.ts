@@ -38,12 +38,12 @@ export type DocVersionRecord = DocumentVersionItem | DocHistoryTuple;
  * 项目文档数据项定义（底层事实数据模型）
  */
 export interface DocumentItem {
-  /** 唯一标识（支持基于 ID 选中和状态更新） */
-  id?: string;
+  /** 唯一标识，和任务、讨论里引用文档用的 id 是同一个 */
+  id: number;
   /** 文档名称 */
   n: string;
-  /** 关联任务ID（可选，如 t129） */
-  tid?: string;
+  /** 所属任务 ID，和任务模块的任务 id 是同一个，没有所属任务时为空 */
+  taskId?: number;
   /** 是否定稿（可选，true 为已定稿） */
   final?: boolean;
   /** 关联任务名称或占位符，例如 "A 需求分析" 或 "—" */

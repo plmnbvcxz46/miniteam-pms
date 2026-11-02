@@ -146,7 +146,7 @@
 }
 
 .trk .b.done {
-  border: 1px solid var(--ink);
+  border: 1px dashed var(--ink);
   background: transparent;
 }
 

@@ -1,6 +1,8 @@
 import type { CSSProperties, PointerEvent } from "react";
+import TaskBar from "../../../../components/TaskBar/TaskBar";
 import { taskTodayDate } from "../../../../data/task";
 import type { TaskDetail } from "../../../../types/task";
+import { useTaskStore } from "../../taskStore";
 import { formatMonthDay } from "../../task/utils";
 
 const SCORE_CLASS: Record<string, string> = {
@@ -35,6 +37,7 @@ export default function TaskCard({
   onPointerDown,
   onClick,
 }: TaskCardProps) {
+  const { activityMap } = useTaskStore();
   const { label, score } = task.priority;
 
   return (
@@ -62,9 +65,12 @@ export default function TaskCard({
       </div>
       <span className="title">{task.title}</span>
       {task.status === "DOING" && (
-        <i className="prog" aria-hidden="true">
-          <b style={{ width: `${task.progress}%` }} />
-        </i>
+        <TaskBar
+          task={task}
+          activities={activityMap[task.id]}
+          compact
+          title={`进度 ${task.progress}%`}
+        />
       )}
       <div className="meta">
         <span>{task.assignee?.realName ?? "未分配"}</span>

@@ -43,6 +43,9 @@ export const myPermissions: MemberPermissions = {
   canManageMember: true,
 };
 
+/** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 utils/date 的 getProjectToday() 读取 */
+export const projectTodayDate = "2026-10-22";
+
 /** 本地当前日期（按 Asia/Shanghai），纯前端计算，不走接口 */
 const now = new Date(
   new Date().toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),

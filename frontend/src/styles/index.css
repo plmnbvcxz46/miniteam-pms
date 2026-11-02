@@ -1,5 +1,5 @@
 /* Tako 版：左侧栏 + 顶栏 + 每页标题区（粗黑双色大字 + 刊头双线），内容装进黑框面板；1440x800 基准，缩放适配。
-   橙色规则：实心橙 = 风险 / 结论；橙色细框 = 现在；橙色斜线 = 预计超期；其余黑白。 */
+   橙色规则：实心橙 = 风险 / 结论；橙色细框 = 现在；橙色斜线 = 阻塞 / 逾期（未完成）；黑色虚线框 = 已完成；其余黑白。 */
 :root {
   --ground: #f2f1ec;
   --paper: #fafaf7;
@@ -16,8 +16,8 @@
   --mono: "JetBrains Mono", "Noto Sans SC", ui-monospace, monospace;
   --hatch: repeating-linear-gradient(
     135deg,
-    var(--ink) 0 2px,
-    var(--paper) 2px 7px
+    var(--signal) 0 3px,
+    var(--paper) 3px 6px
   );
   --over: repeating-linear-gradient(
     135deg,
@@ -783,7 +783,7 @@ main {
   background: var(--hatch);
 }
 .key.done {
-  border-width: 1px;
+  border-style: dashed;
 }
 .key.over {
   background: var(--over);

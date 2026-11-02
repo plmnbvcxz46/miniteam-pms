@@ -1,7 +1,9 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { docs as initialDocs } from "../../data/documents";
 import { currentIssue } from "../../data/global";
 import type { DocumentItem } from "../../types/documents";
+import { useTaskStore } from "../board/taskStore";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";
 import DocumentFinal from "./components/final/DocumentFinal";
@@ -15,15 +17,33 @@ export default function DocumentsPage() {
   const [currentDate, setCurrentDate] = useState<string>(currentIssue.todayDate);
   void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
-  // 选中文档的 ID（默认选中 "doc-3"，即 "接口文档"）
-  const [selectedId, setSelectedId] = useState<string | null>("doc-3");
+  // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
+  // 没带或不存在时默认选中 3，即 "接口文档"
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { taskMap: tasks } = useTaskStore();
+  const [searchParams] = useSearchParams();
+  const [selectedId, setSelectedId] = useState<number | null>(() => {
+    const linked = Number(searchParams.get("id"));
+    return initialDocs.some((d) => d.id === linked) ? linked : 3;
+  });
 
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
+  // 从任务详情点“上传文件”跳过来时，路由 state 带着任务 ID，直接打开抽屉并预选这个任务
+  const uploadTaskId = (location.state as { uploadTaskId?: number } | null)
+    ?.uploadTaskId;
+  const [drawerTaskId] = useState<number | null>(uploadTaskId ?? null);
+  useEffect(() => {
+    if (uploadTaskId !== undefined) {
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+  }, [uploadTaskId, location.pathname, location.search, navigate]);
+
   // 抽屉显隐与预选目标 ID
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [drawerTargetDocId, setDrawerTargetDocId] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(uploadTaskId !== undefined);
+  const [drawerTargetDocId, setDrawerTargetDocId] = useState<number | null>(null);
 
   // 过滤后的列表
   const filteredDocs = useMemo(() => {
@@ -66,21 +86,21 @@ export default function DocumentsPage() {
   };
 
   // 任务名映射辅助
-  const taskMap: Record<string, string> = {
-    t129: "A 需求分析",
-    t131: "B 数据库设计",
-    t139: "C 后端开发",
-    t137: "D 前端开发",
-    t150: "E 联调测试",
+  const taskMap: Record<number, string> = {
+    129: "A 需求分析",
+    131: "B 数据库设计",
+    139: "C 后端开发",
+    137: "D 前端开发",
+    150: "E 联调测试",
   };
 
   // 提交上传处理逻辑（增加到列表或在已有文档追加版本）
   const handleUploadSubmit = (data: {
     file: File | null;
     docName: string;
-    targetDocId: string;
+    targetDocId: number | "new";
     note: string;
-    taskId: string;
+    taskId: number;
   }) => {
     const uploadedFileName = data.file ? data.file.name : undefined;
     const uploadedFileSize = data.file ? `${(data.file.size / (1024 * 1024)).toFixed(1)} MB` : "1.5 MB";
@@ -88,10 +108,10 @@ export default function DocumentsPage() {
     if (data.targetDocId === "new") {
       const finalDocName = data.docName || (data.file ? data.file.name.replace(/\.[^.]+$/, "") : "未命名文档");
       const newDoc: DocumentItem = {
-        id: `doc-${Date.now()}`,
+        id: Math.max(0, ...docList.map((d) => d.id)) + 1,
         n: finalDocName,
-        tid: data.taskId,
-        task: taskMap[data.taskId] || "未指定任务",
+        taskId: data.taskId,
+        task: taskMap[data.taskId] || tasks[data.taskId]?.title || "未指定任务",
         v: "v0.1",
         who: "测试经理 A",
         up: currentDate,
@@ -109,7 +129,7 @@ export default function DocumentsPage() {
         ],
       };
       setDocList((prev) => [...prev, newDoc]);
-      setSelectedId(newDoc.id!);
+      setSelectedId(newDoc.id);
     } else {
       setDocList((prev) =>
         prev.map((d) => {
@@ -164,9 +184,7 @@ export default function DocumentsPage() {
         <DocumentDetail
           doc={selectedDoc}
           currentDate={currentDate}
-          onTaskClick={(taskId) => {
-            console.log("跳转任务:", taskId);
-          }}
+          onTaskClick={(taskId) => navigate(`/board/task?id=${taskId}`)}
           onUploadVersion={handleOpenVersionUpload}
         />
       </div>
@@ -177,6 +195,11 @@ export default function DocumentsPage() {
         onClose={() => setIsDrawerOpen(false)}
         docs={docList}
         initialTargetDocId={drawerTargetDocId}
+        initialTask={
+          drawerTaskId !== null && tasks[drawerTaskId]
+            ? { id: drawerTaskId, name: tasks[drawerTaskId].title }
+            : null
+        }
         onSubmit={handleUploadSubmit}
       />
     </section>

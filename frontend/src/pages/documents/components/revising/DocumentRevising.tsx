@@ -7,11 +7,11 @@ interface DocumentRevisingProps {
   /** 修订中的文档列表 */
   docs: DocumentItem[];
   /** 当前选中的文档 ID */
-  selectedId: string | null;
+  selectedId: number | null;
   /** 今日基准日期（从假数据快照注入） */
   currentDate?: string;
   /** 选中回调 */
-  onSelect?: (id: string) => void;
+  onSelect?: (id: number) => void;
 }
 
 export default function DocumentRevising({
@@ -53,13 +53,13 @@ export default function DocumentRevising({
           >
             {docs.map((doc, k) => (
               <DocumentRevisingItem
-                key={doc.id || doc.tid || doc.n}
+                key={doc.id}
                 doc={doc}
                 orderIndex={k}
-                isSelected={Boolean(selectedId && doc.id === selectedId)}
+                isSelected={doc.id === selectedId}
                 todayOffset={today}
                 currentDate={currentDate}
-                onSelect={() => doc.id && onSelect?.(doc.id)}
+                onSelect={() => onSelect?.(doc.id)}
               />
             ))}
           </div>

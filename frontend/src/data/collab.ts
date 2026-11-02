@@ -89,8 +89,9 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         id: 101,
         user: pmA,
         content:
-          "接口文档还差菜单和权限两部分。字段命名先统一成小驼峰，和若依返回的 <em>menuId</em>、<em>parentId</em> 保持一致。",
+          "@接口文档 还差菜单和权限两部分。字段命名先统一成小驼峰，和若依返回的 <em>menuId</em>、<em>parentId</em> 保持一致。",
         mentions: [],
+        documents: [{ id: 3, name: "接口文档" }],
         createdAt: "2026-10-21 16:20:00",
       },
       {
@@ -99,6 +100,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         content:
           "前端这边已经按小驼峰写了，菜单树用的是 <em>children</em>，文档里也请写成这个名字。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 17:05:00",
       },
       {
@@ -107,13 +109,16 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         content:
           "权限部分卡在按钮级权限标识的格式上，<em>project:task:move</em> 这种三段式可以吗？",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-22 09:18:00",
       },
       {
         id: 104,
         user: pmA,
-        content: "可以，就用三段式。这个任务我先移到阻塞，今天下午一起过一遍。",
-        mentions: [],
+        content:
+          "可以，就用三段式。这个任务我先移到阻塞，今天下午 @普通员工 A 一起过一遍。",
+        mentions: [devA],
+        documents: [],
         createdAt: "2026-10-22 09:30:00",
       },
       {
@@ -121,6 +126,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: devA,
         content: "好的，下午两点前我把菜单部分补上。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-22 10:41:00",
       },
     ],
@@ -144,6 +150,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         content:
           "依赖线打算用 SVG 按任务条的实际位置生成，ECharts 的自定义系列不好做描边动画。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 10:02:00",
       },
       {
@@ -151,6 +158,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: pmA,
         content: "同意，动画要跟着时间轴生长，分叉同时画，汇合同时到。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 10:30:00",
       },
       {
@@ -158,6 +166,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: devB,
         content: "明白，我按工作日换算延迟。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 11:12:00",
       },
     ],
@@ -180,6 +189,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: qaC,
         content: "周五下午三点彩排可以吗？教室我已经问过了。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 14:00:00",
       },
       {
@@ -187,6 +197,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: pmA,
         content: "可以。每人讲五分钟，演示放最后。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 14:12:00",
       },
       {
@@ -194,6 +205,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: devA,
         content: "演示用 Chrome，记得提前把缩放设成 100%。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 14:40:00",
       },
       {
@@ -201,6 +213,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: qaC,
         content: "收到，我把顺序写进 PPT 最后一页。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-21 15:02:00",
       },
     ],
@@ -223,6 +236,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: devA,
         content: "菜单数据量很小，我倾向于不分页，一次返回整棵树。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-20 16:10:00",
       },
       {
@@ -230,6 +244,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: devB,
         content: "不分页可以，前端直接渲染树。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-20 16:30:00",
       },
     ],
@@ -252,6 +267,7 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         user: pmA,
         content: "评审意见都已处理，讨论结束。",
         mentions: [],
+        documents: [],
         createdAt: "2026-10-17 09:00:00",
       },
     ],
@@ -291,7 +307,7 @@ export const activities: Activity[] = [
     id: 207,
     user: qaC,
     targetType: "DOCUMENT",
-    targetId: 135,
+    targetId: 8,
     action: "UPLOAD",
     detail: "普通员工 C 上传了 <b>答辩 PPT 第二版</b>",
     createdAt: "2026-10-21 18:02:00",

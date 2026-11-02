@@ -1,11 +1,19 @@
 import { collabTodayDate } from "../../data/collab";
+import { docs } from "../../data/documents";
 import { taskStatusLabel } from "../../data/global";
 import type {
   DiscussionBrief,
   DiscussionDetail,
   DiscussionTask,
+  MentionValue,
 } from "../../types/collab";
-import type { Activity, TaskStatus, UserBrief } from "../../types/global";
+import type {
+  Activity,
+  DocumentRef,
+  TaskStatus,
+  UserBrief,
+} from "../../types/global";
+import type { TaskDetail } from "../../types/task";
 
 /**
  * 两位补零格式化（例如 5 -> "05"，10 -> "10"）
@@ -185,35 +193,63 @@ export function parseRichInline(text: string): RichInlineSegment[] {
 
 /**
  * 根据项目动态推导对应的讨论话题 ID
- * - 若 activity.targetType === "DISCUSSION" 且 activity.targetId !== null，直接匹配讨论 ID；
- * - 否则若 activity.targetId !== null，根据讨论关联的任务 ID 匹配；
- * - 兜底：从 activity.detail 中提取 <b>...</b> 文本，与讨论标题或关联任务标题匹配；
- * - 若均未匹配则返回 null。
+ * - 讨论动态：按讨论 ID 匹配；
+ * - 任务动态：匹配该任务下的讨论，有多个时取最近回复的那个；
+ * - 文件动态：匹配评论里 @ 过这份文件的讨论，有多个时取最近 @ 的那个；
+ * - 都没有则返回 null，由调用方打开空草稿。
  */
 export function findDiscussionIdByActivity(
   activity: Activity,
   discussions: DiscussionBrief[],
+  detailMap: Record<number, DiscussionDetail>,
 ): number | null {
-  if (activity.targetType === "DISCUSSION" && activity.targetId !== null) {
-    const found = discussions.find((d) => d.id === activity.targetId);
-    if (found) return found.id;
+  if (activity.targetId === null) return null;
+
+  if (activity.targetType === "DISCUSSION") {
+    return discussions.find((d) => d.id === activity.targetId)?.id ?? null;
   }
 
-  if (activity.targetId !== null) {
-    const found = discussions.find((d) => d.task?.id === activity.targetId);
-    if (found) return found.id;
-  }
-
-  const match = activity.detail.match(/<b>(.*?)<\/b>/);
-  if (match && match[1]) {
-    const boldText = match[1].trim();
-    const found = discussions.find(
-      (d) => d.title === boldText || d.task?.title === boldText,
+  if (activity.targetType === "TASK") {
+    const sameTask = discussions.filter(
+      (d) => d.task?.id === activity.targetId,
     );
-    if (found) return found.id;
+    return (
+      pickLatest(sameTask, (d) => parseTimestamp(d.lastCommentAt ?? ""))?.id ??
+      null
+    );
+  }
+
+  if (activity.targetType === "DOCUMENT") {
+    const mentioned = discussions
+      .map((d) => ({
+        id: d.id,
+        time: latestDocumentMentionTime(detailMap[d.id], activity.targetId!),
+      }))
+      .filter((item) => item.time !== null);
+    return pickLatest(mentioned, (item) => item.time!)?.id ?? null;
   }
 
   return null;
+}
+
+/** 取 score 最大的一项，空数组返回 undefined */
+function pickLatest<T>(items: T[], score: (item: T) => number): T | undefined {
+  return items.reduce<T | undefined>(
+    (best, item) =>
+      best === undefined || score(item) >= score(best) ? item : best,
+    undefined,
+  );
+}
+
+/** 讨论里最近一次 @ 某份文档的评论时间，没有 @ 过返回 null */
+function latestDocumentMentionTime(
+  detail: DiscussionDetail | undefined,
+  documentId: number,
+): number | null {
+  const times = (detail?.comments ?? [])
+    .filter((c) => c.documents.some((doc) => doc.id === documentId))
+    .map((c) => parseTimestamp(c.createdAt));
+  return times.length > 0 ? Math.max(...times) : null;
 }
 
 /**
@@ -245,6 +281,14 @@ export function findCommentIdByActivity(
   }
 
   const comments = detail.comments;
+
+  // 文件动态：定位到最近一次 @ 这份文件的评论
+  if (activity.targetType === "DOCUMENT" && activity.targetId !== null) {
+    const mentioning = comments.filter((c) =>
+      c.documents.some((doc) => doc.id === activity.targetId),
+    );
+    if (mentioning.length > 0) return mentioning[mentioning.length - 1].id;
+  }
 
   // 优先级 1（精确时间匹配）
   if (activity.user) {
@@ -303,33 +347,141 @@ export function findCommentIdByActivity(
   return comments[comments.length - 1].id;
 }
 
+/** 任务详情转成讨论里的关联任务信息 */
+export function toDiscussionTask(task: TaskDetail): DiscussionTask {
+  return {
+    id: task.id,
+    taskNo: task.taskNo,
+    title: task.title,
+    status: task.status,
+    overdueDays: task.overdueDays,
+  };
+}
+
 /**
- * 根据未关联讨论的动态生成草稿空讨论会话（临时负数 ID）
+ * 根据未关联讨论的动态生成草稿空讨论会话（临时负数 ID），并自动绑定任务：
+ * - 任务动态：绑定动态对应的任务；
+ * - 文件动态：绑定文件所属的任务，回复框里预先放好 @ 这份文件。
  */
-export function createDraftDiscussionFromActivity(
+export function createDraftFromActivity(
   activity: Activity,
   creator: UserBrief,
-): DiscussionDetail {
+  taskMap: Record<number, TaskDetail>,
+): { draft: DiscussionDetail; initialValue: MentionValue | null } {
   const match = activity.detail.match(/<b>(.*?)<\/b>/);
   const title = match && match[1] ? match[1].trim() : "新建讨论";
 
-  const task: DiscussionTask | null =
-    activity.targetType === "TASK" && activity.targetId !== null
-      ? {
-          id: activity.targetId,
-          taskNo: activity.targetId,
-          title,
-          status: "TODO",
-          overdueDays: 0,
-        }
-      : null;
+  let taskId: number | null = null;
+  if (activity.targetId !== null) {
+    if (activity.targetType === "TASK") taskId = activity.targetId;
+    else if (activity.targetType === "DOCUMENT") {
+      taskId = findDocumentTaskId(activity.targetId);
+    }
+  }
+  const task = taskId !== null && taskMap[taskId] ? taskMap[taskId] : null;
+
+  const doc =
+    activity.targetType === "DOCUMENT"
+      ? getTaskDocumentRefs(task?.id, taskMap).find(
+          (item) => item.id === activity.targetId,
+        )
+      : undefined;
 
   return {
-    id: -activity.id,
-    title,
-    creator,
-    createdAt: `${collabTodayDate} 刚刚`,
-    task,
-    comments: [],
+    draft: {
+      id: -activity.id,
+      title,
+      creator,
+      createdAt: `${collabTodayDate} 刚刚`,
+      task: task ? toDiscussionTask(task) : null,
+      comments: [],
+    },
+    initialValue: doc
+      ? { text: `@${doc.name} `, mentions: [], documents: [doc] }
+      : null,
+  };
+}
+
+/** 文档所属的任务 ID，没有所属任务返回 null。接通接口后取文档详情里的任务字段 */
+export function findDocumentTaskId(documentId: number): number | null {
+  return docs.find((item) => item.id === documentId)?.taskId ?? null;
+}
+
+/** 任务下可以 @ 的文档，没有任务时为空。接通接口后取 GET /tasks/{taskId} 的 documents */
+export function getTaskDocumentRefs(
+  taskId: number | null | undefined,
+  taskMap: Record<number, TaskDetail>,
+): DocumentRef[] {
+  if (taskId === null || taskId === undefined) return [];
+  return (taskMap[taskId]?.documents ?? []).map(({ id, name }) => ({
+    id,
+    name,
+  }));
+}
+
+/** 文字里的 @ 提及片段 */
+export interface MentionSegment {
+  type: "text" | "user" | "doc";
+  content: string;
+  id?: number;
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** 把文字里的 “@名称” 切出来，名称取自评论的 mentions 和 documents，长的名称优先匹配 */
+export function splitMentions(
+  text: string,
+  users: UserBrief[],
+  documents: DocumentRef[],
+): MentionSegment[] {
+  const targets = [
+    ...users.map((user) => ({
+      type: "user" as const,
+      id: user.id,
+      name: user.realName,
+    })),
+    ...documents.map((doc) => ({
+      type: "doc" as const,
+      id: doc.id,
+      name: doc.name,
+    })),
+  ].sort((a, b) => b.name.length - a.name.length);
+  if (targets.length === 0) return [{ type: "text", content: text }];
+
+  const pattern = new RegExp(
+    `@(${targets.map((target) => escapeRegExp(target.name)).join("|")})`,
+    "g",
+  );
+  const result: MentionSegment[] = [];
+  let lastIndex = 0;
+  let matched: RegExpExecArray | null;
+  while ((matched = pattern.exec(text)) !== null) {
+    if (matched.index > lastIndex) {
+      result.push({
+        type: "text",
+        content: text.slice(lastIndex, matched.index),
+      });
+    }
+    const target = targets.find((item) => item.name === matched![1])!;
+    result.push({ type: target.type, id: target.id, content: matched[0] });
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    result.push({ type: "text", content: text.slice(lastIndex) });
+  }
+  return result;
+}
+
+/** 发送前整理输入：去掉首尾空白，丢掉文字里已经不存在的 @ 对象 */
+export function finalizeMention(value: MentionValue): MentionValue {
+  const text = value.text.trim();
+  return {
+    text,
+    mentions: value.mentions.filter((user) =>
+      text.includes(`@${user.realName}`),
+    ),
+    documents: value.documents.filter((doc) => text.includes(`@${doc.name}`)),
   };
 }
