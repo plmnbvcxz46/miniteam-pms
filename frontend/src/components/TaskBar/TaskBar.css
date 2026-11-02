@@ -34,6 +34,11 @@
   font-weight: 700;
 }
 
+/* 第一个刻度在范围最左端，文字从刻度线起向右排，免得左半截伸出面板 */
+.tb-axis span:first-child {
+  transform: none;
+}
+
 .tb-trk {
   position: relative;
   height: var(--tb-trk);
