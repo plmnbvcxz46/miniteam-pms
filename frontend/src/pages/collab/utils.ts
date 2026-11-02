@@ -402,14 +402,9 @@ export function createDraftFromActivity(
   };
 }
 
-/**
- * 文档所属的任务 ID。文档页用 tid（如 "t139"）记录所属任务，
- * 接通接口后取 DocumentItem 里的任务字段
- */
+/** 文档所属的任务 ID，没有所属任务返回 null。接通接口后取文档详情里的任务字段 */
 export function findDocumentTaskId(documentId: number): number | null {
-  const doc = docs.find((item) => item.id === `doc-${documentId}`);
-  const matched = doc?.tid?.match(/^t(\d+)$/);
-  return matched ? Number(matched[1]) : null;
+  return docs.find((item) => item.id === documentId)?.taskId ?? null;
 }
 
 /** 任务下可以 @ 的文档，没有任务时为空。接通接口后取 GET /tasks/{taskId} 的 documents */

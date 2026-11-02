@@ -10,14 +10,14 @@ interface UploadDocDrawerProps {
   /** 所有文档列表（用于选择上传到已有文档） */
   docs: DocumentItem[];
   /** 目标文档 ID（若指定且对应文档未定稿，默认选中它） */
-  initialTargetDocId?: string | null;
+  initialTargetDocId?: number | null;
   /** 提交上传的回调 */
   onSubmit?: (data: {
     file: File | null;
     docName: string; // 文档业务名称（支持用户自定义修改或预填）
-    targetDocId: string; // "new" 或是已有文档的 id
+    targetDocId: number | "new"; // "new" 或是已有文档的 id
     note: string;
-    taskId: string;
+    taskId: number;
   }) => void;
 }
 
@@ -32,30 +32,31 @@ export default function UploadDocDrawer({
 
   // 未定稿的文档选项
   const revisingDocOptions = docs.filter(
-    (d): d is DocumentItem & { id: string } => !d.final && Boolean(d.id)
+    (d) => !d.final
   );
 
   // 默认选中的目标
-  const defaultTarget =
-    initialTargetDocId &&
-      docs.some((d) => d.id === initialTargetDocId && !d.final)
+  const defaultTarget: number | "new" =
+    initialTargetDocId !== null &&
+    initialTargetDocId !== undefined &&
+    docs.some((d) => d.id === initialTargetDocId && !d.final)
       ? initialTargetDocId
       : "new";
 
-  const [targetDocId, setTargetDocId] = useState<string>(defaultTarget);
+  const [targetDocId, setTargetDocId] = useState<number | "new">(defaultTarget);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [docName, setDocName] = useState<string>("");
   const [note, setNote] = useState<string>("");
-  const [taskId, setTaskId] = useState<string>("t139");
+  const [taskId, setTaskId] = useState<number>(139);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   // 任务选项
   const taskOptions = [
-    { id: "t129", name: "A 需求分析" },
-    { id: "t131", name: "B 数据库设计" },
-    { id: "t139", name: "C 后端开发" },
-    { id: "t137", name: "D 前端开发" },
-    { id: "t150", name: "E 联调测试" },
+    { id: 129, name: "A 需求分析" },
+    { id: 131, name: "B 数据库设计" },
+    { id: 139, name: "C 后端开发" },
+    { id: 137, name: "D 前端开发" },
+    { id: 150, name: "E 联调测试" },
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +71,7 @@ export default function UploadDocDrawer({
     }
   };
 
-  const handleTargetChange = (newTarget: string) => {
+  const handleTargetChange = (newTarget: number | "new") => {
     setTargetDocId(newTarget);
     if (newTarget !== "new") {
       const found = docs.find((d) => d.id === newTarget);
@@ -212,7 +213,7 @@ export default function UploadDocDrawer({
               <span className="lb">关联任务</span>
               <select
                 value={taskId}
-                onChange={(e) => setTaskId(e.target.value)}
+                onChange={(e) => setTaskId(Number(e.target.value))}
               >
                 {taskOptions.map((opt) => (
                   <option key={opt.id} value={opt.id}>

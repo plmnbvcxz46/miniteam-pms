@@ -6,9 +6,9 @@ interface DocumentFinalProps {
   /** 定稿文档列表 */
   docs: DocumentItem[];
   /** 当前选中的文档 ID */
-  selectedId: string | null;
+  selectedId: number | null;
   /** 选中回调 */
-  onSelect?: (id: string) => void;
+  onSelect?: (id: number) => void;
 }
 
 export default function DocumentFinal({
@@ -27,11 +27,11 @@ export default function DocumentFinal({
       >
         {docs.map((doc, k) => (
           <DocumentFinalItem
-            key={doc.id || doc.tid || doc.n}
+            key={doc.id}
             doc={doc}
             orderIndex={k}
-            isSelected={Boolean(selectedId && doc.id === selectedId)}
-            onSelect={() => doc.id && onSelect?.(doc.id)}
+            isSelected={doc.id === selectedId}
+            onSelect={() => onSelect?.(doc.id)}
           />
         ))}
       </div>
