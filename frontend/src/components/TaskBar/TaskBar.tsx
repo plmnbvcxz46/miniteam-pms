@@ -6,6 +6,7 @@ import {
   getAxisDays,
   getAxisTicks,
   getProjectToday,
+  type AxisRange,
 } from "../../utils/date";
 import {
   buildTaskBar,
@@ -21,6 +22,8 @@ interface TaskBarProps {
   activities?: Activity[];
   /** 看板里的小条：两端不留白，不画刻度和“截止 / 完成”文字 */
   compact?: boolean;
+  /** 和别的任务条共用一条时间轴（时间线页）；不传则按这个任务自己算 */
+  range?: AxisRange;
   title?: string;
 }
 
@@ -31,10 +34,17 @@ export default function TaskBar({
   task,
   activities = [],
   compact = false,
+  range: sharedRange,
   title,
 }: TaskBarProps) {
   const today = getProjectToday();
-  const model = buildTaskBar(task, activities, today, compact ? 0 : undefined);
+  const model = buildTaskBar(
+    task,
+    activities,
+    today,
+    compact ? 0 : undefined,
+    sharedRange,
+  );
   if (!model) return null;
 
   const { range } = model;
