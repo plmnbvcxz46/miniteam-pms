@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { docs as initialDocs } from "../../data/documents";
 import { currentIssue } from "../../data/global";
 import type { DocumentItem } from "../../types/documents";
+import { useTaskStore } from "../board/taskStore";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";
 import DocumentFinal from "./components/final/DocumentFinal";
@@ -19,6 +20,8 @@ export default function DocumentsPage() {
   // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
   // 没带或不存在时默认选中 3，即 "接口文档"
   const navigate = useNavigate();
+  const location = useLocation();
+  const { taskMap: tasks } = useTaskStore();
   const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(() => {
     const linked = Number(searchParams.get("id"));
@@ -28,8 +31,18 @@ export default function DocumentsPage() {
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
+  // 从任务详情点“上传文件”跳过来时，路由 state 带着任务 ID，直接打开抽屉并预选这个任务
+  const uploadTaskId = (location.state as { uploadTaskId?: number } | null)
+    ?.uploadTaskId;
+  const [drawerTaskId] = useState<number | null>(uploadTaskId ?? null);
+  useEffect(() => {
+    if (uploadTaskId !== undefined) {
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+  }, [uploadTaskId, location.pathname, location.search, navigate]);
+
   // 抽屉显隐与预选目标 ID
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(uploadTaskId !== undefined);
   const [drawerTargetDocId, setDrawerTargetDocId] = useState<number | null>(null);
 
   // 过滤后的列表
@@ -98,7 +111,7 @@ export default function DocumentsPage() {
         id: Math.max(0, ...docList.map((d) => d.id)) + 1,
         n: finalDocName,
         taskId: data.taskId,
-        task: taskMap[data.taskId] || "未指定任务",
+        task: taskMap[data.taskId] || tasks[data.taskId]?.title || "未指定任务",
         v: "v0.1",
         who: "测试经理 A",
         up: currentDate,
@@ -182,6 +195,11 @@ export default function DocumentsPage() {
         onClose={() => setIsDrawerOpen(false)}
         docs={docList}
         initialTargetDocId={drawerTargetDocId}
+        initialTask={
+          drawerTaskId !== null && tasks[drawerTaskId]
+            ? { id: drawerTaskId, name: tasks[drawerTaskId].title }
+            : null
+        }
         onSubmit={handleUploadSubmit}
       />
     </section>

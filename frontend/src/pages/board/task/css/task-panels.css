@@ -73,10 +73,15 @@
 .dep-h::before {
   content: "// ";
 }
-/* 任务详情里的“发起讨论”，沿用看板的虚线新建按钮，只调整外边距 */
-#tk-links .addcard {
-  width: 100%;
+/* 任务详情里的“上传文件”“发起讨论”，沿用看板的虚线新建按钮，两个并排 */
+#tk-links .tk-adds {
+  display: flex;
+  gap: 8px;
   margin: 12px 0 4px;
+}
+#tk-links .tk-adds .addcard {
+  flex: 1;
+  margin: 0;
 }
 .dep-none {
   font-family: var(--mono);

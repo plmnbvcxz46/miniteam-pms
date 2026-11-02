@@ -11,6 +11,8 @@ interface UploadDocDrawerProps {
   docs: DocumentItem[];
   /** 目标文档 ID（若指定且对应文档未定稿，默认选中它） */
   initialTargetDocId?: number | null;
+  /** 新建文档时预选的任务（如从任务详情进来），不在下拉选项里时会补进去 */
+  initialTask?: { id: number; name: string } | null;
   /** 提交上传的回调 */
   onSubmit?: (data: {
     file: File | null;
@@ -26,6 +28,7 @@ export default function UploadDocDrawer({
   onClose,
   docs,
   initialTargetDocId,
+  initialTask,
   onSubmit,
 }: UploadDocDrawerProps) {
   if (!isOpen) return null;
@@ -47,17 +50,21 @@ export default function UploadDocDrawer({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [docName, setDocName] = useState<string>("");
   const [note, setNote] = useState<string>("");
-  const [taskId, setTaskId] = useState<number>(139);
+  const [taskId, setTaskId] = useState<number>(initialTask?.id ?? 139);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   // 任务选项
-  const taskOptions = [
+  const defaultTaskOptions = [
     { id: 129, name: "A 需求分析" },
     { id: 131, name: "B 数据库设计" },
     { id: 139, name: "C 后端开发" },
     { id: 137, name: "D 前端开发" },
     { id: 150, name: "E 联调测试" },
   ];
+  const taskOptions =
+    initialTask && !defaultTaskOptions.some((opt) => opt.id === initialTask.id)
+      ? [...defaultTaskOptions, initialTask]
+      : defaultTaskOptions;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

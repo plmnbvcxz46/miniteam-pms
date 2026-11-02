@@ -7,6 +7,7 @@ interface TaskInfoPanelProps {
   onOpenDocument: (documentId: number) => void;
   onOpenDiscussion: () => void;
   onCreateDiscussion: () => void;
+  onUploadDocument: () => void;
 }
 
 export default function TaskInfoPanel({
@@ -14,6 +15,7 @@ export default function TaskInfoPanel({
   onOpenDocument,
   onOpenDiscussion,
   onCreateDiscussion,
+  onUploadDocument,
 }: TaskInfoPanelProps) {
   const hasLinks = task.documents.length > 0 || task.discussions.length > 0;
 
@@ -55,13 +57,22 @@ export default function TaskInfoPanel({
             />
           ))}
           {!hasLinks && <div className="dep-none">还没有关联的文档或讨论</div>}
-          <button
-            className="addcard"
-            type="button"
-            onClick={onCreateDiscussion}
-          >
-            发起讨论
-          </button>
+          <div className="tk-adds">
+            <button
+              className="addcard"
+              type="button"
+              onClick={onUploadDocument}
+            >
+              上传文件
+            </button>
+            <button
+              className="addcard"
+              type="button"
+              onClick={onCreateDiscussion}
+            >
+              发起讨论
+            </button>
+          </div>
         </div>
       </div>
     </section>
