@@ -118,8 +118,13 @@ body.dragging * {
 .past .card {
   cursor: default;
 }
+/* 卡片是容器不是时间条，底纹仍用黑色斜纹，橙色斜纹只用于图例和时间条 */
 .col.blocked .card {
-  background: var(--hatch);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 2px,
+    var(--paper) 2px 7px
+  );
 }
 .col.blocked .card .title {
   align-self: flex-start;
