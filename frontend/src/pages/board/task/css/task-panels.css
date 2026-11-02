@@ -3,6 +3,7 @@
    ========================================================================== */
 
 .tt {
+  flex-shrink: 0;
   padding-top: 8px;
 }
 .tt-trk {
@@ -81,4 +82,28 @@
   font-size: 11px;
   color: var(--mute);
   padding: 8px 0;
+}
+
+/* 操作记录列表 */
+.feed {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ev {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 12px;
+  line-height: 1.55;
+  outline: none;
+}
+.ev time {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+  margin-bottom: 3px;
+}
+.ev p {
+  margin: 0;
 }

@@ -86,7 +86,7 @@ export default function TaskDrawer({
               className="u"
               autoFocus
               value={title}
-              placeholder="写清楚交付什么，例如 菜单接口"
+              placeholder="例如 菜单接口"
               onChange={(e) => {
                 setTitle(e.target.value);
                 setTitleError("");
@@ -161,7 +161,6 @@ export default function TaskDrawer({
               个工作日
             </div>
           </div>
-          <div className="hint">截止日按工作日自动推算，跳过周末</div>
         </div>
 
         <div className="fr top">
@@ -199,7 +198,6 @@ export default function TaskDrawer({
           <button className="btn" type="button" onClick={onClose}>
             取消
           </button>
-          <span className="note">优先级按截止日和后续任务数自动算</span>
         </div>
       </form>
     </Drawer>

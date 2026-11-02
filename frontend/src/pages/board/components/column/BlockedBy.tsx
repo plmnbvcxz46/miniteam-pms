@@ -11,7 +11,7 @@ export default function BlockedBy({ tasks, onOpenTask }: BlockedByProps) {
 
   return (
     <div className="bby">
-      <span className="k">// 因此受阻</span>
+      <span className="k">// BLOCKING</span>
       {tasks.map((task) => (
         <div className="r" key={task.id} onClick={() => onOpenTask(task.id)}>
           <b>{task.title}</b>
