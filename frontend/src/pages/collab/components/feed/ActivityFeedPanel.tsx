@@ -1,4 +1,7 @@
-import type { DiscussionBrief } from "../../../../types/collab";
+import type {
+  DiscussionBrief,
+  DiscussionDetail,
+} from "../../../../types/collab";
 import type { Activity } from "../../../../types/global";
 import { findDiscussionIdByActivity, formatPadCount } from "../../utils";
 import ActivityFeedItem from "./ActivityFeedItem";
@@ -6,6 +9,7 @@ import ActivityFeedItem from "./ActivityFeedItem";
 interface ActivityFeedPanelProps {
   activities: Activity[];
   discussions: DiscussionBrief[];
+  detailMap: Record<number, DiscussionDetail>;
   selectedDiscussionId: number;
   activeActivityId: number | null;
   isDraftActive: boolean;
@@ -15,6 +19,7 @@ interface ActivityFeedPanelProps {
 export default function ActivityFeedPanel({
   activities,
   discussions,
+  detailMap,
   selectedDiscussionId,
   activeActivityId,
   isDraftActive,
@@ -36,6 +41,7 @@ export default function ActivityFeedPanel({
           const targetDiscussionId = findDiscussionIdByActivity(
             activity,
             discussions,
+            detailMap,
           );
           const isActive =
             activeActivityId !== null

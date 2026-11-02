@@ -1,0 +1,106 @@
+/* ==========================================================================
+   @ 提及：输入框弹层与消息里的标签 (Mention Input & Tags)
+   ========================================================================== */
+
+.mn {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.mn textarea {
+  flex: 1;
+  min-width: 0;
+}
+
+.mn-pop {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 4px);
+  z-index: 20;
+  min-width: 220px;
+  max-width: 100%;
+  max-height: 208px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.mn-h {
+  padding: 6px 10px 2px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mute);
+}
+
+.mn-h::before {
+  content: "// ";
+}
+
+.mn-o {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mn-o[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* 消息里的 @ 标签：成员是黑字加下划线，文件是可点的黑框标签 */
+.msg p .mn-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.msg p .mn-tag.doc {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline;
+  padding: 0 4px;
+  border: 1.5px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.msg p .mn-tag.doc:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.msg p .mn-tag.doc:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.msg p .mn-tag.doc.gone {
+  cursor: default;
+  border-style: dashed;
+  color: var(--mute);
+  text-decoration: line-through;
+}
+
+.msg p .mn-tag.doc.gone:hover {
+  background: none;
+  color: var(--mute);
+}

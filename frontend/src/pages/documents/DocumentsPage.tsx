@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { docs as initialDocs } from "../../data/documents";
 import { currentIssue } from "../../data/global";
 import type { DocumentItem } from "../../types/documents";
@@ -15,8 +16,13 @@ export default function DocumentsPage() {
   const [currentDate, setCurrentDate] = useState<string>(currentIssue.todayDate);
   void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
-  // 选中文档的 ID（默认选中 "doc-3"，即 "接口文档"）
-  const [selectedId, setSelectedId] = useState<string | null>("doc-3");
+  // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
+  // 没带或不存在时默认选中 "doc-3"，即 "接口文档"
+  const [searchParams] = useSearchParams();
+  const [selectedId, setSelectedId] = useState<string | null>(() => {
+    const linked = `doc-${searchParams.get("id")}`;
+    return initialDocs.some((d) => d.id === linked) ? linked : "doc-3";
+  });
 
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");

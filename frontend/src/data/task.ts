@@ -85,6 +85,13 @@ const documentBriefs: Record<number, DocumentBrief> = {
     status: "FINAL",
     overdueDays: 0,
   },
+  8: {
+    id: 8,
+    name: "答辩 PPT",
+    currentVersion: "v0.2",
+    status: "REVISING",
+    overdueDays: 0,
+  },
 };
 
 /** 一条任务操作记录 */
@@ -392,7 +399,7 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-21",
     actualEnd: null,
-    documentIds: [],
+    documentIds: [8],
     description: "按老师中期意见调整结构，演示放在最后，每人讲五分钟。",
   },
   {

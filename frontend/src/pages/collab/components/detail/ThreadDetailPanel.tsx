@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
-import type { Comment, DiscussionDetail } from "../../../../types/collab";
+import type {
+  Comment,
+  DiscussionDetail,
+  MentionValue,
+} from "../../../../types/collab";
+import type { DocumentRef, UserBrief } from "../../../../types/global";
 import MessageItem from "./MessageItem";
 import ReplyForm from "./ReplyForm";
 import ThreadTaskMeta from "./ThreadTaskMeta";
@@ -7,14 +12,25 @@ import ThreadTaskMeta from "./ThreadTaskMeta";
 interface ThreadDetailPanelProps {
   detail?: DiscussionDetail;
   flashComment?: { commentId: number; triggerKey: number } | null;
+  /** 可以 @ 的成员 */
+  users: UserBrief[];
+  /** 讨论所属任务下的文档，可以 @，也用来判断消息里的文件标签是否还有效 */
+  taskDocuments: DocumentRef[];
+  /** 草稿对话预先放进回复框的内容 */
+  replyInitial?: MentionValue | null;
   onTaskClick?: (taskId: number) => void;
-  onSendReply: (content: string) => void;
+  onOpenDocument?: (documentId: number) => void;
+  onSendReply: (value: MentionValue) => void;
 }
 
 export default function ThreadDetailPanel({
   detail,
   flashComment,
+  users,
+  taskDocuments,
+  replyInitial,
   onTaskClick,
+  onOpenDocument,
   onSendReply,
 }: ThreadDetailPanelProps) {
   const msgsRef = useRef<HTMLDivElement>(null);
@@ -68,12 +84,21 @@ export default function ThreadDetailPanel({
                 }
                 comment={comment}
                 isFlashing={isTargetFlash}
+                availableDocIds={taskDocuments.map((doc) => doc.id)}
+                onOpenDocument={onOpenDocument}
               />
             );
           })
         )}
       </div>
-      <ReplyForm onSend={onSendReply} autoFocusTrigger={detail?.id} />
+      <ReplyForm
+        key={detail?.id}
+        users={users}
+        documents={taskDocuments}
+        initialValue={replyInitial}
+        onSend={onSendReply}
+        autoFocusTrigger={detail?.id}
+      />
     </section>
   );
 }

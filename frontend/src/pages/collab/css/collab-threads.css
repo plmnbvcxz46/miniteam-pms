@@ -77,3 +77,10 @@
   outline: 2px solid var(--signal);
   outline-offset: -2px;
 }
+
+/* 话题面板头部：发起讨论按钮和计数并排 */
+#view-team .phd > .r {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 12px;
+}

@@ -56,8 +56,13 @@ export default function TaskPage() {
         />
         <TaskInfoPanel
           task={task}
-          onOpenDocument={() => navigate("/documents")}
+          onOpenDocument={(documentId) =>
+            navigate(`/documents?id=${documentId}`)
+          }
           onOpenDiscussion={() => navigate("/collab")}
+          onCreateDiscussion={() =>
+            navigate("/collab", { state: { newDiscussionTaskId: task.id } })
+          }
         />
         <TaskLogPanel activities={activityMap[task.id]} today={taskTodayDate} />
       </div>

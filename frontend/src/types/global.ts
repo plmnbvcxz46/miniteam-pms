@@ -23,6 +23,12 @@ export interface TaskRef {
 /** 任务状态（TaskStatus）：TODO 待开始 / DOING 进行中 / BLOCKED 阻塞 / DONE 已完成 */
 export type TaskStatus = "TODO" | "DOING" | "BLOCKED" | "DONE";
 
+/** 文档引用（DocumentRef），评论里 @ 文档时用 */
+export interface DocumentRef {
+  id: number;
+  name: string;
+}
+
 /** 项目内角色（ProjectRole）：PM 项目经理 / MEMBER 普通成员 / TESTER 测试人员 */
 export type ProjectRole = "PM" | "MEMBER" | "TESTER";
 

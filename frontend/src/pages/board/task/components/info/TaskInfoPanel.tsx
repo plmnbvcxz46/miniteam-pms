@@ -4,14 +4,16 @@ import LinkRow from "./LinkRow";
 
 interface TaskInfoPanelProps {
   task: TaskDetail;
-  onOpenDocument: () => void;
+  onOpenDocument: (documentId: number) => void;
   onOpenDiscussion: () => void;
+  onCreateDiscussion: () => void;
 }
 
 export default function TaskInfoPanel({
   task,
   onOpenDocument,
   onOpenDiscussion,
+  onCreateDiscussion,
 }: TaskInfoPanelProps) {
   const hasLinks = task.documents.length > 0 || task.discussions.length > 0;
 
@@ -30,6 +32,9 @@ export default function TaskInfoPanel({
             <span className="k">// LINKS</span>
             <h2>文档与讨论</h2>
           </div>
+          <button className="btn" type="button" onClick={onCreateDiscussion}>
+            + 发起讨论
+          </button>
         </div>
         <div id="tk-links">
           {task.documents.map((doc) => (
@@ -40,7 +45,7 @@ export default function TaskInfoPanel({
               sub={doc.currentVersion ?? ""}
               state={formatDocStatus(doc)}
               late={doc.overdueDays > 0}
-              onClick={onOpenDocument}
+              onClick={() => onOpenDocument(doc.id)}
             />
           ))}
           {task.discussions.map((discussion) => (
