@@ -138,6 +138,7 @@ body.dragging * {
 }
 .col.done .card {
   border-width: 1px;
+  border-style: dashed;
 }
 .col.done .card .title {
   text-decoration: line-through;
