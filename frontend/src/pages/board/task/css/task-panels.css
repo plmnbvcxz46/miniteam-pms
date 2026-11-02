@@ -6,10 +6,6 @@
   flex-shrink: 0;
   padding-top: 8px;
 }
-.tt-trk {
-  height: 52px;
-  border-bottom: 1px solid var(--ink);
-}
 .tk-desc {
   margin: 10px 0 0;
   font-size: 13px;

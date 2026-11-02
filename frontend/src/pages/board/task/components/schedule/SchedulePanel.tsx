@@ -1,16 +1,17 @@
+import TaskBar from "../../../../../components/TaskBar/TaskBar";
+import type { Activity } from "../../../../../types/global";
 import type { DependencyTask, TaskDetail } from "../../../../../types/task";
 import DependencyRow from "./DependencyRow";
-import TaskTimeline from "./TaskTimeline";
 
 interface SchedulePanelProps {
   task: TaskDetail;
-  today: string;
+  activities: Activity[];
   onOpenTask: (taskId: number) => void;
 }
 
 export default function SchedulePanel({
   task,
-  today,
+  activities,
   onOpenTask,
 }: SchedulePanelProps) {
   const renderDeps = (deps: DependencyTask[], emptyText: string) =>
@@ -35,7 +36,9 @@ export default function SchedulePanel({
         </div>
         <span className="u">单位（天）</span>
       </div>
-      <TaskTimeline task={task} today={today} />
+      <div className="tt">
+        <TaskBar task={task} activities={activities} />
+      </div>
       <div className="scroll-y">
         <div className="dep-h">PREDECESSORS</div>
         {renderDeps(task.predecessors, "没有前置任务")}

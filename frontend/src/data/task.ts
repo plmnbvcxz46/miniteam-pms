@@ -1,24 +1,17 @@
 import type { Activity, TaskStatus, UserBrief } from "../types/global";
 import type { DependencyTask, DocumentBrief, TaskDetail } from "../types/task";
 import { discussions } from "./collab";
-import { currentProjectId, users } from "./global";
+import { currentProjectId, projectTodayDate, users } from "./global";
 
 /* =========================================================
  * 一、纯前端常量
  * ========================================================= */
 
-/** 今日日期（与协作模块假数据同一天），用于算逾期和已用工作日 */
-export const taskTodayDate = "2026-10-22";
+/** 今日日期（与顶栏、协作模块假数据同一天），用于算逾期和已用工作日 */
+export const taskTodayDate = projectTodayDate;
 
 /** 地址栏没有带任务 id 时默认打开的任务 */
 export const defaultTaskId = 139;
-
-/** 排期时间轴范围：从 start 起共 spanDays 天，每格一天 */
-export const taskTimeline = {
-  start: "2026-10-12",
-  spanDays: 21,
-  ticks: ["2026-10-12", "2026-10-19", "2026-10-26"],
-};
 
 /** 任务状态对应的 .key 色块 class */
 export const taskStatusKey: Record<TaskStatus, string> = {

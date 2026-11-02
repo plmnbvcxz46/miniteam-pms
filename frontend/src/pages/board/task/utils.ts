@@ -1,4 +1,3 @@
-import { taskTimeline } from "../../../data/task";
 import type { TaskStatus } from "../../../types/global";
 import type {
   DependencyTask,
@@ -17,17 +16,6 @@ function daysBetween(from: string, to: string): number {
 export function formatMonthDay(date: string): string {
   const [, month, day] = date.split("-");
   return `${Number(month)}.${day}`;
-}
-
-/** 日期在时间轴上的位置，单位：天 */
-export function timelineOffset(date: string): number {
-  return daysBetween(taskTimeline.start, date);
-}
-
-/** 时间轴位置转成百分比，超出范围的贴边 */
-export function timelinePercent(days: number): string {
-  const clamped = Math.max(0, Math.min(taskTimeline.spanDays, days));
-  return `${((clamped / taskTimeline.spanDays) * 100).toFixed(2)}%`;
 }
 
 /** 操作记录时间：今天只显示时分，昨天显示“昨天”，更早显示月日 */
@@ -117,6 +105,8 @@ export function applyTaskStatus(
         {
           ...synced,
           status,
+          // 移到已完成时记下完成日，任务条要用它画完成标记
+          actualEnd: status === "DONE" ? (task.actualEnd ?? today) : null,
           usedDays: getUsedDays(task, status, today),
           overdueDays: getOverdueDays(task, status, today),
         },

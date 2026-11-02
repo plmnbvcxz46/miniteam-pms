@@ -51,7 +51,7 @@ export default function TaskPage() {
       <div className="tkg">
         <SchedulePanel
           task={task}
-          today={taskTodayDate}
+          activities={activityMap[task.id]}
           onOpenTask={handleOpenTask}
         />
         <TaskInfoPanel
