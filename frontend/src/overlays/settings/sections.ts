@@ -11,4 +11,3 @@ export const sections: { id: SettingsSectionId; group: string; name: string }[] 
 ];
 
 export type SectionId = SettingsSectionId;
-export const groups = ["我的", "本项目", "系统"];

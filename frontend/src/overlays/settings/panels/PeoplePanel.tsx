@@ -1,7 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { roles, systemUsers } from "../../../data/settings";
 import type { SystemUser, UserCreate } from "../../../types/settings";
+import { getProjectToday } from "../../../utils/date";
 import Switch from "../components/Switch";
+
+/** 新增人员表单的内容，密码由服务端按系统参数里的默认密码生成 */
+type NewPerson = Omit<UserCreate, "password">;
 
 const UNGROUPED = "未分组";
 
@@ -66,7 +70,7 @@ export default function PeoplePanel() {
   };
 
   // POST /users
-  const handleCreate = (values: UserCreate) => {
+  const handleCreate = (values: NewPerson) => {
     const role = roles.find((r) => r.id === values.roleId)!;
     const user: SystemUser = {
       id: Math.max(0, ...list.map((u) => u.id)) + 1,
@@ -81,7 +85,7 @@ export default function PeoplePanel() {
       weeklyCapacity: values.weeklyCapacity ?? 40,
       status: 1,
       lastLoginAt: null,
-      createdAt: "2026-10-22 刚刚",
+      createdAt: `${getProjectToday()} 00:00:00`,
     };
     setList((prev) => [...prev, user]);
     setSelectedId(user.id);
@@ -103,7 +107,6 @@ export default function PeoplePanel() {
 
   return (
     <section className="ss" id="ss-people">
-      <h2 className="ss-h">人员</h2>
       <div className="g4">
         <div className="block span2">
           <div className="toolbar">
@@ -231,14 +234,16 @@ export default function PeoplePanel() {
 interface NewPersonFormProps {
   existing: string[];
   onCancel: () => void;
-  onSubmit: (values: UserCreate) => void;
+  onSubmit: (values: NewPerson) => void;
 }
 
 function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
   const [username, setUsername] = useState("");
   const [realName, setRealName] = useState("");
   const [dept, setDept] = useState("");
-  const [roleId, setRoleId] = useState(roles[2].id);
+  const [roleId, setRoleId] = useState(
+    roles.find((r) => r.code === "DEV")?.id ?? roles[0].id,
+  );
   const [error, setError] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
@@ -257,7 +262,6 @@ function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
       realName: realName.trim(),
       dept: dept.trim() || undefined,
       roleId,
-      password: "default",
     });
   };
 

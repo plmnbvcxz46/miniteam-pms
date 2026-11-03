@@ -20,23 +20,14 @@ export default function ProjectRulesPanel() {
   const project = projects[0];
   const [period, setPeriod] = useState(currentProjectPeriod);
   const [workdays, setWorkdays] = useState([true, true, true, true, true, false, false]);
-  const [holidays, setHolidays] = useState(initialHolidays);
-  const [adding, setAdding] = useState<Holiday | null>(null);
+  const holidays = initialHolidays;
   const [capacity, setCapacity] = useState("40");
   const [snapshotOn, setSnapshotOn] = useState(true);
   const [snapshotTime, setSnapshotTime] = useState("00:00");
   const [archiveState, setArchiveState] = useState<"idle" | "confirm" | "done">("idle");
 
-  const saveHoliday = () => {
-    if (!adding || !adding.name.trim() || !adding.start || !adding.end) return;
-    if (adding.end < adding.start) return;
-    setHolidays((prev) => [...prev, { ...adding, name: adding.name.trim() }]);
-    setAdding(null);
-  };
-
   return (
     <section className="ss" id="ss-proj">
-      <h2 className="ss-h">刊物规则</h2>
       <div className="blk">
         <h2>日历</h2>
         <div className="rows">
@@ -85,60 +76,11 @@ export default function ProjectRulesPanel() {
           <div className="srow top">
             <span className="lb">节假日</span>
             <div>
-              {holidays.map((h, i) => (
-                <div className="inl" key={`${h.start}-${h.name}`} style={{ marginBottom: 6 }}>
-                  <span className="v">
-                    {formatDayLabel(h.start)} – {formatDayLabel(h.end)} {h.name}
-                  </span>
-                  <button
-                    className="btn"
-                    type="button"
-                    onClick={() => setHolidays((prev) => prev.filter((_, k) => k !== i))}
-                  >
-                    删除
-                  </button>
+              {holidays.map((h) => (
+                <div key={`${h.start}-${h.name}`}>
+                  {formatDayLabel(h.start)} – {formatDayLabel(h.end)} {h.name}
                 </div>
               ))}
-              {adding ? (
-                <div className="inl">
-                  <input
-                    className="in sm"
-                    type="date"
-                    aria-label="节假日开始"
-                    value={adding.start}
-                    onChange={(e) => setAdding({ ...adding, start: e.target.value })}
-                  />
-                  <span>至</span>
-                  <input
-                    className="in sm"
-                    type="date"
-                    aria-label="节假日结束"
-                    value={adding.end}
-                    onChange={(e) => setAdding({ ...adding, end: e.target.value })}
-                  />
-                  <input
-                    className="in sm"
-                    placeholder="名称"
-                    aria-label="节假日名称"
-                    value={adding.name}
-                    onChange={(e) => setAdding({ ...adding, name: e.target.value })}
-                  />
-                  <button className="btn primary" type="button" onClick={saveHoliday}>
-                    确定
-                  </button>
-                  <button className="btn" type="button" onClick={() => setAdding(null)}>
-                    取消
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="btn"
-                  type="button"
-                  onClick={() => setAdding({ start: "", end: "", name: "" })}
-                >
-                  添加
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -192,12 +134,7 @@ export default function ProjectRulesPanel() {
             <span className="lb">归档项目</span>
             <div className="inl">
               {archiveState === "done" ? (
-                <>
-                  <span className="v">{project.name} 已归档</span>
-                  <button className="btn" type="button" onClick={() => setArchiveState("idle")}>
-                    恢复项目
-                  </button>
-                </>
+                <span className="v">{project.name} 已归档</span>
               ) : (
                 <>
                   <button

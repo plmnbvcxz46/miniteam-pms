@@ -1,11 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { currentUser, projects } from "../../../data/global";
+import { currentUser } from "../../../data/global";
 import Switch from "../components/Switch";
 
 export default function MePanel() {
   const [realName, setRealName] = useState(currentUser.realName);
-  const [defaultProject, setDefaultProject] = useState(projects[0].name);
-  const [notify, setNotify] = useState(true);
   const [calm, setCalm] = useState(() => document.body.classList.contains("calm"));
   const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,7 +16,6 @@ export default function MePanel() {
 
   return (
     <section className="ss" id="ss-me">
-      <h2 className="ss-h">个人</h2>
       <div className="blk">
         <h2>身份</h2>
         <div className="rows">
@@ -72,29 +69,6 @@ export default function MePanel() {
       <div className="blk">
         <h2>偏好</h2>
         <div className="rows">
-          <div className="srow">
-            <label htmlFor="s-proj">默认打开</label>
-            <div>
-              <select
-                className="in"
-                id="s-proj"
-                value={defaultProject}
-                onChange={(e) => setDefaultProject(e.target.value)}
-              >
-                {projects
-                  .filter((p) => p.status === "ACTIVE")
-                  .map((p) => (
-                    <option key={p.id}>{p.name}</option>
-                  ))}
-              </select>
-            </div>
-          </div>
-          <div className="srow">
-            <span className="lb">消息提醒</span>
-            <div>
-              <Switch label="消息提醒" value={notify} onChange={setNotify} />
-            </div>
-          </div>
           <div className="srow">
             <span className="lb">减少动态效果</span>
             <div>

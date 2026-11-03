@@ -170,17 +170,6 @@ code {
 .grp a svg {
   flex-shrink: 0;
 }
-/* 设置抽屉的索引没有图标，仍用小方块作项目符号 */
-.ov-index .grp a::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border: 1.5px solid var(--ink);
-  flex-shrink: 0;
-}
-.ov-index .grp a[aria-current="page"]::before {
-  background: var(--ink);
-}
 .grp a[aria-current="page"] {
   background: var(--signal);
   font-weight: 700;
@@ -1572,9 +1561,6 @@ main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }
-.ov-index {
-  display: none;
-}
 .ov-body {
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1599,9 +1585,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-.ss-h {
-  display: none;
 }
 .blk > h2,
 .ss .block > h2 {

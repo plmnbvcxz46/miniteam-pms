@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { sections, groups, type SectionId } from "./sections";
+import { sections, type SectionId } from "./sections";
 import MePanel from "./panels/MePanel";
 import ProjectRulesPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
@@ -74,25 +74,6 @@ export default function SettingsDrawer({
       <div className="double ov-rule"><i /><i /></div>
 
       <div className="ov-main">
-        {/* 左侧索引：按分组，每组一个 nav，最后一组加 admin */}
-        <aside className="ov-index">
-          {groups.map((g, k) => (
-            <nav
-              key={g}
-              className={"grp" + (k === groups.length - 1 ? " admin" : "")}
-              aria-label={g}
-            >
-              {sections
-                .filter((s) => s.group === g)
-                .map((s) => (
-                  <a key={s.id} {...link(s.id)}>
-                    {s.name}
-                  </a>
-                ))}
-            </nav>
-          ))}
-        </aside>
-
         <div className="ov-body">{panels[active]}</div>
       </div>
     </Drawer>

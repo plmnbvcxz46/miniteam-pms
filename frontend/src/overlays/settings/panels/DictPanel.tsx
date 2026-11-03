@@ -10,7 +10,6 @@ export default function DictPanel() {
 
   return (
     <section className="ss" id="ss-dict">
-      <h2 className="ss-h">字典</h2>
       <div className="g4">
         <div className="block span2">
           <h2>字典类型</h2>

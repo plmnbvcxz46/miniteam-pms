@@ -12,8 +12,6 @@ const numberKeys = [
 
 export default function ParamsPanel() {
   const [values, setValues] = useState(initialValues);
-  const [resettingPassword, setResettingPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -42,51 +40,14 @@ export default function ParamsPanel() {
       setError(`四个优先级权重之和须为 1，现在是 ${weightSum.toFixed(2)}`);
       return;
     }
-    if (resettingPassword && newPassword.length < 6) {
-      setError("新用户默认密码至少 6 位");
-      return;
-    }
-    setResettingPassword(false);
-    setNewPassword("");
     setMessage("已保存");
   };
 
   return (
     <section className="ss" id="ss-params">
-      <h2 className="ss-h">系统参数</h2>
       <div className="blk">
         <h2>账号安全</h2>
         <div className="rows">
-          <div className="srow">
-            <span className="lb">新用户默认密码</span>
-            <div className="inl">
-              {resettingPassword ? (
-                <input
-                  className="in sm"
-                  type="password"
-                  autoFocus
-                  aria-label="新的默认密码"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    setError("");
-                  }}
-                />
-              ) : (
-                <code>••••••••</code>
-              )}
-              <button
-                className="btn"
-                type="button"
-                onClick={() => {
-                  setResettingPassword((v) => !v);
-                  setNewPassword("");
-                }}
-              >
-                {resettingPassword ? "取消" : "重新设置"}
-              </button>
-            </div>
-          </div>
           <div className="srow">
             <span className="lb">允许自助注册</span>
             <div>
