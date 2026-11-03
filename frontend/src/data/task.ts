@@ -1,5 +1,5 @@
 import type { Activity, TaskStatus, UserBrief } from "../types/global";
-import type { DependencyTask, DocumentBrief, TaskDetail } from "../types/task";
+import type { DependencyTask, TaskDetail } from "../types/task";
 import { discussions } from "./collab";
 import { currentProjectId, projectTodayDate, users } from "./global";
 
@@ -39,59 +39,6 @@ export const milestones = {
   C: { id: 3, name: "C 后端开发" },
   D: { id: 4, name: "D 前端开发" },
   E: { id: 5, name: "E 联调测试" },
-};
-
-/** 任务关联的文档（DocumentBrief） */
-const documentBriefs: Record<number, DocumentBrief> = {
-  1: {
-    id: 1,
-    name: "需求规格说明书",
-    currentVersion: "v1.2",
-    status: "FINAL",
-    overdueDays: 0,
-  },
-  2: {
-    id: 2,
-    name: "数据库设计说明书",
-    currentVersion: "v1.1",
-    status: "FINAL",
-    overdueDays: 0,
-  },
-  3: {
-    id: 3,
-    name: "接口文档",
-    currentVersion: "v0.6",
-    status: "REVISING",
-    overdueDays: 2,
-  },
-  4: {
-    id: 4,
-    name: "前端组件说明",
-    currentVersion: "v0.3",
-    status: "REVISING",
-    overdueDays: 0,
-  },
-  5: {
-    id: 5,
-    name: "测试计划",
-    currentVersion: "v0.1",
-    status: "REVISING",
-    overdueDays: 0,
-  },
-  7: {
-    id: 7,
-    name: "周会纪要 10.19",
-    currentVersion: "v1.0",
-    status: "FINAL",
-    overdueDays: 0,
-  },
-  8: {
-    id: 8,
-    name: "答辩 PPT",
-    currentVersion: "v0.2",
-    status: "REVISING",
-    overdueDays: 0,
-  },
 };
 
 /** 一条任务操作记录 */
@@ -318,7 +265,6 @@ interface TaskSeed {
   overdueDays: number;
   actualStart: string | null;
   actualEnd: string | null;
-  documentIds: number[];
   description: string;
 }
 
@@ -339,7 +285,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 2,
     actualStart: "2026-10-19",
     actualEnd: null,
-    documentIds: [3],
     description:
       "补齐菜单和权限两部分的接口说明。字段统一用小驼峰，和若依返回的 menuId、parentId 一致；按钮权限标识用 project:task:move 这样的三段式。",
   },
@@ -359,7 +304,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-19",
     actualEnd: null,
-    documentIds: [3],
     description:
       "前后端联调菜单权限和角色权限，确认按钮级权限在看板拖动、调整排期两处生效。",
   },
@@ -379,7 +323,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-20",
     actualEnd: null,
-    documentIds: [4],
     description:
       "按工作日画任务条，依赖线用 SVG 按任务条实际位置生成，动画跟着时间轴生长。",
   },
@@ -399,7 +342,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-21",
     actualEnd: null,
-    documentIds: [8],
     description: "按老师中期意见调整结构，演示放在最后，每人讲五分钟。",
   },
   {
@@ -418,7 +360,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: null,
     actualEnd: null,
-    documentIds: [],
     description:
       "前端 v-hasPermi 指令按三段式标识隐藏无权限的按钮。等接口文档定下权限标识格式后开始。",
   },
@@ -438,7 +379,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: null,
     actualEnd: null,
-    documentIds: [3],
     description: "一次返回整棵菜单树，不分页。字段名以接口文档为准。",
   },
   {
@@ -457,7 +397,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: null,
     actualEnd: null,
-    documentIds: [7],
     description: "记录本周周会结论并上传到文档。",
   },
   {
@@ -476,7 +415,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: null,
     actualEnd: null,
-    documentIds: [5],
     description: "一键打包前后端并部署到学校服务器。",
   },
   {
@@ -495,7 +433,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-17",
     actualEnd: "2026-10-17",
-    documentIds: [2],
     description:
       "项目、任务、依赖、文档版本、讨论五张核心表，沿用若依的用户和权限表。",
   },
@@ -515,7 +452,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-12",
     actualEnd: "2026-10-16",
-    documentIds: [1],
     description: "整理用例和非功能需求，形成需求规格说明书。",
   },
   {
@@ -534,7 +470,6 @@ const taskSeeds: TaskSeed[] = [
     overdueDays: 0,
     actualStart: "2026-10-16",
     actualEnd: "2026-10-18",
-    documentIds: [3],
     description: "沿用若依登录，加登录失败锁定。",
   },
 ];
@@ -561,7 +496,7 @@ function toDependency(dependencyId: number, taskId: number): DependencyTask {
 }
 
 function toTaskDetail(seed: TaskSeed, index: number): TaskDetail {
-  const { score, documentIds, ...fields } = seed;
+  const { score, ...fields } = seed;
   const logs = taskActivities[seed.id];
   return {
     ...fields,
@@ -584,7 +519,7 @@ function toTaskDetail(seed: TaskSeed, index: number): TaskDetail {
       from === seed.id ? [toDependency(i + 1, to)] : [],
     ),
     subtasks: [],
-    documents: documentIds.map((id) => documentBriefs[id]),
+    documents: [], // 由文档数据按 taskId 关联得出，见 TaskProvider
     discussions: discussions.filter((item) => item.task?.id === seed.id),
     createdAt: logs[logs.length - 1].createdAt,
     updatedAt: logs[0].createdAt,

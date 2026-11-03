@@ -1,11 +1,11 @@
-import type { DocumentItem } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../types/documents";
 import { getDayOffset, getTimelinePercent } from "../../utils";
 import DocumentRevisingHeader from "./DocumentRevisingHeader";
 import DocumentRevisingItem from "./DocumentRevisingItem";
 
 interface DocumentRevisingProps {
   /** 修订中的文档列表 */
-  docs: DocumentItem[];
+  docs: BoundDocument[];
   /** 当前选中的文档 ID */
   selectedId: number | null;
   /** 今日基准日期（从假数据快照注入） */

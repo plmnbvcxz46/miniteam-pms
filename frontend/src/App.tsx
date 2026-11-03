@@ -3,6 +3,7 @@ import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./pages/board/TaskProvider";
+import DocumentProvider from "./pages/documents/DocumentProvider";
 import ReportsPage from "./pages/reports/ReportsPage";
 import DocumentsPage from "./pages/documents/DocumentsPage";
 import MembersPage from "./pages/members/MembersPage";
@@ -30,8 +31,10 @@ const router = createHashRouter([
 
 export default function App() {
   return (
-    <TaskProvider>
-      <RouterProvider router={router} />
-    </TaskProvider>
+    <DocumentProvider>
+      <TaskProvider>
+        <RouterProvider router={router} />
+      </TaskProvider>
+    </DocumentProvider>
   );
 }

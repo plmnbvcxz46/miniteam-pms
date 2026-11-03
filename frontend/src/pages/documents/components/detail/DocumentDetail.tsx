@@ -1,5 +1,5 @@
 import type {
-  DocumentItem,
+  BoundDocument,
   DocumentVersionItem,
 } from "../../../../types/documents";
 import { getDocStatus } from "../../utils";
@@ -8,11 +8,12 @@ import DocumentDetailFacts from "./DocumentDetailFacts";
 import DocumentDetailHistory from "./DocumentDetailHistory";
 
 interface DocumentDetailProps {
-  doc: DocumentItem | null;
+  doc: BoundDocument | null;
   /** 今日基准日期（从假数据快照注入） */
   currentDate?: string;
   onTaskClick?: (taskId: number) => void;
   onUploadVersion?: () => void;
+  onFinalize?: () => void;
   onDownloadVersion?: (version: DocumentVersionItem) => void;
 }
 
@@ -21,6 +22,7 @@ export default function DocumentDetail({
   currentDate,
   onTaskClick,
   onUploadVersion,
+  onFinalize,
   onDownloadVersion,
 }: DocumentDetailProps) {
   if (!doc) {
@@ -69,6 +71,11 @@ export default function DocumentDetail({
         >
           上传新版本 <span aria-hidden="true">↑</span>
         </button>
+        {!doc.final && (
+          <button className="btn" type="button" onClick={onFinalize}>
+            定稿 <span aria-hidden="true">✓</span>
+          </button>
+        )}
       </div>
     </section>
   );

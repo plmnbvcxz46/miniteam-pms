@@ -1,7 +1,7 @@
-import type { DocumentItem } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../types/documents";
 
 interface DocumentDetailFactsProps {
-  doc: DocumentItem;
+  doc: BoundDocument;
   status: string;
   isLate: boolean;
   onTaskClick?: (taskId: number) => void;
@@ -23,10 +23,10 @@ export default function DocumentDetailFacts({
             data-t={doc.taskId}
             onClick={() => onTaskClick?.(doc.taskId!)}
           >
-            {doc.task}
+            {doc.taskTitle}
           </span>
         ) : (
-          doc.task || "—"
+          doc.taskTitle
         )}
       </dd>
       <dt>负责人</dt>

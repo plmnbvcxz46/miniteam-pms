@@ -1,5 +1,5 @@
-import type { TaskDetail } from "../../types/task";
-import type { DocumentItem } from "../../types/documents";
+import type { BoundDocument, DocumentItem } from "../../types/documents";
+import type { DocumentBrief, TaskDetail } from "../../types/task";
 import { formatDayLabel, getProjectToday, toDay } from "../../utils/date";
 
 /**
@@ -35,12 +35,32 @@ export function getDayOffset(str: string): number {
 export function bindDocToTask(
   doc: DocumentItem,
   taskMap: Record<number, TaskDetail>,
-): DocumentItem {
+): BoundDocument {
   const task = doc.taskId === undefined ? undefined : taskMap[doc.taskId];
-  if (!task) return doc;
+  if (!task) return { ...doc, taskTitle: "项目文档" };
   return {
     ...doc,
+    taskTitle: task.title,
     due: task.dueDate ? formatDayLabel(task.dueDate) : doc.due,
+  };
+}
+
+/** 任务详情里的文档简要信息：已逾期天数按任务截止日算 */
+export function toDocumentBrief(
+  doc: DocumentItem,
+  task: TaskDetail,
+  today: string,
+): DocumentBrief {
+  const overdue =
+    !doc.final && task.dueDate
+      ? Math.max(0, Math.round(toDay(today) - toDay(task.dueDate)))
+      : 0;
+  return {
+    id: doc.id,
+    name: doc.n,
+    currentVersion: doc.v,
+    status: doc.final ? "FINAL" : "REVISING",
+    overdueDays: overdue,
   };
 }
 

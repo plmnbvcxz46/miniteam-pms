@@ -216,3 +216,7 @@
   justify-content: space-between;
 }
 
+.dside .up .btn + .btn {
+  margin-top: 8px;
+}
+

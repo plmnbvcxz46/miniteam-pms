@@ -1,8 +1,8 @@
 import React from "react";
-import type { DocumentItem } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../types/documents";
 
 interface DocumentFinalItemProps {
-  doc: DocumentItem;
+  doc: BoundDocument;
   orderIndex: number;
   isSelected: boolean;
   onSelect?: () => void;
@@ -14,8 +14,6 @@ export default function DocumentFinalItem({
   isSelected,
   onSelect,
 }: DocumentFinalItemProps) {
-  const taskLabel = doc.task === "—" ? "项目文档" : doc.task;
-
   return (
     <button
       key={doc.id}
@@ -30,7 +28,7 @@ export default function DocumentFinalItem({
       <span className="dn">
         <b>{doc.n}</b>
         <small>
-          {taskLabel} · {doc.who}
+          {doc.taskTitle} · {doc.who}
         </small>
       </span>
       <span className="fv">

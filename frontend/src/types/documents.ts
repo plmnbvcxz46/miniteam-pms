@@ -46,16 +46,20 @@ export interface DocumentItem {
   taskId?: number;
   /** 是否定稿（可选，true 为已定稿） */
   final?: boolean;
-  /** 关联任务名称或占位符，例如 "A 需求分析" 或 "—" */
-  task?: string;
   /** 当前最新版本号，例如 "v1.2" */
   v: string;
   /** 最后修改人 / 责任人 */
   who: string;
   /** 最后更新日期，例如 "10.16" */
   up: string;
-  /** 截止日期，例如 "10.16" */
+  /** 截止日期，例如 "10.16"；绑定了任务时以任务截止日为准 */
   due: string;
   /** 版本历史记录（兼容元组或对象） */
   hist: DocVersionRecord[];
+}
+
+/** 按所属任务补全后的文档：截止日取任务截止日，并带上任务名 */
+export interface BoundDocument extends DocumentItem {
+  /** 所属任务的标题，没有所属任务时为“项目文档” */
+  taskTitle: string;
 }

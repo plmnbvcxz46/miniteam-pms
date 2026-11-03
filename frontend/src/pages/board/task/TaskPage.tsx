@@ -36,7 +36,9 @@ export default function TaskPage() {
 
   // 切换状态时放到目标列最上面
   const handleChangeStatus = (status: TaskStatus) => {
-    if (status !== task.status) moveTask(task.id, status, 0);
+    if (status === task.status) return;
+    const blocked = moveTask(task.id, status, 0);
+    if (blocked) window.alert(blocked);
   };
 
   return (

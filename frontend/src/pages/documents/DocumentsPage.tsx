@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { docs as initialDocs } from "../../data/documents";
 import type { DocumentItem } from "../../types/documents";
 import { formatDayLabel } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
@@ -9,12 +8,13 @@ import DocumentRevising from "./components/revising/DocumentRevising";
 import DocumentFinal from "./components/final/DocumentFinal";
 import DocumentDetail from "./components/detail/DocumentDetail";
 import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
+import { useDocumentStore } from "./documentStore";
 import { bindDocToTask, getDocToday } from "./utils";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
   // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
-  const [rawDocs, setDocList] = useState<DocumentItem[]>(initialDocs);
+  const { docs: rawDocs, setDocs: setDocList, finalizeDocument } = useDocumentStore();
   const [currentDate, setCurrentDate] = useState<string>(getDocToday());
   void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
@@ -32,7 +32,7 @@ export default function DocumentsPage() {
   const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(() => {
     const linked = Number(searchParams.get("id"));
-    return initialDocs.some((d) => d.id === linked) ? linked : 3;
+    return rawDocs.some((d) => d.id === linked) ? linked : 3;
   });
 
   // 搜索关键字
@@ -59,7 +59,7 @@ export default function DocumentsPage() {
     return docList.filter(
       (d) =>
         d.n.toLowerCase().includes(q) ||
-        (d.task && d.task.toLowerCase().includes(q)) ||
+        d.taskTitle.toLowerCase().includes(q) ||
         d.who.toLowerCase().includes(q)
     );
   }, [docList, searchKeyword]);
@@ -92,13 +92,18 @@ export default function DocumentsPage() {
     setIsDrawerOpen(true);
   };
 
-  // 任务名映射辅助
-  const taskMap: Record<number, string> = {
-    129: "A 需求分析",
-    131: "B 数据库设计",
-    139: "C 后端开发",
-    137: "D 前端开发",
-    150: "E 联调测试",
+  // 上传时可选的关联任务：已完成的任务不能再挂未定稿的新文档
+  const taskOptions = Object.values(tasks)
+    .filter((task) => task.status !== "DONE")
+    .map((task) => ({ id: task.id, name: task.title }));
+
+  // 侧栏“定稿”
+  const handleFinalize = () => {
+    if (!selectedDoc) return;
+    if (!window.confirm(`确定将《${selectedDoc.n}》定稿吗？定稿后不能再上传新版本。`)) {
+      return;
+    }
+    finalizeDocument(selectedDoc.id, currentDate);
   };
 
   // 提交上传处理逻辑（增加到列表或在已有文档追加版本）
@@ -118,7 +123,6 @@ export default function DocumentsPage() {
         id: Math.max(0, ...docList.map((d) => d.id)) + 1,
         n: finalDocName,
         taskId: data.taskId,
-        task: taskMap[data.taskId] || tasks[data.taskId]?.title || "未指定任务",
         v: "v0.1",
         who: "测试经理 A",
         up: currentDate,
@@ -193,6 +197,7 @@ export default function DocumentsPage() {
           currentDate={currentDate}
           onTaskClick={(taskId) => navigate(`/board/task?id=${taskId}`)}
           onUploadVersion={handleOpenVersionUpload}
+          onFinalize={handleFinalize}
         />
       </div>
 
@@ -202,6 +207,7 @@ export default function DocumentsPage() {
         onClose={() => setIsDrawerOpen(false)}
         docs={docList}
         initialTargetDocId={drawerTargetDocId}
+        taskOptions={taskOptions}
         initialTask={
           drawerTaskId !== null && tasks[drawerTaskId]
             ? { id: drawerTaskId, name: tasks[drawerTaskId].title }
