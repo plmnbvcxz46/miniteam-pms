@@ -1,19 +1,48 @@
-import { currentIssue } from "../../data/global";
+import type { TaskDetail } from "../../types/task";
+import type { DocumentItem } from "../../types/documents";
+import { formatDayLabel, getProjectToday, toDay } from "../../utils/date";
 
 /**
  * 时间跨度（天数）
  */
 export const DSPAN = 21;
 
+/** 时间轴起点 MM-DD，和 DocumentRevising 的第一个刻度 10.12 对齐 */
+const AXIS_START = "10-12";
+
+/** 文档页的“今天”，MM.DD */
+export function getDocToday(): string {
+  return formatDayLabel(getProjectToday());
+}
+
 /**
- * 将 "MM.DD" 或 "MM-DD" 日期字符串转换为相对于基准日（10.12）的天数偏移量
+ * 将 "MM.DD" 或 "MM-DD" 日期字符串转换为相对于时间轴起点（10.12）的天数偏移量，年份取项目所在年
  */
 export function getDayOffset(str: string): number {
   if (!str) return 0;
-  const p = str.split(/[.-]/);
-  const m = +p[0];
-  const d = +p[1];
-  return m === 9 ? d - 42 : m === 10 ? d - 12 : d + 19;
+  const year = getProjectToday().slice(0, 4);
+  const toDate = (md: string) => {
+    const [m, d] = md.split(/[.-]/).map(Number);
+    return `${year}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  };
+  return toDay(toDate(str)) - toDay(toDate(AXIS_START));
+}
+
+/**
+ * 文档绑定了任务时，截止日和是否定稿都跟随任务：
+ * 截止日取任务截止日，任务完成了文档才算定稿；没绑任务的文档用自己的字段
+ */
+export function bindDocToTask(
+  doc: DocumentItem,
+  taskMap: Record<number, TaskDetail>,
+): DocumentItem {
+  const task = doc.taskId === undefined ? undefined : taskMap[doc.taskId];
+  if (!task) return doc;
+  return {
+    ...doc,
+    due: task.dueDate ? formatDayLabel(task.dueDate) : doc.due,
+    final: task.status === "DONE",
+  };
 }
 
 /**
@@ -37,7 +66,7 @@ export interface DocStatusInfo {
  */
 export function getDocStatus(
   doc: { final?: boolean; due: string },
-  currentDate = currentIssue.todayDate
+  currentDate = getDocToday()
 ): DocStatusInfo {
   if (doc.final) {
     return { status: "定稿", isLate: false, lateDays: 0 };

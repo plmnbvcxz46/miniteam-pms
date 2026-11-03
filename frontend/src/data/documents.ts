@@ -4,7 +4,8 @@ import { currentIssue } from "./global";
 
 /**
  * 快照数据结构（预留快照切换功能使用）
- * “今天”基准日期统一取 data/global.ts 的 currentIssue.todayDate
+ * “今天”取项目日期 projectTodayDate；绑定了任务（taskId）的文档，截止日和是否定稿以任务为准，
+ * 下面的 due / final 只在没绑任务时生效
  */
 export interface DocumentSnapshot extends IssueInfo {
   docs: DocumentItem[];

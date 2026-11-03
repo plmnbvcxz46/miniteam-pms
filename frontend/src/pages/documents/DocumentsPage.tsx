@@ -1,20 +1,21 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { docs as initialDocs } from "../../data/documents";
-import { currentIssue } from "../../data/global";
 import type { DocumentItem } from "../../types/documents";
+import { formatDayLabel } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";
 import DocumentFinal from "./components/final/DocumentFinal";
 import DocumentDetail from "./components/detail/DocumentDetail";
 import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
+import { bindDocToTask, getDocToday } from "./utils";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
   // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
-  const [docList, setDocList] = useState<DocumentItem[]>(initialDocs);
-  const [currentDate, setCurrentDate] = useState<string>(currentIssue.todayDate);
+  const [rawDocs, setDocList] = useState<DocumentItem[]>(initialDocs);
+  const [currentDate, setCurrentDate] = useState<string>(getDocToday());
   void setCurrentDate; // 预留后续期数/快照切换状态变更入口
 
   // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
@@ -22,6 +23,12 @@ export default function DocumentsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { taskMap: tasks } = useTaskStore();
+
+  // 绑定了任务的文档，截止日和是否定稿都跟着任务走
+  const docList = useMemo(
+    () => rawDocs.map((d) => bindDocToTask(d, tasks)),
+    [rawDocs, tasks],
+  );
   const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(() => {
     const linked = Number(searchParams.get("id"));
@@ -115,7 +122,7 @@ export default function DocumentsPage() {
         v: "v0.1",
         who: "测试经理 A",
         up: currentDate,
-        due: "10.30",
+        due: formatDayLabel(tasks[data.taskId]?.dueDate ?? "2026-10-30"),
         final: false,
         hist: [
           {
