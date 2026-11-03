@@ -197,47 +197,67 @@ code {
   color: var(--mute);
   pointer-events: none;
 }
-.arch-card {
+.sum-card {
   margin-top: auto;
   background: var(--ink);
   color: var(--paper);
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
-.arch-card i {
-  display: block;
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid var(--paper);
-}
-.arch-card b {
-  font-weight: 900;
-  font-size: 15px;
-}
-.arch-card p {
-  margin: 0;
+.sum-card .k {
   font-family: var(--mono);
   font-size: 10px;
-  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 1px;
   color: #cfcfca;
 }
-.arch-card button {
-  all: unset;
-  cursor: pointer;
+.sum-card .big {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--disp);
+  line-height: 1;
+}
+.sum-card .big b {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--signal);
+}
+.sum-card .big span {
+  font-size: 12px;
+  font-weight: 700;
+}
+.sum-card .row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.sum-card .row p {
+  margin: 0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: var(--paper);
-  color: var(--ink);
   font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 8px 10px;
+  font-size: 10px;
+  color: #cfcfca;
 }
-.arch-card button:hover {
-  background: var(--wash);
+.sum-card .row p b {
+  font-weight: 700;
+  color: var(--paper);
+}
+.sum-card .bar {
+  height: 8px;
+  border: 1.5px solid var(--paper);
+}
+.sum-card .bar i {
+  display: block;
+  height: 100%;
+  background: var(--paper);
+}
+.sum-card .bar.go i {
+  background: var(--signal);
 }
 
 /* popovers: projects + past issues */

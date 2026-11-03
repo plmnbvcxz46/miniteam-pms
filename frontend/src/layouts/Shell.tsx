@@ -4,9 +4,9 @@ import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import { useTaskStore } from "../pages/board/taskStore";
 import { getColumnTasks } from "../pages/board/utils";
-import ArchiveCard from "./components/sidebar/ArchiveCard";
 import ProjectSwitch from "./components/sidebar/ProjectSwitch";
 import SidebarNav from "./components/sidebar/SidebarNav";
+import SummaryCard from "./components/sidebar/SummaryCard";
 import IssueSwitch from "./components/topbar/IssueSwitch";
 import NotificationBell from "./components/topbar/NotificationBell";
 import UserChip from "./components/topbar/UserChip";
@@ -23,7 +23,7 @@ export default function Shell() {
       <aside className="index" id="index">
         <ProjectSwitch />
         <SidebarNav riskCount={riskCount} onOpenSettings={openSettings} />
-        <ArchiveCard />
+        <SummaryCard />
       </aside>
 
       {/* 顶部栏 */}

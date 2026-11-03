@@ -27,3 +27,24 @@ export function getWeekProgress(
     current: index >= 0 && index < total ? index + 1 : null,
   };
 }
+
+/** 侧栏摘要卡片需要的项目周期进度 */
+export interface PeriodProgress {
+  /** 距计划结束还有几天，已过期为 0 */
+  daysLeft: number;
+  /** 时间进度 0-100，按今天 00:00 占整个周期的比例 */
+  percent: number;
+}
+
+export function getPeriodProgress(
+  period: ProjectPeriod,
+  today: string,
+): PeriodProgress {
+  const start = toDay(period.startDate);
+  const end = toDay(period.planEnd) + 1;
+  const percent = ((toDay(today) - start) / (end - start)) * 100;
+  return {
+    daysLeft: Math.max(0, Math.round(toDay(period.planEnd) - toDay(today))),
+    percent: Math.round(Math.min(100, Math.max(0, percent))),
+  };
+}
