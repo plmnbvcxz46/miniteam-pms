@@ -1,5 +1,6 @@
 import type { DiscussionTask } from "../../../../types/collab";
-import { getTaskKeyClass, getTaskStatusNote } from "../../utils";
+import { taskStatusKey } from "../../../../data/task";
+import { getTaskStatusNote } from "../../utils";
 
 interface ThreadTaskMetaProps {
   task: DiscussionTask | null;
@@ -13,7 +14,7 @@ export default function ThreadTaskMeta({
   if (!task) return null;
 
   const isRisk = task.status === "BLOCKED" || task.overdueDays > 0;
-  const keyClass = getTaskKeyClass(task.status);
+  const keyClass = taskStatusKey[task.status];
 
   return (
     <div className={`th-meta${isRisk ? " risk" : ""}`} id="th-meta">

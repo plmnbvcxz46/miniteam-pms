@@ -7,7 +7,7 @@ import type {
   WeeklyCompleted,
   Workload,
 } from "../../types/reports";
-import { pad2 } from "../../utils/date";
+import { formatWeekNo } from "../../utils/date";
 import { toCsvRow } from "../../utils/download";
 
 /**
@@ -21,13 +21,6 @@ export function toMonthDay(date: string, preserveZero = true): string {
   const month = parseInt(match[1], 10);
   const day = preserveZero ? match[2] : String(parseInt(match[2], 10));
   return `${month}.${day}`;
-}
-
-/**
- * 两位补零的周次文案（如 5, 10 → "05/10"）
- */
-export function formatWeekNo(weekNo: number, totalWeeks: number): string {
-  return `${pad2(weekNo)}/${pad2(totalWeeks)}`;
 }
 
 /**

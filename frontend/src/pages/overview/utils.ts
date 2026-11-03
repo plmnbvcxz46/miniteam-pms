@@ -4,19 +4,17 @@ import {
   addDays,
   dayEnd,
   formatDayLabel,
-  pad2,
+  formatWeekNo,
+  getTotalWeeks,
+  getWeekIndex,
   toDay,
-  weekdayOf,
+  weekStartOf,
 } from "../../utils/date";
+import { taskStatusKey } from "../../data/task";
 import type { CpmResult, TimelineForecast } from "../timeline/utils";
 
 /** 一周的天数 */
 export const WEEK_DAYS = 7;
-
-/** date 所在周的周一 */
-function weekStartOf(date: string): string {
-  return addDays(date, -((weekdayOf(date) + 6) % 7));
-}
 
 /** 此刻是当天的几分之几（0 点为 0，正午为 0.5），按 Asia/Shanghai，只取本地时钟的时分 */
 export function getDayProgress(): number {
@@ -37,11 +35,9 @@ export function formatKicker(
   today: string,
   period: ProjectPeriod,
 ): string {
-  const week = Math.floor((toDay(today) - toDay(period.startDate)) / 7) + 1;
-  const weeks = Math.ceil(
-    (dayEnd(period.planEnd) - toDay(period.startDate)) / 7,
-  );
-  return `第 ${pad2(week)}/${pad2(weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.left} 项 · 逾期 ${stats.overdue.length} 项`;
+  const week = getWeekIndex(period.startDate, today);
+  const weeks = getTotalWeeks(period.startDate, period.planEnd);
+  return `第 ${formatWeekNo(week, weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.left} 项 · 逾期 ${stats.overdue.length} 项`;
 }
 
 /* ---------- 四个数字 ---------- */
@@ -187,11 +183,6 @@ export interface ScheduleRowData {
   lanes: number;
 }
 
-const TONE: Record<string, ScheduleBar["tone"]> = {
-  DOING: "on",
-  BLOCKED: "stuck",
-};
-
 /**
  * 每个成员这一周要做的事：未完成、和本周有交集的任务。
  * 逾期的任务条画到今天（逾期的部分还在占人）；同一个人的任务重叠时往下叠一行
@@ -235,7 +226,12 @@ export function getSchedule(
         left: ((start - weekStart) / WEEK_DAYS) * 100,
         width: ((end - start) / WEEK_DAYS) * 100,
         lane,
-        tone: TONE[task.status] ?? "next",
+        // 色块沿用任务状态的 .key 颜色：进行中 on、阻塞 stuck，其余是 next
+        tone:
+          taskStatusKey[task.status] === "on" ||
+          taskStatusKey[task.status] === "stuck"
+            ? (taskStatusKey[task.status] as "on" | "stuck")
+            : "next",
       };
     });
     return { user, bars, lanes: Math.max(1, laneEnds.length) };

@@ -5,13 +5,6 @@ import type { TaskDetail } from "../../../../types/task";
 import type { CardDrag, DropTarget } from "../../useCardDrag";
 import TaskCard from "./TaskCard";
 
-const COLUMN_CLASS: Record<TaskStatus, string> = {
-  TODO: "todo",
-  DOING: "doing",
-  BLOCKED: "blocked",
-  DONE: "done",
-};
-
 interface BoardColumnProps {
   status: TaskStatus;
   tasks: TaskDetail[];
@@ -52,7 +45,8 @@ export default function BoardColumn({
   );
 
   return (
-    <div className={`col ${COLUMN_CLASS[status]}`}>
+    // 列的样式类就是状态的小写：todo / doing / blocked / done
+    <div className={`col ${status.toLowerCase()}`}>
       <header>
         <div>
           <span className="k">// {status}</span>

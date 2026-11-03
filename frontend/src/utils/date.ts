@@ -61,6 +61,33 @@ export function addDays(date: string, days: number): string {
   return toDateString(toDay(date) + days);
 }
 
+/** 时间点所在周的周一 00:00 */
+export function weekStartTime(time: DayTime): DayTime {
+  const day = Math.floor(time);
+  const weekday = new Date(day * DAY_MS).getUTCDay();
+  return day - ((weekday + 6) % 7);
+}
+
+/** yyyy-MM-dd 所在周的周一 */
+export function weekStartOf(date: string): string {
+  return toDateString(weekStartTime(toDay(date)));
+}
+
+/** 项目总周数：起止日期（含）跨几周，向上取整 */
+export function getTotalWeeks(startDate: string, planEnd: string): number {
+  return Math.ceil((dayEnd(planEnd) - toDay(startDate)) / 7);
+}
+
+/** 今天是项目的第几周（从 1 起），不限制在项目周期内 */
+export function getWeekIndex(startDate: string, today: string): number {
+  return Math.floor((toDay(today) - toDay(startDate)) / 7) + 1;
+}
+
+/** 周次文案，两位补零，例如 5, 10 -> "05/10" */
+export function formatWeekNo(week: number, totalWeeks: number): string {
+  return `${pad2(week)}/${pad2(totalWeeks)}`;
+}
+
 /** 两个 yyyy-MM-dd 之间相差的天数 */
 export function daysBetween(from: string, to: string): number {
   return Math.round(toDay(to) - toDay(from));

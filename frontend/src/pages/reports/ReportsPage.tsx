@@ -11,7 +11,7 @@ import {
   workload,
 } from "../../data/reports";
 import { downloadTextFile } from "../../utils/download";
-import { buildReportCsv, toMonthDay } from "./utils";
+import { buildReportCsv } from "./utils";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";
 import LoadPanel from "./components/load/LoadPanel";
@@ -58,7 +58,7 @@ export default function ReportsPage() {
         <DeviationPanel items={durationDeviation} />
         <ForecastHero
           forecast={forecast}
-          todayDate={toMonthDay(currentBurndown.today, true)}
+          today={currentBurndown.today}
           deviations={durationDeviation}
         />
       </div>

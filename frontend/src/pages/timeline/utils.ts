@@ -1,13 +1,12 @@
 import type { TaskDetail } from "../../types/task";
 import {
-  DAY_MS,
   addDays,
   dayEnd,
   isWeekend,
   toDateString,
   toDay,
+  weekStartTime,
   type AxisRange,
-  type DayTime,
 } from "../../utils/date";
 
 /** 关键路径法（CPM）算出的一行，单位都是工作日，从项目第 0 天算起 */
@@ -173,14 +172,7 @@ export function getTimelineRange(
   ].filter(Boolean);
   const first = Math.min(...starts.map(toDay));
   const last = Math.max(...ends.map(dayEnd)) - 1;
-  return { start: weekStart(first), end: weekStart(last) + 7 };
-}
-
-/** 时间点所在周的周一 00:00 */
-function weekStart(time: DayTime): DayTime {
-  const day = Math.floor(time);
-  const weekday = new Date(day * DAY_MS).getUTCDay();
-  return day - ((weekday + 6) % 7);
+  return { start: weekStartTime(first), end: weekStartTime(last) + 7 };
 }
 
 /** 范围内每周的周一（yyyy-MM-dd） */

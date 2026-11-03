@@ -10,7 +10,6 @@ import type {
 import type {
   Activity,
   DocumentRef,
-  TaskStatus,
   UserBrief,
 } from "../../types/global";
 import type { TaskDetail } from "../../types/task";
@@ -88,24 +87,6 @@ export function formatMessageTime(
     return `${m}.${d} ${hm}`.trim();
   }
   return `${datePart.replace("-", ".")} ${hm}`.trim();
-}
-
-/**
- * 获取任务状态对应的 key 样式类
- * BLOCKED -> "stuck", DOING -> "on", DONE -> "done", TODO -> ""
- */
-export function getTaskKeyClass(status: TaskStatus): string {
-  switch (status) {
-    case "BLOCKED":
-      return "stuck";
-    case "DOING":
-      return "on";
-    case "DONE":
-      return "done";
-    case "TODO":
-    default:
-      return "";
-  }
 }
 
 /**
