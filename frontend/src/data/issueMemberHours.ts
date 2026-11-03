@@ -1,6 +1,6 @@
 /**
  * 过去各期里每个成员当时的本周工时（小时），按期号、成员账号；第 32 期（今天）用成员自己的数据。
- * 接口接通后对应 GET /projects/{projectId}/issues/{issueNo} 里的成员工时
+ * 接口接通后对应 GET /projects/{projectId}/issues/{issueDate} 里的成员工时
  */
 export const issueMemberHours: Record<number, Record<string, number>> = {
   31: { pm_a: 35, dev_a: 29, dev_b: 24, qa_c: 18 },
