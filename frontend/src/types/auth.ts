@@ -3,6 +3,7 @@
  * 共享结构（UserBrief、ProjectRole、MemberPermissions 等）见 ./global
  */
 import type { UserBrief } from "./global";
+import type { SystemUser } from "./settings";
 
 /** 登录请求体（LoginRequest），POST /auth/login */
 export interface LoginRequest {
@@ -10,8 +11,22 @@ export interface LoginRequest {
   password: string;
 }
 
+/** GET /auth/me（CurrentUser）：用户资料 + 系统权限编码 */
+export interface CurrentUser {
+  user: SystemUser;
+  permissions: string[];
+}
+
+/** 登录响应（LoginResult），POST /auth/login */
+export interface LoginResponse {
+  token: string;
+  /** token 有效期（秒） */
+  expiresIn: number;
+  me: CurrentUser;
+}
+
 /**
- * 登录后的身份，对应 GET /auth/me（CurrentUser）。
+ * 登录后的身份，由 GET /auth/me 得出。
  * 只管“你是谁、系统层面能做什么”；在某个项目里的角色和权限不放这里，
  * 由 src/access/ 按当前项目的成员关系算出
  * - systemPermissions：系统权限编码，有 system:view 的是系统管理员
@@ -20,9 +35,20 @@ export interface Account {
   user: UserBrief;
   /** 系统角色名：系统管理员 / 普通用户 */
   roleName: string;
-  /** 已停用的账号不能登录，也不能切换到 */
-  disabled: boolean;
+  email: string | null;
+  skillTags: string[];
   systemPermissions: string[];
+}
+
+/** 接口的 CurrentUser 转成前端用的 Account */
+export function toAccount({ user, permissions }: CurrentUser): Account {
+  return {
+    user: { id: user.id, username: user.username, realName: user.realName },
+    roleName: user.roleName,
+    email: user.email,
+    skillTags: user.skillTags,
+    systemPermissions: permissions,
+  };
 }
 
 /** 系统管理员：有 system:view。所有项目、所有权限都对他开放 */

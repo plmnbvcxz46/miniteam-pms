@@ -3,6 +3,12 @@
  * 对齐 docs/api/openapi.yaml
  */
 
+/** 分页结果：接口里的列表统一返回 { total, list } */
+export interface PageResult<T> {
+  total: number;
+  list: T[];
+}
+
 /** 用户简要信息（UserBrief） */
 export interface UserBrief {
   id: number;

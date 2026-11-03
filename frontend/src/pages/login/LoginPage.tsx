@@ -1,6 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../auth/useAuth";
-import { accounts as demoAccounts } from "../../data/auth";
 import type { AuthField } from "../../types/auth";
 import "./css/login.css";
 
@@ -32,8 +31,7 @@ export default function LoginPage() {
   const [realName, setRealName] = useState("");
   // 第一次来默认勾选，之后跟随上次有没有记住账号
   const [remember, setRemember] = useState(true);
-  // 演示账号平时收着，点左上角的图标才展开
-  const [demoOpen, setDemoOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<{ field: AuthField; message: string } | null>(
     null,
   );
@@ -54,21 +52,27 @@ export default function LoginPage() {
     clearNotice();
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isRegister) {
-      const result = register({ realName, username, password });
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      if (isRegister) {
+        const result = await register({ realName, username, password });
+        if (!result.ok) return fail(result.field, result.message);
+        // 注册成功：回到登录，账号预填，焦点放到密码
+        setMode("login");
+        setPassword("");
+        setError(null);
+        setTimeout(() => inputs.current.password?.focus(), 0);
+        return;
+      }
+      const result = await login(username, password);
       if (!result.ok) return fail(result.field, result.message);
-      // 注册成功：回到登录，账号预填，焦点放到密码
-      setMode("login");
-      setPassword("");
-      setError(null);
-      setTimeout(() => inputs.current.password?.focus(), 0);
-      return;
+      writeRemembered(remember ? username.trim() : null);
+    } finally {
+      setSubmitting(false);
     }
-    const result = login(username, password);
-    if (!result.ok) return fail(result.field, result.message);
-    writeRemembered(remember ? username.trim() : null);
   };
 
   const switchMode = (next: "login" | "register") => {
@@ -76,13 +80,6 @@ export default function LoginPage() {
     setError(null);
     setPassword("");
     clearNotice();
-  };
-
-  const pickDemo = (demoUsername: string) => {
-    setUsername(demoUsername);
-    setError(null);
-    clearNotice();
-    inputs.current.password?.focus();
   };
 
   const errorProps = (field: AuthField) =>
@@ -99,19 +96,13 @@ export default function LoginPage() {
   return (
     <main className="auth">
       <div className="auth-col">
-        <button
-          className="auth-brand"
-          type="button"
-          aria-expanded={demoOpen}
-          aria-label="演示账号"
-          onClick={() => setDemoOpen((v) => !v)}
-        >
+        <div className="auth-brand">
           <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true">
             <rect x="0" y="0" width="15" height="34" fill="#0a0a0a" />
             <rect x="19" y="0" width="15" height="18" fill="#FF5A1F" />
           </svg>
           MINITEAM PMS
-        </button>
+        </div>
 
         <div className="vh">
           <div className="vl">
@@ -204,7 +195,7 @@ export default function LoginPage() {
             </label>
           )}
 
-          <button className="btn go auth-submit" type="submit">
+          <button className="btn go auth-submit" type="submit" disabled={submitting}>
             {isRegister ? "注册" : "登录"}
           </button>
           <p className="auth-alt">
@@ -217,26 +208,6 @@ export default function LoginPage() {
             </button>
           </p>
         </form>
-
-        {!isRegister && demoOpen && (
-          <section className="auth-demo" aria-label="演示账号">
-            <div className="auth-demo-grid">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.user.id}
-                  type="button"
-                  className={account.disabled ? "off" : undefined}
-                  aria-pressed={username.trim() === account.user.username}
-                  title={`${account.user.realName} · ${account.user.username}`}
-                  onClick={() => pickDemo(account.user.username)}
-                >
-                  <b>{account.user.username}</b>
-                  <span>{account.roleName}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
 
       </div>
     </main>

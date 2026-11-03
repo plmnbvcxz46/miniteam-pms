@@ -45,6 +45,16 @@ export interface UserCreate {
   weeklyCapacity?: number;
 }
 
+/** 修改用户请求体（UserUpdate），PUT /users/{userId}：没传的字段保持原值 */
+export interface UserUpdate {
+  realName?: string;
+  dept?: string;
+  roleId?: number;
+  email?: string;
+  skillTags?: string[];
+  weeklyCapacity?: number;
+}
+
 /** 系统角色（Role），GET /roles：系统管理员和普通用户两种 */
 export interface Role {
   id: number;
