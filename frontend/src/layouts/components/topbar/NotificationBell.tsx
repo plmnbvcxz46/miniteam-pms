@@ -80,7 +80,7 @@ export default function NotificationBell({
       {open && (
         <div className="issues notes">
           <h4>
-            INBOX 通知
+            INBOX
             <em>{hasUnread ? `${unreadCount} 未读` : "已读完"}</em>
           </h4>
           <div className="list scroll-y">

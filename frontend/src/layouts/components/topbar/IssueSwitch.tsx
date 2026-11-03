@@ -53,7 +53,7 @@ export default function IssueSwitch() {
       {open && (
         <div className="issues">
           <h4>
-            ARCHIVE 往期
+            ARCHIVE
             <em>{issues.length}</em>
           </h4>
           <div className="list scroll-y">

@@ -53,7 +53,7 @@ export default function ProjectSwitch({
       {open && (
         <div className="issues projs">
           <h4>
-            PROJECTS 我参与的项目
+            PROJECTS
             <em>{projects.length}</em>
           </h4>
           <div className="list scroll-y">

@@ -119,7 +119,6 @@ export default function NewProjectDrawer({
               />
             </div>
           </div>
-          <div className="hint">你创建后自动成为这个项目的项目经理</div>
           {dateError && <div className="err">{dateError}</div>}
         </div>
 

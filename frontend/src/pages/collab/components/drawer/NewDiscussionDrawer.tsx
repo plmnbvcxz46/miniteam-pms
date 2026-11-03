@@ -177,12 +177,7 @@ export default function NewDiscussionDrawer({
               placeholder="说一下想讨论什么"
             />
           </div>
-          <div className="hint">
-            {notice ||
-              (documents.length > 0
-                ? "@ 可提及成员和这个任务下的文件"
-                : "@ 可提及成员；关联任务后还能 @ 任务下的文件")}
-          </div>
+          {notice && <div className="hint">{notice}</div>}
           {contentError && <div className="err">{contentError}</div>}
         </div>
 
