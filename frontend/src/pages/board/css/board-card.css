@@ -64,6 +64,11 @@
 .card .score small::before {
   content: "· ";
 }
+.card .score.p-h {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--ink);
+}
 .card .score.p-l {
   font-weight: 500;
   color: var(--mute);

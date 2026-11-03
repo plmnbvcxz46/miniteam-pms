@@ -253,6 +253,9 @@ interface TaskSeed {
   assignee: UserBrief | null;
   milestone: TaskDetail["milestone"];
   score: number;
+  /** 重要度、紧急度，1 到 5 */
+  importance: number;
+  urgency: number;
   critical: boolean;
   progress: number;
   planStart: string;
@@ -273,6 +276,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: devA,
     milestone: milestones.C,
     score: 91,
+    importance: 5,
+    urgency: 4,
     critical: true,
     progress: 60,
     planStart: "2026-10-19",
@@ -292,6 +297,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: pmA,
     milestone: milestones.C,
     score: 86,
+    importance: 4,
+    urgency: 4,
     critical: false,
     progress: 70,
     planStart: "2026-10-19",
@@ -311,6 +318,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: devB,
     milestone: milestones.D,
     score: 74,
+    importance: 4,
+    urgency: 3,
     critical: false,
     progress: 60,
     planStart: "2026-10-20",
@@ -330,6 +339,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: qaC,
     milestone: null,
     score: 55,
+    importance: 4,
+    urgency: 4,
     critical: false,
     progress: 35,
     planStart: "2026-10-21",
@@ -348,6 +359,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: pmA,
     milestone: milestones.D,
     score: 72,
+    importance: 3,
+    urgency: 3,
     critical: false,
     progress: 0,
     planStart: "2026-10-26",
@@ -367,6 +380,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: devA,
     milestone: milestones.C,
     score: 68,
+    importance: 4,
+    urgency: 3,
     critical: true,
     progress: 0,
     planStart: "2026-10-23",
@@ -385,6 +400,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: qaC,
     milestone: null,
     score: 31,
+    importance: 3,
+    urgency: 5,
     critical: false,
     progress: 0,
     planStart: "2026-10-22",
@@ -403,6 +420,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: null,
     milestone: milestones.E,
     score: 24,
+    importance: 2,
+    urgency: 2,
     critical: false,
     progress: 0,
     planStart: "2026-10-29",
@@ -421,6 +440,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: devB,
     milestone: milestones.B,
     score: 0,
+    importance: 3,
+    urgency: 3,
     critical: true,
     progress: 100,
     planStart: "2026-10-17",
@@ -440,6 +461,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: pmA,
     milestone: milestones.A,
     score: 0,
+    importance: 3,
+    urgency: 3,
     critical: true,
     progress: 100,
     planStart: "2026-10-12",
@@ -458,6 +481,8 @@ const taskSeeds: TaskSeed[] = [
     assignee: devA,
     milestone: milestones.C,
     score: 0,
+    importance: 3,
+    urgency: 3,
     critical: false,
     progress: 100,
     planStart: "2026-10-16",
@@ -493,7 +518,7 @@ function toDependency(dependencyId: number, taskId: number): DependencyTask {
 }
 
 function toTaskDetail(seed: TaskSeed, index: number): TaskDetail {
-  const { score, ...fields } = seed;
+  const { score, importance, urgency, ...fields } = seed;
   const logs = taskActivities[seed.id];
   return {
     ...fields,
@@ -504,8 +529,8 @@ function toTaskDetail(seed: TaskSeed, index: number): TaskDetail {
     milestoneId: seed.milestone?.id ?? null,
     projectId: currentProjectId,
     creator: users.pmA,
-    importance: 3,
-    urgency: 3,
+    importance,
+    urgency,
     estHours: seed.planDays * 8,
     requiredSkills: [],
     parent: null,
