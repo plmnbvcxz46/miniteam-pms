@@ -2,9 +2,20 @@
    概览 (Overview)
    ========================================================================== */
 
+/* 一屏内展示，做法同时间线页：页面高度 = 视口高度 − 顶部栏，超出的在面板里滚动 */
+#view-overview {
+  flex: none;
+  height: calc(100vh - 94px);
+  max-height: calc(100vh - 94px);
+  min-height: 480px;
+  overflow: hidden;
+}
+
 .ov1 {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  /* 行高可收缩：窗口矮时成员排期在面板内滚动，不撑高整页 */
+  grid-template-rows: minmax(0, 1fr);
   gap: 14px;
   flex: 1;
   min-height: 0;
@@ -289,4 +300,21 @@
   text-align: left;
   text-overflow: ellipsis;
   cursor: pointer;
+}
+
+/* 视口较矮时收紧今日头条，保证内容不被截 */
+@media (max-height: 800px) {
+  .ov1 .hero {
+    gap: 6px;
+    padding: 10px 14px;
+  }
+  .ov1 .hero .headline {
+    font-size: 18px;
+  }
+  .ov1 .hero .big b {
+    font-size: 36px;
+  }
+  .ov1 .hero .tags {
+    display: none;
+  }
 }
