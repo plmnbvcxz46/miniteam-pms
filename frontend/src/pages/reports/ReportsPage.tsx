@@ -10,7 +10,8 @@ import {
   weeklyCompleted,
   workload,
 } from "../../data/reports";
-import { toMonthDay } from "./utils";
+import { downloadTextFile } from "../../utils/download";
+import { buildReportCsv, toMonthDay } from "./utils";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";
 import LoadPanel from "./components/load/LoadPanel";
@@ -26,9 +27,18 @@ export default function ReportsPage() {
   // 根据当前选择的范围获取燃尽图数据
   const currentBurndown = burndownByRange[range];
 
-  // 报表导出（对齐 GET /projects/{projectId}/reports/export）
+  // 报表导出（对齐 GET /projects/{projectId}/reports/export，接口返回 Excel，这里先导出 CSV）
   const handleExport = () => {
-    window.alert("已生成并下载统计报表（Excel 格式）");
+    downloadTextFile(
+      `统计报表_${currentBurndown.today}.csv`,
+      buildReportCsv({
+        summary: reportSummary,
+        workload,
+        weeklyCompleted,
+        deviations: durationDeviation,
+      }),
+      "text/csv",
+    );
   };
 
   return (

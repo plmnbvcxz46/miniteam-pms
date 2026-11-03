@@ -3,6 +3,7 @@ import type {
   DocVersionRecord,
   DocumentVersionItem,
 } from "../../../../types/documents";
+import { downloadTextFile } from "../../../../utils/download";
 
 interface DocumentDetailHistoryProps {
   doc: DocumentItem;
@@ -50,8 +51,16 @@ export default function DocumentDetailHistory({
       onDownloadVersion(ver);
       return;
     }
-    // 默认提供友好的下载提示交互
-    alert(`准备下载版本【${ver.version}】附件: ${ver.fileName || "文件"}`);
+    // 接口接通后由 GET /document-versions/{versionId}/download 返回真实文件，
+    // 现在没有文件内容，先下载一份写着版本信息的文本
+    const note = [
+      `文档：${doc.n}`,
+      `版本：${ver.version}`,
+      `上传：${ver.date} ${ver.operator}`,
+      `说明：${ver.comment}`,
+      `文件：${ver.fileName ?? ""}`,
+    ].join("\r\n");
+    downloadTextFile(`${doc.n}_${ver.version}.txt`, note);
   };
 
   return (
