@@ -1,6 +1,7 @@
 import type {
   IssueInfo,
   MemberPermissions,
+  ProjectPeriod,
   ProjectRole,
   TaskStatus,
   UserBrief,
@@ -41,6 +42,12 @@ export const myPermissions: MemberPermissions = {
   canEditSchedule: true,
   canEditDoc: true,
   canManageMember: true,
+};
+
+/** 当前项目的起止日期（对应 ProjectSummary.startDate / planEnd），共 10 周 */
+export const currentProjectPeriod: ProjectPeriod = {
+  startDate: "2026-09-21",
+  planEnd: "2026-11-29",
 };
 
 /** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 utils/date 的 getProjectToday() 读取 */

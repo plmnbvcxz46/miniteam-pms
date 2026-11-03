@@ -1,0 +1,292 @@
+/* ==========================================================================
+   概览 (Overview)
+   ========================================================================== */
+
+.ov1 {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+.ov2 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  height: 178px;
+  flex-shrink: 0;
+}
+.tl {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.tl .days {
+  display: flex;
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+.tl .days .gut {
+  width: 96px;
+  flex-shrink: 0;
+}
+.tl .days .cols {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+.tl .days .cols span.we {
+  color: var(--mute);
+}
+.tl .days .cols span.on {
+  box-shadow: inset 0 0 0 2px var(--signal);
+  margin: 0 14px;
+}
+.tl .rows {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: calc(52px * 5);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+.tl .today {
+  position: absolute;
+  left: calc(96px + (100% - 96px) * var(--at, 3.5) / 7);
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--signal);
+  z-index: 2;
+}
+.tl .row {
+  flex: 1 0 auto;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dashed var(--ink);
+}
+.tl .row:last-child {
+  border-bottom: 0;
+}
+.tl .who {
+  width: 96px;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tl .lane {
+  position: relative;
+  flex: 1;
+  height: 26px;
+}
+.bar.on {
+  background: var(--ink);
+  color: var(--paper);
+}
+.bar.next {
+  background: var(--paper);
+  font-weight: 400;
+}
+.bar.stuck {
+  background: var(--hatch);
+  padding-left: 6px;
+}
+.bar.stuck span {
+  background: var(--paper);
+  padding: 0 4px;
+}
+.tl .bar[data-t]:hover {
+  outline: 1.5px solid var(--ink);
+  outline-offset: 2px;
+}
+.todo-list {
+  gap: 0;
+}
+.todo-list .todo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.todo-list .item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--ink);
+  font-size: 12px;
+  min-height: 0;
+}
+.todo-list .item:last-child {
+  border-bottom: 0;
+}
+.todo-list .item b {
+  font-weight: 400;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.todo-list .item .key {
+  width: 14px;
+  height: 14px;
+}
+.todo-list .item small {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  border: 1.5px solid var(--ink);
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+.todo-list .item small::before {
+  content: "[ ";
+}
+.todo-list .item small::after {
+  content: " ]";
+}
+.todo-list .item small.late {
+  background: var(--signal);
+  border-color: var(--signal);
+  font-weight: 800;
+}
+.todo-list .item small.now {
+  border-color: var(--signal);
+  font-weight: 800;
+}
+.todo-list .item.more b {
+  color: var(--mute);
+}
+.todo-list .item.more small {
+  display: none;
+}
+.todo-list .item[data-t]:hover b,
+.todo-list .item[data-go]:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.pg .big {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -3px;
+  margin-top: 10px;
+}
+.pg .big em {
+  font-style: normal;
+  color: var(--signal);
+}
+.pg .pbar {
+  display: flex;
+  height: 22px;
+  border: 1.5px solid var(--ink);
+  margin-top: auto;
+}
+.pg .pbar span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+.pg .pbar span:first-child {
+  background: var(--ink);
+  color: var(--paper);
+}
+.pg .pbar span + span {
+  flex: 1;
+}
+.pg .legend {
+  margin-top: 8px;
+  font-size: 9px;
+}
+.cp {
+  gap: 8px;
+}
+.cp .chain {
+  display: flex;
+  align-items: center;
+  gap: 6px 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.cp .chain span {
+  border: 1.5px solid var(--paper);
+  padding: 3px 6px;
+  white-space: nowrap;
+}
+.cp .chain .hot {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0;
+  border: 0;
+  gap: 0;
+}
+.cp .chain .hot b {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 4px 7px;
+  font-weight: 700;
+}
+.cp .chain .hot i {
+  width: 22px;
+  border: 1.5px solid var(--paper);
+  border-left: 0;
+  background: var(--over);
+}
+.cp .chain .hot i[hidden] + em {
+  display: none;
+}
+.cp .chain em {
+  font-style: normal;
+  color: var(--signal);
+  border: 0;
+  padding: 0;
+}
+.cp .foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+.cp .foot span {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: #cfcfca;
+}
+.cp .foot b {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 0.9;
+  letter-spacing: -2px;
+  color: var(--signal);
+}
+.cp .foot b.ok {
+  color: var(--paper);
+}
+
+/* 成员排期的任务条是按钮：去掉按钮默认的内边距和居中，文字太长时截断 */
+.tl .bar {
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  text-align: left;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
