@@ -18,6 +18,15 @@
 - 业务错误抛 `BusinessException(ResultCode.XXX, "给用户看的原因")`，由全局异常处理转换，不要在 Controller 里自己拼错误响应。
 - 日期时间字段用 `LocalDate` / `LocalDateTime`，DTO 上加 `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")`（日期为 `yyyy-MM-dd`）。
 
+## 认证与权限
+
+- `@RestController` 的路径会自动加 `/api` 前缀（`common/config/ApiPrefixConfig`），Controller 里只写接口文档里的路径，如 `@RequestMapping("/users")`，不要再写 `/api`。
+- 除登录、注册外的接口都要带 JWT，由 `auth/AuthInterceptor` 统一校验。身份只从 `AuthContext.require()` 取，**不要信请求里传的用户 id**；只有系统管理员能做的事用 `AuthContext.requireAdmin()`，无权限抛 403。
+- 项目内的权限（是不是成员、能不能编辑任务等）不在拦截器里做，写在对应模块的 Service 里，每个接口自己校验。
+- 记操作日志用 `OperationLogService.record(...)`，失败不会影响业务。
+- 数据库里的 JSON 数组列（技能标签、权限编码）在 XML 里用 `typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"`，Java 侧是 `List<String>`。
+- 本机第一次启动时用户表是空的，会自动创建管理员 `admin` / `123456`，用它登录；开发库建好之后这个账号已经存在。
+
 ## 常用命令（在仓库根目录执行）
 
 | 做什么 | 命令 |

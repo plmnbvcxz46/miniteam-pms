@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.user.mapper.RoleMapper">
+
+    <resultMap id="roleMap" type="org.miniteam.pms.user.entity.SysRole">
+        <id property="id" column="id"/>
+        <result property="permissions" column="permissions"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"/>
+    </resultMap>
+
+    <select id="findByCode" resultMap="roleMap">
+        SELECT id, code, name, permissions, sort FROM sys_role WHERE code = #{code}
+    </select>
+
+    <select id="findById" resultMap="roleMap">
+        SELECT id, code, name, permissions, sort FROM sys_role WHERE id = #{id}
+    </select>
+
+    <select id="listWithUserCount" resultMap="roleMap">
+        SELECT r.id, r.code, r.name, r.permissions, r.sort,
+               (SELECT COUNT(*) FROM sys_user u WHERE u.role_id = r.id) AS user_count
+        FROM sys_role r
+        ORDER BY r.sort, r.id
+    </select>
+</mapper>

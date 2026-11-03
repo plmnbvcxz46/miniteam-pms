@@ -58,6 +58,8 @@
 | `DB_USERNAME` | 数据库用户名 |
 | `DB_PASSWORD` | 数据库密码 |
 | `SERVER_PORT` | 后端端口，默认 8080 |
+| `JWT_SECRET` | JWT 签名密钥。不配则每次启动随机生成（重启后所有人要重新登录），线上必须配；本地开发可以不配 |
+| `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 用户表为空时自动创建的初始管理员，默认 `admin` / `123456`；线上建议改掉密码 |
 
 本地开发默认连服务器上的**开发库 `app_dev`**（全组共用，可以随便测），线上后端连**线上库 `app`**（开发账号碰不到）。开发库密码不进仓库，写在本机 `backend/application-local.yaml` 里（已被忽略，向组长要），详见 `backend/AGENTS.md`。
 

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.user.mapper.UserMapper">
+
+    <resultMap id="userMap" type="org.miniteam.pms.user.entity.SysUser">
+        <id property="id" column="id"/>
+        <result property="skillTags" column="skill_tags"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"/>
+        <result property="rolePermissions" column="role_permissions"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"/>
+    </resultMap>
+
+    <sql id="selectUser">
+        SELECT u.id, u.username, u.password_hash, u.real_name, u.dept, u.role_id, u.email, u.skill_tags,
+               u.weekly_capacity, u.status, u.last_login_at, u.created_at, u.updated_at,
+               r.code AS role_code, r.name AS role_name, r.permissions AS role_permissions
+        FROM sys_user u
+        JOIN sys_role r ON r.id = u.role_id
+    </sql>
+
+    <select id="findById" resultMap="userMap">
+        <include refid="selectUser"/>
+        WHERE u.id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="userMap">
+        <include refid="selectUser"/>
+        WHERE u.username = #{username}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM sys_user
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (username, password_hash, real_name, dept, role_id, email, skill_tags, weekly_capacity)
+        VALUES (#{username}, #{passwordHash}, #{realName}, #{dept}, #{roleId}, #{email},
+                #{skillTags,typeHandler=org.miniteam.pms.common.mybatis.JsonStringListTypeHandler},
+                #{weeklyCapacity})
+    </insert>
+
+    <update id="updateLastLogin">
+        UPDATE sys_user SET last_login_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE sys_user SET password_hash = #{passwordHash} WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE sys_user SET status = #{status} WHERE id = #{id}
+    </update>
+
+    <sql id="listFilter">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (u.real_name LIKE CONCAT('%', #{keyword}, '%') OR u.username LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="dept != null and dept != ''">AND u.dept = #{dept}</if>
+            <if test="roleId != null">AND u.role_id = #{roleId}</if>
+            <if test="status != null">AND u.status = #{status}</if>
+        </where>
+    </sql>
+
+    <select id="list" resultMap="userMap">
+        <include refid="selectUser"/>
+        <include refid="listFilter"/>
+        ORDER BY u.id
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByFilter" resultType="long">
+        SELECT COUNT(*) FROM sys_user u
+        <include refid="listFilter"/>
+    </select>
+
+    <select id="search" resultMap="userMap">
+        <include refid="selectUser"/>
+        WHERE u.status = 1
+          AND (u.real_name LIKE CONCAT('%', #{keyword}, '%') OR u.username LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY u.id
+        LIMIT #{limit}
+    </select>
+
+    <update id="updateProfile">
+        UPDATE sys_user
+        SET real_name = #{realName},
+            email = #{email},
+            skill_tags = #{skillTags,typeHandler=org.miniteam.pms.common.mybatis.JsonStringListTypeHandler}
+        WHERE id = #{id}
+    </update>
+</mapper>

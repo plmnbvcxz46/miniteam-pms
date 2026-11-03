@@ -407,8 +407,8 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 
 | 表 | 内容 |
 |---|---|
-| `sys_role` | ADMIN 系统管理员、PM 项目经理、MEMBER 普通成员、TESTER 测试人员、GUEST 访客 |
+| `sys_role` | ADMIN 系统管理员（权限 `system:view`）、USER 普通用户（无系统权限）。`V1` 里的 5 个角色已由 `V2__system_roles.sql` 改成这两个，项目内角色见 `project_member.project_role` |
 | `sys_config` | 优先级权重 w1=0.30、w2=0.30、w3=0.25、w4=0.15，α=0.5，今日待办 5 条，默认每周工时上限 40 小时 |
 | `sys_dict` | 任务状态、文档分类、文档状态、缺陷严重级别、缺陷状态 |
 
-不预置用户账号。
+迁移脚本不预置用户账号。后端启动时如果 `sys_user` 为空，会按配置 `app.admin`（环境变量 `ADMIN_USERNAME`、`ADMIN_PASSWORD`，默认 `admin` / `123456`）自动创建一个系统管理员。
