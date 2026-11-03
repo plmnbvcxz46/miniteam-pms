@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useConfigs } from "../../../config/useConfigs";
 import { configs } from "../../../data/settings";
 
-const initialValues = Object.fromEntries(configs.map((c) => [c.key, c.value]));
 const weightConfigs = configs.filter((c) => c.key.startsWith("priority.weight."));
 
 export default function ParamsPanel() {
-  const [values, setValues] = useState(initialValues);
+  const { values: saved, save } = useConfigs();
+  const [values, setValues] = useState(saved);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -47,6 +48,7 @@ export default function ParamsPanel() {
       setError(`${name}要填大于 0 的整数`);
       return;
     }
+    save(values);
     setMessage("已保存");
   };
 

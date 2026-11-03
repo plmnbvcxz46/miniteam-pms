@@ -176,7 +176,7 @@ function toTaskFields(values: TaskFormValues) {
   };
 }
 
-/** 新建任务，放到待开始列最上面。优先级接通接口后由后端计算 */
+/** 新建任务，放到待开始列最上面。优先级得分不在这里算，由 TaskProvider 按评分算法得出 */
 export function createTask(
   tasks: Record<number, TaskDetail>,
   taskId: number,
@@ -184,7 +184,6 @@ export function createTask(
   today: string,
   creator: UserBrief,
 ): Record<number, TaskDetail> {
-  const score = 50 + values.predecessorIds.length * 10;
   const createdAt = `${today} 刚刚`;
   const task: TaskDetail = {
     ...toTaskFields(values),
@@ -192,7 +191,7 @@ export function createTask(
     taskNo: taskId,
     status: "TODO",
     progress: 0,
-    priority: { label: getPriorityLabel(score), score },
+    priority: { label: getPriorityLabel(0), score: 0 },
     critical: false,
     overdueDays: 0,
     sortOrder: 0,

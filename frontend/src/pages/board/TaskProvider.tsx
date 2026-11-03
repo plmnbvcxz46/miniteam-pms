@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useMe } from "../../auth/useAuth";
+import { useConfigs } from "../../config/useConfigs";
 import { taskStatusLabel } from "../../data/global";
 import {
   taskActivities as initialTaskActivities,
@@ -10,6 +11,7 @@ import type { Activity, TaskStatus } from "../../types/global";
 import type { TaskDetail, TaskFormValues } from "../../types/task";
 import { useDocumentStore } from "../documents/documentStore";
 import { toDocumentBrief } from "../documents/utils";
+import { calculatePriorities, readPriorityConfig } from "./priority";
 import { TaskStoreContext, type TaskStore } from "./taskStore";
 import { createTask, moveTaskTo, updateTask } from "./utils";
 
@@ -21,22 +23,28 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   const { user: currentUser } = useMe();
   const [baseTaskMap, setTaskMap] =
     useState<Record<number, TaskDetail>>(initialTaskDetails);
-  // 任务关联的文档由文档数据按 taskId 得出，不在任务里另存一份
-  const taskMap = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.values(baseTaskMap).map((task) => [
-          task.id,
-          {
-            ...task,
-            documents: docs
-              .filter((doc) => doc.taskId === task.id)
-              .map((doc) => toDocumentBrief(doc, task, taskTodayDate)),
-          },
-        ]),
-      ),
-    [baseTaskMap, docs],
-  );
+  const { values: configValues } = useConfigs();
+  // 任务关联的文档由文档数据按 taskId 得出，不在任务里另存一份；
+  // 未完成任务的优先级得分由评分算法和系统参数里的权重得出，改了任务或权重就跟着变
+  const taskMap = useMemo(() => {
+    const withDocs = Object.values(baseTaskMap).map((task) => ({
+      ...task,
+      documents: docs
+        .filter((doc) => doc.taskId === task.id)
+        .map((doc) => toDocumentBrief(doc, task, taskTodayDate)),
+    }));
+    const priorities = calculatePriorities(
+      withDocs,
+      taskTodayDate,
+      readPriorityConfig(configValues),
+    );
+    return Object.fromEntries(
+      withDocs.map((task) => [
+        task.id,
+        priorities[task.id] ? { ...task, priority: priorities[task.id] } : task,
+      ]),
+    ) as Record<number, TaskDetail>;
+  }, [baseTaskMap, docs, configValues]);
   const [activityMap, setActivityMap] = useState<Record<number, Activity[]>>(
     initialTaskActivities,
   );

@@ -1,6 +1,7 @@
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
 import AuthProvider from "./auth/AuthProvider";
 import { useAuth } from "./auth/useAuth";
+import ConfigProvider from "./config/ConfigProvider";
 import LoginPage from "./pages/login/LoginPage";
 import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
@@ -48,7 +49,9 @@ function AuthGate() {
 export default function App() {
   return (
     <AuthProvider>
-      <AuthGate />
+      <ConfigProvider>
+        <AuthGate />
+      </ConfigProvider>
     </AuthProvider>
   );
 }
