@@ -78,3 +78,58 @@ export interface IssueInfo {
   fullDate: string;
 }
 
+
+/** 项目状态（ProjectStatus）：ACTIVE 进行中 / ARCHIVED 已归档 */
+export type ProjectStatus = "ACTIVE" | "ARCHIVED";
+
+/** 项目切换浮层里的一项（ProjectSummary），GET /projects */
+export interface ProjectSummary extends ProjectPeriod {
+  id: number;
+  name: string;
+  status: ProjectStatus;
+  /** 今日期号 */
+  issueNo: number;
+  /** 今日头条 */
+  headline: string | null;
+  myProjectRole: ProjectRole | null;
+}
+
+/** 新建项目请求体（ProjectSave），POST /projects */
+export interface ProjectSave extends ProjectPeriod {
+  name: string;
+  description?: string;
+}
+
+/** 往期列表的一项（IssueSummary），GET /projects/{projectId}/issues */
+export interface IssueSummary {
+  issueNo: number;
+  /** yyyy-MM-dd */
+  issueDate: string;
+  headline: string | null;
+  /** 预计完工日期 yyyy-MM-dd */
+  predictedEnd: string | null;
+  delayDays: number;
+  risk: boolean;
+}
+
+/** 通知类型（NotificationType）：ASSIGN 指派 / MENTION 被@ / DELAY 延期预警 / DEFECT 缺陷 / SYSTEM 系统 */
+export type NotificationType =
+  | "ASSIGN"
+  | "MENTION"
+  | "DELAY"
+  | "DEFECT"
+  | "SYSTEM";
+
+/** 通知（Notification），GET /notifications */
+export interface Notification {
+  id: number;
+  type: NotificationType;
+  title: string;
+  content: string | null;
+  /** 前端路由，可带查询参数，例如 "/collab?discussionId=1&commentId=103" */
+  link: string | null;
+  isRead: boolean;
+  projectId: number | null;
+  /** yyyy-MM-dd HH:mm:ss */
+  createdAt: string;
+}
