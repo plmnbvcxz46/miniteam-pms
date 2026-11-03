@@ -41,7 +41,12 @@ export default function CrewLabels({
         <b>负责任务</b>
       </div>
 
-      {/* 行 4-7：权限项说明 */}
+      {/* 行 4：项目角色 */}
+      <div className="c-lb">
+        <b>项目角色</b>
+      </div>
+
+      {/* 行 5-8：权限项说明 */}
       {permDefs.map((def) => (
         <div key={def.key} className="c-lb">
           <b>{def.label}</b>

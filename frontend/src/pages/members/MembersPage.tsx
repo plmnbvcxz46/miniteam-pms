@@ -1,5 +1,11 @@
 import { useState, useMemo } from "react";
-import type { PermKey, Activity, MemberPermissions } from "../../types/global";
+import type {
+  PermKey,
+  Activity,
+  MemberPermissions,
+  ProjectRole,
+} from "../../types/global";
+import { roleLabel } from "../../data/global";
 import type { Member } from "../../types/members";
 import { useMe } from "../../auth/useAuth";
 import {
@@ -93,6 +99,38 @@ export default function MembersPage() {
     setLogList((prev) => [newLog, ...prev]);
   };
 
+  // 修改成员在本项目里的角色：改成项目经理时全部权限打开，从项目经理改成别的角色时回到默认权限
+  const handleChangeRole = (userId: number, role: ProjectRole) => {
+    const target = memberList.find((m) => m.user.id === userId);
+    if (!target || target.projectRole === role) return;
+    const permissions: MemberPermissions =
+      role === "PM"
+        ? { canEditTask: true, canEditSchedule: true, canEditDoc: true, canManageMember: true }
+        : target.projectRole === "PM"
+          ? { canEditTask: false, canEditSchedule: false, canEditDoc: true, canManageMember: false }
+          : {
+              canEditTask: target.canEditTask,
+              canEditSchedule: target.canEditSchedule,
+              canEditDoc: target.canEditDoc,
+              canManageMember: target.canManageMember,
+            };
+    setMemberList((prev) =>
+      prev.map((m) =>
+        m.user.id === userId ? { ...m, projectRole: role, ...permissions } : m,
+      ),
+    );
+    const newLog: Activity = {
+      id: Date.now(),
+      user: currentUser,
+      targetType: "MEMBER",
+      targetId: userId,
+      action: "ROLE",
+      detail: `${currentUser.realName} 把 ${target.user.realName} 的角色改为${roleLabel[role]}`,
+      createdAt: formatFullDateTime(new Date()),
+    };
+    setLogList((prev) => [newLog, ...prev]);
+  };
+
   // 邀请成员提交
   const handleInviteSubmit = (data: {
     user: typeof inviteCandidates[number];
@@ -145,6 +183,7 @@ export default function MembersPage() {
         onSearchChange={setSearchKeyword}
         canManageMember={canManageMember}
         onTogglePerm={handleTogglePerm}
+        onChangeRole={handleChangeRole}
       />
 
       <PermLog logs={logList} />

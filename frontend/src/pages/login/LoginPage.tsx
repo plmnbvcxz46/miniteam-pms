@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../auth/useAuth";
 import { accounts as demoAccounts } from "../../data/auth";
+import { roleLabel } from "../../data/global";
 import type { AuthField } from "../../types/auth";
 import "./css/login.css";
 
@@ -231,7 +232,11 @@ export default function LoginPage() {
                   onClick={() => pickDemo(account.user.username)}
                 >
                   <b>{account.user.username}</b>
-                  <span>{account.roleName}</span>
+                  <span>
+                    {account.projectRole
+                      ? roleLabel[account.projectRole]
+                      : account.roleName}
+                  </span>
                 </button>
               ))}
             </div>

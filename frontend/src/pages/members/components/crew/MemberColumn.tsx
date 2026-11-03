@@ -1,5 +1,5 @@
 import React from "react";
-import type { PermKey } from "../../../../types/global";
+import type { PermKey, ProjectRole } from "../../../../types/global";
 import type { Member, PermDef } from "../../../../types/members";
 import { roleLabel } from "../../../../data/global";
 import MemberLoad from "./MemberLoad";
@@ -14,8 +14,12 @@ interface MemberColumnProps {
   permDefs: PermDef[];
   /** 当前用户是否有权限管理成员权限 */
   canManageMember: boolean;
+  /** 能不能改这个成员的项目角色，不能时只显示角色名 */
+  canChangeRole: boolean;
   /** 切换权限回调 */
   onTogglePerm: (key: PermKey) => void;
+  /** 修改项目角色回调 */
+  onChangeRole: (role: ProjectRole) => void;
 }
 
 export default function MemberColumn({
@@ -23,7 +27,9 @@ export default function MemberColumn({
   loadScale,
   permDefs,
   canManageMember,
+  canChangeRole,
   onTogglePerm,
+  onChangeRole,
 }: MemberColumnProps) {
   const isPm = member.projectRole === "PM";
   const roleName = member.position || roleLabel[member.projectRole];
@@ -51,7 +57,27 @@ export default function MemberColumn({
         {member.taskCount} <small>项</small>
       </div>
 
-      {/* 行 4-7：各项权限开关格 */}
+      {/* 行 4：本项目里的角色（项目经理、普通成员、测试人员），有权限的人可以改 */}
+      <div className="c-p c-role">
+        {canChangeRole ? (
+          <select
+            className="in"
+            aria-label={`${member.user.realName} 在本项目里的角色`}
+            value={member.projectRole}
+            onChange={(e) => onChangeRole(e.target.value as ProjectRole)}
+          >
+            {(Object.keys(roleLabel) as ProjectRole[]).map((role) => (
+              <option key={role} value={role}>
+                {roleLabel[role]}
+              </option>
+            ))}
+          </select>
+        ) : (
+          roleLabel[member.projectRole]
+        )}
+      </div>
+
+      {/* 行 5-8：各项权限开关格 */}
       {permDefs.map((def, idx) => {
         const isLast = idx === permDefs.length - 1;
         const hasPerm = Boolean(member[def.key]);

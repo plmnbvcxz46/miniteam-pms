@@ -1660,15 +1660,6 @@ select.in {
   gap: 14px;
   margin-top: 14px;
 }
-.dept h3 {
-  margin: 0 0 4px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--mute);
-  display: flex;
-  justify-content: space-between;
-}
 .pp {
   all: unset;
   box-sizing: border-box;

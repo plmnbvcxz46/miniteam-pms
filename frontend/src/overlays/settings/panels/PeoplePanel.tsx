@@ -4,22 +4,6 @@ import type { SystemUser, UserCreate } from "../../../types/settings";
 import { getProjectToday } from "../../../utils/date";
 import Switch from "../components/Switch";
 
-const UNGROUPED = "未分组";
-
-/** 按部门分组，没有部门的放最后 */
-function groupByDept(list: SystemUser[]): { dept: string; items: SystemUser[] }[] {
-  const groups: { dept: string; items: SystemUser[] }[] = [];
-  for (const user of list) {
-    const dept = user.dept ?? UNGROUPED;
-    const found = groups.find((g) => g.dept === dept);
-    if (found) found.items.push(user);
-    else groups.push({ dept, items: [user] });
-  }
-  return groups.sort(
-    (a, b) => Number(a.dept === UNGROUPED) - Number(b.dept === UNGROUPED),
-  );
-}
-
 export default function PeoplePanel() {
   const [list, setList] = useState(systemUsers);
   const [selectedId, setSelectedId] = useState(systemUsers[0].id);
@@ -136,27 +120,19 @@ export default function PeoplePanel() {
           </div>
           <div className="roster" id="roster">
             {visible.length === 0 && <p className="msg">没有匹配的人员</p>}
-            {groupByDept(visible).map((group) => (
-              <div className="dept" key={group.dept}>
-                <h3>
-                  <span>{group.dept}</span>
-                  <span>{group.items.length} 人</span>
-                </h3>
-                {group.items.map((user) => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    className={user.status === 1 ? "pp" : "pp off"}
-                    aria-current={
-                      !creating && user.id === selected?.id ? "true" : undefined
-                    }
-                    onClick={() => select(user.id)}
-                  >
-                    <span>{user.realName}</span>
-                    <code>{user.username}</code>
-                  </button>
-                ))}
-              </div>
+            {visible.map((user) => (
+              <button
+                key={user.id}
+                type="button"
+                className={user.status === 1 ? "pp" : "pp off"}
+                aria-current={
+                  !creating && user.id === selected?.id ? "true" : undefined
+                }
+                onClick={() => select(user.id)}
+              >
+                <span>{user.realName}</span>
+                <code>{user.username}</code>
+              </button>
             ))}
           </div>
         </div>
@@ -178,12 +154,8 @@ export default function PeoplePanel() {
                     <code>{selected.username}</code>
                   </div>
                 </div>
-                <div className="srow">
-                  <span className="lb">部门</span>
-                  <div>{selected.dept ?? UNGROUPED}</div>
-                </div>
                 <div className="srow top">
-                  <span className="lb">角色</span>
+                  <span className="lb">账号类型</span>
                   <div className="roles">
                     {roles.map((role) => (
                       <label key={role.id}>
@@ -240,9 +212,8 @@ function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
   const [username, setUsername] = useState("");
   const [realName, setRealName] = useState("");
   const [password, setPassword] = useState("");
-  const [dept, setDept] = useState("");
   const [roleId, setRoleId] = useState(
-    roles.find((r) => r.code === "MEMBER")?.id ?? roles[0].id,
+    roles.find((r) => r.code === "USER")?.id ?? roles[0].id,
   );
   const [error, setError] = useState("");
 
@@ -265,7 +236,6 @@ function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
       username: account,
       password,
       realName: realName.trim(),
-      dept: dept.trim() || undefined,
       roleId,
     });
   };
@@ -310,20 +280,8 @@ function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
             />
           </div>
         </div>
-        <div className="srow">
-          <label htmlFor="np-dept">部门</label>
-          <div>
-            <input
-              className="in"
-              id="np-dept"
-              value={dept}
-              placeholder="可不填"
-              onChange={(e) => setDept(e.target.value)}
-            />
-          </div>
-        </div>
         <div className="srow top">
-          <span className="lb">角色</span>
+          <span className="lb">账号类型</span>
           <div className="roles">
             {roles.map((role) => (
               <label key={role.id}>
