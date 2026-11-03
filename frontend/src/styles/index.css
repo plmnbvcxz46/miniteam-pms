@@ -1749,13 +1749,6 @@ select.in {
 .sw2 button:not([aria-pressed="true"]):hover {
   background: var(--wash);
 }
-.days7 {
-  gap: 4px;
-}
-.days7 span {
-  display: none;
-}
-.days7 .perm,
 .perm {
   all: unset;
   box-sizing: border-box;
@@ -1769,47 +1762,9 @@ select.in {
   font-weight: 700;
   border: 1.5px solid var(--ink);
 }
-.days7 .perm::after {
-  content: attr(data-d);
-}
 .perm[aria-pressed="true"] {
   background: var(--ink);
   color: var(--paper);
-}
-.rank {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: r;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-}
-.rank li {
-  counter-increment: r;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px;
-  font-size: 13px;
-}
-.rank li::before {
-  content: "0" counter(r);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  width: 22px;
-}
-.rank li:first-child {
-  box-shadow: inset 0 0 0 1.5px var(--signal);
-}
-.rank li:first-child::after {
-  content: "今日命中";
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
 }
 .g4 {
   display: grid;

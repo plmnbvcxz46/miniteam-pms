@@ -1,10 +1,10 @@
-import { currentProjectPeriod } from "../../../data/global";
+import type { ProjectPeriod } from "../../../types/global";
 import { getProjectToday } from "../../../utils/date";
 import { getWeekProgress } from "../../utils";
 
-export default function WeekLine() {
+export default function WeekLine({ period }: { period: ProjectPeriod }) {
   const { startLabel, endLabel, total, current } = getWeekProgress(
-    currentProjectPeriod,
+    period,
     getProjectToday(),
   );
   return (

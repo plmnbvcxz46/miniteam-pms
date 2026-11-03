@@ -3,7 +3,6 @@ import type {
   IssueSummary,
   Notification,
   NotificationType,
-  ProjectPeriod,
   ProjectRole,
   ProjectSummary,
   TaskStatus,
@@ -28,12 +27,6 @@ export const users = {
   devB: { id: 3, username: "dev_b", realName: "普通员工 B" },
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
-
-/** 当前项目的起止日期（对应 ProjectSummary.startDate / planEnd），共 10 周 */
-export const currentProjectPeriod: ProjectPeriod = {
-  startDate: "2026-09-21",
-  planEnd: "2026-11-29",
-};
 
 /** GET /projects，项目切换浮层 */
 export const projects: ProjectSummary[] = [
@@ -68,6 +61,13 @@ export const projects: ProjectSummary[] = [
     myProjectRole: "PM",
   },
 ];
+
+/** GET /projects/{projectId} 的 description，按项目 id */
+export const projectDescriptions: Record<number, string> = {
+  1: "小型软件团队项目管理系统的课程设计",
+  2: "",
+  3: "数据库课程实验，已结项",
+};
 
 /** GET /projects/{projectId}/issues，按期号倒序，第一项是今天 */
 export const issues: IssueSummary[] = [

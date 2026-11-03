@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMe } from "../../auth/useAuth";
-import { currentProjectPeriod, users } from "../../data/global";
+import { users } from "../../data/global";
+import { useProjectPeriod } from "../../layouts/useProjectPeriod";
 import { getProjectToday } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import { computeCpm, getForecast, getTimelineTasks } from "../timeline/utils";
@@ -27,6 +28,7 @@ import "./css/overview.css";
 export default function OverviewPage() {
   const navigate = useNavigate();
   const { permissions } = useMe();
+  const period = useProjectPeriod();
   const { taskMap, openTaskForm } = useTaskStore();
   const today = getProjectToday();
 
@@ -36,7 +38,7 @@ export default function OverviewPage() {
   const cpm = useMemo(() => computeCpm(tasks), [tasks]);
   const forecast = useMemo(() => getForecast(tasks, cpm), [tasks, cpm]);
 
-  const stats = getOverviewStats(all, cpm, today, currentProjectPeriod);
+  const stats = getOverviewStats(all, cpm, today, period);
   const headline = getHeadline(stats.overdue, cpm);
   const todos = getTodos(all, today);
   const chain = getCriticalChain(tasks, cpm);
@@ -49,10 +51,10 @@ export default function OverviewPage() {
   return (
     <section className="view" id="view-overview" data-view="overview">
       <OverviewHeader
-        kicker={formatKicker(stats, today, currentProjectPeriod)}
+        kicker={formatKicker(stats, today, period)}
         onCreateTask={permissions.canEditTask ? () => openTaskForm() : undefined}
       />
-      <FigureStrip stats={stats} planEnd={currentProjectPeriod.planEnd} />
+      <FigureStrip stats={stats} planEnd={period.planEnd} />
 
       <div className="ov1">
         <SchedulePanel

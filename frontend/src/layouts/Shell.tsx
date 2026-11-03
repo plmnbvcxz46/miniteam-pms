@@ -7,8 +7,12 @@ import type { ProfileUpdate } from "../types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
-import { notifications as initialNotifications, projects as initialProjects } from "../data/global";
-import type { ProjectSave, ProjectSummary } from "../types/global";
+import {
+  notifications as initialNotifications,
+  projectDescriptions as initialDescriptions,
+  projects as initialProjects,
+} from "../data/global";
+import type { ProjectSave, ProjectStatus, ProjectSummary } from "../types/global";
 import { useTaskStore } from "../pages/board/taskStore";
 import { getColumnTasks } from "../pages/board/utils";
 import ProjectSwitch from "./components/sidebar/ProjectSwitch";
@@ -18,6 +22,7 @@ import IssueSwitch from "./components/topbar/IssueSwitch";
 import NotificationBell from "./components/topbar/NotificationBell";
 import AccountMenu from "./components/topbar/AccountMenu";
 import WeekLine from "./components/topbar/WeekLine";
+import type { ShellContext } from "./useProjectPeriod";
 
 export default function Shell() {
   const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
@@ -35,7 +40,10 @@ export default function Shell() {
     setProfileEdits((prev) => ({ ...prev, [me.user.id]: values }));
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [projectList, setProjectList] = useState(initialProjects);
+  const [projectDescriptions, setProjectDescriptions] = useState(initialDescriptions);
   const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
+  const currentProject =
+    projectList.find((p) => p.id === currentProjectId) ?? projectList[0];
   const [notificationList, setNotificationList] = useState(initialNotifications);
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
@@ -61,9 +69,40 @@ export default function Shell() {
       myProjectRole: "PM",
     };
     setProjectList((prev) => [project, ...prev]);
+    setProjectDescriptions((prev) => ({
+      ...prev,
+      [project.id]: values.description ?? "",
+    }));
     setCurrentProjectId(project.id);
     setProjectFormOpen(false);
   };
+
+  // PUT /projects/{projectId}：改当前项目的名称、说明和起止日期
+  const handleSaveProject = (values: ProjectSave) => {
+    setProjectList((prev) =>
+      prev.map((p) =>
+        p.id === currentProject.id
+          ? {
+              ...p,
+              name: values.name,
+              startDate: values.startDate,
+              planEnd: values.planEnd,
+            }
+          : p,
+      ),
+    );
+    setProjectDescriptions((prev) => ({
+      ...prev,
+      [currentProject.id]: values.description ?? "",
+    }));
+  };
+
+  // POST /projects/{projectId}/archive 和 /restore
+  const handleSetProjectStatus = (status: ProjectStatus) =>
+    setProjectList((prev) =>
+      prev.map((p) => (p.id === currentProject.id ? { ...p, status } : p)),
+    );
+
   return (
     <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
       {/* 左侧边栏 */}
@@ -78,14 +117,14 @@ export default function Shell() {
           riskCount={riskCount}
           onOpenSettings={() => setSettingsSection("people")}
         />
-        <SummaryCard />
+        <SummaryCard period={currentProject} />
       </aside>
 
       {/* 顶部栏 */}
       <header className="masthead" id="masthead">
         <IssueSwitch />
         <div className="slot">
-          <WeekLine />
+          <WeekLine period={currentProject} />
         </div>
         <NotificationBell
           notifications={notificationList}
@@ -107,7 +146,7 @@ export default function Shell() {
 
       {/* 主视图内容区域 */}
       <main>
-        <Outlet />
+        <Outlet context={{ period: currentProject } satisfies ShellContext} />
       </main>
 
       {/* 设置抽屉 */}
@@ -116,6 +155,10 @@ export default function Shell() {
           initialSection={settingsSection}
           profile={profile}
           onSaveProfile={setProfile}
+          project={currentProject}
+          projectDescription={projectDescriptions[currentProject.id] ?? ""}
+          onSaveProject={handleSaveProject}
+          onSetProjectStatus={handleSetProjectStatus}
           onClose={() => setSettingsSection(null)}
         />
       )}
