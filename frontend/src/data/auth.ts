@@ -32,7 +32,7 @@ export const accounts: Account[] = systemUsers.map((user) => {
     disabled: user.status === 0,
     systemPermissions: role?.permissions ?? [],
     projectRole: member?.projectRole ?? null,
-    // 不在项目成员里的账号：超级管理员可以做所有事，其余只读
+    // 不在项目成员里的账号：系统管理员可以做所有事，其余只读
     permissions: member
       ? {
           canEditTask: member.canEditTask,
@@ -40,7 +40,7 @@ export const accounts: Account[] = systemUsers.map((user) => {
           canEditDoc: member.canEditDoc,
           canManageMember: member.canManageMember,
         }
-      : user.roleCode === "SUPER_ADMIN"
+      : user.roleCode === "ADMIN"
         ? allPermissions
         : noPermissions,
   };

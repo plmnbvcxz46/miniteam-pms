@@ -242,7 +242,7 @@ function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
   const [password, setPassword] = useState("");
   const [dept, setDept] = useState("");
   const [roleId, setRoleId] = useState(
-    roles.find((r) => r.code === "DEV")?.id ?? roles[0].id,
+    roles.find((r) => r.code === "MEMBER")?.id ?? roles[0].id,
   );
   const [error, setError] = useState("");
 
