@@ -37,13 +37,19 @@ export default function GanttDeps({
         const x2 = nameWidth + dateToX(toDay(task.planStart!), range, width);
         const y1 = y(from.id);
         const y2 = y(task.id);
-        const mid = Math.max(x1 + ELBOW, Math.min(x2 - ELBOW, (x1 + x2) / 2));
         const crit =
           cpm.rows[from.id].slack === 0 && cpm.rows[task.id].slack === 0;
+        // 后续任务开始得比前置任务结束还早（或贴得太近）时，不能直接折过去，
+        // 否则线会倒着穿过任务条：改从两行之间的缝里绕过去
+        const roomy = x2 >= x1 + ELBOW * 2;
+        const mid = (x1 + x2) / 2;
+        const gap = y1 + (y2 >= y1 ? rowHeight : -rowHeight) / 2;
         return {
           key: dep.dependencyId,
           crit,
-          path: `M${x1} ${y1}H${mid}V${y2}H${x2}`,
+          path: roomy
+            ? `M${x1} ${y1}H${mid}V${y2}H${x2}`
+            : `M${x1} ${y1}H${x1 + ELBOW}V${gap}H${x2 - ELBOW}V${y2}H${x2}`,
           head: `${x2},${y2} ${x2 - 5},${y2 - 3} ${x2 - 5},${y2 + 3}`,
         };
       }),
