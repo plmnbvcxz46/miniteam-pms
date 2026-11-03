@@ -11,7 +11,6 @@ import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectInfoPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
-import RolesPanel from "./panels/RolesPanel";
 import LogsPanel from "./panels/LogsPanel";
 import ParamsPanel from "./panels/ParamsPanel";
 
@@ -102,7 +101,6 @@ export default function SettingsDrawer({
             />
           )}
           {current === "people" && <PeoplePanel />}
-          {current === "roles" && <RolesPanel />}
           {current === "logs" && <LogsPanel />}
           {current === "params" && <ParamsPanel />}
         </div>

@@ -1,5 +1,5 @@
 import { weekdayOf } from "../../utils/date";
-import type { LogItem, Permission } from "../../types/settings";
+import type { LogItem } from "../../types/settings";
 
 const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
 
@@ -20,24 +20,6 @@ export function groupLogsByDay(
     const last = groups[groups.length - 1];
     if (last && last.day === day) last.items.push(log);
     else groups.push({ day, items: [log] });
-  }
-  return groups;
-}
-
-/** 权限按钮在矩阵里的层级：view / list 是菜单（一级），其余是菜单里的按钮（二级） */
-export function getPermLevel(permission: Permission): 1 | 2 {
-  return /:(view|list)$/.test(permission.code) ? 1 : 2;
-}
-
-/** 权限按分组整理，组内保持接口顺序 */
-export function groupPermissions(
-  permissions: Permission[],
-): { group: string; items: Permission[] }[] {
-  const groups: { group: string; items: Permission[] }[] = [];
-  for (const permission of permissions) {
-    const found = groups.find((g) => g.group === permission.group);
-    if (found) found.items.push(permission);
-    else groups.push({ group: permission.group, items: [permission] });
   }
   return groups;
 }

@@ -1735,39 +1735,6 @@ select.in {
   color: var(--paper);
   font-weight: 700;
 }
-.matrix td,
-.matrix th {
-  text-align: left;
-}
-.matrix th.p,
-.matrix td.p {
-  text-align: center;
-  width: 84px;
-}
-.matrix tr.mg td {
-  font-weight: 800;
-  padding-top: 12px;
-}
-.matrix td.l1 {
-  padding-left: 18px;
-}
-.matrix td.l2 {
-  padding-left: 36px;
-}
-.matrix td.l1::before,
-.matrix td.l2::before {
-  content: "└ ";
-  color: var(--mute);
-}
-.matrix .pm {
-  margin: 0 auto;
-  height: 26px;
-  padding: 0 6px;
-}
-.matrix .fixed {
-  font-family: var(--mono);
-  font-weight: 700;
-}
 .logday {
   display: flex;
   flex-direction: column;
@@ -1819,11 +1786,6 @@ select.in {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.matrix th small {
-  font-family: var(--mono);
-  font-weight: 400;
-  color: var(--mute);
 }
 
 /* form drawer */

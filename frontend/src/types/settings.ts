@@ -45,24 +45,15 @@ export interface UserCreate {
   weeklyCapacity?: number;
 }
 
-/** 角色（Role），GET /roles */
+/** 系统角色（Role），GET /roles：系统管理员和普通用户两种 */
 export interface Role {
   id: number;
   code: string;
   name: string;
-  /** 拥有的权限编码 */
+  /** 拥有的系统权限编码，目前只有 system:view（能不能进系统管理） */
   permissions: string[];
   sort: number;
   userCount: number;
-}
-
-/** 权限项（Permission），GET /permissions */
-export interface Permission {
-  /** 例如 "project:task:move" */
-  code: string;
-  name: string;
-  /** 分组，如 项目 */
-  group: string;
 }
 
 /** 操作日志（LogItem），GET /logs */
@@ -95,6 +86,5 @@ export type SettingsSectionId =
   | "me"
   | "proj"
   | "people"
-  | "roles"
   | "logs"
   | "params";

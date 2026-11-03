@@ -2,7 +2,6 @@ import type { UserBrief } from "../types/global";
 import type {
   ConfigItem,
   LogItem,
-  Permission,
   ProfileUpdate,
   Role,
   SystemUser,
@@ -57,28 +56,15 @@ export function getProfile(userId: number): ProfileUpdate {
 }
 
 /**
- * GET /roles：系统角色只有两种，系统管理员和普通用户。
+ * GET /roles：系统角色只有两种，系统管理员和普通用户，区别只在能不能进系统管理（system:view）。
  * 项目里的角色（项目经理、普通成员、测试人员）是另一回事，在“成员与权限”里由项目经理按项目设置
  */
-const userPermissions = [
-  "project:overview:view",
-  "project:task:list",
-  "project:task:move",
-  "project:schedule:view",
-  "project:schedule:edit",
-  "project:report:view",
-  "collab:thread:list",
-  "collab:doc:list",
-  "collab:doc:upload",
-  "project:member:list",
-];
-
 export const roles: Role[] = [
   {
     id: 1,
     code: "ADMIN",
     name: "系统管理员",
-    permissions: [...userPermissions, "system:view"],
+    permissions: ["system:view"],
     sort: 1,
     userCount: 1,
   },
@@ -86,25 +72,10 @@ export const roles: Role[] = [
     id: 2,
     code: "USER",
     name: "普通用户",
-    permissions: userPermissions,
+    permissions: [],
     sort: 2,
     userCount: 5,
   },
-];
-
-/** GET /permissions，菜单权限（view / list）在前，按钮权限在后 */
-export const permissions: Permission[] = [
-  { code: "project:overview:view", name: "概览", group: "项目" },
-  { code: "project:task:list", name: "任务", group: "项目" },
-  { code: "project:task:move", name: "移动任务", group: "项目" },
-  { code: "project:schedule:view", name: "进度", group: "项目" },
-  { code: "project:schedule:edit", name: "调整排期", group: "项目" },
-  { code: "project:report:view", name: "统计报表", group: "项目" },
-  { code: "collab:thread:list", name: "团队协作", group: "协作" },
-  { code: "collab:doc:list", name: "文档", group: "协作" },
-  { code: "collab:doc:upload", name: "上传文档", group: "协作" },
-  { code: "project:member:list", name: "成员与权限", group: "协作" },
-  { code: "system:view", name: "系统管理", group: "管理" },
 ];
 
 /** GET /users */

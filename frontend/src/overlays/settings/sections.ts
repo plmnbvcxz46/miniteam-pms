@@ -5,7 +5,7 @@ import type { SettingsSectionId } from "../../types/settings";
  * access：谁能看到这个分区
  * - all：所有人
  * - project：能管理项目成员的人（本项目的信息）
- * - system：有 system:view 的人（系统级的人员、角色、字典、日志、参数）
+ * - system：有 system:view 的人，也就是系统管理员（系统级的人员、日志、参数）
  */
 export const sections: {
   id: SettingsSectionId;
@@ -16,7 +16,6 @@ export const sections: {
   { id: "me", group: "我的", name: "个人", access: "all" },
   { id: "proj", group: "本项目", name: "项目信息", access: "project" },
   { id: "people", group: "系统", name: "人员", access: "system" },
-  { id: "roles", group: "系统", name: "角色与权限", access: "system" },
   { id: "logs", group: "系统", name: "日志", access: "system" },
   { id: "params", group: "系统", name: "系统参数", access: "system" },
 ];
