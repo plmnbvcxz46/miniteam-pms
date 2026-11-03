@@ -14,6 +14,7 @@ import TodoPanel from "./components/todo/TodoPanel";
 import {
   formatKicker,
   getCriticalChain,
+  getDayProgress,
   getHeadline,
   getOverviewStats,
   getSchedule,
@@ -38,6 +39,7 @@ export default function OverviewPage() {
   const todos = getTodos(all, today);
   const chain = getCriticalChain(tasks, cpm);
   const week = getWeek(today);
+  const dayProgress = getDayProgress();
   const schedule = getSchedule(all, Object.values(users), week, today);
 
   const openTask = (taskId: number) => navigate(`/board/task?id=${taskId}`);
@@ -51,7 +53,12 @@ export default function OverviewPage() {
       <FigureStrip stats={stats} planEnd={currentProjectPeriod.planEnd} />
 
       <div className="ov1">
-        <SchedulePanel week={week} rows={schedule} onOpenTask={openTask} />
+        <SchedulePanel
+          week={week}
+          rows={schedule}
+          dayProgress={dayProgress}
+          onOpenTask={openTask}
+        />
         <HeadlinePanel
           headline={headline}
           forecast={forecast}

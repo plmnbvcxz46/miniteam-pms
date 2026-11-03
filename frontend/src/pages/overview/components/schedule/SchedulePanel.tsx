@@ -5,15 +5,18 @@ import ScheduleRow from "./ScheduleRow";
 interface SchedulePanelProps {
   week: WeekDay[];
   rows: ScheduleRowData[];
+  /** 此刻是当天的几分之几，决定今天线在今天那一列里的位置 */
+  dayProgress: number;
   onOpenTask: (taskId: number) => void;
 }
 
 export default function SchedulePanel({
   week,
   rows,
+  dayProgress,
   onOpenTask,
 }: SchedulePanelProps) {
-  // 今天线画在今天那一列的正中
+  // 今天线按此刻的时间画在今天那一列里，0 点在两列的分界线上
   const todayIndex = week.findIndex((day) => day.today);
 
   return (
@@ -57,7 +60,7 @@ export default function SchedulePanel({
             <div
               className="today"
               aria-hidden="true"
-              style={{ "--at": todayIndex + 0.5 } as CSSProperties}
+              style={{ "--at": todayIndex + dayProgress } as CSSProperties}
             />
           )}
           {rows.map((row) => (

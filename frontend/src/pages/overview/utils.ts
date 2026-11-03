@@ -21,6 +21,14 @@ function weekStartOf(date: string): string {
   return addDays(date, -((weekdayOf(date) + 6) % 7));
 }
 
+/** 此刻是当天的几分之几（0 点为 0，正午为 0.5），按 Asia/Shanghai，只取本地时钟的时分 */
+export function getDayProgress(): number {
+  const now = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
+  );
+  return (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
+}
+
 /** 未完成 */
 function isOpen(task: TaskDetail): boolean {
   return task.status !== "DONE";
