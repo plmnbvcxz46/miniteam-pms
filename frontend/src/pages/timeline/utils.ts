@@ -40,7 +40,7 @@ function isWeekend(date: string): boolean {
 }
 
 /** date 之后的第 n 个工作日（跳过周六日），n 为 0 返回 date 本身 */
-export function addWorkdays(date: string, n: number): string {
+function addWorkdays(date: string, n: number): string {
   let current = date;
   for (let left = n; left > 0;) {
     current = addDays(current, 1);

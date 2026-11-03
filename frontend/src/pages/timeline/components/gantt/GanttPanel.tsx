@@ -84,10 +84,6 @@ export default function GanttPanel({
               <i className="key over" />
               阻塞 / 逾期
             </span>
-            <span>
-              <i className="key gt-key-slack" />
-              总时差
-            </span>
           </div>
           <div className="pred">
             <span>

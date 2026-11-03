@@ -52,13 +52,6 @@
   color: var(--ink);
 }
 
-/* 图例里的“总时差”：一条点线 */
-.gt-key-slack {
-  height: 0;
-  border-width: 1.5px 0 0;
-  border-style: dotted;
-}
-
 /* ---------- 横轴 ---------- */
 .gt {
   padding-bottom: 24px;
@@ -180,13 +173,6 @@
 }
 .gt-lane .tb-compact .tb-now {
   display: none;
-}
-/* 总时差：截止日往后的一条点线 */
-.gt-slack {
-  position: absolute;
-  top: 50%;
-  height: 0;
-  border-top: 1.5px dotted var(--ink);
 }
 
 /* ---------- 今天 / 计划 / 预测 竖线 ---------- */
