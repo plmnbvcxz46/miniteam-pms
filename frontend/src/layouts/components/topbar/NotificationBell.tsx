@@ -1,6 +1,6 @@
 import { unreadNotificationCount } from "../../../data/global";
 
-/** 空心铃铛：描边黑色表示没有未读通知，橙色表示有 */
+/** 黑色空心铃铛，有未读通知时右上角多一个橙色方块，铃铛在方块周围留出缺口 */
 export default function NotificationBell() {
   const hasUnread = unreadNotificationCount > 0;
   return (
@@ -10,16 +10,29 @@ export default function NotificationBell() {
       aria-label={hasUnread ? `通知，${unreadNotificationCount} 条未读` : "通知"}
     >
       <svg
-        width="20"
-        height="20"
+        width="22"
+        height="22"
         viewBox="0 0 16 16"
         fill="none"
-        stroke={hasUnread ? "var(--signal)" : "var(--ink)"}
+        stroke="var(--ink)"
         strokeWidth="1.6"
         aria-hidden="true"
       >
-        <path d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z" />
-        <path d="M6.5 14h3" />
+        {hasUnread && (
+          <mask id="bell-notch" maskUnits="userSpaceOnUse" x="-2" y="-2" width="20" height="20">
+            <rect x="-2" y="-2" width="20" height="20" fill="white" stroke="none" />
+            <rect x="10" y="-2" width="8" height="8" fill="black" stroke="none" />
+          </mask>
+        )}
+        <g mask={hasUnread ? "url(#bell-notch)" : undefined}>
+          <g transform="translate(-0.75 0.75)">
+            <path d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z" />
+            <path d="M6.5 14h3" />
+          </g>
+        </g>
+        {hasUnread && (
+          <rect x="11" y="0.5" width="4.5" height="4.5" fill="var(--signal)" stroke="none" />
+        )}
       </svg>
     </button>
   );
