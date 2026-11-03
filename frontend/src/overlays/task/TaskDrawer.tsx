@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from "react";
 import Drawer from "../../components/Drawer";
-import { members } from "../../data/members";
+import { workload } from "../../data/reports";
 import { systemUsers } from "../../data/settings";
 import { milestones, taskTodayDate } from "../../data/task";
 import { getPredecessorOptions } from "../../pages/board/utils";
@@ -11,14 +11,18 @@ import type {
 } from "../../types/task";
 import AssigneePicker from "./AssigneePicker";
 
-/** 候选人只来自当前项目成员，技能标签取自用户资料 */
-const assigneeCandidates: AssigneeCandidate[] = members.map((member) => ({
-  user: member.user,
-  skillTags:
-    systemUsers.find((u) => u.id === member.user.id)?.skillTags ?? [],
-  load: member.weeklyHours,
-  capacity: member.weeklyCapacity,
-}));
+/**
+ * 候选人只来自当前项目成员，负载取 workload 的 loadHours（未完成任务预估工时之和）。
+ * Member 里没有技能标签，暂时按用户 id 从用户资料里取
+ */
+const assigneeCandidates: AssigneeCandidate[] = workload.members.map(
+  (item) => ({
+    user: item.user,
+    skillTags: systemUsers.find((u) => u.id === item.user.id)?.skillTags ?? [],
+    load: item.loadHours,
+    capacity: item.capacity,
+  }),
+);
 const milestoneOptions = Object.values(milestones);
 
 interface TaskDrawerProps {
