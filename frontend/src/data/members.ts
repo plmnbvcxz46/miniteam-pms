@@ -10,7 +10,7 @@ import { currentIssue, currentProjectId, users } from "./global";
 
 /** 4 个权限行的标题和说明，顺序即表格行顺序 */
 export const permDefs: PermDef[] = [
-  { key: "canEditTask", label: "编辑任务", desc: "新建、修改任务，拖动看板卡片" },
+  { key: "canEditTask", label: "编辑任务", desc: "新建、修改任务，调整他人任务的状态" },
   { key: "canEditSchedule", label: "调整排期", desc: "修改工期和依赖，重算关键路径" },
   { key: "canEditDoc", label: "编辑文档", desc: "上传新版本，修改文档状态" },
   { key: "canManageMember", label: "管理成员", desc: "邀请成员，修改本页的权限" },
@@ -47,7 +47,7 @@ export const members: Member[] = [
     overCapacity: false,
     taskCount: 5,
     joinedAt: "2026-09-21 10:12:00",
-    canEditTask: true,
+    canEditTask: false,
     canEditSchedule: false,
     canEditDoc: true,
     canManageMember: false,
@@ -61,7 +61,7 @@ export const members: Member[] = [
     overCapacity: false,
     taskCount: 3,
     joinedAt: "2026-09-21 10:15:00",
-    canEditTask: true,
+    canEditTask: false,
     canEditSchedule: false,
     canEditDoc: true,
     canManageMember: false,
@@ -75,9 +75,9 @@ export const members: Member[] = [
     overCapacity: false,
     taskCount: 3,
     joinedAt: "2026-09-22 14:30:00",
-    canEditTask: true,
+    canEditTask: false,
     canEditSchedule: false,
-    canEditDoc: false,
+    canEditDoc: true,
     canManageMember: false,
   },
 ];

@@ -15,6 +15,11 @@
   -webkit-user-select: none;
   touch-action: none;
 }
+/* 没有权限改状态的卡片：不能拖，只能点开看 */
+.card.locked {
+  cursor: pointer;
+  touch-action: auto;
+}
 .card .top {
   display: flex;
   justify-content: space-between;

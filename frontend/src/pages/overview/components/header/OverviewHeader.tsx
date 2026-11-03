@@ -1,6 +1,7 @@
 interface OverviewHeaderProps {
   kicker: string;
-  onCreateTask: () => void;
+  /** 没有“编辑任务”权限时不传，按钮不显示 */
+  onCreateTask?: () => void;
 }
 
 export default function OverviewHeader({
@@ -15,11 +16,13 @@ export default function OverviewHeader({
           项目<em>日报</em>
         </h1>
       </div>
-      <div className="va">
-        <button className="btn go" type="button" onClick={onCreateTask}>
-          + 新建任务
-        </button>
-      </div>
+      {onCreateTask && (
+        <div className="va">
+          <button className="btn go" type="button" onClick={onCreateTask}>
+            + 新建任务
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -94,6 +94,18 @@ export interface TaskDetail extends TaskCard {
   updatedAt: string;
 }
 
+/**
+ * 负责人候选人：项目成员加上他的技能标签
+ * - skillTags 来自 User.skillTags（Member 里没有这个字段）
+ * - load / capacity 来自 GET /projects/{projectId}/workload 的 loadHours / capacity
+ */
+export interface AssigneeCandidate {
+  user: UserBrief;
+  skillTags: string[];
+  load: number;
+  capacity: number;
+}
+
 /** 任务表单的值，对应 TaskCreate / TaskUpdate 里页面能填的字段 */
 export interface TaskFormValues {
   title: string;

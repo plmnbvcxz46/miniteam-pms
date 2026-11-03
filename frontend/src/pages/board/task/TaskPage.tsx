@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useMe } from "../../../auth/useAuth";
 import { defaultTaskId, taskTodayDate } from "../../../data/task";
 import type { TaskStatus } from "../../../types/global";
 import { useTaskStore } from "../taskStore";
+import { canMoveTask } from "../utils";
 import TaskFigures from "./components/figures/TaskFigures";
 import TaskHeader from "./components/header/TaskHeader";
 import TaskInfoPanel from "./components/info/TaskInfoPanel";
@@ -14,6 +16,7 @@ export default function TaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const { user: currentUser, permissions } = useMe();
   const { taskMap, activityMap, moveTask, openTaskForm } = useTaskStore();
 
   // 只在进入页面时判断一次：任务之间跳转会换掉 location.key
@@ -46,8 +49,14 @@ export default function TaskPage() {
       <TaskHeader
         task={task}
         onBack={handleBack}
-        onChangeStatus={handleChangeStatus}
-        onEdit={() => openTaskForm(task.id)}
+        onChangeStatus={
+          canMoveTask(task, currentUser.id, permissions.canEditTask)
+            ? handleChangeStatus
+            : undefined
+        }
+        onEdit={
+          permissions.canEditTask ? () => openTaskForm(task.id) : undefined
+        }
       />
       <TaskFigures task={task} />
       <div className="tkg">

@@ -36,7 +36,7 @@ export default function InviteMemberDrawer({
   const [role, setRole] = useState<ProjectRole>("MEMBER");
   const [position, setPosition] = useState<string>("");
   const [perms, setPerms] = useState<MemberPermissions>({
-    canEditTask: true,
+    canEditTask: false,
     canEditSchedule: false,
     canEditDoc: true,
     canManageMember: false,

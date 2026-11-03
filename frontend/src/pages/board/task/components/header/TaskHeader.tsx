@@ -7,8 +7,10 @@ import StatusChips from "./StatusChips";
 interface TaskHeaderProps {
   task: TaskDetail;
   onBack: () => void;
-  onChangeStatus: (status: TaskStatus) => void;
-  onEdit: () => void;
+  /** 没有权限改这个任务的状态时不传，状态按钮不显示 */
+  onChangeStatus?: (status: TaskStatus) => void;
+  /** 没有“编辑任务”权限时不传，编辑按钮不显示 */
+  onEdit?: () => void;
 }
 
 export default function TaskHeader({
@@ -62,12 +64,18 @@ export default function TaskHeader({
           {task.critical && <span className="crit">在关键路径上</span>}
         </p>
       </div>
-      <div className="va tk-acts">
-        <StatusChips status={task.status} onChange={onChangeStatus} />
-        <button className="btn" type="button" onClick={onEdit}>
-          编辑
-        </button>
-      </div>
+      {(onChangeStatus || onEdit) && (
+        <div className="va tk-acts">
+          {onChangeStatus && (
+            <StatusChips status={task.status} onChange={onChangeStatus} />
+          )}
+          {onEdit && (
+            <button className="btn" type="button" onClick={onEdit}>
+              编辑
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

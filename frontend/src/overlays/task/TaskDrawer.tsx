@@ -1,11 +1,28 @@
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import Drawer from "../../components/Drawer";
-import { users } from "../../data/global";
+import { workload } from "../../data/reports";
+import { systemUsers } from "../../data/settings";
 import { milestones, taskTodayDate } from "../../data/task";
 import { getPredecessorOptions } from "../../pages/board/utils";
-import type { TaskDetail, TaskFormValues } from "../../types/task";
+import type {
+  AssigneeCandidate,
+  TaskDetail,
+  TaskFormValues,
+} from "../../types/task";
+import AssigneePicker from "./AssigneePicker";
 
-const assigneeOptions = Object.values(users);
+/**
+ * 候选人只来自当前项目成员，负载取 workload 的 loadHours（未完成任务预估工时之和）。
+ * Member 里没有技能标签，暂时按用户 id 从用户资料里取
+ */
+const assigneeCandidates: AssigneeCandidate[] = workload.members.map(
+  (item) => ({
+    user: item.user,
+    skillTags: systemUsers.find((u) => u.id === item.user.id)?.skillTags ?? [],
+    load: item.loadHours,
+    capacity: item.capacity,
+  }),
+);
 const milestoneOptions = Object.values(milestones);
 
 interface TaskDrawerProps {
@@ -23,6 +40,7 @@ export default function TaskDrawer({
   onSubmit,
 }: TaskDrawerProps) {
   const task = taskId === null ? null : tasks[taskId];
+  const assigneeLabelId = useId();
 
   const [title, setTitle] = useState(task?.title ?? "");
   const [milestoneId, setMilestoneId] = useState<number | null>(
@@ -115,26 +133,15 @@ export default function TaskDrawer({
         </div>
 
         <div className="fr">
-          <span className="lb">负责人</span>
-          <div className="chips">
-            {assigneeOptions.map((user) => (
-              <button
-                key={user.id}
-                type="button"
-                aria-pressed={user.id === assigneeId}
-                onClick={() => setAssigneeId(user.id)}
-              >
-                {user.realName}
-              </button>
-            ))}
-            <button
-              type="button"
-              aria-pressed={assigneeId === null}
-              onClick={() => setAssigneeId(null)}
-            >
-              未分配
-            </button>
-          </div>
+          <span className="lb" id={assigneeLabelId}>
+            负责人
+          </span>
+          <AssigneePicker
+            candidates={assigneeCandidates}
+            value={assigneeId}
+            labelId={assigneeLabelId}
+            onChange={setAssigneeId}
+          />
         </div>
 
         <div className="fr">
