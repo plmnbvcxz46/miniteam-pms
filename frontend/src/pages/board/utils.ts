@@ -213,6 +213,26 @@ export function updateTask(
   return applyTaskStatus(written, taskId, task.status, today);
 }
 
+/** 删除任务，并从其他任务的前置 / 后续、子任务和父任务里去掉它 */
+export function removeTask(
+  tasks: Record<number, TaskDetail>,
+  taskId: number,
+): Record<number, TaskDetail> {
+  const next: Record<number, TaskDetail> = {};
+  Object.values(tasks).forEach((item) => {
+    if (item.id === taskId) return;
+    next[item.id] = {
+      ...item,
+      predecessors: item.predecessors.filter((dep) => dep.task.id !== taskId),
+      successors: item.successors.filter((dep) => dep.task.id !== taskId),
+      subtasks: item.subtasks.filter((sub) => sub.id !== taskId),
+      parentId: item.parentId === taskId ? null : item.parentId,
+      parent: item.parent?.id === taskId ? null : item.parent,
+    };
+  });
+  return next;
+}
+
 /** 任务在某一期当时的样子：状态和进度取快照，逾期天数按那一天重新算，前后置任务里还没创建的去掉 */
 export function getTaskAtIssue(
   task: TaskDetail,

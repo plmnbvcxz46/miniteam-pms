@@ -21,9 +21,10 @@ export default function TaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { canEditTask, canViewTask, canMoveTask } = useAccess();
+  const { canEditTask, canDeleteTask, canViewTask, canMoveTask } = useAccess();
   const { today } = useIssue();
-  const { taskMap, activityMap, moveTask, openTaskForm } = useTaskStore();
+  const { taskMap, activityMap, moveTask, openTaskForm, deleteTask } =
+    useTaskStore();
 
   // 只在进入页面时判断一次：任务之间跳转会换掉 location.key
   const [openedDirectly] = useState(location.key === "default");
@@ -54,6 +55,12 @@ export default function TaskPage() {
     if (blocked) window.alert(blocked);
   };
 
+  // 删除后这个任务没了，上面的“任务不存在”会自动回到看板
+  const handleDelete = () => {
+    const blocked = deleteTask(task.id);
+    if (blocked) window.alert(blocked);
+  };
+
   return (
     <section className="view" id="view-task" data-view="task">
       <TaskHeader
@@ -63,6 +70,7 @@ export default function TaskPage() {
         onEdit={
           canEditTask ? () => openTaskForm(task.id) : undefined
         }
+        onDelete={canDeleteTask ? handleDelete : undefined}
       />
       <TaskFigures task={task} />
       <div className="tkg">

@@ -51,6 +51,8 @@ export interface AccessState {
   /** 任务：能不能看、能不能改状态，规则见 rules.ts */
   /** 现在能不能新建和修改任务：要有“编辑任务”权限，而且看的是今天这一期，过去的期只读 */
   canEditTask: boolean;
+  /** 只有项目经理和系统管理员能删除任务，过去的期不能删 */
+  canDeleteTask: boolean;
   canViewTask: (task: TaskDetail) => boolean;
   canMoveTask: (task: TaskDetail) => boolean;
 }

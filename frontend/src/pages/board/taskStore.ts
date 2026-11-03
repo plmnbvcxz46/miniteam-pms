@@ -17,6 +17,8 @@ export interface TaskStore {
   closeTaskForm: () => void;
   /** 保存表单，对应 POST /projects/{projectId}/tasks 和 PUT /tasks/{taskId} */
   saveTaskForm: (values: TaskFormValues) => void;
+  /** 删除任务，对应 DELETE /tasks/{taskId}。没有权限时返回原因，删除成功返回 null */
+  deleteTask: (taskId: number) => string | null;
   /** 刚新建的任务，看板上短暂高亮 */
   freshTaskId: number | null;
 }
