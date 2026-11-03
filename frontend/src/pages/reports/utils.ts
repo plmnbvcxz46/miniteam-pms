@@ -8,7 +8,7 @@ import type {
   Workload,
 } from "../../types/reports";
 import { formatWeekNo } from "../../utils/date";
-import { toCsvRow } from "../../utils/download";
+import type { XlsxCell } from "../../utils/xlsx";
 
 /**
  * 将 yyyy-MM-dd 截取为 M.DD 或 M.D（如 "2026-11-27" → "11.27"，"2026-12-01" → "12.1"）
@@ -40,39 +40,49 @@ export function formatDelayText(delayDays: number): string {
   return "按计划";
 }
 
+/** 导出表格每一列的宽度 */
+export const REPORT_SHEET_WIDTHS = [18, 12, 12, 12, 12];
+
 /**
- * 把报表页上的数据拼成 CSV（Excel 可以直接打开）。
- * 接口接通后由 GET /projects/{projectId}/reports/export 返回 Excel 文件，这里只是替身
+ * 把报表页上的数据排成一张表（一行一个数组，空字符串是空格子）。
+ * 接口接通后由 GET /projects/{projectId}/reports/export 直接返回 Excel，这里只是替身
  */
-export function buildReportCsv(data: {
+export function buildReportRows(data: {
   summary: ReportSummary;
   workload: Workload;
   weeklyCompleted: WeeklyCompleted[];
   deviations: DurationDeviation[];
-}): string {
+}): XlsxCell[][] {
   const { summary, workload, weeklyCompleted, deviations } = data;
   const percent = (rate: number) => `${Math.round(rate * 100)}%`;
   return [
-    toCsvRow(["概况", ""]),
-    toCsvRow(["当前周", formatWeekNo(summary.weekNo, summary.totalWeeks)]),
-    toCsvRow(["任务总数", summary.total]),
-    toCsvRow(["已完成", summary.done]),
-    toCsvRow(["剩余", summary.remaining]),
-    toCsvRow(["完成率", percent(summary.completionRate)]),
-    toCsvRow(["按期率", percent(summary.onTimeRate)]),
-    toCsvRow(["延期率", percent(summary.delayRate)]),
-    "",
-    toCsvRow(["成员", "本周工时", "未完成工时", "每周上限", "负责任务数"]),
-    ...workload.members.map((m) =>
-      toCsvRow([m.user.realName, m.weeklyHours, m.loadHours, m.capacity, m.taskCount]),
-    ),
-    "",
-    toCsvRow(["周起始", "完成任务数"]),
-    ...weeklyCompleted.map((w) => toCsvRow([w.weekStart, w.count])),
-    "",
-    toCsvRow(["任务", "计划天数", "实际天数", "偏差天数"]),
-    ...deviations.map((d) =>
-      toCsvRow([d.label, d.planDays, d.actualDays, d.deviationDays]),
-    ),
-  ].join("\r\n");
+    ["概况"],
+    ["当前周", formatWeekNo(summary.weekNo, summary.totalWeeks)],
+    ["任务总数", summary.total],
+    ["已完成", summary.done],
+    ["剩余", summary.remaining],
+    ["完成率", percent(summary.completionRate)],
+    ["按期率", percent(summary.onTimeRate)],
+    ["延期率", percent(summary.delayRate)],
+    [],
+    ["成员", "本周工时", "未完成工时", "每周上限", "负责任务数"],
+    ...workload.members.map((m): XlsxCell[] => [
+      m.user.realName,
+      m.weeklyHours,
+      m.loadHours,
+      m.capacity,
+      m.taskCount,
+    ]),
+    [],
+    ["周起始", "完成任务数"],
+    ...weeklyCompleted.map((w): XlsxCell[] => [w.weekStart, w.count]),
+    [],
+    ["任务", "计划天数", "实际天数", "偏差天数"],
+    ...deviations.map((d): XlsxCell[] => [
+      d.label,
+      d.planDays,
+      d.actualDays,
+      d.deviationDays,
+    ]),
+  ];
 }

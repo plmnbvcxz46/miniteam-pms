@@ -10,8 +10,9 @@ import {
   weeklyCompleted,
   workload,
 } from "../../data/reports";
-import { downloadTextFile } from "../../utils/download";
-import { buildReportCsv } from "./utils";
+import { downloadBlob } from "../../utils/download";
+import { buildXlsx } from "../../utils/xlsx";
+import { REPORT_SHEET_WIDTHS, buildReportRows } from "./utils";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";
 import LoadPanel from "./components/load/LoadPanel";
@@ -27,17 +28,19 @@ export default function ReportsPage() {
   // 根据当前选择的范围获取燃尽图数据
   const currentBurndown = burndownByRange[range];
 
-  // 报表导出（对齐 GET /projects/{projectId}/reports/export，接口返回 Excel，这里先导出 CSV）
+  // 报表导出（对齐 GET /projects/{projectId}/reports/export，接口返回 Excel 文件）
   const handleExport = () => {
-    downloadTextFile(
-      `统计报表_${currentBurndown.today}.csv`,
-      buildReportCsv({
-        summary: reportSummary,
-        workload,
-        weeklyCompleted,
-        deviations: durationDeviation,
+    const rows = buildReportRows({
+      summary: reportSummary,
+      workload,
+      weeklyCompleted,
+      deviations: durationDeviation,
+    });
+    downloadBlob(
+      `统计报表_${currentBurndown.today}.xlsx`,
+      new Blob([buildXlsx("统计报表", rows, REPORT_SHEET_WIDTHS)], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }),
-      "text/csv",
     );
   };
 
