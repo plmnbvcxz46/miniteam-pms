@@ -24,7 +24,7 @@ export default function DocumentsPage() {
   const location = useLocation();
   const { taskMap: tasks } = useTaskStore();
 
-  // 绑定了任务的文档，截止日和是否定稿都跟着任务走
+  // 绑定了任务的文档，截止日跟着任务走
   const docList = useMemo(
     () => rawDocs.map((d) => bindDocToTask(d, tasks)),
     [rawDocs, tasks],

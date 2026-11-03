@@ -82,7 +82,7 @@ const documentBriefs: Record<number, DocumentBrief> = {
     id: 7,
     name: "周会纪要 10.19",
     currentVersion: "v1.0",
-    status: "REVISING",
+    status: "FINAL",
     overdueDays: 0,
   },
   8: {

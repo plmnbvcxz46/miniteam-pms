@@ -29,8 +29,8 @@ export function getDayOffset(str: string): number {
 }
 
 /**
- * 文档绑定了任务时，截止日和是否定稿都跟随任务：
- * 截止日取任务截止日，任务完成了文档才算定稿；没绑任务的文档用自己的字段
+ * 文档绑定了任务时，截止日跟随任务截止日；没绑任务的文档用自己的 due。
+ * 是否定稿是文档自己的状态，可以早于任务完成，不跟随任务
  */
 export function bindDocToTask(
   doc: DocumentItem,
@@ -41,7 +41,6 @@ export function bindDocToTask(
   return {
     ...doc,
     due: task.dueDate ? formatDayLabel(task.dueDate) : doc.due,
-    final: task.status === "DONE",
   };
 }
 
