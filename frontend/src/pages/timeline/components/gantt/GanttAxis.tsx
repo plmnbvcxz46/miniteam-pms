@@ -3,9 +3,10 @@ import {
   formatDayLabel,
   getAxisDays,
   addDays,
+  isWeekend,
   type AxisRange,
 } from "../../../../utils/date";
-import { getWeekStarts, isWeekend } from "../../utils";
+import { getWeekStarts } from "../../utils";
 
 interface GanttAxisProps {
   range: AxisRange;

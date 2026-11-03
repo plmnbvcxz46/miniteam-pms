@@ -7,6 +7,7 @@ import type {
   WeeklyCompleted,
   Workload,
 } from "../../types/reports";
+import { pad2 } from "../../utils/date";
 import { toCsvRow } from "../../utils/download";
 
 /**
@@ -26,8 +27,7 @@ export function toMonthDay(date: string, preserveZero = true): string {
  * 两位补零的周次文案（如 5, 10 → "05/10"）
  */
 export function formatWeekNo(weekNo: number, totalWeeks: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(weekNo)}/${pad(totalWeeks)}`;
+  return `${pad2(weekNo)}/${pad2(totalWeeks)}`;
 }
 
 /**

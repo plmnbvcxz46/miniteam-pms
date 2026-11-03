@@ -1,20 +1,17 @@
 import type { ProjectPeriod, UserBrief } from "../../types/global";
 import type { DependencyTask, TaskDetail } from "../../types/task";
-import { addDays, dayEnd, formatDayLabel, toDay } from "../../utils/date";
+import {
+  addDays,
+  dayEnd,
+  formatDayLabel,
+  pad2,
+  toDay,
+  weekdayOf,
+} from "../../utils/date";
 import type { CpmResult, TimelineForecast } from "../timeline/utils";
 
 /** 一周的天数 */
 export const WEEK_DAYS = 7;
-
-/** 数字补成两位，例如 5 -> "05" */
-export function pad2(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-/** 星期几，周日为 0 */
-function weekdayOf(date: string): number {
-  return new Date(toDay(date) * 86400000).getUTCDay();
-}
 
 /** date 所在周的周一 */
 function weekStartOf(date: string): string {

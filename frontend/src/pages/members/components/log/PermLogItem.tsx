@@ -1,5 +1,5 @@
 import type { Activity } from "../../../../types/global";
-import { formatLogDate } from "../../utils";
+import { formatMonthDay } from "../../../../utils/date";
 
 interface PermLogItemProps {
   /** 权限变更动态对象 */
@@ -9,7 +9,7 @@ interface PermLogItemProps {
 export default function PermLogItem({ log }: PermLogItemProps) {
   return (
     <div className="hv" title={log.detail}>
-      <b>{formatLogDate(log.createdAt)}</b>
+      <b>{formatMonthDay(log.createdAt)}</b>
       <span>{log.detail}</span>
     </div>
   );

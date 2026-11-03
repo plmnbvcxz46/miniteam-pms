@@ -1,6 +1,6 @@
 import type { BoundDocument, DocumentItem } from "../../types/documents";
 import type { DocumentBrief, TaskDetail } from "../../types/task";
-import { formatDayLabel, getProjectToday, toDay } from "../../utils/date";
+import { formatDayLabel, getProjectToday, pad2, toDay } from "../../utils/date";
 
 /**
  * 时间跨度（天数）
@@ -23,7 +23,7 @@ export function getDayOffset(str: string): number {
   const year = getProjectToday().slice(0, 4);
   const toDate = (md: string) => {
     const [m, d] = md.split(/[.-]/).map(Number);
-    return `${year}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    return `${year}-${pad2(m)}-${pad2(d)}`;
   };
   return toDay(toDate(str)) - toDay(toDate(AXIS_START));
 }

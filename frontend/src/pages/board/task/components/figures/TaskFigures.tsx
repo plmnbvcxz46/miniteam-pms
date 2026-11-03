@@ -1,5 +1,5 @@
 import type { TaskDetail } from "../../../../../types/task";
-import { formatMonthDay } from "../../utils";
+import { formatMonthDay } from "../../../../../utils/date";
 import FigureItem from "./FigureItem";
 
 interface TaskFiguresProps {

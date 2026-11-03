@@ -1,7 +1,9 @@
 import type { TaskDetail } from "../../types/task";
 import {
+  DAY_MS,
   addDays,
   dayEnd,
+  isWeekend,
   toDateString,
   toDay,
   type AxisRange,
@@ -33,11 +35,6 @@ export interface TimelineForecast {
   delayDays: number;
 }
 
-/** 当天是不是周末 */
-export function isWeekend(date: string): boolean {
-  const day = new Date(toDay(date) * 86400000).getUTCDay();
-  return day === 0 || day === 6;
-}
 
 /** date 之后的第 n 个工作日（跳过周六日），n 为 0 返回 date 本身 */
 function addWorkdays(date: string, n: number): string {
@@ -182,7 +179,7 @@ export function getTimelineRange(
 /** 时间点所在周的周一 00:00 */
 function weekStart(time: DayTime): DayTime {
   const day = Math.floor(time);
-  const weekday = new Date(day * 86400000).getUTCDay();
+  const weekday = new Date(day * DAY_MS).getUTCDay();
   return day - ((weekday + 6) % 7);
 }
 

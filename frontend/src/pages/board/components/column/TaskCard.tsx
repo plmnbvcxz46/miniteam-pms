@@ -3,7 +3,7 @@ import TaskBar from "../../../../components/TaskBar/TaskBar";
 import { taskTodayDate } from "../../../../data/task";
 import type { TaskDetail } from "../../../../types/task";
 import { useTaskStore } from "../../taskStore";
-import { formatMonthDay } from "../../task/utils";
+import { formatMonthDay } from "../../../../utils/date";
 
 const SCORE_CLASS: Record<string, string> = {
   高: "p-h",

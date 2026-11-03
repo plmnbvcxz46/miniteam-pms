@@ -1,4 +1,4 @@
-import { toDay } from "../../utils/date";
+import { weekdayOf } from "../../utils/date";
 import type { LogItem, Permission } from "../../types/settings";
 
 const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -7,8 +7,7 @@ const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
 export function formatLogDay(createdAt: string): string {
   const date = createdAt.slice(0, 10);
   const [, month, day] = date.split("-").map(Number);
-  const weekday = new Date(toDay(date) * 86400000).getUTCDay();
-  return `${month} 月 ${day} 日 周${WEEKDAY_LABELS[weekday]}`;
+  return `${month} 月 ${day} 日 周${WEEKDAY_LABELS[weekdayOf(date)]}`;
 }
 
 /** 日志按天分组，保持传入顺序（时间倒序） */

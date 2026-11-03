@@ -5,18 +5,7 @@ import type {
   TaskDetail,
 } from "../../../types/task";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-/** 两个 yyyy-MM-dd 之间相差的天数 */
-function daysBetween(from: string, to: string): number {
-  return Math.round((Date.parse(to) - Date.parse(from)) / DAY_MS);
-}
-
-/** yyyy-MM-dd 转成 M.DD，例如 "2026-10-20" -> "10.20" */
-export function formatMonthDay(date: string): string {
-  const [, month, day] = date.split("-");
-  return `${Number(month)}.${day}`;
-}
+import { DAY_MS, daysBetween, formatMonthDay } from "../../../utils/date";
 
 /** 操作记录时间：今天只显示时分，昨天显示“昨天”，更早显示月日 */
 export function formatLogTime(createdAt: string, today: string): string {

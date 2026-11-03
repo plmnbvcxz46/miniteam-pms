@@ -1,6 +1,6 @@
 import { taskStatusKey } from "../../../../data/task";
 import type { TodoItemData } from "../../utils";
-import { pad2 } from "../../utils";
+import { pad2 } from "../../../../utils/date";
 
 /** 面板最多放几行，超出的并成“还有 N 项” */
 const MAX_ROWS = 4;

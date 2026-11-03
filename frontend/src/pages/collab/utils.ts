@@ -14,26 +14,7 @@ import type {
   UserBrief,
 } from "../../types/global";
 import type { TaskDetail } from "../../types/task";
-
-/**
- * 两位补零格式化（例如 5 -> "05"，10 -> "10"）
- */
-export function formatPadCount(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-/**
- * 计算指定日期的前一天 (yyyy-MM-dd)
- */
-function getPreviousDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  date.setDate(date.getDate() - 1);
-  const prevY = date.getFullYear();
-  const prevM = String(date.getMonth() + 1).padStart(2, "0");
-  const prevD = String(date.getDate()).padStart(2, "0");
-  return `${prevY}-${prevM}-${prevD}`;
-}
+import { addDays } from "../../utils/date";
 
 /**
  * 用于左侧讨论列表项底部时间
@@ -49,7 +30,7 @@ export function formatThreadShortTime(
   if (!dateTimeStr) return "";
   if (dateTimeStr === "刚刚" || dateTimeStr.endsWith("刚刚")) return "刚刚";
 
-  const prevDate = getPreviousDate(todayDate);
+  const prevDate = addDays(todayDate, -1);
   const todayMMDD = todayDate.split("-").slice(-2).join("-");
   const prevMMDD = prevDate.split("-").slice(-2).join("-");
 
@@ -88,7 +69,7 @@ export function formatMessageTime(
     return dateTimeStr;
   }
 
-  const prevDate = getPreviousDate(todayDate);
+  const prevDate = addDays(todayDate, -1);
   const todayMMDD = todayDate.split("-").slice(-2).join("-");
   const prevMMDD = prevDate.split("-").slice(-2).join("-");
 

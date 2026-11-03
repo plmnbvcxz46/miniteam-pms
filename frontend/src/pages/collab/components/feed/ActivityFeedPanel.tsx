@@ -3,7 +3,8 @@ import type {
   DiscussionDetail,
 } from "../../../../types/collab";
 import type { Activity } from "../../../../types/global";
-import { findDiscussionIdByActivity, formatPadCount } from "../../utils";
+import { pad2 } from "../../../../utils/date";
+import { findDiscussionIdByActivity } from "../../utils";
 import ActivityFeedItem from "./ActivityFeedItem";
 
 interface ActivityFeedPanelProps {
@@ -33,7 +34,7 @@ export default function ActivityFeedPanel({
           <h2>动态</h2>
         </div>
         <span className="n" id="fd-count">
-          {formatPadCount(activities.length)}
+          {pad2(activities.length)}
         </span>
       </div>
       <div className="feed scroll-y" id="feed">
