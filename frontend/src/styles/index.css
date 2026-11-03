@@ -1947,25 +1947,6 @@ select.in {
   height: 26px;
   padding: 0 6px;
 }
-.plain td,
-.plain th {
-  text-align: left;
-}
-.tbl.pick tbody tr {
-  cursor: pointer;
-}
-.tbl.pick tbody tr:hover td {
-  background: var(--wash);
-}
-.tbl.pick tbody tr[aria-selected="true"] td {
-  background: var(--ink);
-  color: var(--paper);
-}
-.sw {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
 .logday {
   display: flex;
   flex-direction: column;

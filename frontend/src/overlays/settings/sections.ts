@@ -17,7 +17,6 @@ export const sections: {
   { id: "proj", group: "本项目", name: "刊物规则", access: "project" },
   { id: "people", group: "系统", name: "人员", access: "system" },
   { id: "roles", group: "系统", name: "角色与权限", access: "system" },
-  { id: "dict", group: "系统", name: "字典", access: "system" },
   { id: "logs", group: "系统", name: "日志", access: "system" },
   { id: "params", group: "系统", name: "系统参数", access: "system" },
 ];

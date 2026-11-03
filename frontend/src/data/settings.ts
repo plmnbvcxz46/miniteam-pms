@@ -1,8 +1,6 @@
 import type { UserBrief } from "../types/global";
 import type {
   ConfigItem,
-  DictItem,
-  DictType,
   LogItem,
   Permission,
   ProfileUpdate,
@@ -20,14 +18,6 @@ import { users } from "./global";
 /* =========================================================
  * 一、纯前端常量
  * ========================================================= */
-
-/** 字典类型（接口只返回字典项，类型列表由前端维护） */
-export const dictTypes: DictType[] = [
-  { type: "task_status", name: "任务状态" },
-  { type: "task_priority", name: "任务优先级" },
-  { type: "doc_status", name: "文档状态" },
-  { type: "project_role", name: "项目角色" },
-];
 
 /** 日志里 targetType 的中文名 */
 export const logTargetLabel: Record<string, string> = {
@@ -255,24 +245,6 @@ export const systemUsers: SystemUser[] = [
     lastLoginAt: null,
     createdAt: "2026-10-01 09:00:00",
   },
-];
-
-/** GET /dicts */
-export const dictItems: DictItem[] = [
-  { id: 1, dictType: "task_status", label: "待开始", value: "todo", sort: 1, status: 1 },
-  { id: 2, dictType: "task_status", label: "进行中", value: "doing", sort: 2, status: 1 },
-  { id: 3, dictType: "task_status", label: "阻塞", value: "blocked", sort: 3, status: 1 },
-  { id: 4, dictType: "task_status", label: "已完成", value: "done", sort: 4, status: 1 },
-  { id: 5, dictType: "task_priority", label: "高", value: "high", sort: 1, status: 1 },
-  { id: 6, dictType: "task_priority", label: "中", value: "medium", sort: 2, status: 1 },
-  { id: 7, dictType: "task_priority", label: "低", value: "low", sort: 3, status: 1 },
-  { id: 8, dictType: "doc_status", label: "修订中", value: "draft", sort: 1, status: 1 },
-  { id: 9, dictType: "doc_status", label: "定稿", value: "final", sort: 2, status: 1 },
-  { id: 10, dictType: "doc_status", label: "逾期", value: "overdue", sort: 3, status: 1 },
-  { id: 11, dictType: "project_role", label: "项目经理", value: "pm", sort: 1, status: 1 },
-  { id: 12, dictType: "project_role", label: "后端开发", value: "backend", sort: 2, status: 1 },
-  { id: 13, dictType: "project_role", label: "前端开发", value: "frontend", sort: 3, status: 1 },
-  { id: 14, dictType: "project_role", label: "测试", value: "qa", sort: 4, status: 1 },
 ];
 
 /** GET /logs（按时间倒序） */

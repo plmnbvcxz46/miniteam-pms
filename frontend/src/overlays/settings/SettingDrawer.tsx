@@ -7,7 +7,6 @@ import MePanel from "./panels/MePanel";
 import ProjectRulesPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
 import RolesPanel from "./panels/RolesPanel";
-import DictPanel from "./panels/DictPanel";
 import LogsPanel from "./panels/LogsPanel";
 import ParamsPanel from "./panels/ParamsPanel";
 import type { JSX } from "react/jsx-runtime";
@@ -16,7 +15,6 @@ const panels: Record<Exclude<SectionId, "me">, JSX.Element> = {
   proj: <ProjectRulesPanel />,
   people: <PeoplePanel />,
   roles: <RolesPanel />,
-  dict: <DictPanel />,
   logs: <LogsPanel />,
   params: <ParamsPanel />,
 };

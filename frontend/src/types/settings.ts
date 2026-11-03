@@ -80,23 +80,6 @@ export interface LogItem {
   createdAt: string;
 }
 
-/** 字典项（DictItem），GET /dicts */
-export interface DictItem {
-  id: number;
-  dictType: string;
-  label: string;
-  value: string;
-  sort: number;
-  /** 1 启用 0 停用 */
-  status: 0 | 1;
-}
-
-/** 字典类型，纯前端常量（接口只返回字典项） */
-export interface DictType {
-  type: string;
-  name: string;
-}
-
 /** 系统参数（ConfigItem），GET /configs */
 export interface ConfigItem {
   key: string;
@@ -113,6 +96,5 @@ export type SettingsSectionId =
   | "proj"
   | "people"
   | "roles"
-  | "dict"
   | "logs"
   | "params";
