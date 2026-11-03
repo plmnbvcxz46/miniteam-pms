@@ -1,12 +1,108 @@
+import { useState, type FormEvent } from "react";
+import { roles, systemUsers } from "../../../data/settings";
+import type { SystemUser, UserCreate } from "../../../types/settings";
+import Switch from "../components/Switch";
+
+const UNGROUPED = "未分组";
+
+/** 按部门分组，没有部门的放最后 */
+function groupByDept(list: SystemUser[]): { dept: string; items: SystemUser[] }[] {
+  const groups: { dept: string; items: SystemUser[] }[] = [];
+  for (const user of list) {
+    const dept = user.dept ?? UNGROUPED;
+    const found = groups.find((g) => g.dept === dept);
+    if (found) found.items.push(user);
+    else groups.push({ dept, items: [user] });
+  }
+  return groups.sort(
+    (a, b) => Number(a.dept === UNGROUPED) - Number(b.dept === UNGROUPED),
+  );
+}
+
 export default function PeoplePanel() {
+  const [list, setList] = useState(systemUsers);
+  const [selectedId, setSelectedId] = useState(systemUsers[0].id);
+  const [query, setQuery] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const keyword = query.trim().toLowerCase();
+  const visible = list.filter(
+    (u) =>
+      !keyword ||
+      u.realName.toLowerCase().includes(keyword) ||
+      u.username.toLowerCase().includes(keyword),
+  );
+  const selected = list.find((u) => u.id === selectedId) ?? list[0];
+
+  const select = (id: number) => {
+    setSelectedId(id);
+    setCreating(false);
+    setNotice("");
+    setConfirmDelete(false);
+  };
+
+  // PUT /users/{userId}：改角色
+  const changeRole = (roleId: number) => {
+    const role = roles.find((r) => r.id === roleId);
+    if (!role) return;
+    setList((prev) =>
+      prev.map((u) =>
+        u.id === selected.id
+          ? { ...u, roleId, roleCode: role.code, roleName: role.name }
+          : u,
+      ),
+    );
+  };
+
+  // PUT /users/{userId}/status
+  const changeStatus = (enabled: boolean) => {
+    setList((prev) =>
+      prev.map((u) =>
+        u.id === selected.id ? { ...u, status: enabled ? 1 : 0 } : u,
+      ),
+    );
+  };
+
+  // POST /users
+  const handleCreate = (values: UserCreate) => {
+    const role = roles.find((r) => r.id === values.roleId)!;
+    const user: SystemUser = {
+      id: Math.max(0, ...list.map((u) => u.id)) + 1,
+      username: values.username,
+      realName: values.realName,
+      dept: values.dept ?? null,
+      roleId: role.id,
+      roleCode: role.code,
+      roleName: role.name,
+      email: values.email ?? null,
+      skillTags: values.skillTags ?? [],
+      weeklyCapacity: values.weeklyCapacity ?? 40,
+      status: 1,
+      lastLoginAt: null,
+      createdAt: "2026-10-22 刚刚",
+    };
+    setList((prev) => [...prev, user]);
+    setSelectedId(user.id);
+    setCreating(false);
+    setNotice("已新增，初始密码为系统参数里的默认密码");
+  };
+
+  // DELETE /users/{userId}，要点两次
+  const handleDelete = () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    const rest = list.filter((u) => u.id !== selected.id);
+    setList(rest);
+    setSelectedId(rest[0]?.id ?? 0);
+    setConfirmDelete(false);
+  };
+
   return (
-    <section
-      className="ss"
-      id="ss-people"
-      data-sub="people"
-      data-g="系统"
-      data-name="人员"
-    >
+    <section className="ss" id="ss-people">
       <h2 className="ss-h">人员</h2>
       <div className="g4">
         <div className="block span2">
@@ -17,17 +113,220 @@ export default function PeoplePanel() {
                 id="pq"
                 type="search"
                 placeholder="姓名或账号"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
               />
             </label>
-            <button className="btn primary" type="button">
+            <button
+              className="btn primary"
+              type="button"
+              onClick={() => {
+                setCreating(true);
+                setNotice("");
+              }}
+            >
               新增人员
             </button>
           </div>
-          <div className="roster" id="roster" />
+          <div className="roster" id="roster">
+            {visible.length === 0 && <p className="msg">没有匹配的人员</p>}
+            {groupByDept(visible).map((group) => (
+              <div className="dept" key={group.dept}>
+                <h3>
+                  <span>{group.dept}</span>
+                  <span>{group.items.length} 人</span>
+                </h3>
+                {group.items.map((user) => (
+                  <button
+                    key={user.id}
+                    type="button"
+                    className={user.status === 1 ? "pp" : "pp off"}
+                    aria-current={
+                      !creating && user.id === selected?.id ? "true" : undefined
+                    }
+                    onClick={() => select(user.id)}
+                  >
+                    <span>{user.realName}</span>
+                    <code>{user.username}</code>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="block span2 cl" id="person" />
+
+        <div className="block span2 cl" id="person">
+          {creating ? (
+            <NewPersonForm
+              existing={list.map((u) => u.username)}
+              onCancel={() => setCreating(false)}
+              onSubmit={handleCreate}
+            />
+          ) : selected ? (
+            <>
+              <h3 className="who-h">{selected.realName}</h3>
+              <div className="rows">
+                <div className="srow">
+                  <span className="lb">账号</span>
+                  <div>
+                    <code>{selected.username}</code>
+                  </div>
+                </div>
+                <div className="srow">
+                  <span className="lb">部门</span>
+                  <div>{selected.dept ?? UNGROUPED}</div>
+                </div>
+                <div className="srow top">
+                  <span className="lb">角色</span>
+                  <div className="roles">
+                    {roles.map((role) => (
+                      <label key={role.id}>
+                        <button
+                          className="perm"
+                          type="button"
+                          aria-pressed={role.id === selected.roleId}
+                          aria-label={role.name}
+                          onClick={() => changeRole(role.id)}
+                        />
+                        {role.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="srow">
+                  <span className="lb">状态</span>
+                  <div>
+                    <Switch
+                      label="账号状态"
+                      value={selected.status === 1}
+                      onChange={changeStatus}
+                      texts={["启用", "停用"]}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="acts">
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => setNotice("已重置为默认密码，下次登录需要修改")}
+                >
+                  重置密码
+                </button>
+                <button className="btn risk" type="button" onClick={handleDelete}>
+                  {confirmDelete ? "再点一次确认删除" : "删除账号"}
+                </button>
+              </div>
+              {notice && <p className="msg">{notice}</p>}
+            </>
+          ) : (
+            <p className="msg">没有人员</p>
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
+interface NewPersonFormProps {
+  existing: string[];
+  onCancel: () => void;
+  onSubmit: (values: UserCreate) => void;
+}
+
+function NewPersonForm({ existing, onCancel, onSubmit }: NewPersonFormProps) {
+  const [username, setUsername] = useState("");
+  const [realName, setRealName] = useState("");
+  const [dept, setDept] = useState("");
+  const [roleId, setRoleId] = useState(roles[2].id);
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const account = username.trim();
+    if (!account || !realName.trim()) {
+      setError("账号和姓名都要填");
+      return;
+    }
+    if (existing.includes(account)) {
+      setError("这个账号已经存在");
+      return;
+    }
+    onSubmit({
+      username: account,
+      realName: realName.trim(),
+      dept: dept.trim() || undefined,
+      roleId,
+      password: "default",
+    });
+  };
+
+  return (
+    <form noValidate onSubmit={handleSubmit}>
+      <h3 className="who-h">新增人员</h3>
+      <div className="rows">
+        <div className="srow">
+          <label htmlFor="np-account">账号</label>
+          <div>
+            <input
+              className="in"
+              id="np-account"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="srow">
+          <label htmlFor="np-name">姓名</label>
+          <div>
+            <input
+              className="in"
+              id="np-name"
+              value={realName}
+              onChange={(e) => setRealName(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="srow">
+          <label htmlFor="np-dept">部门</label>
+          <div>
+            <input
+              className="in"
+              id="np-dept"
+              value={dept}
+              placeholder="可不填"
+              onChange={(e) => setDept(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="srow top">
+          <span className="lb">角色</span>
+          <div className="roles">
+            {roles.map((role) => (
+              <label key={role.id}>
+                <button
+                  className="perm"
+                  type="button"
+                  aria-pressed={role.id === roleId}
+                  aria-label={role.name}
+                  onClick={() => setRoleId(role.id)}
+                />
+                {role.name}
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="acts">
+        <button className="btn primary" type="submit">
+          新增
+        </button>
+        <button className="btn" type="button" onClick={onCancel}>
+          取消
+        </button>
+      </div>
+      {error && <p className="msg err">{error}</p>}
+    </form>
+  );
+}

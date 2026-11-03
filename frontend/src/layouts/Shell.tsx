@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
+import type { SectionId } from "../overlays/settings/sections";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
@@ -16,14 +17,14 @@ import UserChip from "./components/topbar/UserChip";
 import WeekLine from "./components/topbar/WeekLine";
 
 export default function Shell() {
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
+  const settingsOpen = settingsSection !== null;
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [projectList, setProjectList] = useState(initialProjects);
   const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
   const [notificationList, setNotificationList] = useState(initialNotifications);
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
-  const openSettings = () => setSettingsOpen(true);
 
   // POST /projects：新建后加进列表并切过去，创建人是项目经理
   const handleCreateProject = (values: ProjectSave) => {
@@ -51,7 +52,10 @@ export default function Shell() {
           onSelect={setCurrentProjectId}
           onCreate={() => setProjectFormOpen(true)}
         />
-        <SidebarNav riskCount={riskCount} onOpenSettings={openSettings} />
+        <SidebarNav
+          riskCount={riskCount}
+          onOpenSettings={() => setSettingsSection("people")}
+        />
         <SummaryCard />
       </aside>
 
@@ -72,7 +76,7 @@ export default function Shell() {
             setNotificationList((prev) => prev.map((n) => ({ ...n, isRead: true })))
           }
         />
-        <UserChip onClick={openSettings} />
+        <UserChip onClick={() => setSettingsSection("me")} />
       </header>
 
       {/* 主视图内容区域 */}
@@ -81,7 +85,12 @@ export default function Shell() {
       </main>
 
       {/* 设置抽屉 */}
-      {settingsOpen && <SettingsDrawer onClose={() => setSettingsOpen(false)} />}
+      {settingsSection && (
+        <SettingsDrawer
+          initialSection={settingsSection}
+          onClose={() => setSettingsSection(null)}
+        />
+      )}
 
       {/* 新建项目抽屉 */}
       {projectFormOpen && (

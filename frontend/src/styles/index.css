@@ -1973,6 +1973,27 @@ select.in {
 .lg.fail b {
   color: var(--signal-text);
 }
+/* 系统管理里的操作反馈 */
+.ss .msg {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+.ss .msg.err,
+.ss .bad {
+  color: var(--signal-text);
+}
+.ss .acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.matrix th small {
+  font-family: var(--mono);
+  font-weight: 400;
+  color: var(--mute);
+}
 body.calm * {
   animation: none !important;
   transition: none !important;

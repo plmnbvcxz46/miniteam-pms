@@ -1,62 +1,62 @@
+import { useState } from "react";
+import { logActionLabel, logs, logTargetLabel } from "../../../data/settings";
+import { groupLogsByDay } from "../utils";
+
+/** 筛选：全部或某个 targetType */
+const filters = ["ALL", ...Object.keys(logTargetLabel)].filter((key) =>
+  key === "ALL" || logs.some((log) => log.targetType === key),
+);
+
 export default function LogsPanel() {
+  const [filter, setFilter] = useState("ALL");
+  const visible = logs.filter(
+    (log) => filter === "ALL" || log.targetType === filter,
+  );
+  const days = groupLogsByDay(visible);
+
   return (
-    <section
-      className="ss"
-      id="ss-logs"
-      data-sub="logs"
-      data-g="系统"
-      data-name="日志"
-    >
+    <section className="ss" id="ss-logs">
       <h2 className="ss-h">日志</h2>
-      <div className="logday">
-        <h3>10 月 22 日 周四</h3>
-        <div className="lg">
-          <time>10:52</time>
-          <span>普通员工 B</span>
-          <p>任务 · 更新进度</p>
-          <b>成功</b>
-        </div>
-        <div className="lg">
-          <time>10:41</time>
-          <span>普通员工 A</span>
-          <p>协作 · 发表回复</p>
-          <b>成功</b>
-        </div>
-        <div className="lg">
-          <time>09:30</time>
-          <span>测试经理 A</span>
-          <p>任务 · 移动任务</p>
-          <b>成功</b>
-        </div>
-        <div className="lg fail">
-          <time>09:02</time>
-          <span>guest</span>
-          <p>登录 · 账号登录</p>
-          <b>失败：账号已停用</b>
-        </div>
+      <div className="roles" role="group" aria-label="日志类型">
+        {filters.map((key) => (
+          <label key={key}>
+            <button
+              className="perm"
+              type="button"
+              aria-pressed={key === filter}
+              aria-label={key === "ALL" ? "全部" : logTargetLabel[key]}
+              onClick={() => setFilter(key)}
+            />
+            {key === "ALL" ? "全部" : logTargetLabel[key]}
+          </label>
+        ))}
       </div>
-      <div className="logday">
-        <h3>10 月 21 日 周三</h3>
-        <div className="lg">
-          <time>18:02</time>
-          <span>普通员工 C</span>
-          <p>文档 · 上传文档</p>
-          <b>成功</b>
+      {days.length === 0 && <p className="msg">没有日志</p>}
+      {days.map((day) => (
+        <div className="logday" key={day.day}>
+          <h3>{day.day}</h3>
+          {day.items.map((log) => {
+            const failed = log.action.endsWith("_FAIL");
+            return (
+              <div className={failed ? "lg fail" : "lg"} key={log.id}>
+                <time>{log.createdAt.slice(11, 16)}</time>
+                <span>{log.user?.realName ?? "系统"}</span>
+                <p>
+                  {logTargetLabel[log.targetType] ?? log.targetType} ·{" "}
+                  {logActionLabel[log.action] ?? log.action}
+                  {log.detail && !failed && (
+                    <>
+                      {" "}
+                      <em>{log.detail}</em>
+                    </>
+                  )}
+                </p>
+                <b>{failed ? `失败：${log.detail ?? ""}` : "成功"}</b>
+              </div>
+            );
+          })}
         </div>
-        <div className="lg">
-          <time>15:20</time>
-          <span>测试经理 A</span>
-          <p>任务 · 新建任务</p>
-          <b>成功</b>
-        </div>
-        <div className="lg">
-          <time>09:12</time>
-          <span>普通员工 B</span>
-          <p>文档 · 修订文档</p>
-          <b>成功</b>
-        </div>
-      </div>
+      ))}
     </section>
   );
 }
-

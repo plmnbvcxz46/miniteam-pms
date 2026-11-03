@@ -1,4 +1,6 @@
-export const sections = [
+import type { SettingsSectionId } from "../../types/settings";
+
+export const sections: { id: SettingsSectionId; group: string; name: string }[] = [
   { id: "me", group: "我的", name: "个人" },
   { id: "proj", group: "本项目", name: "刊物规则" },
   { id: "people", group: "系统", name: "人员" },
@@ -6,7 +8,7 @@ export const sections = [
   { id: "dict", group: "系统", name: "字典" },
   { id: "logs", group: "系统", name: "日志" },
   { id: "params", group: "系统", name: "系统参数" },
-] as const;
+];
 
-export type SectionId = (typeof sections)[number]["id"];
+export type SectionId = SettingsSectionId;
 export const groups = ["我的", "本项目", "系统"];

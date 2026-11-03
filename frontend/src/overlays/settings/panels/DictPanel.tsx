@@ -1,12 +1,15 @@
+import { useState } from "react";
+import { dictItems, dictTypes } from "../../../data/settings";
+
 export default function DictPanel() {
+  const [selected, setSelected] = useState(dictTypes[0].type);
+  const current = dictTypes.find((t) => t.type === selected) ?? dictTypes[0];
+  const items = dictItems
+    .filter((item) => item.dictType === current.type)
+    .sort((a, b) => a.sort - b.sort);
+
   return (
-    <section
-      className="ss"
-      id="ss-dict"
-      data-sub="dict"
-      data-g="系统"
-      data-name="字典"
-    >
+    <section className="ss" id="ss-dict">
       <h2 className="ss-h">字典</h2>
       <div className="g4">
         <div className="block span2">
@@ -20,53 +23,57 @@ export default function DictPanel() {
               </tr>
             </thead>
             <tbody>
-              <tr data-k="task_status" aria-selected="true">
-                <td>任务状态</td>
-                <td>
-                  <code>task_status</code>
-                </td>
-                <td>4</td>
-              </tr>
-              <tr data-k="task_priority">
-                <td>任务优先级</td>
-                <td>
-                  <code>task_priority</code>
-                </td>
-                <td>3</td>
-              </tr>
-              <tr data-k="doc_status">
-                <td>文档状态</td>
-                <td>
-                  <code>doc_status</code>
-                </td>
-                <td>3</td>
-              </tr>
-              <tr data-k="project_role">
-                <td>项目角色</td>
-                <td>
-                  <code>project_role</code>
-                </td>
-                <td>4</td>
-              </tr>
+              {dictTypes.map((type) => (
+                <tr
+                  key={type.type}
+                  tabIndex={0}
+                  aria-selected={type.type === current.type}
+                  onClick={() => setSelected(type.type)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelected(type.type);
+                    }
+                  }}
+                >
+                  <td>{type.name}</td>
+                  <td>
+                    <code>{type.type}</code>
+                  </td>
+                  <td>
+                    {dictItems.filter((i) => i.dictType === type.type).length}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         <div className="block span2 cl">
-          <h2 id="dict-name">任务状态</h2>
+          <h2 id="dict-name">{current.name}</h2>
           <table className="tbl plain">
             <thead>
               <tr>
                 <th>标签</th>
                 <th>键值</th>
                 <th>排序</th>
-                <th>样式</th>
+                <th>状态</th>
               </tr>
             </thead>
-            <tbody id="dict-data" />
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.label}</td>
+                  <td>
+                    <code>{item.value}</code>
+                  </td>
+                  <td>{item.sort}</td>
+                  <td>{item.status === 1 ? "启用" : "停用"}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
     </section>
   );
 }
-

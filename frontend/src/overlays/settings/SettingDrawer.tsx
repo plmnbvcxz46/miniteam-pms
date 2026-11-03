@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Drawer from "../../components/Drawer";
 import { sections, groups, type SectionId } from "./sections";
 import MePanel from "./panels/MePanel";
@@ -19,8 +20,30 @@ const panels: Record<SectionId, JSX.Element> = {
   params: <ParamsPanel />,
 };
 
-export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
-  const active: SectionId = "people"; // 静态阶段写死
+interface SettingsDrawerProps {
+  /** 打开时先显示哪个分区 */
+  initialSection?: SectionId;
+  onClose: () => void;
+}
+
+export default function SettingsDrawer({
+  initialSection = "people",
+  onClose,
+}: SettingsDrawerProps) {
+  const [active, setActive] = useState<SectionId>(initialSection);
+  // 标签和左侧索引共用：点击或回车切换分区
+  const link = (id: SectionId) => ({
+    role: "button" as const,
+    tabIndex: 0,
+    "aria-current": id === active ? ("page" as const) : undefined,
+    onClick: () => setActive(id),
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setActive(id);
+      }
+    },
+  });
 
   return (
     <Drawer className="ov drawer" label="设置" onClose={onClose}>
@@ -38,9 +61,7 @@ export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
               {k > 0 && s.group !== sections[k - 1].group && (
                 <i className="tsep" aria-hidden="true" />
               )}
-              <a tabIndex={0} aria-current={s.id === active ? "page" : undefined}>
-                {s.name}
-              </a>
+              <a {...link(s.id)}>{s.name}</a>
             </span>
           ))}
         </nav>
@@ -64,8 +85,7 @@ export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
               {sections
                 .filter((s) => s.group === g)
                 .map((s) => (
-                  <a key={s.id} tabIndex={0}
-                    aria-current={s.id === active ? "page" : undefined}>
+                  <a key={s.id} {...link(s.id)}>
                     {s.name}
                   </a>
                 ))}
