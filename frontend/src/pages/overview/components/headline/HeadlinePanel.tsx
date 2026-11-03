@@ -32,13 +32,13 @@ export default function HeadlinePanel({
             <span>
               {blocked.length > 0
                 ? `${blocked.length} 项任务因此受阻`
-                : "暂时没有任务因此受阻"}
+                : "暂未影响后续任务"}
             </span>
           </>
         ) : (
           <>
-            <span>没有逾期任务，</span>
-            <span>按计划推进</span>
+            <span>无逾期任务，</span>
+            <span>进度正常</span>
           </>
         )}
       </p>
@@ -66,7 +66,7 @@ export default function HeadlinePanel({
         className="go"
         onClick={() => (task ? onOpenTask(task.id) : onOpenBoard())}
       >
-        {task ? "查看逾期任务" : "去看板"} <span aria-hidden="true">→</span>
+        {task ? "查看逾期任务" : "查看看板"} <span aria-hidden="true">→</span>
       </a>
     </section>
   );

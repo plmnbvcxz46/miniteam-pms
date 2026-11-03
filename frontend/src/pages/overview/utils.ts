@@ -105,7 +105,7 @@ export interface TodoItemData {
   tone: "late" | "now";
 }
 
-/** 今天要盯的任务：已逾期的，和今天截止的 */
+/** 今日待办：已逾期的和今天截止的任务 */
 export function getTodos(all: TaskDetail[], today: string): TodoItemData[] {
   return all
     .filter(isOpen)

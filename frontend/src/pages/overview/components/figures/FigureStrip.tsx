@@ -17,12 +17,12 @@ export default function FigureStrip({ stats, planEnd }: FigureStripProps) {
       <Figure
         label="剩余任务"
         value={stats.left}
-        sub={`${stats.criticalLeft} 项在关键路径上`}
+        sub={`关键路径 ${stats.criticalLeft} 项`}
       />
       <Figure
         label="逾期"
         value={pad2(stats.overdue.length)}
-        sub={worst ? `${worst.title} · ${worst.overdueDays} 天` : "没有逾期"}
+        sub={worst ? `${worst.title} · ${worst.overdueDays} 天` : "无逾期"}
         alert={worst !== undefined}
       />
       <Figure

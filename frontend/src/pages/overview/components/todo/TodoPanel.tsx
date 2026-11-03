@@ -42,7 +42,7 @@ export default function TodoPanel({ items, onOpenTask }: TodoPanelProps) {
         )}
         {items.length === 0 && (
           <div className="item more">
-            <b>今天没有要盯的任务</b>
+            <b>今日无待办任务</b>
           </div>
         )}
       </div>
