@@ -283,104 +283,235 @@ code {
   color: var(--paper);
 }
 
-/* popovers: projects + past issues */
+/* popovers: projects + past issues + notifications */
+.pop-root {
+  display: contents;
+}
+.bell-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
 .issues {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 460px;
+  width: 440px;
   z-index: 30;
   white-space: normal;
   background: var(--paper);
   border: 1.5px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
+}
+.projs {
+  top: 71px;
+  left: 16px;
+  width: 360px;
+}
+.notes {
+  left: auto;
+  right: 0;
+  width: 400px;
 }
 .issues h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   margin: 0;
-  padding: 10px 16px 8px;
+  padding: 9px 14px;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 1px;
   background: var(--ink);
   color: var(--paper);
 }
 .issues h4::before {
-  content: "// ";
+  content: "//";
+  margin-right: -4px;
+}
+.issues h4 em {
+  margin-left: auto;
+  font-style: normal;
+  color: #cfcfca;
+}
+.issues .list {
+  max-height: min(330px, calc(100vh - 200px));
+  flex: none;
+  /* 只在浮层里放开标准滚动条属性，Chrome 才会用 6px 黑色细条 */
+  scrollbar-width: auto;
+  scrollbar-color: auto;
 }
 .issues button {
   all: unset;
   cursor: pointer;
   display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: 4px 12px;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 3px 12px;
   width: 100%;
   box-sizing: border-box;
-  padding: 11px 16px;
-  border-bottom: 1px dashed var(--ink);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--hair);
 }
-.issues button:last-child {
+.issues .list > button:last-child {
   border-bottom: 0;
 }
 .issues button:hover {
   background: var(--wash);
 }
+.issues button:hover .hd {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
 .issues button:focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: -2px;
 }
+/* 当前项：橙色细框 = 现在 */
 .issues button[aria-current="true"] {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  outline: 1.5px solid var(--signal);
+  outline-offset: -1.5px;
+}
+.issues button[aria-current="true"] .no {
+  grid-row: 1 / span 2;
+  color: var(--signal-text);
+}
+.issues button[aria-current="true"] .no::after {
+  content: "当前";
+  display: block;
+  width: max-content;
+  margin-top: 4px;
+  padding: 1px 4px;
+  font-size: 9px;
+  background: var(--signal);
+  color: var(--ink);
 }
 .issues .no {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding-top: 2px;
+  letter-spacing: 0.5px;
 }
 .issues .hd {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-.issues .dt {
   grid-column: 2;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.issues .hd.none {
+  font-weight: 400;
   color: var(--mute);
 }
-.issues button[aria-current="true"] .dt {
-  color: #cfcfca;
+.issues .dt {
+  grid-column: 2 / 4;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  color: var(--mute);
 }
-.projs {
-  top: 68px;
-  left: 16px;
-  width: 420px;
-}
-.projs .dt .late {
+.issues .dt .late {
   color: var(--signal-text);
   font-weight: 700;
 }
-.issues button[aria-current="true"] .dt .late {
-  color: var(--signal);
+.issues .tm {
+  grid-column: 3;
+  grid-row: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+  white-space: nowrap;
 }
-.projs button.arch .hd {
+.issues .ct {
+  grid-column: 2 / 4;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--mute);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.issues .pempty {
+  margin: 0;
+  padding: 16px;
+  font-size: 13px;
   color: var(--mute);
 }
-.issues .pnew {
+/* 项目：头条单独成行，竖线提示是要看的信息 */
+.projs .hl {
+  grid-column: 2 / 4;
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 3px solid var(--signal);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.projs button.arch .no,
+.projs button.arch .hd,
+.projs button.arch .dt {
+  color: #8f8d86;
+}
+/* 通知：未读小方块固定在左侧，不挤占类型标签 */
+.notes button {
+  position: relative;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  padding-left: 28px;
+}
+.notes .hd {
+  grid-column: 2 / 4;
+}
+.notes .tm {
+  grid-column: 3;
+  grid-row: 2;
+}
+.notes .ct {
+  grid-column: 2;
+}
+.notes button.unread::before {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 16px;
+  width: 6px;
+  height: 6px;
+  background: var(--signal);
+}
+.notes button:not(.unread) .hd {
+  font-weight: 500;
+  color: var(--mute);
+}
+.notes button:not(.unread) .no {
+  color: var(--mute);
+}
+.notes .no.risk-t {
+  color: var(--signal-text);
+}
+/* 底部操作行 */
+.issues .pnew,
+.issues .pfoot {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  grid-template-columns: none;
+  height: 36px;
+  padding: 0 14px;
   border-top: 1.5px solid var(--ink);
+  border-bottom: 0;
   font-family: var(--mono);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
-.issues .pnew::before {
-  content: "+";
-  font-size: 16px;
-  line-height: 1;
+.issues .pnew::after,
+.issues .pfoot::after {
+  content: "→";
+}
+.issues .pnew:hover,
+.issues .pfoot:hover {
+  background: var(--ink);
+  color: var(--paper);
 }
 
 /* ---------- top bar ---------- */

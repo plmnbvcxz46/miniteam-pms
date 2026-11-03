@@ -2,6 +2,9 @@ import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
+import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
+import { notifications as initialNotifications, projects as initialProjects } from "../data/global";
+import type { ProjectSave, ProjectSummary } from "../types/global";
 import { useTaskStore } from "../pages/board/taskStore";
 import { getColumnTasks } from "../pages/board/utils";
 import ProjectSwitch from "./components/sidebar/ProjectSwitch";
@@ -14,14 +17,40 @@ import WeekLine from "./components/topbar/WeekLine";
 
 export default function Shell() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [projectFormOpen, setProjectFormOpen] = useState(false);
+  const [projectList, setProjectList] = useState(initialProjects);
+  const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
+  const [notificationList, setNotificationList] = useState(initialNotifications);
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
   const openSettings = () => setSettingsOpen(true);
+
+  // POST /projects：新建后加进列表并切过去，创建人是项目经理
+  const handleCreateProject = (values: ProjectSave) => {
+    const project: ProjectSummary = {
+      id: Math.max(0, ...projectList.map((p) => p.id)) + 1,
+      name: values.name,
+      status: "ACTIVE",
+      startDate: values.startDate,
+      planEnd: values.planEnd,
+      issueNo: 1,
+      headline: null,
+      myProjectRole: "PM",
+    };
+    setProjectList((prev) => [project, ...prev]);
+    setCurrentProjectId(project.id);
+    setProjectFormOpen(false);
+  };
   return (
     <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
       {/* 左侧边栏 */}
       <aside className="index" id="index">
-        <ProjectSwitch />
+        <ProjectSwitch
+          projects={projectList}
+          currentId={currentProjectId}
+          onSelect={setCurrentProjectId}
+          onCreate={() => setProjectFormOpen(true)}
+        />
         <SidebarNav riskCount={riskCount} onOpenSettings={openSettings} />
         <SummaryCard />
       </aside>
@@ -32,7 +61,17 @@ export default function Shell() {
         <div className="slot">
           <WeekLine />
         </div>
-        <NotificationBell />
+        <NotificationBell
+          notifications={notificationList}
+          onRead={(id) =>
+            setNotificationList((prev) =>
+              prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+            )
+          }
+          onReadAll={() =>
+            setNotificationList((prev) => prev.map((n) => ({ ...n, isRead: true })))
+          }
+        />
         <UserChip onClick={openSettings} />
       </header>
 
@@ -43,6 +82,14 @@ export default function Shell() {
 
       {/* 设置抽屉 */}
       {settingsOpen && <SettingsDrawer onClose={() => setSettingsOpen(false)} />}
+
+      {/* 新建项目抽屉 */}
+      {projectFormOpen && (
+        <NewProjectDrawer
+          onClose={() => setProjectFormOpen(false)}
+          onSubmit={handleCreateProject}
+        />
+      )}
 
       {/* 任务表单抽屉 */}
       {taskForm && (
