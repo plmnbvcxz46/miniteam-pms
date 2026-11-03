@@ -176,8 +176,7 @@
   color: var(--mute);
 }
 
-.pm i,
-.pk {
+.pm i {
   display: inline-block;
   width: 34px;
   height: 7px;
@@ -190,8 +189,7 @@
   font-weight: 700;
 }
 
-.pm[aria-pressed="true"] i,
-.pk.on {
+.pm[aria-pressed="true"] i {
   background: var(--ink);
   border-style: solid;
   height: 6px;

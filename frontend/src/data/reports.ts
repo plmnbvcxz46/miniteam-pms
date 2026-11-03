@@ -35,9 +35,6 @@ export const rangeOptions: RangeOption[] = [
 /** 默认范围 */
 export const defaultRange: BurndownRange = "week";
 
-/** 成员工时条的坐标轴最大值（小时），上限 40 落在 80% 处 */
-export const loadAxisMax = 50;
-
 /* =========================================================
  * 二、接口假数据
  * ========================================================= */

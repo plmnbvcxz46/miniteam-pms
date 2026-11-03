@@ -17,13 +17,6 @@ export function toMonthDay(date: string, preserveZero = true): string {
 }
 
 /**
- * 0-1 的比率转为百分比整数文案（如 0.4286 → "43%"）
- */
-export function formatPercent(rate: number): string {
-  return `${Math.round(rate * 100)}%`;
-}
-
-/**
  * 两位补零的周次文案（如 5, 10 → "05/10"）
  */
 export function formatWeekNo(weekNo: number, totalWeeks: number): string {
@@ -90,47 +83,5 @@ export function calculateLoadBar(
     overDelay,
     overDur,
     isOver: over > 0,
-  };
-}
-
-/**
- * 计算工期偏差图条的宽度百分比与动效参数
- * 基准天数 maxDays 默认为 8 天
- */
-export function calculateDeviationBar(
-  planDays: number,
-  actualDays: number,
-  deviationDays: number,
-  maxDays = 8,
-): {
-  planWidthPercent: number;
-  planDur: number;
-  actualWidthPercent: number;
-  actualDur: number;
-  overWidthPercent: number;
-  overDur: number;
-  isOver: boolean;
-} {
-  const DU = 0.09;
-  const safeMax = Math.max(maxDays, 1);
-
-  const planWidthPercent = Math.min(100, (planDays / safeMax) * 100);
-  const planDur = Number((planDays * DU).toFixed(2));
-
-  const actualWidthPercent = Math.min(100, (actualDays / safeMax) * 100);
-  const actualDur = Number((actualDays * DU).toFixed(2));
-
-  const overDays = Math.max(0, deviationDays);
-  const overWidthPercent = Math.min(100 - actualWidthPercent, (overDays / safeMax) * 100);
-  const overDur = Number((overDays * DU).toFixed(2));
-
-  return {
-    planWidthPercent,
-    planDur,
-    actualWidthPercent,
-    actualDur,
-    overWidthPercent,
-    overDur,
-    isOver: deviationDays > 0,
   };
 }
