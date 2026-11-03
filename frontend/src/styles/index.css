@@ -167,19 +167,23 @@ code {
   font-size: 14px;
   cursor: pointer;
 }
-.grp a::before {
+.grp a svg {
+  flex-shrink: 0;
+}
+/* 设置抽屉的索引没有图标，仍用小方块作项目符号 */
+.ov-index .grp a::before {
   content: "";
   width: 6px;
   height: 6px;
   border: 1.5px solid var(--ink);
   flex-shrink: 0;
 }
+.ov-index .grp a[aria-current="page"]::before {
+  background: var(--ink);
+}
 .grp a[aria-current="page"] {
   background: var(--signal);
   font-weight: 700;
-}
-.grp a[aria-current="page"]::before {
-  background: var(--ink);
 }
 .grp a:not([aria-current="page"]):hover {
   background: var(--wash);

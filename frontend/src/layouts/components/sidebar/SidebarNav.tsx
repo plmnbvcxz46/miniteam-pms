@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { navGroups } from "../../nav";
+import NavIcon from "./NavIcon";
 
 interface SidebarNavProps {
   /** 阻塞任务数，显示在“任务”上，为 0 不显示 */
@@ -20,6 +21,7 @@ export default function SidebarNav({ riskCount, onOpenSettings }: SidebarNavProp
         >
           {group.items.map((item) => (
             <NavLink key={item.to} to={item.to}>
+              <NavIcon name={item.icon} />
               {item.label}
               {item.badge === "risk" && riskCount > 0 && (
                 <span className="risk">{riskCount}</span>
@@ -34,6 +36,7 @@ export default function SidebarNav({ riskCount, onOpenSettings }: SidebarNavProp
                 onOpenSettings();
               }}
             >
+              <NavIcon name="settings" />
               系统管理
             </a>
           )}
