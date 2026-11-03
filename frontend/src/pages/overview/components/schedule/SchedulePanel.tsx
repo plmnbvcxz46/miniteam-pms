@@ -20,7 +20,7 @@ export default function SchedulePanel({
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// 本周</span>
+          <span className="k">// WEEK</span>
           <h2>成员排期</h2>
         </div>
         <div className="legend">

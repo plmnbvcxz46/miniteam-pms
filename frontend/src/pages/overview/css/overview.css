@@ -55,8 +55,7 @@
   color: var(--mute);
 }
 .tl .days .cols span.on {
-  box-shadow: inset 0 0 0 2px var(--signal);
-  margin: 0 14px;
+  color: var(--signal-text);
 }
 .tl .rows {
   position: relative;

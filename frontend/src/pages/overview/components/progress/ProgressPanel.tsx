@@ -11,7 +11,7 @@ export default function ProgressPanel({ done, total }: ProgressPanelProps) {
     <section className="pnl pg">
       <div className="phd">
         <div>
-          <span className="k">// 整体</span>
+          <span className="k">// PROGRESS</span>
           <h2>项目进度</h2>
         </div>
         <span className="u">共 {total} 项</span>

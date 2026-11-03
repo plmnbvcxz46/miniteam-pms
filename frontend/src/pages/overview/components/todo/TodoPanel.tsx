@@ -18,7 +18,7 @@ export default function TodoPanel({ items, onOpenTask }: TodoPanelProps) {
     <section className="pnl todo-list">
       <div className="phd">
         <div>
-          <span className="k">// 今日</span>
+          <span className="k">// TODAY</span>
           <h2>今日待办</h2>
         </div>
         <span className="n">{pad2(items.length)}</span>

@@ -20,7 +20,7 @@ export default function HeadlinePanel({
   return (
     <section className={task ? "hero" : "hero calm"}>
       <div className="hk">
-        <span>// 今日头条</span>
+        <span>// HEADLINE</span>
         <span className="chip">风险</span>
       </div>
       <p className="headline">
