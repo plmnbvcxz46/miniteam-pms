@@ -15,7 +15,7 @@ export default function NotificationBell() {
         viewBox="0 0 16 16"
         fill="none"
         stroke="var(--ink)"
-        strokeWidth="1.6"
+        strokeWidth="1.5"
         aria-hidden="true"
       >
         {hasUnread && (
@@ -25,9 +25,9 @@ export default function NotificationBell() {
           </mask>
         )}
         <g mask={hasUnread ? "url(#bell-notch)" : undefined}>
-          <g transform="translate(-0.75 0.75)">
-            <path d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z" />
-            <path d="M6.5 14h3" />
+          <g transform="translate(-0.75 0.5)">
+            <path d="M4.25 11.75V7a3.75 3.75 0 017.5 0v4.75M2.5 11.75h11" />
+            <path d="M6.5 13.5h3v1.5h-3z" fill="var(--ink)" stroke="none" />
           </g>
         </g>
         {hasUnread && (
