@@ -39,9 +39,8 @@ src/
 |---|---|
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | OpenAPI 公共 schema |
 | `currentProjectId` | 路由或项目上下文 |
-| `currentUser` | `GET /auth/me` |
+| 当前登录身份（用户、系统权限、项目角色和权限） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`；账号假数据在 `data/auth.ts` |
 | `users`（项目成员的 `UserBrief`，各模块假数据共用） | `GET /projects/{projectId}/members` 的 `user` |
-| `myProjectRole`、`myPermissions` | 项目详情的 `myProjectRole` / `myPermissions` |
 | `currentIssue`（`IssueInfo`：期号、`M.DD` 日期、完整日期） | 期号取项目详情的 `issueNo`；日期直接取本地当前时间，不走接口 |
 | `roleLabel` 等枚举中文名 | 前端常量 |
 

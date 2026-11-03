@@ -1,0 +1,198 @@
+/* ==========================================================================
+   登录 / 注册页 (Login Page)
+   复用 .vh .vt .pnl .fr .u .err .hint .btn.go，这里只补页面布局和差异
+   ========================================================================== */
+
+.auth {
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(40px, 12vh, 112px) 16px 32px;
+  background: var(--ground);
+}
+
+.auth-col {
+  width: min(400px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-brand {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ---------- 表单面板 ---------- */
+.auth-form {
+  padding: 4px 20px 20px;
+}
+
+.auth .fr {
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: 14px 0 12px;
+}
+
+.auth .fr > label {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.auth .fr .err,
+.auth .fr .hint {
+  grid-column: 1;
+  margin-top: 2px;
+}
+
+.auth .fr .u.mono {
+  font-family: var(--mono);
+}
+
+.auth .fr .u[aria-invalid="true"] {
+  border-bottom-color: var(--signal-text);
+}
+
+.auth .fr .u[aria-invalid="true"]:focus {
+  border-bottom-color: var(--signal);
+}
+
+.auth .fr:last-of-type {
+  border-bottom: 0;
+}
+
+.auth-brand:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+}
+
+.auth-note {
+  margin: 12px 0 0;
+  padding-left: 8px;
+  border-left: 3px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.auth .ck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth .ck input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.auth-opts {
+  margin: 4px 0 16px;
+}
+
+.auth-submit {
+  width: 100%;
+  height: 40px;
+  font-size: 12px;
+}
+
+.auth-alt {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.auth-alt button {
+  all: unset;
+  cursor: pointer;
+  margin-left: 4px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.auth-alt button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* ---------- 演示账号：细线网格，视觉权重低于登录面板 ---------- */
+.auth-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--hair);
+}
+
+.auth-demo-grid button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border-right: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+}
+
+.auth-demo-grid button:nth-child(3n) {
+  border-right: 0;
+}
+
+.auth-demo-grid button:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.auth-demo-grid button:hover {
+  background: var(--wash);
+}
+
+.auth-demo-grid button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -2px;
+}
+
+.auth-demo-grid button[aria-pressed="true"] {
+  outline: 1.5px solid var(--signal);
+  outline-offset: -1.5px;
+}
+
+.auth-demo-grid b {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.auth-demo-grid span {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.auth-demo-grid .off b,
+.auth-demo-grid .off span {
+  color: #8f8d86;
+}
+
+@media (max-height: 700px) {
+  .auth .vt {
+    font-size: 44px;
+  }
+}

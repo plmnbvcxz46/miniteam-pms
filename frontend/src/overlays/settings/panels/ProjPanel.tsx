@@ -1,13 +1,33 @@
-export default function ProjPanel() {
+import { useState } from "react";
+import { currentProjectPeriod, projects } from "../../../data/global";
+import { formatDayLabel } from "../../../utils/date";
+import Switch from "../components/Switch";
+
+const WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"];
+
+interface Holiday {
+  start: string;
+  end: string;
+  name: string;
+}
+
+/** 节假日，接口没有这块，先放前端 */
+const initialHolidays: Holiday[] = [
+  { start: "2026-10-01", end: "2026-10-07", name: "国庆节" },
+];
+
+export default function ProjectRulesPanel() {
+  const project = projects[0];
+  const [period, setPeriod] = useState(currentProjectPeriod);
+  const [workdays, setWorkdays] = useState([true, true, true, true, true, false, false]);
+  const holidays = initialHolidays;
+  const [capacity, setCapacity] = useState("40");
+  const [snapshotOn, setSnapshotOn] = useState(true);
+  const [snapshotTime, setSnapshotTime] = useState("00:00");
+  const [archiveState, setArchiveState] = useState<"idle" | "confirm" | "done">("idle");
+
   return (
-    <section
-      className="ss"
-      id="ss-proj"
-      data-sub="proj"
-      data-g="本项目"
-      data-name="刊物规则"
-    >
-      <h2 className="ss-h">刊物规则</h2>
+    <section className="ss" id="ss-proj">
       <div className="blk">
         <h2>日历</h2>
         <div className="rows">
@@ -16,85 +36,51 @@ export default function ProjPanel() {
             <div className="inl">
               <input
                 className="in sm"
-                defaultValue="2026-09-21"
+                type="date"
                 aria-label="开始日期"
+                value={period.startDate}
+                onChange={(e) => setPeriod({ ...period, startDate: e.target.value })}
               />
               <span>至</span>
               <input
                 className="in sm"
-                defaultValue="2026-11-29"
+                type="date"
                 aria-label="结束日期"
+                value={period.planEnd}
+                onChange={(e) => setPeriod({ ...period, planEnd: e.target.value })}
               />
+              {period.planEnd < period.startDate && (
+                <span className="msg err">结束早于开始</span>
+              )}
             </div>
           </div>
           <div className="srow">
             <span className="lb">工作日</span>
             <div className="inl days7">
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="true"
-                aria-label="周一"
-                data-d="一"
-              />
-              <span>一</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="true"
-                aria-label="周二"
-                data-d="二"
-              />
-              <span>二</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="true"
-                aria-label="周三"
-                data-d="三"
-              />
-              <span>三</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="true"
-                aria-label="周四"
-                data-d="四"
-              />
-              <span>四</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="true"
-                aria-label="周五"
-                data-d="五"
-              />
-              <span>五</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="false"
-                aria-label="周六"
-                data-d="六"
-              />
-              <span>六</span>
-              <button
-                className="perm"
-                type="button"
-                aria-pressed="false"
-                aria-label="周日"
-                data-d="日"
-              />
-              <span>日</span>
+              {WEEKDAYS.map((day, i) => (
+                <span key={day} style={{ display: "contents" }}>
+                  <button
+                    className="perm"
+                    type="button"
+                    aria-pressed={workdays[i]}
+                    aria-label={`周${day}`}
+                    onClick={() =>
+                      setWorkdays((prev) => prev.map((v, k) => (k === i ? !v : v)))
+                    }
+                  />
+                  <span>{day}</span>
+                </span>
+              ))}
             </div>
           </div>
-          <div className="srow">
+          <div className="srow top">
             <span className="lb">节假日</span>
-            <div className="inl">
-              <span className="v">10.01 – 10.07 国庆节</span>
-              <button className="btn" type="button">
-                添加
-              </button>
+            <div>
+              {holidays.map((h) => (
+                <div key={`${h.start}-${h.name}`}>
+                  {formatDayLabel(h.start)} – {formatDayLabel(h.end)} {h.name}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -105,26 +91,27 @@ export default function ProjPanel() {
           <div className="srow">
             <label htmlFor="s-cap">每周工时上限</label>
             <div className="inl">
-              <input className="in xs" id="s-cap" defaultValue="40" />
+              <input
+                className="in xs"
+                id="s-cap"
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+              />
               <span>小时</span>
             </div>
           </div>
           <div className="srow">
             <span className="lb">每日快照</span>
             <div className="inl">
-              <span className="sw2" role="group" aria-label="每日快照">
-                <button type="button" aria-pressed="true">
-                  开
-                </button>
-                <button type="button" aria-pressed="false">
-                  关
-                </button>
-              </span>
+              <Switch label="每日快照" value={snapshotOn} onChange={setSnapshotOn} />
               <span>生成时间</span>
               <input
                 className="in xs"
-                defaultValue="00:00"
+                type="time"
                 aria-label="生成时间"
+                disabled={!snapshotOn}
+                value={snapshotTime}
+                onChange={(e) => setSnapshotTime(e.target.value)}
               />
             </div>
           </div>
@@ -145,10 +132,29 @@ export default function ProjPanel() {
         <div className="rows">
           <div className="srow">
             <span className="lb">归档项目</span>
-            <div>
-              <button className="btn risk" type="button">
-                归档测试项目 App
-              </button>
+            <div className="inl">
+              {archiveState === "done" ? (
+                <span className="v">{project.name} 已归档</span>
+              ) : (
+                <>
+                  <button
+                    className="btn risk"
+                    type="button"
+                    onClick={() =>
+                      setArchiveState(archiveState === "idle" ? "confirm" : "done")
+                    }
+                  >
+                    {archiveState === "idle"
+                      ? `归档${project.name}`
+                      : "再点一次确认归档"}
+                  </button>
+                  {archiveState === "confirm" && (
+                    <button className="btn" type="button" onClick={() => setArchiveState("idle")}>
+                      取消
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -156,4 +162,3 @@ export default function ProjPanel() {
     </section>
   );
 }
-

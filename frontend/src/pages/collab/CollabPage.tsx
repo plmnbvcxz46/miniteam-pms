@@ -7,7 +7,8 @@ import {
   discussionDetails as initialDiscussionDetails,
   discussions as initialDiscussions,
 } from "../../data/collab";
-import { currentUser, users } from "../../data/global";
+import { useMe } from "../../auth/useAuth";
+import { users } from "../../data/global";
 import type {
   Comment,
   DiscussionBrief,
@@ -33,11 +34,6 @@ import {
 } from "./utils";
 import "./css/collab.css";
 
-/** 可以 @ 的成员：项目成员里除了自己 */
-const mentionUsers = Object.values(users).filter(
-  (user) => user.id !== currentUser.id,
-);
-
 /** 从任务页跳过来发起讨论时，通过路由 state 带上任务 */
 interface CollabLocationState {
   newDiscussionTaskId?: number;
@@ -47,6 +43,12 @@ export default function CollabPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { taskMap } = useTaskStore();
+  const { user: currentUser } = useMe();
+  // 可以 @ 的成员：项目成员里除了自己
+  const mentionUsers = useMemo(
+    () => Object.values(users).filter((user) => user.id !== currentUser.id),
+    [currentUser.id],
+  );
 
   // 顶层状态
   const [discussionList, setDiscussionList] =

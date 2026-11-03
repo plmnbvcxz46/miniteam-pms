@@ -170,17 +170,6 @@ code {
 .grp a svg {
   flex-shrink: 0;
 }
-/* 设置抽屉的索引没有图标，仍用小方块作项目符号 */
-.ov-index .grp a::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border: 1.5px solid var(--ink);
-  flex-shrink: 0;
-}
-.ov-index .grp a[aria-current="page"]::before {
-  background: var(--ink);
-}
 .grp a[aria-current="page"] {
   background: var(--signal);
   font-weight: 700;
@@ -488,6 +477,46 @@ code {
 .notes .no.risk-t {
   color: var(--signal-text);
 }
+/* 账号切换浮层 */
+.accts {
+  left: auto;
+  right: 0;
+  width: 360px;
+}
+.accts button.off {
+  cursor: default;
+}
+.accts button.off:hover {
+  background: transparent;
+}
+.accts button.off:hover .hd {
+  text-decoration: none;
+}
+.accts button.off .no,
+.accts button.off .hd,
+.accts button.off .tm,
+.accts button.off .dt {
+  color: #8f8d86;
+}
+.afoot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1.5px solid var(--ink);
+}
+.afoot .pfoot {
+  border-top: 0;
+}
+.afoot .pfoot + .pfoot {
+  border-left: 1.5px solid var(--ink);
+}
+.afoot .out::after {
+  content: none;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* 底部操作行 */
 .issues .pnew,
 .issues .pfoot {
@@ -633,6 +662,15 @@ code {
 }
 .bell:hover {
   background: var(--wash);
+}
+.me-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.me[aria-expanded="true"],
+.me.swapped {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
 }
 .me {
   all: unset;
@@ -1572,9 +1610,6 @@ main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }
-.ov-index {
-  display: none;
-}
 .ov-body {
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1599,9 +1634,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-.ss-h {
-  display: none;
 }
 .blk > h2,
 .ss .block > h2 {
@@ -1915,25 +1947,6 @@ select.in {
   height: 26px;
   padding: 0 6px;
 }
-.plain td,
-.plain th {
-  text-align: left;
-}
-.tbl.pick tbody tr {
-  cursor: pointer;
-}
-.tbl.pick tbody tr:hover td {
-  background: var(--wash);
-}
-.tbl.pick tbody tr[aria-selected="true"] td {
-  background: var(--ink);
-  color: var(--paper);
-}
-.sw {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
 .logday {
   display: flex;
   flex-direction: column;
@@ -1972,6 +1985,27 @@ select.in {
 }
 .lg.fail b {
   color: var(--signal-text);
+}
+/* 系统管理里的操作反馈 */
+.ss .msg {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+.ss .msg.err,
+.ss .bad {
+  color: var(--signal-text);
+}
+.ss .acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.matrix th small {
+  font-family: var(--mono);
+  font-weight: 400;
+  color: var(--mute);
 }
 body.calm * {
   animation: none !important;

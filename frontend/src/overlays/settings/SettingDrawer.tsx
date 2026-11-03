@@ -1,26 +1,58 @@
+import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { sections, groups, type SectionId } from "./sections";
+import { useMe } from "../../auth/useAuth";
+import { getVisibleSections, resolveSection, type SectionId } from "./sections";
+import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectRulesPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
 import RolesPanel from "./panels/RolesPanel";
-import DictPanel from "./panels/DictPanel";
 import LogsPanel from "./panels/LogsPanel";
 import ParamsPanel from "./panels/ParamsPanel";
 import type { JSX } from "react/jsx-runtime";
 
-const panels: Record<SectionId, JSX.Element> = {
-  me: <MePanel />,
+const panels: Record<Exclude<SectionId, "me">, JSX.Element> = {
   proj: <ProjectRulesPanel />,
   people: <PeoplePanel />,
   roles: <RolesPanel />,
-  dict: <DictPanel />,
   logs: <LogsPanel />,
   params: <ParamsPanel />,
 };
 
-export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
-  const active: SectionId = "people"; // 静态阶段写死
+interface SettingsDrawerProps {
+  /** 打开时先显示哪个分区 */
+  initialSection?: SectionId;
+  profile: ProfileUpdate;
+  onSaveProfile: (values: ProfileUpdate) => void;
+  onClose: () => void;
+}
+
+export default function SettingsDrawer({
+  initialSection = "people",
+  profile,
+  onSaveProfile,
+  onClose,
+}: SettingsDrawerProps) {
+  const me = useMe();
+  const visibleSections = getVisibleSections(me);
+  const [active, setActive] = useState<SectionId>(() =>
+    resolveSection(initialSection, visibleSections),
+  );
+  // 当前分区在切换账号后没有权限看了，退回第一个能看的
+  const current = resolveSection(active, visibleSections);
+  // 标签和左侧索引共用：点击或回车切换分区
+  const link = (id: SectionId) => ({
+    role: "button" as const,
+    tabIndex: 0,
+    "aria-current": id === current ? ("page" as const) : undefined,
+    onClick: () => setActive(id),
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setActive(id);
+      }
+    },
+  });
 
   return (
     <Drawer className="ov drawer" label="设置" onClose={onClose}>
@@ -33,14 +65,12 @@ export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
 
         {/* 顶部标签：分组变化处插一条分隔线 */}
         <nav className="ov-tabs" aria-label="设置分区">
-          {sections.map((s, k) => (
+          {visibleSections.map((s, k) => (
             <span key={s.id} style={{ display: "contents" }}>
-              {k > 0 && s.group !== sections[k - 1].group && (
+              {k > 0 && s.group !== visibleSections[k - 1].group && (
                 <i className="tsep" aria-hidden="true" />
               )}
-              <a tabIndex={0} aria-current={s.id === active ? "page" : undefined}>
-                {s.name}
-              </a>
+              <a {...link(s.id)}>{s.name}</a>
             </span>
           ))}
         </nav>
@@ -53,27 +83,11 @@ export default function SettingsDrawer({ onClose }: { onClose: () => void }) {
       <div className="double ov-rule"><i /><i /></div>
 
       <div className="ov-main">
-        {/* 左侧索引：按分组，每组一个 nav，最后一组加 admin */}
-        <aside className="ov-index">
-          {groups.map((g, k) => (
-            <nav
-              key={g}
-              className={"grp" + (k === groups.length - 1 ? " admin" : "")}
-              aria-label={g}
-            >
-              {sections
-                .filter((s) => s.group === g)
-                .map((s) => (
-                  <a key={s.id} tabIndex={0}
-                    aria-current={s.id === active ? "page" : undefined}>
-                    {s.name}
-                  </a>
-                ))}
-            </nav>
-          ))}
-        </aside>
-
-        <div className="ov-body">{panels[active]}</div>
+        <div className="ov-body">{current === "me" ? (
+            <MePanel profile={profile} onSave={onSaveProfile} />
+          ) : (
+            panels[current as Exclude<SectionId, "me">]
+          )}</div>
       </div>
     </Drawer>
   );

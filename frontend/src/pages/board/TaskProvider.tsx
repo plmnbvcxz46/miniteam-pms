@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { currentUser, taskStatusLabel } from "../../data/global";
+import { useMe } from "../../auth/useAuth";
+import { taskStatusLabel } from "../../data/global";
 import {
   taskActivities as initialTaskActivities,
   taskDetails as initialTaskDetails,
@@ -17,6 +18,7 @@ const FRESH_MS = 2400;
 
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
+  const { user: currentUser } = useMe();
   const [baseTaskMap, setTaskMap] =
     useState<Record<number, TaskDetail>>(initialTaskDetails);
   // 任务关联的文档由文档数据按 taskId 得出，不在任务里另存一份
@@ -87,7 +89,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     }
 
     const newId = Math.max(...Object.keys(taskMap).map(Number)) + 1;
-    setTaskMap((prev) => createTask(prev, newId, values, taskTodayDate));
+    setTaskMap((prev) => createTask(prev, newId, values, taskTodayDate, currentUser));
     addLog(newId, "CREATE", "创建任务");
 
     setFreshTaskId(newId);

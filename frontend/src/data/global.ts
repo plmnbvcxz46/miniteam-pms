@@ -1,7 +1,6 @@
 import type {
   IssueInfo,
   IssueSummary,
-  MemberPermissions,
   Notification,
   NotificationType,
   ProjectPeriod,
@@ -19,34 +18,16 @@ import type {
 /** 当前项目 ID（对应路由或全局项目上下文） */
 export const currentProjectId = 1;
 
-/** 当前登录用户（对应 GET /auth/me） */
-export const currentUser: UserBrief = {
-  id: 1,
-  username: "pm_a",
-  realName: "测试经理 A",
-};
-
 /**
  * 当前项目的成员用户（UserBrief），各模块假数据统一从这里取，避免重复定义
  * 将来由 GET /projects/{projectId}/members 的 user 字段提供
  */
 export const users = {
-  pmA: currentUser,
+  pmA: { id: 1, username: "pm_a", realName: "测试经理 A" },
   devA: { id: 2, username: "dev_a", realName: "普通员工 A" },
   devB: { id: 3, username: "dev_b", realName: "普通员工 B" },
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
-
-/** 我在当前项目的角色（对应 ProjectDetail.myProjectRole） */
-export const myProjectRole: ProjectRole = "PM";
-
-/** 我在当前项目的权限（对应 ProjectDetail.myPermissions） */
-export const myPermissions: MemberPermissions = {
-  canEditTask: true,
-  canEditSchedule: true,
-  canEditDoc: true,
-  canManageMember: true,
-};
 
 /** 当前项目的起止日期（对应 ProjectSummary.startDate / planEnd），共 10 周 */
 export const currentProjectPeriod: ProjectPeriod = {
