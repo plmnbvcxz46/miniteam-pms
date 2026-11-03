@@ -134,6 +134,7 @@ export default function GanttPanel({
               width={width}
               nameWidth={NAME_WIDTH}
               rowHeight={ROW_HEIGHT}
+              today={today}
             />
 
             <div className="gt-line today" style={{ left: x(toDay(today)) }}>
