@@ -1,4 +1,4 @@
-import { myPermissions, mySystemPermissions } from "../../data/global";
+import type { Account } from "../../types/auth";
 import type { SettingsSectionId } from "../../types/settings";
 
 /**
@@ -24,17 +24,20 @@ export const sections: {
 
 export type SectionId = SettingsSectionId;
 
-/** 当前用户能看到的分区 */
-export const visibleSections = sections.filter(
-  (s) =>
-    s.access === "all" ||
-    (s.access === "project" && myPermissions.canManageMember) ||
-    (s.access === "system" && mySystemPermissions.includes("system:view")),
-);
+/** 这个身份能看到的分区 */
+export function getVisibleSections(account: Account) {
+  return sections.filter(
+    (s) =>
+      s.access === "all" ||
+      (s.access === "project" && account.permissions.canManageMember) ||
+      (s.access === "system" && account.systemPermissions.includes("system:view")),
+  );
+}
 
 /** 打开抽屉时的分区：想看的分区没有权限就退回第一个能看的 */
-export function resolveSection(wanted: SectionId): SectionId {
-  return visibleSections.some((s) => s.id === wanted)
-    ? wanted
-    : visibleSections[0].id;
+export function resolveSection(
+  wanted: SectionId,
+  visible: ReturnType<typeof getVisibleSections>,
+): SectionId {
+  return visible.some((s) => s.id === wanted) ? wanted : visible[0].id;
 }

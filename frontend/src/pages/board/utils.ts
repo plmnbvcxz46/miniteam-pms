@@ -1,6 +1,6 @@
-import { currentProjectId, currentUser, users } from "../../data/global";
+import { currentProjectId, users } from "../../data/global";
 import { getPriorityLabel, milestones } from "../../data/task";
-import type { TaskStatus } from "../../types/global";
+import type { TaskStatus, UserBrief } from "../../types/global";
 import type {
   DependencyTask,
   TaskDetail,
@@ -144,6 +144,7 @@ export function createTask(
   taskId: number,
   values: TaskFormValues,
   today: string,
+  creator: UserBrief,
 ): Record<number, TaskDetail> {
   const score = 50 + values.predecessorIds.length * 10;
   const createdAt = `${today} 刚刚`;
@@ -160,7 +161,7 @@ export function createTask(
     parentId: null,
     actualEnd: null,
     projectId: currentProjectId,
-    creator: currentUser,
+    creator,
     importance: 3,
     urgency: 3,
     usedDays: 0,

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { currentUser } from "../../../data/global";
+import { useMe } from "../../../auth/useAuth";
 import type { ProfileUpdate } from "../../../types/settings";
 import Switch from "../components/Switch";
 
@@ -10,6 +10,7 @@ interface MePanelProps {
 }
 
 export default function MePanel({ profile, onSave }: MePanelProps) {
+  const currentUser = useMe().user;
   const [realName, setRealName] = useState(profile.realName);
   const [email, setEmail] = useState(profile.email);
   const [skillTags, setSkillTags] = useState(profile.skillTags);

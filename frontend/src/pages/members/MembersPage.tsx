@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { PermKey, Activity } from "../../types/global";
 import type { Member } from "../../types/members";
-import { currentUser, myPermissions } from "../../data/global";
+import { useMe } from "../../auth/useAuth";
 import {
   members as initialMembers,
   permLogs as initialPermLogs,
@@ -27,7 +27,8 @@ export default function MembersPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   // 权限与人数统计
-  const canManageMember = myPermissions.canManageMember;
+  const { user: currentUser, permissions } = useMe();
+  const canManageMember = permissions.canManageMember;
   const overCapacityCount = useMemo(
     () => getOverCapacityCount(memberList),
     [memberList],

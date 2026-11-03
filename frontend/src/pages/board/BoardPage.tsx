@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { currentUser } from "../../data/global";
+import { useMe } from "../../auth/useAuth";
 import type { TaskStatus } from "../../types/global";
 import type { TaskDetail } from "../../types/task";
 import BlockedBy from "./components/column/BlockedBy";
@@ -17,6 +17,7 @@ const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 export default function BoardPage() {
   const navigate = useNavigate();
+  const { user: currentUser } = useMe();
   const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 

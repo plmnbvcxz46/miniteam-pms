@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { resolveSection, visibleSections, type SectionId } from "./sections";
+import { useMe } from "../../auth/useAuth";
+import { getVisibleSections, resolveSection, type SectionId } from "./sections";
 import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectRulesPanel from "./panels/ProjPanel";
@@ -34,14 +35,18 @@ export default function SettingsDrawer({
   onSaveProfile,
   onClose,
 }: SettingsDrawerProps) {
+  const me = useMe();
+  const visibleSections = getVisibleSections(me);
   const [active, setActive] = useState<SectionId>(() =>
-    resolveSection(initialSection),
+    resolveSection(initialSection, visibleSections),
   );
+  // 当前分区在切换账号后没有权限看了，退回第一个能看的
+  const current = resolveSection(active, visibleSections);
   // 标签和左侧索引共用：点击或回车切换分区
   const link = (id: SectionId) => ({
     role: "button" as const,
     tabIndex: 0,
-    "aria-current": id === active ? ("page" as const) : undefined,
+    "aria-current": id === current ? ("page" as const) : undefined,
     onClick: () => setActive(id),
     onKeyDown: (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -80,10 +85,10 @@ export default function SettingsDrawer({
       <div className="double ov-rule"><i /><i /></div>
 
       <div className="ov-main">
-        <div className="ov-body">{active === "me" ? (
+        <div className="ov-body">{current === "me" ? (
             <MePanel profile={profile} onSave={onSaveProfile} />
           ) : (
-            panels[active]
+            panels[current as Exclude<SectionId, "me">]
           )}</div>
       </div>
     </Drawer>
