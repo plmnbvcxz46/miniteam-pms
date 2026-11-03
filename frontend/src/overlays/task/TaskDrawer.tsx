@@ -1,11 +1,24 @@
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import Drawer from "../../components/Drawer";
-import { users } from "../../data/global";
+import { members } from "../../data/members";
+import { systemUsers } from "../../data/settings";
 import { milestones, taskTodayDate } from "../../data/task";
 import { getPredecessorOptions } from "../../pages/board/utils";
-import type { TaskDetail, TaskFormValues } from "../../types/task";
+import type {
+  AssigneeCandidate,
+  TaskDetail,
+  TaskFormValues,
+} from "../../types/task";
+import AssigneePicker from "./AssigneePicker";
 
-const assigneeOptions = Object.values(users);
+/** 候选人只来自当前项目成员，技能标签取自用户资料 */
+const assigneeCandidates: AssigneeCandidate[] = members.map((member) => ({
+  user: member.user,
+  skillTags:
+    systemUsers.find((u) => u.id === member.user.id)?.skillTags ?? [],
+  load: member.weeklyHours,
+  capacity: member.weeklyCapacity,
+}));
 const milestoneOptions = Object.values(milestones);
 
 interface TaskDrawerProps {
@@ -23,6 +36,7 @@ export default function TaskDrawer({
   onSubmit,
 }: TaskDrawerProps) {
   const task = taskId === null ? null : tasks[taskId];
+  const assigneeLabelId = useId();
 
   const [title, setTitle] = useState(task?.title ?? "");
   const [milestoneId, setMilestoneId] = useState<number | null>(
@@ -115,26 +129,15 @@ export default function TaskDrawer({
         </div>
 
         <div className="fr">
-          <span className="lb">负责人</span>
-          <div className="chips">
-            {assigneeOptions.map((user) => (
-              <button
-                key={user.id}
-                type="button"
-                aria-pressed={user.id === assigneeId}
-                onClick={() => setAssigneeId(user.id)}
-              >
-                {user.realName}
-              </button>
-            ))}
-            <button
-              type="button"
-              aria-pressed={assigneeId === null}
-              onClick={() => setAssigneeId(null)}
-            >
-              未分配
-            </button>
-          </div>
+          <span className="lb" id={assigneeLabelId}>
+            负责人
+          </span>
+          <AssigneePicker
+            candidates={assigneeCandidates}
+            value={assigneeId}
+            labelId={assigneeLabelId}
+            onChange={setAssigneeId}
+          />
         </div>
 
         <div className="fr">

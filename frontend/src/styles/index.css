@@ -2093,6 +2093,197 @@ body.calm * {
 .fr .pms .pm {
   margin-left: 0;
 }
+/* 负责人选择器（任务抽屉）：浮层沿用 .issues，不占文档流，抽屉高度不变 */
+.ap {
+  position: relative;
+}
+.ap-tg {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 12px;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 30px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.ap-tg:hover {
+  background: var(--wash);
+}
+.ap-tg:focus-visible {
+  outline: none;
+  border-bottom-color: var(--signal);
+}
+.ap-tg .nm {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ap-tg .nm.none {
+  font-weight: 400;
+  color: var(--mute);
+}
+.ap .ap-pop {
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  width: auto;
+}
+.ap .list {
+  max-height: 252px;
+}
+.ap-opt {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 108px;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 13px;
+  cursor: pointer;
+}
+.ap .list > .ap-opt:last-child {
+  border-bottom: 0;
+}
+.ap-opt.on {
+  background: var(--wash);
+}
+.ap-opt[aria-selected="true"] {
+  outline: 1.5px solid var(--signal);
+  outline-offset: -1.5px;
+}
+.ap-opt.hit:has(+ .ap-opt.miss) {
+  border-bottom: 1.5px solid var(--ink);
+}
+.ap-opt.miss .ap-nm,
+.ap-opt.miss .ap-tags,
+.ap-opt.miss .ap-load {
+  opacity: 0.5;
+}
+.ap-opt.miss .ap-nm {
+  font-weight: 400;
+}
+.ap-nm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 700;
+}
+.ap-nm > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ap-nm mark {
+  background: none;
+  color: inherit;
+  text-decoration: underline 2px var(--signal);
+  text-underline-offset: 3px;
+}
+.ap-nm .chip {
+  flex: none;
+  background: var(--signal);
+  color: var(--ink);
+}
+.ap-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+.ap-tag {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px;
+  line-height: 18px;
+  font-size: 11px;
+  color: var(--mute);
+  border: 1px solid var(--hair);
+}
+.ap-tag.hit {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+}
+.ap-more {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--mute);
+}
+.ap-load {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.ap-bar {
+  flex: none;
+  width: 48px;
+  height: 6px;
+  background: var(--wash);
+}
+.ap-bar i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+.ap-load.over {
+  color: var(--signal-text);
+}
+.ap-load.over .ap-bar {
+  background: var(--over);
+}
+.ap-load.over .ap-bar i {
+  display: none;
+}
+.ap-none {
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 0;
+  color: var(--mute);
+}
+.ap-none[aria-selected="true"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .ap .list {
+    max-height: min(252px, 45vh);
+  }
+  .ap-opt {
+    grid-template-columns: minmax(0, 1fr) auto;
+    height: auto;
+    min-height: 36px;
+    padding: 7px 14px;
+    row-gap: 5px;
+  }
+  .ap-tags {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .ap-tags:empty {
+    display: none;
+  }
+}
 .dz {
   display: flex;
   flex-direction: column;
