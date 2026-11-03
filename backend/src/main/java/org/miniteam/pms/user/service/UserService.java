@@ -13,10 +13,12 @@ import org.miniteam.pms.user.dto.ResetPasswordResult;
 import org.miniteam.pms.user.dto.RoleVO;
 import org.miniteam.pms.user.dto.UserBriefVO;
 import org.miniteam.pms.user.dto.UserCreate;
+import org.miniteam.pms.user.dto.UserUpdate;
 import org.miniteam.pms.user.dto.UserVO;
 import org.miniteam.pms.user.entity.SysUser;
 import org.miniteam.pms.user.mapper.RoleMapper;
 import org.miniteam.pms.user.mapper.UserMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +85,58 @@ public class UserService {
         }
         logService.record(operator.id(), null, TARGET_USER, user.getId(), "CREATE", "新建用户 " + user.getUsername());
         return UserVO.of(userMapper.findById(user.getId()));
+    }
+
+    @Transactional
+    public UserVO update(Long userId, UserUpdate request) {
+        LoginUser operator = AuthContext.requireAdmin();
+        SysUser target = load(userId);
+        Long roleId = request.roleId() == null ? target.getRoleId() : request.roleId();
+        if (!roleId.equals(target.getRoleId())) {
+            if (operator.id().equals(target.getId())) {
+                // 防止最后一个管理员把自己降级后没人能管系统
+                throw new BusinessException(ResultCode.BAD_REQUEST, "不能修改自己的账号类型");
+            }
+            if (roleMapper.findById(roleId) == null) {
+                throw new BusinessException(ResultCode.BAD_REQUEST, "角色不存在");
+            }
+        }
+        userMapper.updateByAdmin(
+                userId,
+                request.realName() == null
+                        ? target.getRealName()
+                        : request.realName().trim(),
+                request.dept() == null ? target.getDept() : blankToNull(request.dept()),
+                roleId,
+                request.email() == null ? target.getEmail() : blankToNull(request.email()),
+                request.skillTags() == null ? target.getSkillTags() : request.skillTags(),
+                request.weeklyCapacity() == null ? target.getWeeklyCapacity() : request.weeklyCapacity());
+        SysUser updated = userMapper.findById(userId);
+        if (!roleId.equals(target.getRoleId())) {
+            logService.record(
+                    operator.id(),
+                    null,
+                    TARGET_USER,
+                    userId,
+                    "CHANGE_ROLE",
+                    target.getUsername() + " 的账号类型改为 " + updated.getRoleName());
+        }
+        return UserVO.of(updated);
+    }
+
+    @Transactional
+    public void delete(Long userId) {
+        LoginUser operator = AuthContext.requireAdmin();
+        SysUser target = load(userId);
+        if (operator.id().equals(target.getId())) {
+            throw new BusinessException(ResultCode.BAD_REQUEST, "不能删除自己的账号");
+        }
+        try {
+            userMapper.delete(userId);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ResultCode.CONFLICT, "该用户仍负责任务、项目或有评论、文档，不能删除，可以改为停用");
+        }
+        logService.record(operator.id(), null, TARGET_USER, userId, "DELETE", "删除用户 " + target.getUsername());
     }
 
     @Transactional

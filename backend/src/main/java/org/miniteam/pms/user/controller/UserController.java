@@ -8,8 +8,10 @@ import org.miniteam.pms.user.dto.ResetPasswordResult;
 import org.miniteam.pms.user.dto.UserBriefVO;
 import org.miniteam.pms.user.dto.UserCreate;
 import org.miniteam.pms.user.dto.UserStatusChange;
+import org.miniteam.pms.user.dto.UserUpdate;
 import org.miniteam.pms.user.dto.UserVO;
 import org.miniteam.pms.user.service.UserService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +51,17 @@ public class UserController {
     public Result<List<UserBriefVO>> search(
             @RequestParam String keyword, @RequestParam(defaultValue = "10") int limit) {
         return Result.ok(userService.search(keyword, limit));
+    }
+
+    @PutMapping("/{userId}")
+    public Result<UserVO> update(@PathVariable Long userId, @Valid @RequestBody UserUpdate request) {
+        return Result.ok(userService.update(userId, request));
+    }
+
+    @DeleteMapping("/{userId}")
+    public Result<Void> delete(@PathVariable Long userId) {
+        userService.delete(userId);
+        return Result.ok();
     }
 
     @PutMapping("/{userId}/status")

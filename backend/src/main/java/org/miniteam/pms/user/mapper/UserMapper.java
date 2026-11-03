@@ -26,6 +26,17 @@ public interface UserMapper {
             @Param("email") String email,
             @Param("skillTags") List<String> skillTags);
 
+    void updateByAdmin(
+            @Param("id") Long id,
+            @Param("realName") String realName,
+            @Param("dept") String dept,
+            @Param("roleId") Long roleId,
+            @Param("email") String email,
+            @Param("skillTags") List<String> skillTags,
+            @Param("weeklyCapacity") Integer weeklyCapacity);
+
+    void delete(@Param("id") Long id);
+
     void updateStatus(@Param("id") Long id, @Param("status") int status);
 
     List<SysUser> list(

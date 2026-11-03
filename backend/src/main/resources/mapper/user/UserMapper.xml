@@ -47,6 +47,21 @@
         UPDATE sys_user SET password_hash = #{passwordHash} WHERE id = #{id}
     </update>
 
+    <update id="updateByAdmin">
+        UPDATE sys_user
+        SET real_name = #{realName},
+            dept = #{dept},
+            role_id = #{roleId},
+            email = #{email},
+            skill_tags = #{skillTags,typeHandler=org.miniteam.pms.common.mybatis.JsonStringListTypeHandler},
+            weekly_capacity = #{weeklyCapacity}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_user WHERE id = #{id}
+    </delete>
+
     <update id="updateStatus">
         UPDATE sys_user SET status = #{status} WHERE id = #{id}
     </update>

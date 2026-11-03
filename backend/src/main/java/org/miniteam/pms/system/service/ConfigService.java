@@ -39,10 +39,14 @@ public class ConfigService {
      * 这里只保证每个权重在 0~1 之间，合计由前端保存前校验。
      */
     private static void validate(String key, String value) {
-        if (key.startsWith(WEIGHT_PREFIX) || key.equals("priority.alpha")) {
+        if (key.startsWith(WEIGHT_PREFIX)) {
             double v = parseNumber(value, "须为数字");
             if (v < 0 || v > 1) {
                 throw new BusinessException(ResultCode.BAD_REQUEST, "取值须在 0 到 1 之间");
+            }
+        } else if (key.equals("priority.alpha")) {
+            if (parseNumber(value, "须为数字") < 0) {
+                throw new BusinessException(ResultCode.BAD_REQUEST, "不能小于 0");
             }
         } else if (key.equals("priority.top_n") || key.equals("member.weekly_capacity")) {
             double v = parseNumber(value, "须为整数");
