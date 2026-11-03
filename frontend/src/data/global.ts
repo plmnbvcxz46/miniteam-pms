@@ -15,6 +15,9 @@ import type {
 /** 当前项目 ID（对应路由或全局项目上下文） */
 export const currentProjectId = 1;
 
+/** 当前项目名称（对应 ProjectSummary.name） */
+export const currentProjectName = "测试项目 App";
+
 /** 当前登录用户（对应 GET /auth/me） */
 export const currentUser: UserBrief = {
   id: 1,
