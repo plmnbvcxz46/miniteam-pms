@@ -6,7 +6,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { useAccess } from "../../../access/useAccess";
-import { taskTodayDate } from "../../../data/task";
+import { useIssue } from "../../../issue/useIssue";
 import type { TaskStatus } from "../../../types/global";
 import { useTaskStore } from "../taskStore";
 import NoAccess from "./components/NoAccess";
@@ -21,7 +21,8 @@ export default function TaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { permissions, canViewTask, canMoveTask } = useAccess();
+  const { canEditTask, canViewTask, canMoveTask } = useAccess();
+  const { today } = useIssue();
   const { taskMap, activityMap, moveTask, openTaskForm } = useTaskStore();
 
   // 只在进入页面时判断一次：任务之间跳转会换掉 location.key
@@ -60,7 +61,7 @@ export default function TaskPage() {
         onBack={handleBack}
         onChangeStatus={canMoveTask(task) ? handleChangeStatus : undefined}
         onEdit={
-          permissions.canEditTask ? () => openTaskForm(task.id) : undefined
+          canEditTask ? () => openTaskForm(task.id) : undefined
         }
       />
       <TaskFigures task={task} />
@@ -83,7 +84,7 @@ export default function TaskPage() {
             navigate("/collab", { state: { newDiscussionTaskId: task.id } })
           }
         />
-        <TaskLogPanel activities={activityMap[task.id]} today={taskTodayDate} />
+        <TaskLogPanel activities={activityMap[task.id]} today={today} />
       </div>
     </section>
   );

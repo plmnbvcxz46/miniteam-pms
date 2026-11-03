@@ -3,6 +3,7 @@ import AccessProvider from "./access/AccessProvider";
 import AuthProvider from "./auth/AuthProvider";
 import { useAuth } from "./auth/useAuth";
 import ConfigProvider from "./config/ConfigProvider";
+import IssueProvider from "./issue/IssueProvider";
 import LoginPage from "./pages/login/LoginPage";
 import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
@@ -39,13 +40,15 @@ function AuthGate() {
   const { me } = useAuth();
   if (!me) return <LoginPage />;
   return (
-    <AccessProvider>
-      <DocumentProvider>
-        <TaskProvider>
-          <RouterProvider router={router} />
-        </TaskProvider>
-      </DocumentProvider>
-    </AccessProvider>
+    <IssueProvider>
+      <AccessProvider>
+        <DocumentProvider>
+          <TaskProvider>
+            <RouterProvider router={router} />
+          </TaskProvider>
+        </DocumentProvider>
+      </AccessProvider>
+    </IssueProvider>
   );
 }
 

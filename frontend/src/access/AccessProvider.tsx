@@ -24,6 +24,8 @@ import type {
   ProjectSummary,
 } from "../types/global";
 import type { Member } from "../types/members";
+import { issueMemberHours } from "../data/issueMemberHours";
+import { useIssue } from "../issue/useIssue";
 import { getProjectToday } from "../utils/date";
 import { AccessContext, type AccessState } from "./AccessContext";
 import {
@@ -36,6 +38,7 @@ import {
 /** 登录后才会渲染，所以拿得到非空的当前身份 */
 export default function AccessProvider({ children }: { children: ReactNode }) {
   const me = useMe();
+  const { isPast, viewing, today } = useIssue();
   const isAdmin = isSystemAdmin(me);
 
   const [projectList, setProjectList] = useState<ProjectSummary[]>(initialProjects);
@@ -62,14 +65,26 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
   const currentProject = projects.find((p) => p.id === currentId) ?? projects[0] ?? null;
   const projectId = currentProject?.id ?? null;
 
-  const members = useMemo(
-    () => (projectId === null ? [] : (memberMap[projectId] ?? [])),
-    [memberMap, projectId],
-  );
-  const permLogs = useMemo(
-    () => (projectId === null ? [] : (logMap[projectId] ?? [])),
-    [logMap, projectId],
-  );
+  // 看过去的期时，成员只留当时已加入的，本周工时取当时的；变更记录只留那一天以前的
+  const members = useMemo(() => {
+    const list = projectId === null ? [] : (memberMap[projectId] ?? []);
+    if (!isPast) return list;
+    const hours = issueMemberHours[viewing.issueNo] ?? {};
+    return list
+      .filter((m) => m.joinedAt.slice(0, 10) <= today)
+      .map((m) => {
+        const weeklyHours = hours[m.user.username] ?? m.weeklyHours;
+        return {
+          ...m,
+          weeklyHours,
+          overCapacity: weeklyHours > m.weeklyCapacity,
+        };
+      });
+  }, [memberMap, projectId, isPast, viewing.issueNo, today]);
+  const permLogs = useMemo(() => {
+    const list = projectId === null ? [] : (logMap[projectId] ?? []);
+    return isPast ? list.filter((log) => log.createdAt.slice(0, 10) <= today) : list;
+  }, [logMap, projectId, isPast, today]);
 
   const myMember = members.find((m) => m.user.id === me.user.id);
   const permissions = isAdmin
@@ -168,8 +183,10 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
     permLogs,
     setPermLogs,
     roleOf: (userId) => (projectId === null ? null : roleIn(projectId, userId)),
+    canEditTask: permissions.canEditTask && !isPast,
     canViewTask: (task) => isTaskVisible(task, me.user.id, permissions.canEditTask),
-    canMoveTask: (task) => canMoveTaskRule(task, me.user.id, permissions.canEditTask),
+    canMoveTask: (task) =>
+      !isPast && canMoveTaskRule(task, me.user.id, permissions.canEditTask),
   };
 
   return <AccessContext.Provider value={value}>{children}</AccessContext.Provider>;

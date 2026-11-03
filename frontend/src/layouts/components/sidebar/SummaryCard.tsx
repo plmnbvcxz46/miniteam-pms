@@ -1,10 +1,11 @@
+import { useIssue } from "../../../issue/useIssue";
 import { useTaskStore } from "../../../pages/board/taskStore";
 import type { ProjectPeriod } from "../../../types/global";
-import { getProjectToday } from "../../../utils/date";
 import { getPeriodProgress } from "../../utils";
 
 export default function SummaryCard({ period }: { period: ProjectPeriod }) {
   const { taskMap } = useTaskStore();
+  const { today } = useIssue();
   const tasks = Object.values(taskMap);
   const doneCount = tasks.filter((task) => task.status === "DONE").length;
   const donePercent = tasks.length
@@ -12,7 +13,7 @@ export default function SummaryCard({ period }: { period: ProjectPeriod }) {
     : 0;
   const { daysLeft, percent } = getPeriodProgress(
     period,
-    getProjectToday(),
+    today,
   );
   return (
     <div className="sum-card">

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAccess } from "../../access/useAccess";
 import { users } from "../../data/global";
 import { useProjectPeriod } from "../../layouts/useProjectPeriod";
-import { getProjectToday } from "../../utils/date";
+import { useIssue } from "../../issue/useIssue";
 import { useTaskStore } from "../board/taskStore";
 import { computeCpm, getForecast, getTimelineTasks } from "../timeline/utils";
 import CriticalChainPanel from "./components/critical/CriticalChainPanel";
@@ -27,10 +27,10 @@ import "./css/overview.css";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { permissions } = useAccess();
+  const { canEditTask } = useAccess();
   const period = useProjectPeriod();
   const { taskMap, openTaskForm } = useTaskStore();
-  const today = getProjectToday();
+  const { today } = useIssue();
 
   const all = useMemo(() => Object.values(taskMap), [taskMap]);
   // 关键路径和预测与时间线页同一套算法
@@ -52,7 +52,7 @@ export default function OverviewPage() {
     <section className="view" id="view-overview" data-view="overview">
       <OverviewHeader
         kicker={formatKicker(stats, today, period)}
-        onCreateTask={permissions.canEditTask ? () => openTaskForm() : undefined}
+        onCreateTask={canEditTask ? () => openTaskForm() : undefined}
       />
       <FigureStrip stats={stats} planEnd={period.planEnd} />
 

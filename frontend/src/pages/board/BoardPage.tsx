@@ -17,11 +17,10 @@ import "./css/board.css";
 export default function BoardPage() {
   const navigate = useNavigate();
   const { user: currentUser } = useMe();
-  const { permissions, canViewTask, canMoveTask } = useAccess();
+  const { canEditTask, canViewTask, canMoveTask } = useAccess();
   const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 
-  const canEditTask = permissions.canEditTask;
   const isShown = canViewTask;
   const canMove = canMoveTask;
 

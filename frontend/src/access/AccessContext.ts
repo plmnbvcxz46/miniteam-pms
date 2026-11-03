@@ -49,6 +49,8 @@ export interface AccessState {
   roleOf: (userId: number) => ProjectRole | null;
 
   /** 任务：能不能看、能不能改状态，规则见 rules.ts */
+  /** 现在能不能新建和修改任务：要有“编辑任务”权限，而且看的是今天这一期，过去的期只读 */
+  canEditTask: boolean;
   canViewTask: (task: TaskDetail) => boolean;
   canMoveTask: (task: TaskDetail) => boolean;
 }

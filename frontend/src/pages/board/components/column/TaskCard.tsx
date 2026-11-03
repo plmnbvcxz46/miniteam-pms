@@ -1,6 +1,6 @@
 import type { CSSProperties, PointerEvent } from "react";
 import TaskBar from "../../../../components/TaskBar/TaskBar";
-import { taskTodayDate } from "../../../../data/task";
+import { useIssue } from "../../../../issue/useIssue";
 import type { TaskDetail } from "../../../../types/task";
 import { useTaskStore } from "../../taskStore";
 import { formatMonthDay } from "../../../../utils/date";
@@ -20,10 +20,11 @@ interface TaskCardProps {
 }
 
 function CardDue({ task }: { task: TaskDetail }) {
+  const { today } = useIssue();
   if (task.overdueDays > 0) {
     return <span className="late">逾期 {task.overdueDays} 天</span>;
   }
-  if (task.status !== "DONE" && task.dueDate === taskTodayDate) {
+  if (task.status !== "DONE" && task.dueDate === today) {
     return <span className="now">今天</span>;
   }
   const date = task.actualEnd ?? task.dueDate;

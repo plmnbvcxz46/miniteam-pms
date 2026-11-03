@@ -1,4 +1,5 @@
 import { currentProjectId, users } from "../../data/global";
+import type { IssueTaskState } from "../../data/issueSnapshots";
 import { getPriorityLabel, milestones } from "../../data/task";
 import type { TaskStatus, UserBrief } from "../../types/global";
 import type {
@@ -6,6 +7,7 @@ import type {
   TaskDetail,
   TaskFormValues,
 } from "../../types/task";
+import { daysBetween } from "../../utils/date";
 import { applyTaskStatus, getDueDate } from "./task/utils";
 
 /** 某一列的任务，按列内顺序排列 */
@@ -211,4 +213,28 @@ export function updateTask(
   };
   const written = writeTask(tasks, task, values.predecessorIds);
   return applyTaskStatus(written, taskId, task.status, today);
+}
+
+/** 任务在某一期当时的样子：状态和进度取快照，逾期天数按那一天重新算，前后置任务里还没创建的去掉 */
+export function getTaskAtIssue(
+  task: TaskDetail,
+  states: Record<number, IssueTaskState>,
+  today: string,
+): TaskDetail {
+  const { status, progress } = states[task.id];
+  const atIssue = (dep: DependencyTask): DependencyTask[] =>
+    states[dep.task.id] ? [{ ...dep, status: states[dep.task.id].status }] : [];
+  return {
+    ...task,
+    status,
+    progress,
+    overdueDays:
+      status !== "DONE" && task.dueDate && task.dueDate < today
+        ? daysBetween(task.dueDate, today)
+        : 0,
+    actualStart: status === "TODO" ? null : task.actualStart,
+    actualEnd: status === "DONE" ? task.actualEnd : null,
+    predecessors: task.predecessors.flatMap(atIssue),
+    successors: task.successors.flatMap(atIssue),
+  };
 }
