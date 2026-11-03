@@ -3,8 +3,6 @@ import type { DependencyTask, TaskDetail } from "../../types/task";
 import { addDays, dayEnd, formatDayLabel, toDay } from "../../utils/date";
 import type { CpmResult, TimelineForecast } from "../timeline/utils";
 
-const WEEKDAY_LABEL = ["日", "一", "二", "三", "四", "五", "六"];
-
 /** 一周的天数 */
 export const WEEK_DAYS = 7;
 
@@ -28,9 +26,9 @@ function isOpen(task: TaskDetail): boolean {
   return task.status !== "DONE";
 }
 
-/** 页头小标题：第 32 期 · 2026.10.22 周四 · 第 05/10 周 */
+/** 页头小标题：第 05/10 周 · 已完成 3 项 · 待推进 8 项 · 逾期 1 项（期号和日期顶栏已有，不重复） */
 export function formatKicker(
-  issueNo: string,
+  stats: OverviewStats,
   today: string,
   period: ProjectPeriod,
 ): string {
@@ -38,7 +36,7 @@ export function formatKicker(
   const weeks = Math.ceil(
     (dayEnd(period.planEnd) - toDay(period.startDate)) / 7,
   );
-  return `${issueNo} · ${today.replaceAll("-", ".")} 周${WEEKDAY_LABEL[weekdayOf(today)]} · 第 ${pad2(week)}/${pad2(weeks)} 周`;
+  return `第 ${pad2(week)}/${pad2(weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.left} 项 · 逾期 ${stats.overdue.length} 项`;
 }
 
 /* ---------- 四个数字 ---------- */

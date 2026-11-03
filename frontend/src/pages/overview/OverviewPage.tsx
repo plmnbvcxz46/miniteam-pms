@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { currentIssue, currentProjectPeriod, users } from "../../data/global";
+import { currentProjectPeriod, users } from "../../data/global";
 import { getProjectToday } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import { computeCpm, getForecast, getTimelineTasks } from "../timeline/utils";
@@ -45,8 +45,7 @@ export default function OverviewPage() {
   return (
     <section className="view" id="view-overview" data-view="overview">
       <OverviewHeader
-        kicker={formatKicker(currentIssue.issueNo, today, currentProjectPeriod)}
-        deck={`计划 · 追踪 · 交付 — 已完成 ${stats.done} 项，待推进 ${stats.left} 项，逾期 ${stats.overdue.length} 项。`}
+        kicker={formatKicker(stats, today, currentProjectPeriod)}
         onCreateTask={() => openTaskForm()}
       />
       <FigureStrip stats={stats} planEnd={currentProjectPeriod.planEnd} />

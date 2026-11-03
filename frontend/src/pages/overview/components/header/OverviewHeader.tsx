@@ -1,12 +1,10 @@
 interface OverviewHeaderProps {
   kicker: string;
-  deck: string;
   onCreateTask: () => void;
 }
 
 export default function OverviewHeader({
   kicker,
-  deck,
   onCreateTask,
 }: OverviewHeaderProps) {
   return (
@@ -16,7 +14,6 @@ export default function OverviewHeader({
         <h1 className="vt">
           项目<em>日报</em>
         </h1>
-        <div className="vd">{deck}</div>
       </div>
       <div className="va">
         <button className="btn open-issues" type="button">
