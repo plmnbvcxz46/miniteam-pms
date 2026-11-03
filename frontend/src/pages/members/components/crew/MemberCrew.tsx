@@ -6,6 +6,8 @@ import MemberColumn from "./MemberColumn";
 interface MemberCrewProps {
   /** 成员列表（支持搜索过滤后传入） */
   members: Member[];
+  /** 一组成员共用的工时坐标轴最大值（小时） */
+  loadScale: number;
   /** 权限行列表配置 */
   permDefs: PermDef[];
   /** 搜索关键字 */
@@ -20,6 +22,7 @@ interface MemberCrewProps {
 
 export default function MemberCrew({
   members,
+  loadScale,
   permDefs,
   searchKeyword,
   onSearchChange,
@@ -50,6 +53,7 @@ export default function MemberCrew({
             <MemberColumn
               key={member.user.id}
               member={member}
+              loadScale={loadScale}
               permDefs={permDefs}
               canManageMember={canManageMember}
               onTogglePerm={(key) => onTogglePerm(member.user.id, key)}

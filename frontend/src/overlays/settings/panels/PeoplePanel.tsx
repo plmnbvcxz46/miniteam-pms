@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { roles, systemUsers } from "../../../data/settings";
+import { defaultWeeklyCapacity, roles, systemUsers } from "../../../data/settings";
 import type { SystemUser, UserCreate } from "../../../types/settings";
 import { getProjectToday } from "../../../utils/date";
 import Switch from "../components/Switch";
@@ -79,7 +79,7 @@ export default function PeoplePanel() {
       roleName: role.name,
       email: values.email ?? null,
       skillTags: values.skillTags ?? [],
-      weeklyCapacity: values.weeklyCapacity ?? 40,
+      weeklyCapacity: values.weeklyCapacity ?? defaultWeeklyCapacity,
       status: 1,
       lastLoginAt: null,
       createdAt: `${getProjectToday()} 00:00:00`,

@@ -1,13 +1,15 @@
 import type { WorkloadMember } from "../../../../types/reports";
-import { calculateLoadBar } from "../../utils";
+import { calculateLoadBar } from "../../../../utils/load";
 
 interface LoadRowProps {
   member: WorkloadMember;
-  maxScale?: number;
+  /** 一组成员共用的坐标轴最大值（小时） */
+  maxScale: number;
 }
 
-export default function LoadRow({ member, maxScale = 50 }: LoadRowProps) {
+export default function LoadRow({ member, maxScale }: LoadRowProps) {
   const {
+    capPercent,
     fillPercent,
     fillDur,
     overPercent,
@@ -43,10 +45,9 @@ export default function LoadRow({ member, maxScale = 50 }: LoadRowProps) {
             }
           />
         )}
-        <span className="cap" />
+        <span className="cap" style={{ left: `${capPercent}%` }} />
       </div>
       <span className={`v${isOver ? " late" : ""}`}>{member.weeklyHours}</span>
     </div>
   );
 }
-

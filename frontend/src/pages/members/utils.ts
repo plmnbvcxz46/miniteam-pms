@@ -38,33 +38,3 @@ export function getOverCapacityCount(members: Member[]): number {
   ).length;
 }
 
-/**
- * 计算工时进度条各个分段的百分比
- * 默认上限 40 小时位于 80% 刻度处（基准坐标轴 50 小时）
- */
-export function calculateTrackWidth(
-  hours: number,
-  capacity = 40,
-  maxScale = 50,
-): {
-  capPercent: number;
-  fillPercent: number;
-  overPercent: number;
-} {
-  const safeCapacity = Math.max(capacity, 1);
-  const safeMax = Math.max(maxScale, safeCapacity);
-
-  const capPercent = (safeCapacity / safeMax) * 100;
-  const normalHours = Math.min(hours, safeCapacity);
-  const fillPercent = Math.max(0, (normalHours / safeMax) * 100);
-
-  const overHours = Math.max(0, hours - safeCapacity);
-  const overPercent = Math.min((overHours / safeMax) * 100, 100 - capPercent);
-
-  return {
-    capPercent,
-    fillPercent,
-    overPercent,
-  };
-}
-

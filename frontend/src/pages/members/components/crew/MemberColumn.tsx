@@ -8,6 +8,8 @@ import PermToggle from "./PermToggle";
 interface MemberColumnProps {
   /** 成员信息 */
   member: Member;
+  /** 一组成员共用的工时坐标轴最大值（小时） */
+  loadScale: number;
   /** 权限行列表配置 */
   permDefs: PermDef[];
   /** 当前用户是否有权限管理成员权限 */
@@ -18,6 +20,7 @@ interface MemberColumnProps {
 
 export default function MemberColumn({
   member,
+  loadScale,
   permDefs,
   canManageMember,
   onTogglePerm,
@@ -39,6 +42,7 @@ export default function MemberColumn({
       <MemberLoad
         weeklyHours={member.weeklyHours}
         weeklyCapacity={member.weeklyCapacity}
+        loadScale={loadScale}
         overCapacity={member.overCapacity}
       />
 

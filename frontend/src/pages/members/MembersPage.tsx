@@ -8,6 +8,8 @@ import {
   permDefs,
   inviteCandidates,
 } from "../../data/members";
+import { defaultWeeklyCapacity } from "../../data/settings";
+import { getLoadScale } from "../../utils/load";
 import { formatFullDateTime, getOverCapacityCount } from "./utils";
 import MembersHeader from "./components/header/MembersHeader";
 import MemberCrew from "./components/crew/MemberCrew";
@@ -31,6 +33,15 @@ export default function MembersPage() {
   const canManageMember = permissions.canManageMember;
   const overCapacityCount = useMemo(
     () => getOverCapacityCount(memberList),
+    [memberList],
+  );
+  // 所有成员共用一根坐标轴，搜索过滤时各条的长度不跟着变
+  const loadScale = useMemo(
+    () =>
+      getLoadScale(
+        memberList.map((m) => m.weeklyHours),
+        memberList.map((m) => m.weeklyCapacity),
+      ),
     [memberList],
   );
 
@@ -95,7 +106,7 @@ export default function MembersPage() {
       projectRole: data.projectRole,
       position: data.position,
       weeklyHours: 0,
-      weeklyCapacity: 40,
+      weeklyCapacity: defaultWeeklyCapacity,
       overCapacity: false,
       taskCount: 0,
       joinedAt: nowStr,
@@ -128,6 +139,7 @@ export default function MembersPage() {
 
       <MemberCrew
         members={filteredMembers}
+        loadScale={loadScale}
         permDefs={permDefs}
         searchKeyword={searchKeyword}
         onSearchChange={setSearchKeyword}

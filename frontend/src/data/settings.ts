@@ -268,3 +268,8 @@ export const configs: ConfigItem[] = [
   { key: "priority.top_n", value: "5", name: "今日待办条数", remark: null, updatedAt: "2026-09-18 09:00:00" },
   { key: "member.weekly_capacity", value: "40", name: "默认每周工时上限", remark: "小时", updatedAt: "2026-09-18 09:00:00" },
 ];
+
+/** 新成员的默认每周工时上限，取系统参数 member.weekly_capacity */
+export const defaultWeeklyCapacity = Number(
+  configs.find((c) => c.key === "member.weekly_capacity")?.value,
+);
