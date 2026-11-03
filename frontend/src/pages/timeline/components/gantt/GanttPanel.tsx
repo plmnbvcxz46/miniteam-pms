@@ -81,6 +81,10 @@ export default function GanttPanel({
               计划
             </span>
             <span>
+              <i className="key done" />
+              已完成
+            </span>
+            <span>
               <i className="key over" />
               阻塞 / 逾期
             </span>
