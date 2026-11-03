@@ -342,6 +342,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /users/{userId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 用户管理
@@ -513,6 +514,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 角色权限
@@ -541,6 +543,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /roles/{roleId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 角色权限
@@ -575,6 +578,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 角色权限
@@ -598,6 +602,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /permissions:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 角色权限
@@ -743,6 +748,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 项目
@@ -789,6 +795,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/restore:
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 项目
@@ -906,6 +913,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/members/{userId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 成员
@@ -946,6 +954,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 成员
@@ -974,6 +983,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/members/{userId}/permissions:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 成员
@@ -1015,6 +1025,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/milestones:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 里程碑
@@ -1045,6 +1056,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 里程碑
@@ -1080,6 +1092,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /milestones/{milestoneId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 里程碑
@@ -1114,6 +1127,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 里程碑
@@ -1509,6 +1523,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /tasks/{taskId}/progress:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 任务
@@ -1544,6 +1559,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /tasks/{taskId}/assignee:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 任务
@@ -1610,6 +1626,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/dependencies:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 依赖
@@ -1640,6 +1657,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 依赖
@@ -1676,6 +1694,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /dependencies/{dependencyId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 依赖
@@ -1986,6 +2005,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/reports/defect-density:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 统计报表
@@ -2069,6 +2089,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/assign-suggestions:
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 统计报表
@@ -2104,6 +2125,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/assign-suggestions/apply:
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 统计报表
@@ -2240,6 +2262,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 团队协作
@@ -2298,6 +2321,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /comments/{commentId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 团队协作
@@ -2377,6 +2401,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/defects:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 缺陷
@@ -2454,6 +2479,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 缺陷
@@ -2490,6 +2516,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/defects/stats:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 缺陷
@@ -2519,6 +2546,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /defects/{defectId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 缺陷
@@ -2547,6 +2575,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 缺陷
@@ -2581,6 +2610,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 缺陷
@@ -2603,6 +2633,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /defects/{defectId}/status:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 缺陷
@@ -2691,6 +2722,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 文档
@@ -2755,6 +2787,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 文档
@@ -2789,6 +2822,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 文档
@@ -2847,6 +2881,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /documents/{documentId}/versions:
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 文档
@@ -2960,6 +2995,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /notifications/unread-count:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 通知
@@ -3005,6 +3041,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /notifications/read-all:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 通知
@@ -3169,6 +3206,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /dicts:
+    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 系统管理
@@ -3199,6 +3237,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 系统管理
@@ -3227,6 +3266,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /dicts/{dictId}:
+    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 系统管理
@@ -3261,6 +3301,7 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
+    # 暂不实现：前端没有对应功能，之后按需补充
     delete:
       tags:
       - 系统管理
