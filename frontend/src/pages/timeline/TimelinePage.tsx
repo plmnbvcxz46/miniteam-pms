@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMe } from "../../auth/useAuth";
 import { getProjectToday } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import CriticalPanel from "./components/critical/CriticalPanel";
@@ -17,6 +18,7 @@ import "./css/timeline.css";
 
 export default function TimelinePage() {
   const navigate = useNavigate();
+  const { permissions } = useMe();
   const { taskMap, activityMap, openTaskForm } = useTaskStore();
   const [scale, setScale] = useState<TimelineScale>("week");
   const today = getProjectToday();
@@ -40,7 +42,7 @@ export default function TimelinePage() {
         kicker={kicker}
         scale={scale}
         onChangeScale={setScale}
-        onCreateTask={() => openTaskForm()}
+        onCreateTask={permissions.canEditTask ? () => openTaskForm() : undefined}
       />
       <GanttPanel
         tasks={tasks}

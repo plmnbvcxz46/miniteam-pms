@@ -10,7 +10,8 @@ interface BoardHeaderProps {
   kicker: string;
   filter: BoardFilter;
   onChangeFilter: (filter: BoardFilter) => void;
-  onCreateTask: () => void;
+  /** 没有“编辑任务”权限时不传，按钮不显示 */
+  onCreateTask?: () => void;
 }
 
 export default function BoardHeader({
@@ -40,9 +41,11 @@ export default function BoardHeader({
             </button>
           ))}
         </div>
-        <button className="btn go" type="button" onClick={onCreateTask}>
-          + 新建任务
-        </button>
+        {onCreateTask && (
+          <button className="btn go" type="button" onClick={onCreateTask}>
+            + 新建任务
+          </button>
+        )}
       </div>
     </div>
   );

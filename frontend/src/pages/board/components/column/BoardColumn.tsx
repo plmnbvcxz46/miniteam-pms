@@ -17,6 +17,8 @@ interface BoardColumnProps {
   tasks: TaskDetail[];
   drag: CardDrag | null;
   isDimmed: (task: TaskDetail) => boolean;
+  /** 没有权限改状态的卡片不能拖，只能点开看 */
+  canMove: (task: TaskDetail) => boolean;
   freshTaskId: number | null;
   onPressCard: (
     e: PointerEvent<HTMLElement>,
@@ -35,6 +37,7 @@ export default function BoardColumn({
   tasks,
   drag,
   isDimmed,
+  canMove,
   freshTaskId,
   onPressCard,
   onOpenTask,
@@ -64,8 +67,12 @@ export default function BoardColumn({
             {index === placeholderIndex && placeholder}
             <TaskCard
               task={task}
-              className={`${isDimmed(task) ? "dimmed" : ""} ${task.id === freshTaskId ? "fresh" : ""}`.trim()}
-              onPointerDown={(e) => onPressCard(e, task.id, { status, index })}
+              className={`${isDimmed(task) ? "dimmed" : ""} ${task.id === freshTaskId ? "fresh" : ""} ${canMove(task) ? "" : "locked"}`.trim()}
+              onPointerDown={
+                canMove(task)
+                  ? (e) => onPressCard(e, task.id, { status, index })
+                  : undefined
+              }
               onClick={() => onOpenTask(task.id)}
             />
           </Fragment>

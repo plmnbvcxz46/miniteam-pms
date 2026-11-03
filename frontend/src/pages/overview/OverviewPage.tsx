@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMe } from "../../auth/useAuth";
 import { currentProjectPeriod, users } from "../../data/global";
 import { getProjectToday } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
@@ -25,6 +26,7 @@ import "./css/overview.css";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
+  const { permissions } = useMe();
   const { taskMap, openTaskForm } = useTaskStore();
   const today = getProjectToday();
 
@@ -48,7 +50,7 @@ export default function OverviewPage() {
     <section className="view" id="view-overview" data-view="overview">
       <OverviewHeader
         kicker={formatKicker(stats, today, currentProjectPeriod)}
-        onCreateTask={() => openTaskForm()}
+        onCreateTask={permissions.canEditTask ? () => openTaskForm() : undefined}
       />
       <FigureStrip stats={stats} planEnd={currentProjectPeriod.planEnd} />
 

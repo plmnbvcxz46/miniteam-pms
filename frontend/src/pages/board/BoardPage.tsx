@@ -10,26 +10,39 @@ import TaskCard from "./components/column/TaskCard";
 import BoardHeader, { type BoardFilter } from "./components/header/BoardHeader";
 import { useTaskStore } from "./taskStore";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
-import { getBlockedTasks, getColumnTasks } from "./utils";
+import {
+  canMoveTask,
+  getBlockedTasks,
+  getColumnTasks,
+  isTaskVisible,
+  toFullIndex,
+} from "./utils";
 import "./css/board.css";
 
 const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 export default function BoardPage() {
   const navigate = useNavigate();
-  const { user: currentUser } = useMe();
+  const { user: currentUser, permissions } = useMe();
   const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 
+  const canEditTask = permissions.canEditTask;
+  const isShown = (task: TaskDetail) =>
+    isTaskVisible(task, currentUser.id, canEditTask);
+  const canMove = (task: TaskDetail) =>
+    canMoveTask(task, currentUser.id, canEditTask);
+
   const handleDrop = (taskId: number, target: DropTarget) => {
-    const blocked = moveTask(taskId, target.status, target.index);
+    const index = toFullIndex(taskMap, taskId, target, isShown);
+    const blocked = moveTask(taskId, target.status, index);
     if (blocked) window.alert(blocked);
   };
   const { drag, handlePress, wasDragged } = useCardDrag(handleDrop);
 
-  // 顶栏 kicker 统计
-  const allTasks = Object.values(taskMap);
-  const blockedCount = getColumnTasks(taskMap, "BLOCKED").length;
+  // 顶栏 kicker 统计只算看得到的任务
+  const allTasks = Object.values(taskMap).filter(isShown);
+  const blockedCount = allTasks.filter((task) => task.status === "BLOCKED").length;
   const criticalCount = allTasks.filter(
     (task) => task.critical && task.status !== "DONE",
   ).length;
@@ -54,7 +67,7 @@ export default function BoardPage() {
         kicker={kicker}
         filter={filter}
         onChangeFilter={setFilter}
-        onCreateTask={() => openTaskForm()}
+        onCreateTask={canEditTask ? () => openTaskForm() : undefined}
       />
 
       <div className="scroll-x">
@@ -63,13 +76,15 @@ export default function BoardPage() {
             <BoardColumn
               key={status}
               status={status}
-              tasks={getColumnTasks(taskMap, status)}
+              tasks={getColumnTasks(taskMap, status).filter(isShown)}
               drag={drag}
               isDimmed={isDimmed}
+              canMove={canMove}
               freshTaskId={freshTaskId}
               onPressCard={handlePress}
               onOpenTask={handleOpenTask}
               head={
+                canEditTask &&
                 status === "TODO" && (
                   <button
                     className="addcard"
@@ -83,7 +98,7 @@ export default function BoardPage() {
             >
               {status === "BLOCKED" && (
                 <BlockedBy
-                  tasks={getBlockedTasks(taskMap)}
+                  tasks={getBlockedTasks(taskMap).filter(isShown)}
                   onOpenTask={handleOpenTask}
                 />
               )}

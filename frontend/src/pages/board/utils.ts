@@ -43,6 +43,44 @@ export function moveTaskTo(
   return next;
 }
 
+/**
+ * 看板上能看到哪些任务：有“编辑任务”权限的看全部，
+ * 其他人只看自己负责的，加上关键路径上别人的任务（只读）
+ */
+export function isTaskVisible(
+  task: TaskDetail,
+  userId: number,
+  canEditTask: boolean,
+): boolean {
+  return canEditTask || task.critical || task.assignee?.id === userId;
+}
+
+/** 能不能改任务的状态：有“编辑任务”权限的改任何人的，其他人只能改自己负责的 */
+export function canMoveTask(
+  task: TaskDetail,
+  userId: number,
+  canEditTask: boolean,
+): boolean {
+  return canEditTask || task.assignee?.id === userId;
+}
+
+/**
+ * 列里有些任务被隐藏时，把“在可见卡片里的第几位”换算成“在整列里的第几位”，
+ * 这样落在末尾就还是整列的末尾
+ */
+export function toFullIndex(
+  tasks: Record<number, TaskDetail>,
+  movedId: number,
+  target: { status: TaskStatus; index: number },
+  isShown: (task: TaskDetail) => boolean,
+): number {
+  const column = getColumnTasks(tasks, target.status).filter(
+    (task) => task.id !== movedId,
+  );
+  const before = column.filter(isShown)[target.index];
+  return before ? column.findIndex((task) => task.id === before.id) : column.length;
+}
+
 /** 被阻塞任务拖住、还没完成的后续任务，去重 */
 export function getBlockedTasks(
   tasks: Record<number, TaskDetail>,
