@@ -10,9 +10,6 @@ import { currentProjectId, projectTodayDate, users } from "./global";
 /** 今日日期（与顶栏、协作模块假数据同一天），用于算逾期和已用工作日 */
 export const taskTodayDate = projectTodayDate;
 
-/** 地址栏没有带任务 id 时默认打开的任务 */
-export const defaultTaskId = 139;
-
 /** 任务状态对应的 .key 色块 class */
 export const taskStatusKey: Record<TaskStatus, string> = {
   TODO: "",

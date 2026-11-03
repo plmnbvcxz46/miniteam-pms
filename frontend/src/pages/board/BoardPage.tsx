@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
 import { taskStatusOrder } from "../../data/global";
 import type { TaskDetail } from "../../types/task";
@@ -10,26 +11,19 @@ import TaskCard from "./components/column/TaskCard";
 import BoardHeader, { type BoardFilter } from "./components/header/BoardHeader";
 import { useTaskStore } from "./taskStore";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
-import {
-  canMoveTask,
-  getBlockedTasks,
-  getColumnTasks,
-  isTaskVisible,
-  toFullIndex,
-} from "./utils";
+import { getBlockedTasks, getColumnTasks, toFullIndex } from "./utils";
 import "./css/board.css";
 
 export default function BoardPage() {
   const navigate = useNavigate();
-  const { user: currentUser, permissions } = useMe();
+  const { user: currentUser } = useMe();
+  const { permissions, canViewTask, canMoveTask } = useAccess();
   const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 
   const canEditTask = permissions.canEditTask;
-  const isShown = (task: TaskDetail) =>
-    isTaskVisible(task, currentUser.id, canEditTask);
-  const canMove = (task: TaskDetail) =>
-    canMoveTask(task, currentUser.id, canEditTask);
+  const isShown = canViewTask;
+  const canMove = canMoveTask;
 
   const handleDrop = (taskId: number, target: DropTarget) => {
     const index = toFullIndex(taskMap, taskId, target, isShown);

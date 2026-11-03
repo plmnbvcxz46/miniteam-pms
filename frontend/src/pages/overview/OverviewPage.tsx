@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMe } from "../../auth/useAuth";
+import { useAccess } from "../../access/useAccess";
 import { users } from "../../data/global";
 import { useProjectPeriod } from "../../layouts/useProjectPeriod";
 import { getProjectToday } from "../../utils/date";
@@ -27,7 +27,7 @@ import "./css/overview.css";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { permissions } = useMe();
+  const { permissions } = useAccess();
   const period = useProjectPeriod();
   const { taskMap, openTaskForm } = useTaskStore();
   const today = getProjectToday();

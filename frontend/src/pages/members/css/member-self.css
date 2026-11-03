@@ -1,0 +1,320 @@
+/* ==========================================================================
+   我的信息（没有“管理成员”权限的人看到的成员页）
+   ========================================================================== */
+
+.me-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 188px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.me-grid > .pnl {
+  padding: 10px 14px;
+}
+
+.me-grid > .pnl > .phd {
+  padding-bottom: 6px;
+}
+
+/* ---------- 我是谁 ---------- */
+.me-id-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.me-name {
+  font-family: var(--disp);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.me-kv {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 2px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.me-kv dt {
+  color: var(--mute);
+}
+
+.me-kv dd {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.me-tags {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.me-tags li {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border: 1px solid var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* ---------- 本周工时 ---------- */
+.me-load-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+
+.me-big {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 0.85;
+  letter-spacing: -3px;
+}
+
+.me-big small {
+  margin-left: 8px;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--mute);
+}
+
+.me-load .track {
+  height: 14px;
+}
+
+.me-load.over .me-big {
+  color: var(--signal);
+}
+
+.me-load .chip {
+  background: var(--signal);
+  color: var(--ink);
+}
+
+/* ---------- 我的权限 ---------- */
+.me-perm-list {
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.me-perm-list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--ink);
+}
+
+.me-perm-list > div:last-child {
+  border-bottom: 0;
+}
+
+.me-perm-list dt {
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.me-perm-list dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.me-perm-list .on dt,
+.me-perm-list .on dd {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ---------- 我负责的任务 ---------- */
+.me-stat {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.me-stat li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+
+.me-stat li + li {
+  border-left: 1px solid var(--hair);
+}
+
+.me-stat span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.me-stat b {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.me-stat .zero {
+  color: var(--mute);
+}
+
+.me-stat .zero .key {
+  border-color: var(--mute);
+}
+
+/* 局部滚动：任务列表 */
+.me-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+
+.me-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.me-list::-webkit-scrollbar-thumb {
+  background: var(--ink);
+}
+
+.me-task {
+  display: grid;
+  grid-template-columns: 56px 76px minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 12px;
+  height: 38px;
+  padding: 0 8px;
+  border-bottom: 1px dashed var(--ink);
+  color: inherit;
+  text-decoration: none;
+}
+
+.me-task:hover {
+  background: var(--wash);
+}
+
+.me-task:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -2px;
+}
+
+.me-task .no,
+.me-task .st,
+.me-task .due {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.me-task .st {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.me-task .tt {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 没有 chip 时 due 自动落到最后一列 */
+.me-task .due {
+  grid-column: 5;
+  text-align: right;
+}
+
+.me-task.late .due {
+  color: var(--signal-text);
+}
+
+/* ---------- 我的变更：复用 .plog .hv 行样式，改为单列铺满 ---------- */
+.me-plog {
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr);
+  max-height: none;
+}
+
+.me-plog:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* ---------- 空态 ---------- */
+.me-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mute);
+}
+
+/* ---------- 窄屏：单列，整页滚动 ---------- */
+@media (max-width: 900px) {
+  .me-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    flex: none;
+  }
+
+  .me-grid > .pnl {
+    min-height: 188px;
+  }
+
+  .me-list,
+  .me-plog {
+    max-height: 320px;
+  }
+}

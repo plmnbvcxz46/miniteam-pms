@@ -2,10 +2,16 @@ import { useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../auth/useAuth";
 import { accounts as demoAccounts } from "../../data/auth";
 import { roleLabel } from "../../data/global";
+import { projectMembers } from "../../data/members";
 import type { AuthField } from "../../types/auth";
 import "./css/login.css";
 
 const REMEMBER_KEY = "pms.rememberedUsername";
+
+/** 演示账号标签：有项目的显示在第一个项目里的角色，没有的显示系统角色 */
+function firstProjectRole(userId: number) {
+  return projectMembers[1]?.find((m) => m.user.id === userId)?.projectRole ?? null;
+}
 
 function readRemembered(): string {
   try {
@@ -233,8 +239,8 @@ export default function LoginPage() {
                 >
                   <b>{account.user.username}</b>
                   <span>
-                    {account.projectRole
-                      ? roleLabel[account.projectRole]
+                    {firstProjectRole(account.user.id)
+                      ? roleLabel[firstProjectRole(account.user.id)!]
                       : account.roleName}
                   </span>
                 </button>

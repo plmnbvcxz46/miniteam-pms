@@ -1,4 +1,5 @@
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
+import AccessProvider from "./access/AccessProvider";
 import AuthProvider from "./auth/AuthProvider";
 import { useAuth } from "./auth/useAuth";
 import ConfigProvider from "./config/ConfigProvider";
@@ -38,11 +39,13 @@ function AuthGate() {
   const { me } = useAuth();
   if (!me) return <LoginPage />;
   return (
-    <DocumentProvider>
-      <TaskProvider>
-        <RouterProvider router={router} />
-      </TaskProvider>
-    </DocumentProvider>
+    <AccessProvider>
+      <DocumentProvider>
+        <TaskProvider>
+          <RouterProvider router={router} />
+        </TaskProvider>
+      </DocumentProvider>
+    </AccessProvider>
   );
 }
 

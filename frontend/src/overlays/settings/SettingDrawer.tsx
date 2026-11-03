@@ -1,12 +1,7 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { useMe } from "../../auth/useAuth";
+import { useAccess } from "../../access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
-import type {
-  ProjectSave,
-  ProjectStatus,
-  ProjectSummary,
-} from "../../types/global";
 import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectInfoPanel from "./panels/ProjPanel";
@@ -19,11 +14,6 @@ interface SettingsDrawerProps {
   initialSection?: SectionId;
   profile: ProfileUpdate;
   onSaveProfile: (values: ProfileUpdate) => void;
-  /** 当前项目，“项目信息”分区编辑的就是它 */
-  project: ProjectSummary;
-  projectDescription: string;
-  onSaveProject: (values: ProjectSave) => void;
-  onSetProjectStatus: (status: ProjectStatus) => void;
   onClose: () => void;
 }
 
@@ -31,14 +21,21 @@ export default function SettingsDrawer({
   initialSection = "people",
   profile,
   onSaveProfile,
-  project,
-  projectDescription,
-  onSaveProject,
-  onSetProjectStatus,
   onClose,
 }: SettingsDrawerProps) {
-  const me = useMe();
-  const visibleSections = getVisibleSections(me);
+  const {
+    isAdmin,
+    permissions,
+    currentProject,
+    projectDescription,
+    saveProject,
+    setProjectStatus,
+  } = useAccess();
+  const visibleSections = getVisibleSections({
+    isAdmin,
+    canManageMember: permissions.canManageMember,
+    hasProject: currentProject !== null,
+  });
   const [active, setActive] = useState<SectionId>(() =>
     resolveSection(initialSection, visibleSections),
   );
@@ -91,13 +88,13 @@ export default function SettingsDrawer({
           {current === "me" && (
             <MePanel profile={profile} onSave={onSaveProfile} />
           )}
-          {current === "proj" && (
+          {current === "proj" && currentProject && (
             <ProjectInfoPanel
-              key={project.id}
-              project={project}
+              key={currentProject.id}
+              project={currentProject}
               description={projectDescription}
-              onSave={onSaveProject}
-              onSetStatus={onSetProjectStatus}
+              onSave={saveProject}
+              onSetStatus={setProjectStatus}
             />
           )}
           {current === "people" && <PeoplePanel />}

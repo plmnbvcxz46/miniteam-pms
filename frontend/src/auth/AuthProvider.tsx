@@ -65,19 +65,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (!values.password) return { ok: false, field: "password", message: "请输入密码" };
       const id = Math.max(0, ...accounts.map((a) => a.user.id)) + 1;
-      // 注册后是普通用户：没加入项目，权限全部为否
+      // 注册后是普通用户：没有系统权限，也没加入任何项目
       const account: Account = {
         user: { id, username, realName },
         roleName: "普通用户",
         disabled: false,
         systemPermissions: [],
-        projectRole: null,
-        permissions: {
-          canEditTask: false,
-          canEditSchedule: false,
-          canEditDoc: false,
-          canManageMember: false,
-        },
       };
       setAccounts((prev) => [...prev, account]);
       setNotice("注册成功，请登录");

@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useAccess } from "../../../access/useAccess";
 import { navGroups } from "../../nav";
 import NavIcon from "./NavIcon";
 
@@ -10,6 +11,7 @@ interface SidebarNavProps {
 
 export default function SidebarNav({ riskCount, onOpenSettings }: SidebarNavProps) {
   const lastGroup = navGroups.length - 1;
+  const { permissions } = useAccess();
   return (
     <>
       {navGroups.map((group, index) => (
@@ -22,7 +24,9 @@ export default function SidebarNav({ riskCount, onOpenSettings }: SidebarNavProp
           {group.items.map((item) => (
             <NavLink key={item.to} to={item.to}>
               <NavIcon name={item.icon} />
-              {item.label}
+              {item.to === "/members" && !permissions.canManageMember
+                ? "我的信息"
+                : item.label}
               {item.badge === "risk" && riskCount > 0 && (
                 <span className="risk">{riskCount}</span>
               )}

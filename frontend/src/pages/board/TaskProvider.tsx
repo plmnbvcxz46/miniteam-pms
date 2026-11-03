@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
 import { useConfigs } from "../../config/useConfigs";
 import { taskStatusLabel } from "../../data/global";
@@ -21,6 +22,7 @@ const FRESH_MS = 2400;
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
   const { user: currentUser } = useMe();
+  const { permissions, canMoveTask } = useAccess();
   const [baseTaskMap, setTaskMap] =
     useState<Record<number, TaskDetail>>(initialTaskDetails);
   const { values: configValues } = useConfigs();
@@ -72,6 +74,8 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   // 移动任务；换了列才追加操作记录。
   // 关联的文档没定稿时不能完成任务，这时不移动，返回原因
   const moveTask = (taskId: number, status: TaskStatus, index: number) => {
+    // 页面上没权限的人看不到入口，这里再挡一道，防止别处误调用
+    if (!canMoveTask(taskMap[taskId])) return "没有权限修改这个任务的状态";
     if (status === "DONE") {
       const pending = docs.find((doc) => doc.taskId === taskId && !doc.final);
       if (pending) return `文档《${pending.n}》还没定稿，定稿后才能完成任务`;
@@ -89,6 +93,8 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   const saveTaskForm = (values: TaskFormValues) => {
     const editingId = taskForm?.taskId ?? null;
     setTaskForm(null);
+    // 新建和修改任务都需要“编辑任务”权限
+    if (!permissions.canEditTask) return;
 
     if (editingId !== null) {
       setTaskMap((prev) => updateTask(prev, editingId, values, taskTodayDate));
@@ -115,7 +121,9 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         activityMap,
         moveTask,
         taskForm,
-        openTaskForm: (taskId) => setTaskForm({ taskId: taskId ?? null }),
+        openTaskForm: (taskId) => {
+          if (permissions.canEditTask) setTaskForm({ taskId: taskId ?? null });
+        },
         closeTaskForm: () => setTaskForm(null),
         saveTaskForm,
         freshTaskId,

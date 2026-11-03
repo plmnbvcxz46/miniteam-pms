@@ -38,7 +38,7 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-11-29",
     issueNo: 32,
     headline: "接口文档逾期 2 天，已移到阻塞",
-    myProjectRole: "PM",
+    myProjectRole: null,
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-12-20",
     issueNo: 18,
     headline: null,
-    myProjectRole: "MEMBER",
+    myProjectRole: null,
   },
   {
     id: 3,
@@ -58,7 +58,7 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-06-21",
     issueNo: 112,
     headline: null,
-    myProjectRole: "PM",
+    myProjectRole: null,
   },
 ];
 

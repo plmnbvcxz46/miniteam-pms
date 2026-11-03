@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMe } from "../../auth/useAuth";
+import { useAccess } from "../../access/useAccess";
 import { getProjectToday } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import CriticalPanel from "./components/critical/CriticalPanel";
@@ -18,7 +18,7 @@ import "./css/timeline.css";
 
 export default function TimelinePage() {
   const navigate = useNavigate();
-  const { permissions } = useMe();
+  const { permissions } = useAccess();
   const { taskMap, activityMap, openTaskForm } = useTaskStore();
   const [scale, setScale] = useState<TimelineScale>("week");
   const today = getProjectToday();
