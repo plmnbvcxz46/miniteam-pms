@@ -1,6 +1,7 @@
 import type { TimelineForecast } from "../../../timeline/utils";
 import type { Headline } from "../../utils";
-import { formatForecastRange, isLate, pad2 } from "../../utils";
+import { pad2 } from "../../../../utils/date";
+import { formatForecastRange, isLate } from "../../utils";
 
 interface HeadlinePanelProps {
   headline: Headline;

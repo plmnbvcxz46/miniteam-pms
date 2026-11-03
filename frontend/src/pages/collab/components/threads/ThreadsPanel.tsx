@@ -2,7 +2,7 @@ import type {
   DiscussionBrief,
   DiscussionDetail,
 } from "../../../../types/collab";
-import { formatPadCount } from "../../utils";
+import { pad2 } from "../../../../utils/date";
 import ThreadItem from "./ThreadItem";
 
 interface ThreadsPanelProps {
@@ -26,7 +26,7 @@ export default function ThreadsPanel({
           <h2>讨论话题</h2>
         </div>
         <span className="n" id="th-count">
-          {formatPadCount(discussions.length)}
+          {pad2(discussions.length)}
         </span>
       </div>
       <div className="threads scroll-y" id="threads">

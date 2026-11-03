@@ -1,5 +1,5 @@
 import type { OverviewStats } from "../../utils";
-import { pad2 } from "../../utils";
+import { pad2 } from "../../../../utils/date";
 import { formatDayLabel } from "../../../../utils/date";
 import Figure from "./Figure";
 

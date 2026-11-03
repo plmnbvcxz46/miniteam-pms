@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
-import type { TaskStatus } from "../../types/global";
+import { taskStatusOrder } from "../../data/global";
 import type { TaskDetail } from "../../types/task";
 import BlockedBy from "./components/column/BlockedBy";
 import BoardColumn from "./components/column/BoardColumn";
@@ -10,28 +11,18 @@ import TaskCard from "./components/column/TaskCard";
 import BoardHeader, { type BoardFilter } from "./components/header/BoardHeader";
 import { useTaskStore } from "./taskStore";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
-import {
-  canMoveTask,
-  getBlockedTasks,
-  getColumnTasks,
-  isTaskVisible,
-  toFullIndex,
-} from "./utils";
+import { getBlockedTasks, getColumnTasks, toFullIndex } from "./utils";
 import "./css/board.css";
-
-const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 export default function BoardPage() {
   const navigate = useNavigate();
-  const { user: currentUser, permissions } = useMe();
+  const { user: currentUser } = useMe();
+  const { canEditTask, canViewTask, canMoveTask } = useAccess();
   const { taskMap, moveTask, openTaskForm, freshTaskId } = useTaskStore();
   const [filter, setFilter] = useState<BoardFilter>("all");
 
-  const canEditTask = permissions.canEditTask;
-  const isShown = (task: TaskDetail) =>
-    isTaskVisible(task, currentUser.id, canEditTask);
-  const canMove = (task: TaskDetail) =>
-    canMoveTask(task, currentUser.id, canEditTask);
+  const isShown = canViewTask;
+  const canMove = canMoveTask;
 
   const handleDrop = (taskId: number, target: DropTarget) => {
     const index = toFullIndex(taskMap, taskId, target, isShown);
@@ -72,7 +63,7 @@ export default function BoardPage() {
 
       <div className="scroll-x">
         <div className="board" id="board">
-          {STATUS_ORDER.map((status) => (
+          {taskStatusOrder.map((status) => (
             <BoardColumn
               key={status}
               status={status}

@@ -16,7 +16,12 @@ src/
   layouts/        Shell：左侧导航、masthead、<Outlet />、浮层
   pages/          有地址的页面，一页一个文件夹
   overlays/       盖在页面上的浮层（settings、task 表单）
-  styles/         index.css（目前全部样式都在这里）
+  auth/           登录态，useAuth()
+  access/         能进哪些项目、有什么权限、任务能不能看和改，useAccess()
+  issue/          正在看哪一期，useIssue()；过去的期只读
+  config/         系统参数
+  data/           假数据；哪些值是前端替身见 AGENTS.md
+  styles/         全局样式
 ```
 
 ## 进度
@@ -35,11 +40,11 @@ src/
 | 成员与权限 members     | ✓   | ✓     | ✓     |                   |
 | 统计报表 reports       | ✓   | ✓     | ✓     |                   |
 | 团队协作 collab        | ✓   | ✓     | ✓     |                   |
-| 概览 overview          | ✓   |        |        |                   |
+| 概览 overview          | ✓   | ✓     | ✓     |                   |
 | 任务详情 board/task    | ✓   | ✓     | ✓     | 状态、跳转、编辑 ✓ |
-| 进度 progress          | ✓   |        |        |                   |
+| 时间线 timeline        | ✓   | ✓     | ✓     | 缩放、跳转 ✓      |
 | 看板 board             | ✓   | ✓     | ✓     | 拖拽、筛选、新建 ✓ |
-| 设置 overlays/settings | ✓   |        |        | 开关 ✓，分区切换 |
+| 设置 overlays/settings | ✓   | ✓     | ✓     | 分区切换、保存 ✓  |
 
 表按建议顺序排列，先易后难。
 

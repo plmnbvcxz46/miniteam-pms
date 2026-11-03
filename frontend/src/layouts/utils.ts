@@ -1,5 +1,10 @@
 import type { ProjectPeriod } from "../types/global";
-import { formatDayLabel, toDay } from "../utils/date";
+import {
+  formatDayLabel,
+  getTotalWeeks,
+  getWeekIndex,
+  toDay,
+} from "../utils/date";
 
 /** 顶栏周进度条需要的数据 */
 export interface WeekProgress {
@@ -18,13 +23,13 @@ export function getWeekProgress(
   period: ProjectPeriod,
   today: string,
 ): WeekProgress {
-  const total = Math.ceil((toDay(period.planEnd) - toDay(period.startDate) + 1) / 7);
-  const index = Math.floor((toDay(today) - toDay(period.startDate)) / 7);
+  const total = getTotalWeeks(period.startDate, period.planEnd);
+  const week = getWeekIndex(period.startDate, today);
   return {
     startLabel: formatDayLabel(period.startDate),
     endLabel: formatDayLabel(period.planEnd),
     total,
-    current: index >= 0 && index < total ? index + 1 : null,
+    current: week >= 1 && week <= total ? week : null,
   };
 }
 

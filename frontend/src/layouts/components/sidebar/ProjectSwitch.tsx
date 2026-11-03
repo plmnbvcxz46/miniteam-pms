@@ -6,9 +6,11 @@ import { useDismiss } from "../../useDismiss";
 
 interface ProjectSwitchProps {
   projects: ProjectSummary[];
-  currentId: number;
+  /** 没有能进的项目时为空 */
+  currentId: number | null;
   onSelect: (id: number) => void;
-  onCreate: () => void;
+  /** 不能新建项目的人不传，浮层里不显示“新建项目” */
+  onCreate?: () => void;
 }
 
 export default function ProjectSwitch({
@@ -21,7 +23,7 @@ export default function ProjectSwitch({
   const rootRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, rootRef, close);
-  const current = projects.find((p) => p.id === currentId) ?? projects[0];
+  const current = projects.find((p) => p.id === currentId) ?? null;
 
   return (
     <div className="pop-root" ref={rootRef}>
@@ -37,7 +39,7 @@ export default function ProjectSwitch({
           <rect x="0" y="0" width="15" height="34" fill="#FAFAF7" />
           <rect x="19" y="0" width="15" height="18" fill="#FF5A1F" />
         </svg>
-        <span id="proj-name">{current.name}</span>
+        <span id="proj-name">{current?.name ?? "没有项目"}</span>
         <svg
           width="12"
           height="12"
@@ -79,22 +81,21 @@ export default function ProjectSwitch({
                     ` · ${roleLabel[project.myProjectRole]}`}
                   {` · 第 ${project.issueNo} 期`}
                 </span>
-                {project.headline && (
-                  <span className="hl">{project.headline}</span>
-                )}
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            className="pnew"
-            onClick={() => {
-              close();
-              onCreate();
-            }}
-          >
-            新建项目
-          </button>
+          {onCreate && (
+            <button
+              type="button"
+              className="pnew"
+              onClick={() => {
+                close();
+                onCreate();
+              }}
+            >
+              新建项目
+            </button>
+          )}
         </div>
       )}
     </div>

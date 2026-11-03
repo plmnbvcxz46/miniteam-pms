@@ -1,14 +1,33 @@
 import type { BoundDocument, DocumentItem } from "../../types/documents";
 import type { DocumentBrief, TaskDetail } from "../../types/task";
-import { formatDayLabel, getProjectToday, toDay } from "../../utils/date";
+import {
+  addDays,
+  formatDayLabel,
+  getProjectToday,
+  pad2,
+  toDay,
+} from "../../utils/date";
 
 /**
  * 时间跨度（天数）
  */
 export const DSPAN = 21;
 
-/** 时间轴起点 MM-DD，和 DocumentRevising 的第一个刻度 10.12 对齐 */
-const AXIS_START = "10-12";
+/** 时间轴起点在今天前面几天，今天落在轴上约一半的位置 */
+const AXIS_DAYS_BEFORE_TODAY = 10;
+
+/** 时间轴起点 yyyy-MM-dd，跟着项目的今天走 */
+function getAxisStart(): string {
+  return addDays(getProjectToday(), -AXIS_DAYS_BEFORE_TODAY);
+}
+
+/** 时间轴上的刻度（MM.DD），每 7 天一个，覆盖整条轴 */
+export function getAxisDates(): string[] {
+  const start = getAxisStart();
+  return Array.from({ length: Math.ceil(DSPAN / 7) }, (_, i) =>
+    formatDayLabel(addDays(start, i * 7)),
+  );
+}
 
 /** 文档页的“今天”，MM.DD */
 export function getDocToday(): string {
@@ -23,9 +42,44 @@ export function getDayOffset(str: string): number {
   const year = getProjectToday().slice(0, 4);
   const toDate = (md: string) => {
     const [m, d] = md.split(/[.-]/).map(Number);
-    return `${year}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    return `${year}-${pad2(m)}-${pad2(d)}`;
   };
-  return toDay(toDate(str)) - toDay(toDate(AXIS_START));
+  return toDay(toDate(str)) - toDay(getAxisStart());
+}
+
+/** "M.DD" 转成 yyyy-MM-dd，年份取项目所在年 */
+function toIsoDate(md: string): string {
+  const [m, d] = md.split(/[.-]/).map(Number);
+  return `${getProjectToday().slice(0, 4)}-${pad2(m)}-${pad2(d)}`;
+}
+
+/**
+ * 文档在某一天的样子：只留那天以前的版本，最新版本、更新人、更新日期取其中最新的一条，
+ * 第一个版本还没上传的文档不出现，定稿日（最后更新日）在那天之后的还算修订中
+ */
+export function getDocsAtDate(docs: DocumentItem[], date: string): DocumentItem[] {
+  return docs.flatMap((doc) => {
+    const versions = doc.hist
+      .map((record) =>
+        Array.isArray(record)
+          ? { version: record[0], date: record[1], operator: record[2] }
+          : record,
+      )
+      .map((record, i) => ({ record, source: doc.hist[i] }))
+      .filter(({ record }) => toIsoDate(record.date) <= date);
+    if (versions.length === 0) return [];
+    const { record } = versions[0];
+    return [
+      {
+        ...doc,
+        v: record.version,
+        who: record.operator,
+        up: record.date,
+        final: doc.final && toIsoDate(doc.up) <= date ? true : undefined,
+        hist: versions.map(({ source }) => source),
+      },
+    ];
+  });
 }
 
 /**

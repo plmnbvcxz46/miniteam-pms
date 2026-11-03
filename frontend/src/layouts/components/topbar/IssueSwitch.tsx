@@ -1,22 +1,14 @@
 import { useCallback, useRef, useState } from "react";
-import { issues } from "../../../data/global";
-import {
-  formatDayLabel,
-  formatFullDate,
-  getProjectToday,
-} from "../../../utils/date";
+import { useIssue } from "../../../issue/useIssue";
+import { formatDayLabel, formatFullDate } from "../../../utils/date";
 import { useDismiss } from "../../useDismiss";
-
-const todayIssue =
-  issues.find((issue) => issue.issueDate === getProjectToday()) ?? issues[0];
 
 export default function IssueSwitch() {
   const [open, setOpen] = useState(false);
-  const [viewing, setViewing] = useState(todayIssue);
+  const { issues, viewing, isPast, setViewing, backToToday } = useIssue();
   const rootRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, rootRef, close);
-  const isPast = viewing.issueNo !== todayIssue.issueNo;
 
   return (
     <div id="issue-wrap" ref={rootRef}>
@@ -45,7 +37,7 @@ export default function IssueSwitch() {
         <button
           className="back"
           type="button"
-          onClick={() => setViewing(todayIssue)}
+          onClick={backToToday}
         >
           回到今天
         </button>

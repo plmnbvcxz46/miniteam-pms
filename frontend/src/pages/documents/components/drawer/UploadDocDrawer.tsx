@@ -25,8 +25,12 @@ interface UploadDocDrawerProps {
   }) => void;
 }
 
-export default function UploadDocDrawer({
-  isOpen,
+/** 关着时不渲染，打开时才挂上表单，每次打开都是新的表单状态 */
+export default function UploadDocDrawer(props: UploadDocDrawerProps) {
+  return props.isOpen ? <UploadDocForm {...props} /> : null;
+}
+
+function UploadDocForm({
   onClose,
   docs,
   initialTargetDocId,
@@ -34,8 +38,6 @@ export default function UploadDocDrawer({
   initialTask,
   onSubmit,
 }: UploadDocDrawerProps) {
-  if (!isOpen) return null;
-
   // 未定稿的文档选项
   const revisingDocOptions = docs.filter(
     (d) => !d.final

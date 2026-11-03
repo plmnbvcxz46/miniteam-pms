@@ -1,23 +1,13 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { useMe } from "../../auth/useAuth";
+import { useAccess } from "../../access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
 import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
-import ProjectRulesPanel from "./panels/ProjPanel";
+import ProjectInfoPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
-import RolesPanel from "./panels/RolesPanel";
 import LogsPanel from "./panels/LogsPanel";
 import ParamsPanel from "./panels/ParamsPanel";
-import type { JSX } from "react/jsx-runtime";
-
-const panels: Record<Exclude<SectionId, "me">, JSX.Element> = {
-  proj: <ProjectRulesPanel />,
-  people: <PeoplePanel />,
-  roles: <RolesPanel />,
-  logs: <LogsPanel />,
-  params: <ParamsPanel />,
-};
 
 interface SettingsDrawerProps {
   /** 打开时先显示哪个分区 */
@@ -33,8 +23,19 @@ export default function SettingsDrawer({
   onSaveProfile,
   onClose,
 }: SettingsDrawerProps) {
-  const me = useMe();
-  const visibleSections = getVisibleSections(me);
+  const {
+    isAdmin,
+    permissions,
+    currentProject,
+    projectDescription,
+    saveProject,
+    setProjectStatus,
+  } = useAccess();
+  const visibleSections = getVisibleSections({
+    isAdmin,
+    canManageMember: permissions.canManageMember,
+    hasProject: currentProject !== null,
+  });
   const [active, setActive] = useState<SectionId>(() =>
     resolveSection(initialSection, visibleSections),
   );
@@ -83,11 +84,23 @@ export default function SettingsDrawer({
       <div className="double ov-rule"><i /><i /></div>
 
       <div className="ov-main">
-        <div className="ov-body">{current === "me" ? (
+        <div className="ov-body">
+          {current === "me" && (
             <MePanel profile={profile} onSave={onSaveProfile} />
-          ) : (
-            panels[current as Exclude<SectionId, "me">]
-          )}</div>
+          )}
+          {current === "proj" && currentProject && (
+            <ProjectInfoPanel
+              key={currentProject.id}
+              project={currentProject}
+              description={projectDescription}
+              onSave={saveProject}
+              onSetStatus={setProjectStatus}
+            />
+          )}
+          {current === "people" && <PeoplePanel />}
+          {current === "logs" && <LogsPanel />}
+          {current === "params" && <ParamsPanel />}
+        </div>
       </div>
     </Drawer>
   );

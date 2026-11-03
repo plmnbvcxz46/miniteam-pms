@@ -2,7 +2,6 @@ import type { UserBrief } from "../types/global";
 import type {
   ConfigItem,
   LogItem,
-  Permission,
   ProfileUpdate,
   Role,
   SystemUser,
@@ -36,7 +35,7 @@ export const logActionLabel: Record<string, string> = {
   UPLOAD: "上传文档",
   REVISE: "修订文档",
   LOGIN: "账号登录",
-  LOGIN_FAIL: "账号登录",
+  LOGIN_FAIL: "登录失败",
 };
 
 /* =========================================================
@@ -56,121 +55,37 @@ export function getProfile(userId: number): ProfileUpdate {
   };
 }
 
-/** GET /roles */
+/**
+ * GET /roles：系统角色只有两种，系统管理员和普通用户，区别只在能不能进系统管理（system:view）。
+ * 项目里的角色（项目经理、普通成员、测试人员）是另一回事，在“成员与权限”里由项目经理按项目设置
+ */
 export const roles: Role[] = [
   {
     id: 1,
-    code: "SUPER_ADMIN",
-    name: "超级管理员",
-    permissions: [
-      "project:overview:view",
-      "project:task:list",
-      "project:task:move",
-      "project:schedule:view",
-      "project:schedule:edit",
-      "project:report:view",
-      "collab:thread:list",
-      "collab:doc:list",
-      "collab:doc:upload",
-      "project:member:list",
-      "system:view",
-    ],
+    code: "ADMIN",
+    name: "系统管理员",
+    permissions: ["system:view"],
     sort: 1,
     userCount: 1,
   },
   {
     id: 2,
-    code: "PM",
-    name: "项目经理",
-    permissions: [
-      "project:overview:view",
-      "project:task:list",
-      "project:task:move",
-      "project:schedule:view",
-      "project:schedule:edit",
-      "project:report:view",
-      "collab:thread:list",
-      "collab:doc:list",
-      "collab:doc:upload",
-      "project:member:list",
-    ],
+    code: "USER",
+    name: "普通用户",
+    permissions: [],
     sort: 2,
-    userCount: 1,
+    userCount: 5,
   },
-  {
-    id: 3,
-    code: "DEV",
-    name: "开发",
-    permissions: [
-      "project:overview:view",
-      "project:task:list",
-      "project:task:move",
-      "project:schedule:view",
-      "project:report:view",
-      "collab:thread:list",
-      "collab:doc:list",
-      "collab:doc:upload",
-    ],
-    sort: 3,
-    userCount: 2,
-  },
-  {
-    id: 4,
-    code: "QA",
-    name: "测试",
-    permissions: [
-      "project:overview:view",
-      "project:task:list",
-      "project:task:move",
-      "project:schedule:view",
-      "project:report:view",
-      "collab:thread:list",
-      "collab:doc:list",
-      "collab:doc:upload",
-    ],
-    sort: 4,
-    userCount: 1,
-  },
-  {
-    id: 5,
-    code: "READONLY",
-    name: "只读",
-    permissions: [
-      "project:overview:view",
-      "project:task:list",
-      "project:schedule:view",
-      "project:report:view",
-      "collab:thread:list",
-      "collab:doc:list",
-    ],
-    sort: 5,
-    userCount: 1,
-  },
-];
-
-/** GET /permissions，菜单权限（view / list）在前，按钮权限在后 */
-export const permissions: Permission[] = [
-  { code: "project:overview:view", name: "概览", group: "项目" },
-  { code: "project:task:list", name: "任务", group: "项目" },
-  { code: "project:task:move", name: "移动任务", group: "项目" },
-  { code: "project:schedule:view", name: "进度", group: "项目" },
-  { code: "project:schedule:edit", name: "调整排期", group: "项目" },
-  { code: "project:report:view", name: "统计报表", group: "项目" },
-  { code: "collab:thread:list", name: "团队协作", group: "协作" },
-  { code: "collab:doc:list", name: "文档", group: "协作" },
-  { code: "collab:doc:upload", name: "上传文档", group: "协作" },
-  { code: "project:member:list", name: "成员与权限", group: "协作" },
-  { code: "system:view", name: "系统管理", group: "管理" },
 ];
 
 /** GET /users */
 export const systemUsers: SystemUser[] = [
   {
     ...pmA,
-    dept: "第 8 组",
+    dept: null,
     roleId: 2,
-    roleCode: "PM",
-    roleName: "项目经理",
+    roleCode: "USER",
+    roleName: "普通用户",
     email: "pm_a@example.com",
     skillTags: ["项目管理", "需求分析"],
     weeklyCapacity: 40,
@@ -180,10 +95,10 @@ export const systemUsers: SystemUser[] = [
   },
   {
     ...devA,
-    dept: "第 8 组",
-    roleId: 3,
-    roleCode: "DEV",
-    roleName: "开发",
+    dept: null,
+    roleId: 2,
+    roleCode: "USER",
+    roleName: "普通用户",
     email: "dev_a@example.com",
     skillTags: ["Java", "MyBatis"],
     weeklyCapacity: 40,
@@ -193,10 +108,10 @@ export const systemUsers: SystemUser[] = [
   },
   {
     ...devB,
-    dept: "第 8 组",
-    roleId: 3,
-    roleCode: "DEV",
-    roleName: "开发",
+    dept: null,
+    roleId: 2,
+    roleCode: "USER",
+    roleName: "普通用户",
     email: "dev_b@example.com",
     skillTags: ["React", "TypeScript"],
     weeklyCapacity: 40,
@@ -206,10 +121,10 @@ export const systemUsers: SystemUser[] = [
   },
   {
     ...qaC,
-    dept: "第 8 组",
-    roleId: 4,
-    roleCode: "QA",
-    roleName: "测试",
+    dept: null,
+    roleId: 2,
+    roleCode: "USER",
+    roleName: "普通用户",
     email: null,
     skillTags: ["测试用例"],
     weeklyCapacity: 40,
@@ -223,8 +138,8 @@ export const systemUsers: SystemUser[] = [
     realName: "系统管理员",
     dept: null,
     roleId: 1,
-    roleCode: "SUPER_ADMIN",
-    roleName: "超级管理员",
+    roleCode: "ADMIN",
+    roleName: "系统管理员",
     email: null,
     skillTags: [],
     weeklyCapacity: 40,
@@ -235,9 +150,9 @@ export const systemUsers: SystemUser[] = [
   {
     ...guest,
     dept: null,
-    roleId: 5,
-    roleCode: "READONLY",
-    roleName: "只读",
+    roleId: 2,
+    roleCode: "USER",
+    roleName: "普通用户",
     email: null,
     skillTags: [],
     weeklyCapacity: 40,
@@ -260,13 +175,16 @@ export const logs: LogItem[] = [
 
 /** GET /configs */
 export const configs: ConfigItem[] = [
-  { key: "account.default_password", value: "********", name: "新用户默认密码", remark: "新增人员和重置密码时使用", updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.allow_register", value: "false", name: "允许自助注册", remark: null, updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.lock_threshold", value: "5", name: "登录失败锁定", remark: "连续失败多少次后锁定账号", updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.session_minutes", value: "120", name: "会话超时", remark: "分钟", updatedAt: "2026-09-18 09:00:00" },
-  { key: "layout.headline_max", value: "24", name: "头条字数上限", remark: null, updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.importance", value: "0.4", name: "重要度权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.urgency", value: "0.3", name: "紧急度权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.dependency", value: "0.2", name: "依赖影响权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.delay", value: "0.1", name: "延期风险权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.importance", value: "0.30", name: "优先级权重 w1", remark: "重要度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.urgency", value: "0.30", name: "优先级权重 w2", remark: "紧急度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.time", value: "0.25", name: "优先级权重 w3", remark: "时间紧迫度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.block", value: "0.15", name: "优先级权重 w4", remark: "阻塞影响度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.alpha", value: "0.5", name: "关键路径加权系数 α", remark: "阻塞影响度中关键路径任务的额外加权", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.top_n", value: "5", name: "今日待办条数", remark: null, updatedAt: "2026-09-18 09:00:00" },
+  { key: "member.weekly_capacity", value: "40", name: "默认每周工时上限", remark: "小时", updatedAt: "2026-09-18 09:00:00" },
 ];
+
+/** 新成员的默认每周工时上限，取系统参数 member.weekly_capacity */
+export const defaultWeeklyCapacity = Number(
+  configs.find((c) => c.key === "member.weekly_capacity")?.value,
+);

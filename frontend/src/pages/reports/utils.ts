@@ -1,7 +1,14 @@
 /**
  * 统计报表模块纯函数：接口字段 → 展示文案与图表比例换算
  */
-import type { ReportSummary } from "../../types/reports";
+import type {
+  DurationDeviation,
+  ReportSummary,
+  WeeklyCompleted,
+  Workload,
+} from "../../types/reports";
+import { formatWeekNo } from "../../utils/date";
+import type { XlsxCell } from "../../utils/xlsx";
 
 /**
  * 将 yyyy-MM-dd 截取为 M.DD 或 M.D（如 "2026-11-27" → "11.27"，"2026-12-01" → "12.1"）
@@ -14,21 +21,6 @@ export function toMonthDay(date: string, preserveZero = true): string {
   const month = parseInt(match[1], 10);
   const day = preserveZero ? match[2] : String(parseInt(match[2], 10));
   return `${month}.${day}`;
-}
-
-/**
- * 0-1 的比率转为百分比整数文案（如 0.4286 → "43%"）
- */
-export function formatPercent(rate: number): string {
-  return `${Math.round(rate * 100)}%`;
-}
-
-/**
- * 两位补零的周次文案（如 5, 10 → "05/10"）
- */
-export function formatWeekNo(weekNo: number, totalWeeks: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(weekNo)}/${pad(totalWeeks)}`;
 }
 
 /**
@@ -48,89 +40,49 @@ export function formatDelayText(delayDays: number): string {
   return "按计划";
 }
 
-/**
- * 计算成员工时条各段百分比及动效参数
- * 默认上限 40 小时位于 80% 刻度处（基准坐标轴 50 小时）
- */
-export function calculateLoadBar(
-  hours: number,
-  capacity = 40,
-  maxScale = 50,
-): {
-  capPercent: number;
-  fillPercent: number;
-  fillDur: string;
-  overPercent: number;
-  overLeftPercent: number;
-  overDelay: string;
-  overDur: string;
-  isOver: boolean;
-} {
-  const safeCap = Math.max(capacity, 1);
-  const safeMax = Math.max(maxScale, safeCap);
-
-  const main = Math.min(hours, safeCap);
-  const over = Math.max(0, hours - safeCap);
-
-  const capPercent = (safeCap / safeMax) * 100;
-  const fillPercent = (main / safeMax) * 100;
-  const fillDur = ((main / safeMax) * 0.6).toFixed(2);
-
-  const overPercent = (over / safeMax) * 100;
-  const overLeftPercent = capPercent;
-  const overDelay = ((safeCap / safeMax) * 0.6).toFixed(2);
-  const overDur = ((over / safeMax) * 0.6).toFixed(2);
-
-  return {
-    capPercent,
-    fillPercent,
-    fillDur,
-    overPercent,
-    overLeftPercent,
-    overDelay,
-    overDur,
-    isOver: over > 0,
-  };
-}
+/** 导出表格每一列的宽度 */
+export const REPORT_SHEET_WIDTHS = [18, 12, 12, 12, 12];
 
 /**
- * 计算工期偏差图条的宽度百分比与动效参数
- * 基准天数 maxDays 默认为 8 天
+ * 把报表页上的数据排成一张表（一行一个数组，空字符串是空格子）。
+ * 接口接通后由 GET /projects/{projectId}/reports/export 直接返回 Excel，这里只是替身
  */
-export function calculateDeviationBar(
-  planDays: number,
-  actualDays: number,
-  deviationDays: number,
-  maxDays = 8,
-): {
-  planWidthPercent: number;
-  planDur: number;
-  actualWidthPercent: number;
-  actualDur: number;
-  overWidthPercent: number;
-  overDur: number;
-  isOver: boolean;
-} {
-  const DU = 0.09;
-  const safeMax = Math.max(maxDays, 1);
-
-  const planWidthPercent = Math.min(100, (planDays / safeMax) * 100);
-  const planDur = Number((planDays * DU).toFixed(2));
-
-  const actualWidthPercent = Math.min(100, (actualDays / safeMax) * 100);
-  const actualDur = Number((actualDays * DU).toFixed(2));
-
-  const overDays = Math.max(0, deviationDays);
-  const overWidthPercent = Math.min(100 - actualWidthPercent, (overDays / safeMax) * 100);
-  const overDur = Number((overDays * DU).toFixed(2));
-
-  return {
-    planWidthPercent,
-    planDur,
-    actualWidthPercent,
-    actualDur,
-    overWidthPercent,
-    overDur,
-    isOver: deviationDays > 0,
-  };
+export function buildReportRows(data: {
+  summary: ReportSummary;
+  workload: Workload;
+  weeklyCompleted: WeeklyCompleted[];
+  deviations: DurationDeviation[];
+}): XlsxCell[][] {
+  const { summary, workload, weeklyCompleted, deviations } = data;
+  const percent = (rate: number) => `${Math.round(rate * 100)}%`;
+  return [
+    ["概况"],
+    ["当前周", formatWeekNo(summary.weekNo, summary.totalWeeks)],
+    ["任务总数", summary.total],
+    ["已完成", summary.done],
+    ["剩余", summary.remaining],
+    ["完成率", percent(summary.completionRate)],
+    ["按期率", percent(summary.onTimeRate)],
+    ["延期率", percent(summary.delayRate)],
+    [],
+    ["成员", "本周工时", "未完成工时", "每周上限", "负责任务数"],
+    ...workload.members.map((m): XlsxCell[] => [
+      m.user.realName,
+      m.weeklyHours,
+      m.loadHours,
+      m.capacity,
+      m.taskCount,
+    ]),
+    [],
+    ["周起始", "完成任务数"],
+    ...weeklyCompleted.map((w): XlsxCell[] => [w.weekStart, w.count]),
+    [],
+    ["任务", "计划天数", "实际天数", "偏差天数"],
+    ...deviations.map((d): XlsxCell[] => [
+      d.label,
+      d.planDays,
+      d.actualDays,
+      d.deviationDays,
+    ]),
+  ];
 }

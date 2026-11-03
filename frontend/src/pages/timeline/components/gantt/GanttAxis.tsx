@@ -3,6 +3,7 @@ import {
   formatDayLabel,
   getAxisDays,
   addDays,
+  isWeekend,
   type AxisRange,
 } from "../../../../utils/date";
 import { getWeekStarts } from "../../utils";
@@ -14,12 +15,6 @@ interface GanttAxisProps {
   today: string;
   /** 按周显示每一天的日号，按月只留每周一的标签 */
   showDays: boolean;
-}
-
-/** 周末的日期 */
-function isWeekend(date: string) {
-  const day = new Date(`${date}T00:00:00Z`).getUTCDay();
-  return day === 0 || day === 6;
 }
 
 export default function GanttAxis({

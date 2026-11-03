@@ -22,7 +22,7 @@
 .crew {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: 84px 104px 46px repeat(4, 50px);
+  grid-template-rows: 84px 104px 46px 50px repeat(4, 50px);
   column-gap: 14px;
   min-width: 900px;
 }
@@ -156,7 +156,18 @@
   color: var(--mute);
 }
 
-/* ---------- 第 4-7 行：权限开关单元格 ---------- */
+/* ---------- 第 4 行：项目角色，有权限的人用下拉改，其他人只看 ---------- */
+.c-role {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.c-role select.in {
+  width: 100%;
+}
+
+/* ---------- 第 5-8 行：权限开关单元格 ---------- */
 .c-p.last {
   border-bottom: 1.5px solid var(--ink);
 }
@@ -176,8 +187,7 @@
   color: var(--mute);
 }
 
-.pm i,
-.pk {
+.pm i {
   display: inline-block;
   width: 34px;
   height: 7px;
@@ -190,8 +200,7 @@
   font-weight: 700;
 }
 
-.pm[aria-pressed="true"] i,
-.pk.on {
+.pm[aria-pressed="true"] i {
   background: var(--ink);
   border-style: solid;
   height: 6px;

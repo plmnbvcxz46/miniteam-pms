@@ -3,7 +3,6 @@ import type {
   IssueSummary,
   Notification,
   NotificationType,
-  ProjectPeriod,
   ProjectRole,
   ProjectSummary,
   TaskStatus,
@@ -29,12 +28,6 @@ export const users = {
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
 
-/** 当前项目的起止日期（对应 ProjectSummary.startDate / planEnd），共 10 周 */
-export const currentProjectPeriod: ProjectPeriod = {
-  startDate: "2026-09-21",
-  planEnd: "2026-11-29",
-};
-
 /** GET /projects，项目切换浮层 */
 export const projects: ProjectSummary[] = [
   {
@@ -45,7 +38,7 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-11-29",
     issueNo: 32,
     headline: "接口文档逾期 2 天，已移到阻塞",
-    myProjectRole: "PM",
+    myProjectRole: null,
   },
   {
     id: 2,
@@ -55,7 +48,7 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-12-20",
     issueNo: 18,
     headline: null,
-    myProjectRole: "MEMBER",
+    myProjectRole: null,
   },
   {
     id: 3,
@@ -65,9 +58,16 @@ export const projects: ProjectSummary[] = [
     planEnd: "2026-06-21",
     issueNo: 112,
     headline: null,
-    myProjectRole: "PM",
+    myProjectRole: null,
   },
 ];
+
+/** GET /projects/{projectId} 的 description，按项目 id */
+export const projectDescriptions: Record<number, string> = {
+  1: "小型软件团队项目管理系统的课程设计",
+  2: "",
+  3: "数据库课程实验，已结项",
+};
 
 /** GET /projects/{projectId}/issues，按期号倒序，第一项是今天 */
 export const issues: IssueSummary[] = [
@@ -172,6 +172,9 @@ export const roleLabel: Record<ProjectRole, string> = {
   MEMBER: "普通成员",
   TESTER: "测试人员",
 };
+
+/** 任务状态的先后顺序，看板列和状态按钮都按它排 */
+export const taskStatusOrder: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 /** 任务状态中文名 */
 export const taskStatusLabel: Record<TaskStatus, string> = {

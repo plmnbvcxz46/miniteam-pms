@@ -2,10 +2,11 @@ import type { TaskDetail } from "../../types/task";
 import {
   addDays,
   dayEnd,
+  isWeekend,
   toDateString,
   toDay,
+  weekStartTime,
   type AxisRange,
-  type DayTime,
 } from "../../utils/date";
 
 /** 关键路径法（CPM）算出的一行，单位都是工作日，从项目第 0 天算起 */
@@ -33,11 +34,6 @@ export interface TimelineForecast {
   delayDays: number;
 }
 
-/** 当天是不是周末 */
-function isWeekend(date: string): boolean {
-  const day = new Date(toDay(date) * 86400000).getUTCDay();
-  return day === 0 || day === 6;
-}
 
 /** date 之后的第 n 个工作日（跳过周六日），n 为 0 返回 date 本身 */
 function addWorkdays(date: string, n: number): string {
@@ -176,14 +172,7 @@ export function getTimelineRange(
   ].filter(Boolean);
   const first = Math.min(...starts.map(toDay));
   const last = Math.max(...ends.map(dayEnd)) - 1;
-  return { start: weekStart(first), end: weekStart(last) + 7 };
-}
-
-/** 时间点所在周的周一 00:00 */
-function weekStart(time: DayTime): DayTime {
-  const day = Math.floor(time);
-  const weekday = new Date(day * 86400000).getUTCDay();
-  return day - ((weekday + 6) % 7);
+  return { start: weekStartTime(first), end: weekStartTime(last) + 7 };
 }
 
 /** 范围内每周的周一（yyyy-MM-dd） */

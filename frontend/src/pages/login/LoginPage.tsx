@@ -137,7 +137,7 @@ export default function LoginPage() {
                   id="auth-name"
                   autoFocus
                   autoComplete="name"
-                  placeholder="显示在成员列表里的名字"
+                  placeholder="真实姓名"
                   ref={(el) => {
                     inputs.current.realName = el;
                   }}
@@ -160,7 +160,7 @@ export default function LoginPage() {
                 autoComplete="username"
                 autoCapitalize="off"
                 spellCheck={false}
-                placeholder="输入账号，如 pm_a"
+                placeholder="账号"
                 ref={(el) => {
                   inputs.current.username = el;
                 }}
@@ -181,7 +181,7 @@ export default function LoginPage() {
                 type="password"
                 autoFocus={!isRegister && !!remembered}
                 autoComplete={isRegister ? "new-password" : "current-password"}
-                placeholder="输入密码"
+                placeholder="密码"
                 ref={(el) => {
                   inputs.current.password = el;
                 }}

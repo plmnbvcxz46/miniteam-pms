@@ -64,6 +64,11 @@
 .card .score small::before {
   content: "· ";
 }
+.card .score.p-h {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--ink);
+}
 .card .score.p-l {
   font-weight: 500;
   color: var(--mute);
@@ -115,7 +120,8 @@ body.dragging * {
   cursor: grabbing !important;
 }
 @media (hover: hover) {
-  body:not(.dragging):not(.past) .card:hover {
+  /* 没有权限移动的卡片（.locked）悬停时不抬起、不出阴影 */
+  body:not(.dragging):not(.past) .card:not(.locked):hover {
     transform: translate(-3px, -3px);
     box-shadow: 6px 6px 0 var(--ink);
   }

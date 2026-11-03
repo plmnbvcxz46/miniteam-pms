@@ -33,7 +33,7 @@ export default function CrewLabels({
       {/* 行 2：本周工时 */}
       <div className="c-lb">
         <b>本周工时</b>
-        <small>单位：小时（上限40）</small>
+        <small>单位：小时，虚线为每周上限</small>
       </div>
 
       {/* 行 3：负责任务 */}
@@ -41,7 +41,12 @@ export default function CrewLabels({
         <b>负责任务</b>
       </div>
 
-      {/* 行 4-7：权限项说明 */}
+      {/* 行 4：项目角色 */}
+      <div className="c-lb">
+        <b>项目角色</b>
+      </div>
+
+      {/* 行 5-8：权限项说明 */}
       {permDefs.map((def) => (
         <div key={def.key} className="c-lb">
           <b>{def.label}</b>

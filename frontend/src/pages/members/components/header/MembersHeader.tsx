@@ -25,17 +25,18 @@ export default function MembersHeader({
           成员<em>权限</em>
         </h1>
       </div>
-      <div className="va">
-        <button
-          className="btn go"
-          type="button"
-          data-form="member"
-          disabled={!canInvite}
-          onClick={onInviteClick}
-        >
-          + 邀请成员
-        </button>
-      </div>
+      {canInvite && (
+        <div className="va">
+          <button
+            className="btn go"
+            type="button"
+            data-form="member"
+            onClick={onInviteClick}
+          >
+            + 邀请成员
+          </button>
+        </div>
+      )}
     </div>
   );
 }

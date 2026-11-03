@@ -62,21 +62,23 @@ export default function DocumentDetail({
       />
 
       {/* 底部上传按钮 */}
-      <div className="up">
-        <button
-          className="btn primary"
-          type="button"
-          data-form="doc"
-          onClick={onUploadVersion}
-        >
-          上传新版本 <span aria-hidden="true">↑</span>
-        </button>
-        {!doc.final && (
-          <button className="btn" type="button" onClick={onFinalize}>
-            定稿 <span aria-hidden="true">✓</span>
+      {onUploadVersion && (
+        <div className="up">
+          <button
+            className="btn primary"
+            type="button"
+            data-form="doc"
+            onClick={onUploadVersion}
+          >
+            上传新版本 <span aria-hidden="true">↑</span>
           </button>
-        )}
-      </div>
+          {!doc.final && onFinalize && (
+            <button className="btn" type="button" onClick={onFinalize}>
+              定稿 <span aria-hidden="true">✓</span>
+            </button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

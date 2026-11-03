@@ -1,4 +1,4 @@
-import type { PermKey } from "../../../../types/global";
+import type { PermKey, ProjectRole } from "../../../../types/global";
 import type { Member, PermDef } from "../../../../types/members";
 import CrewLabels from "./CrewLabels";
 import MemberColumn from "./MemberColumn";
@@ -6,6 +6,8 @@ import MemberColumn from "./MemberColumn";
 interface MemberCrewProps {
   /** 成员列表（支持搜索过滤后传入） */
   members: Member[];
+  /** 一组成员共用的工时坐标轴最大值（小时） */
+  loadScale: number;
   /** 权限行列表配置 */
   permDefs: PermDef[];
   /** 搜索关键字 */
@@ -16,15 +18,19 @@ interface MemberCrewProps {
   canManageMember: boolean;
   /** 切换权限回调 */
   onTogglePerm: (userId: number, key: PermKey) => void;
+  /** 修改成员在本项目里的角色 */
+  onChangeRole: (userId: number, role: ProjectRole) => void;
 }
 
 export default function MemberCrew({
   members,
+  loadScale,
   permDefs,
   searchKeyword,
   onSearchChange,
   canManageMember,
   onTogglePerm,
+  onChangeRole,
 }: MemberCrewProps) {
   const columnCount = Math.max(members.length, 1);
 
@@ -50,9 +56,17 @@ export default function MemberCrew({
             <MemberColumn
               key={member.user.id}
               member={member}
+              loadScale={loadScale}
               permDefs={permDefs}
               canManageMember={canManageMember}
+              // 项目里至少要留一个项目经理，最后一个不能被改成别的角色
+              canChangeRole={
+                canManageMember &&
+                (member.projectRole !== "PM" ||
+                  members.filter((m) => m.projectRole === "PM").length > 1)
+              }
               onTogglePerm={(key) => onTogglePerm(member.user.id, key)}
+              onChangeRole={(role) => onChangeRole(member.user.id, role)}
             />
           ))
         ) : (
@@ -60,7 +74,7 @@ export default function MemberCrew({
             className="c-who"
             style={{
               gridColumn: "2",
-              gridRow: "1 / span 7",
+              gridRow: "1 / span 8",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

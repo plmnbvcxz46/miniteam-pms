@@ -1,11 +1,11 @@
 import { taskStatusLabel } from "../../data/global";
+import { useIssue } from "../../issue/useIssue";
 import type { Activity } from "../../types/global";
 import {
   dateToX,
   formatDayLabel,
   getAxisDays,
   getAxisTicks,
-  getProjectToday,
   type AxisRange,
 } from "../../utils/date";
 import {
@@ -37,7 +37,7 @@ export default function TaskBar({
   range: sharedRange,
   title,
 }: TaskBarProps) {
-  const today = getProjectToday();
+  const { today } = useIssue();
   const model = buildTaskBar(
     task,
     activities,

@@ -19,7 +19,7 @@ export interface DocumentVersionItem {
 }
 
 /**
- * 原生原型中保留的简写元组格式（用于平滑兼容原型 Mock 数据）
+ * 版本记录的简写元组格式，假数据里还在用，页面里会统一转成对象
  * [版本号, 更新日期, 操作人, 变更说明]
  */
 export type DocHistoryTuple = [

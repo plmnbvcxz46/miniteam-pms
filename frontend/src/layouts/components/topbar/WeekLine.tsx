@@ -1,11 +1,12 @@
-import { currentProjectPeriod } from "../../../data/global";
-import { getProjectToday } from "../../../utils/date";
+import type { ProjectPeriod } from "../../../types/global";
+import { useIssue } from "../../../issue/useIssue";
 import { getWeekProgress } from "../../utils";
 
-export default function WeekLine() {
+export default function WeekLine({ period }: { period: ProjectPeriod }) {
+  const { today } = useIssue();
   const { startLabel, endLabel, total, current } = getWeekProgress(
-    currentProjectPeriod,
-    getProjectToday(),
+    period,
+    today,
   );
   return (
     <div className="weekline">

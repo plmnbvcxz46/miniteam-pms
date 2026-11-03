@@ -1,5 +1,5 @@
 import type { BoundDocument } from "../../../../types/documents";
-import { getDayOffset, getTimelinePercent } from "../../utils";
+import { getAxisDates, getDayOffset, getTimelinePercent } from "../../utils";
 import DocumentRevisingHeader from "./DocumentRevisingHeader";
 import DocumentRevisingItem from "./DocumentRevisingItem";
 
@@ -8,8 +8,8 @@ interface DocumentRevisingProps {
   docs: BoundDocument[];
   /** 当前选中的文档 ID */
   selectedId: number | null;
-  /** 今日基准日期（从假数据快照注入） */
-  currentDate?: string;
+  /** 今日基准日期 MM.DD */
+  currentDate: string;
   /** 选中回调 */
   onSelect?: (id: number) => void;
 }
@@ -17,14 +17,14 @@ interface DocumentRevisingProps {
 export default function DocumentRevising({
   docs,
   selectedId,
-  currentDate = "10.22",
+  currentDate,
   onSelect,
 }: DocumentRevisingProps) {
   // 今日基准偏移
   const today = getDayOffset(currentDate);
 
   // 时间轴刻度
-  const axisDates = ["10.12", "10.19", "10.26"];
+  const axisDates = getAxisDates();
 
   return (
     <section className="dsec on">

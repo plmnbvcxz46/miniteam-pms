@@ -10,30 +10,10 @@ import type {
 import type {
   Activity,
   DocumentRef,
-  TaskStatus,
   UserBrief,
 } from "../../types/global";
 import type { TaskDetail } from "../../types/task";
-
-/**
- * 两位补零格式化（例如 5 -> "05"，10 -> "10"）
- */
-export function formatPadCount(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-/**
- * 计算指定日期的前一天 (yyyy-MM-dd)
- */
-function getPreviousDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  date.setDate(date.getDate() - 1);
-  const prevY = date.getFullYear();
-  const prevM = String(date.getMonth() + 1).padStart(2, "0");
-  const prevD = String(date.getDate()).padStart(2, "0");
-  return `${prevY}-${prevM}-${prevD}`;
-}
+import { addDays } from "../../utils/date";
 
 /**
  * 用于左侧讨论列表项底部时间
@@ -49,7 +29,7 @@ export function formatThreadShortTime(
   if (!dateTimeStr) return "";
   if (dateTimeStr === "刚刚" || dateTimeStr.endsWith("刚刚")) return "刚刚";
 
-  const prevDate = getPreviousDate(todayDate);
+  const prevDate = addDays(todayDate, -1);
   const todayMMDD = todayDate.split("-").slice(-2).join("-");
   const prevMMDD = prevDate.split("-").slice(-2).join("-");
 
@@ -88,7 +68,7 @@ export function formatMessageTime(
     return dateTimeStr;
   }
 
-  const prevDate = getPreviousDate(todayDate);
+  const prevDate = addDays(todayDate, -1);
   const todayMMDD = todayDate.split("-").slice(-2).join("-");
   const prevMMDD = prevDate.split("-").slice(-2).join("-");
 
@@ -107,24 +87,6 @@ export function formatMessageTime(
     return `${m}.${d} ${hm}`.trim();
   }
   return `${datePart.replace("-", ".")} ${hm}`.trim();
-}
-
-/**
- * 获取任务状态对应的 key 样式类
- * BLOCKED -> "stuck", DOING -> "on", DONE -> "done", TODO -> ""
- */
-export function getTaskKeyClass(status: TaskStatus): string {
-  switch (status) {
-    case "BLOCKED":
-      return "stuck";
-    case "DOING":
-      return "on";
-    case "DONE":
-      return "done";
-    case "TODO":
-    default:
-      return "";
-  }
 }
 
 /**
@@ -483,5 +445,56 @@ export function finalizeMention(value: MentionValue): MentionValue {
       text.includes(`@${user.realName}`),
     ),
     documents: value.documents.filter((doc) => text.includes(`@${doc.name}`)),
+  };
+}
+
+/**
+ * 讨论、评论和动态在某一天的样子：只留那天以前发生的，
+ * 评论数和最后评论时间按留下的评论重算，关联的任务还没创建时不再关联
+ */
+export function getCollabAtDate(
+  discussions: DiscussionBrief[],
+  details: Record<number, DiscussionDetail>,
+  activities: Activity[],
+  taskMap: Record<number, TaskDetail>,
+  date: string,
+) {
+  const upTo = (createdAt: string) => createdAt.slice(0, 10) <= date;
+  const detailMap: Record<number, DiscussionDetail> = {};
+  for (const detail of Object.values(details)) {
+    if (!upTo(detail.createdAt)) continue;
+    const task = detail.task ? taskMap[detail.task.id] : undefined;
+    detailMap[detail.id] = {
+      ...detail,
+      comments: detail.comments.filter((c) => upTo(c.createdAt)),
+      task:
+        detail.task && task
+          ? { ...detail.task, status: task.status, overdueDays: task.overdueDays }
+          : null,
+    };
+  }
+  const briefs = discussions.flatMap((brief) => {
+    const detail = detailMap[brief.id];
+    if (!detail) return [];
+    const last = detail.comments[detail.comments.length - 1];
+    return [
+      {
+        ...brief,
+        task: detail.task && { id: detail.task.id, taskNo: detail.task.taskNo, title: detail.task.title },
+        commentCount: detail.comments.length,
+        lastCommentAt: last?.createdAt ?? detail.createdAt,
+      },
+    ];
+  });
+  return {
+    discussions: briefs,
+    detailMap,
+    activities: activities.filter(
+      (act) =>
+        /^\d{4}-\d{2}-\d{2}/.test(act.createdAt) &&
+        upTo(act.createdAt) &&
+        (act.targetType !== "DISCUSSION" ||
+          (act.targetId !== null && !!detailMap[act.targetId])),
+    ),
   };
 }

@@ -1,14 +1,11 @@
 import type { DocumentItem } from "../../../../types/documents";
+import { pad2 } from "../../../../utils/date";
 
 interface DocumentDetailHeroProps {
   doc: DocumentItem;
   status: string;
   isLate: boolean;
   lateDays: number;
-}
-
-function pad2(n: number) {
-  return n < 10 ? `0${n}` : `${n}`;
 }
 
 export default function DocumentDetailHero({

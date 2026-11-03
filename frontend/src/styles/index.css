@@ -427,16 +427,6 @@ code {
   font-size: 13px;
   color: var(--mute);
 }
-/* 项目：头条单独成行，竖线提示是要看的信息 */
-.projs .hl {
-  grid-column: 2 / 4;
-  margin-top: 4px;
-  padding-left: 8px;
-  border-left: 3px solid var(--signal);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-}
 .projs button.arch .no,
 .projs button.arch .hd,
 .projs button.arch .dt {
@@ -631,21 +621,6 @@ code {
 .weeks .now {
   border: 2.5px solid var(--signal);
 }
-.subtabs {
-  display: flex;
-  gap: 2px;
-}
-.subtabs a {
-  display: flex;
-  align-items: center;
-  height: 32px;
-  padding: 0 10px;
-  font-size: 13px;
-}
-.subtabs a[aria-current="page"] {
-  background: var(--ink);
-  color: var(--paper);
-}
 .bell {
   all: unset;
   box-sizing: border-box;
@@ -713,9 +688,6 @@ code {
 .me:focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 2px;
-}
-.sys-title {
-  display: none;
 }
 
 /* ---------- content ---------- */
@@ -1343,117 +1315,6 @@ main {
   cursor: default;
 }
 
-/* ---------- page states ---------- */
-.pstate {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-top: 24px;
-}
-.pstate .eyebrow {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  padding-top: 10px;
-  border-top: 5px solid var(--ink);
-}
-.pstate .eyebrow::before {
-  content: "[ ";
-}
-.pstate .eyebrow::after {
-  content: " ]";
-}
-.pstate.err .eyebrow {
-  border-color: var(--signal);
-  color: var(--signal-text);
-}
-.pstate h2 {
-  margin: 0;
-  font-family: var(--disp);
-  font-weight: 900;
-  font-size: 48px;
-  line-height: 1.15;
-  letter-spacing: -1.5px;
-  max-width: 20em;
-}
-.pstate.err h2 {
-  color: var(--ink);
-}
-.pstate p {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 36em;
-}
-.pstate .acts {
-  display: flex;
-  gap: 10px;
-}
-.pstate .acts .btn.primary {
-  background: var(--signal);
-  color: var(--ink);
-  font-weight: 800;
-}
-.pstate .strip {
-  display: grid;
-  grid-template-columns: repeat(10, 44px);
-  gap: 4px;
-}
-.pstate .strip span {
-  height: 14px;
-  border: 1.5px solid var(--ink);
-  animation: loadcell 1.6s steps(1) infinite;
-  animation-delay: calc(var(--k) * 0.16s);
-}
-@keyframes loadcell {
-  0% {
-    background: var(--ink);
-  }
-  50% {
-    background: transparent;
-  }
-}
-.pstate .ghost {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 10px;
-}
-.pstate .ghost i {
-  display: block;
-  height: 112px;
-  border: 1.5px solid var(--ink);
-  background: var(--paper);
-  animation: wipe 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-  animation-delay: calc(var(--k) * 0.12s);
-}
-.pstate .double {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.pstate .double i {
-  display: block;
-  height: 1.5px;
-  background: var(--ink);
-}
-.pstate .double i + i {
-  height: 5px;
-}
-
-/* ---------- system view (scheme a only) ---------- */
-#sys-host {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-#view-system .double {
-  display: none;
-}
-
 /* ---------- overlays: drawers ---------- */
 .ov {
   position: absolute;
@@ -1749,13 +1610,6 @@ select.in {
 .sw2 button:not([aria-pressed="true"]):hover {
   background: var(--wash);
 }
-.days7 {
-  gap: 4px;
-}
-.days7 span {
-  display: none;
-}
-.days7 .perm,
 .perm {
   all: unset;
   box-sizing: border-box;
@@ -1769,47 +1623,9 @@ select.in {
   font-weight: 700;
   border: 1.5px solid var(--ink);
 }
-.days7 .perm::after {
-  content: attr(data-d);
-}
 .perm[aria-pressed="true"] {
   background: var(--ink);
   color: var(--paper);
-}
-.rank {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: r;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-}
-.rank li {
-  counter-increment: r;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px;
-  font-size: 13px;
-}
-.rank li::before {
-  content: "0" counter(r);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  width: 22px;
-}
-.rank li:first-child {
-  box-shadow: inset 0 0 0 1.5px var(--signal);
-}
-.rank li:first-child::after {
-  content: "今日命中";
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
 }
 .g4 {
   display: grid;
@@ -1833,15 +1649,6 @@ select.in {
   flex-direction: column;
   gap: 14px;
   margin-top: 14px;
-}
-.dept h3 {
-  margin: 0 0 4px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--mute);
-  display: flex;
-  justify-content: space-between;
 }
 .pp {
   all: unset;
@@ -1918,35 +1725,6 @@ select.in {
   color: var(--paper);
   font-weight: 700;
 }
-.matrix td,
-.matrix th {
-  text-align: left;
-}
-.matrix th.p,
-.matrix td.p {
-  text-align: center;
-  width: 84px;
-}
-.matrix tr.mg td {
-  font-weight: 800;
-  padding-top: 12px;
-}
-.matrix td.l1 {
-  padding-left: 18px;
-}
-.matrix td.l2 {
-  padding-left: 36px;
-}
-.matrix td.l1::before,
-.matrix td.l2::before {
-  content: "└ ";
-  color: var(--mute);
-}
-.matrix .pm {
-  margin: 0 auto;
-  height: 26px;
-  padding: 0 6px;
-}
 .logday {
   display: flex;
   flex-direction: column;
@@ -1983,9 +1761,6 @@ select.in {
   font-size: 11px;
   font-weight: 700;
 }
-.lg.fail b {
-  color: var(--signal-text);
-}
 /* 系统管理里的操作反馈 */
 .ss .msg {
   margin: 0;
@@ -2001,15 +1776,6 @@ select.in {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.matrix th small {
-  font-family: var(--mono);
-  font-weight: 400;
-  color: var(--mute);
-}
-body.calm * {
-  animation: none !important;
-  transition: none !important;
 }
 
 /* form drawer */
@@ -2548,9 +2314,6 @@ body.calm * {
   .grp a {
     border-bottom: 0;
     white-space: nowrap;
-  }
-  .arch-card {
-    display: none;
   }
   .projs {
     top: 62px;

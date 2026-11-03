@@ -1,18 +1,24 @@
 import { Fragment } from "react";
 import type { DurationDeviation, Forecast } from "../../../../types/reports";
+import { toDay } from "../../../../utils/date";
 import { formatDelayText, toMonthDay } from "../../utils";
+
+/** 进度条两段至少各留这么多百分比，免得斜纹段或虚线段细得看不见 */
+const MIN_PART = 8;
 
 interface ForecastHeroProps {
   forecast: Forecast;
-  todayDate: string;
+  /** 今天 yyyy-MM-dd */
+  today: string;
   deviations: DurationDeviation[];
 }
 
 export default function ForecastHero({
   forecast,
-  todayDate,
+  today,
   deviations,
 }: ForecastHeroProps) {
+  const todayDate = toMonthDay(today, true);
   const predictedDisplay = toMonthDay(forecast.predictedEnd, true);
   const plannedDisplay = toMonthDay(forecast.plannedEnd, true);
   const delayDisplay = formatDelayText(forecast.delayDays);
@@ -26,8 +32,18 @@ export default function ForecastHero({
   const topDelayed = delayedTasks.slice(0, 2);
   const restDelayedCount = Math.max(0, delayedTasks.length - topDelayed.length);
 
-  // 进度条主段占比（延期时主段代表计划工期，留出右侧展示直边斜纹超期段）
-  const solidPercent = isDelayed ? 84 : isEarly ? 90 : 100;
+  // 进度条从今天画到两个完工日里较晚的一个：
+  // 延期时实心段是今天到计划完工，右边斜纹段是超期；提前时实心段是今天到预测完工，右边虚线段是提前量
+  const toPlanned = Math.max(1, toDay(forecast.plannedEnd) - toDay(today));
+  const toPredicted = Math.max(1, toDay(forecast.predictedEnd) - toDay(today));
+  const rawPercent = isDelayed
+    ? (toPlanned / toPredicted) * 100
+    : isEarly
+      ? (toPredicted / toPlanned) * 100
+      : 100;
+  const solidPercent = isDelayed || isEarly
+    ? Math.min(100 - MIN_PART, Math.max(MIN_PART, rawPercent))
+    : 100;
 
   return (
     <section className={`hero${forecast.risk ? "" : " calm"}`} id="rp-hero">

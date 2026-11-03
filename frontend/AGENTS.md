@@ -39,12 +39,29 @@ src/
 |---|---|
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | OpenAPI 公共 schema |
 | `currentProjectId` | 路由或项目上下文 |
-| 当前登录身份（用户、系统权限、项目角色和权限） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`；账号假数据在 `data/auth.ts` |
+| 当前登录身份（用户、系统角色） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`；账号假数据在 `data/auth.ts` |
+| 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目，权限取自 `data/members.ts` 的 `projectMembers`（对应 `GET /projects`、`GET /projects/{projectId}/members`） |
+| 正在看哪一期、各页面的“今天” | `src/issue/` 的 `useIssue()`。过去的期只读；接口对应 `GET /projects/{projectId}/issues` 和 `GET /projects/{projectId}/issues/{issueDate}` |
 | `users`（项目成员的 `UserBrief`，各模块假数据共用） | `GET /projects/{projectId}/members` 的 `user` |
 | `currentIssue`（`IssueInfo`：期号、`M.DD` 日期、完整日期） | 期号取项目详情的 `issueNo`；日期直接取本地当前时间，不走接口 |
 | `roleLabel` 等枚举中文名 | 前端常量 |
 
 以后接入全局状态时，只替换 `data/global.ts` 的来源。
+
+### 前端替身（接口接通时要换掉）
+
+页面读的数据都来自 `src/data/`，但下面这些值不是接口字段，是前端按假数据现算的替身。接口接通后改读接口，对应的算法和假数据一起删：
+
+| 替身 | 位置 | 接口接通后 |
+|---|---|---|
+| 任务优先级得分 | `pages/board/priority.ts`，权重取系统参数 | 后端按开题报告的评分公式算，读 `priority` |
+| 预测完工、延期天数 | `pages/timeline/utils.ts` 的 `getForecast` | 读后端的进度预测 |
+| 统计报表的概况、燃尽图、每周完成、工期偏差、成员负载 | `pages/reports/derive.ts` | 读 `GET /projects/{projectId}/reports/*` |
+| 往期各页面的样子 | 任务取 `data/issueSnapshots.ts`，成员工时取 `data/issueMemberHours.ts`，文档、讨论、动态、变更记录按时间从现有数据筛出 | 切期时读 `GET /projects/{projectId}/issues/{issueDate}` 的 `snapshot`，快照里没有成员页，要和后端确认 |
+| 报表 Excel 导出 | `utils/xlsx.ts` 手写 | 读 `GET /projects/{projectId}/reports/export` 返回的文件 |
+| 项目和权限判断 | `src/access/` | 登录态和 `GET /projects` 的结果 |
+
+假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。已知和文档不一致的地方：系统角色前端只分系统管理员和普通用户，后端种子里还是 5 个角色。
 
 ### 模块（`types/<模块>.ts`、`data/<模块>.ts`）
 

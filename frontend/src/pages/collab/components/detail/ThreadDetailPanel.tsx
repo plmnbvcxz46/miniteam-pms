@@ -20,7 +20,8 @@ interface ThreadDetailPanelProps {
   replyInitial?: MentionValue | null;
   onTaskClick?: (taskId: number) => void;
   onOpenDocument?: (documentId: number) => void;
-  onSendReply: (value: MentionValue) => void;
+  /** 为空时不显示回复框（过去的期只读） */
+  onSendReply?: (value: MentionValue) => void;
 }
 
 export default function ThreadDetailPanel({
@@ -91,14 +92,16 @@ export default function ThreadDetailPanel({
           })
         )}
       </div>
-      <ReplyForm
-        key={detail?.id}
-        users={users}
-        documents={taskDocuments}
-        initialValue={replyInitial}
-        onSend={onSendReply}
-        autoFocusTrigger={detail?.id}
-      />
+      {onSendReply && (
+        <ReplyForm
+          key={detail?.id}
+          users={users}
+          documents={taskDocuments}
+          initialValue={replyInitial}
+          onSend={onSendReply}
+          autoFocusTrigger={detail?.id}
+        />
+      )}
     </section>
   );
 }

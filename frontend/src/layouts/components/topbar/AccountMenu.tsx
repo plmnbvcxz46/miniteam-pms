@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAccess } from "../../../access/useAccess";
 import { useAuth, useMe } from "../../../auth/useAuth";
 import { roleLabel } from "../../../data/global";
-import type { Account } from "../../../types/auth";
+import { isSystemAdmin, type Account } from "../../../types/auth";
 import { useDismiss } from "../../useDismiss";
 
 interface AccountMenuProps {
@@ -12,15 +13,6 @@ interface AccountMenuProps {
   onSwitch: (userId: number) => void;
 }
 
-/** 本项目里的角色，没加入项目写“未加入当前项目” */
-function describeProjectRole(account: Account): string {
-  if (account.disabled) return "已停用 · 不可切换";
-  if (account.projectRole) return `本项目 · ${roleLabel[account.projectRole]}`;
-  return account.permissions.canManageMember
-    ? "未加入当前项目 · 拥有全部权限"
-    : "未加入当前项目";
-}
-
 export default function AccountMenu({
   realName,
   onOpenProfile,
@@ -28,6 +20,15 @@ export default function AccountMenu({
 }: AccountMenuProps) {
   const me = useMe();
   const { accounts, logout } = useAuth();
+  const { roleOf } = useAccess();
+
+  /** 本项目里的角色；系统管理员所有项目都能进、所有权限都有 */
+  const describeProjectRole = (account: Account): string => {
+    if (account.disabled) return "已停用 · 不可切换";
+    if (isSystemAdmin(account)) return "全部项目 · 全部权限";
+    const role = roleOf(account.user.id);
+    return role ? `本项目 · ${roleLabel[role]}` : "未加入当前项目";
+  };
   const [open, setOpen] = useState(false);
   const [swapped, setSwapped] = useState(false);
   const [announce, setAnnounce] = useState("");

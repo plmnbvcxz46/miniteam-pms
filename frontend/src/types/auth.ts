@@ -2,7 +2,7 @@
  * 认证类型（对齐 docs/api/openapi.yaml 的“认证”标签）
  * 共享结构（UserBrief、ProjectRole、MemberPermissions 等）见 ./global
  */
-import type { MemberPermissions, ProjectRole, UserBrief } from "./global";
+import type { UserBrief } from "./global";
 
 /** 登录请求体（LoginRequest），POST /auth/login */
 export interface LoginRequest {
@@ -11,19 +11,23 @@ export interface LoginRequest {
 }
 
 /**
- * 登录后的身份，对应 GET /auth/me（CurrentUser）加上当前项目里的角色和权限
- * - systemPermissions：系统权限编码，决定系统管理里能看哪些分区
- * - projectRole / permissions：在当前项目里的角色和权限，不在项目里时为 null 和全 false
+ * 登录后的身份，对应 GET /auth/me（CurrentUser）。
+ * 只管“你是谁、系统层面能做什么”；在某个项目里的角色和权限不放这里，
+ * 由 src/access/ 按当前项目的成员关系算出
+ * - systemPermissions：系统权限编码，有 system:view 的是系统管理员
  */
 export interface Account {
   user: UserBrief;
-  /** 系统角色名，例如 “项目经理” */
+  /** 系统角色名：系统管理员 / 普通用户 */
   roleName: string;
   /** 已停用的账号不能登录，也不能切换到 */
   disabled: boolean;
   systemPermissions: string[];
-  projectRole: ProjectRole | null;
-  permissions: MemberPermissions;
+}
+
+/** 系统管理员：有 system:view。所有项目、所有权限都对他开放 */
+export function isSystemAdmin(account: Account): boolean {
+  return account.systemPermissions.includes("system:view");
 }
 
 /** 注册请求体（RegisterRequest），POST /auth/register */

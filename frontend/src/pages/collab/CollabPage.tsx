@@ -8,6 +8,7 @@ import {
   discussions as initialDiscussions,
 } from "../../data/collab";
 import { useMe } from "../../auth/useAuth";
+import { useIssue } from "../../issue/useIssue";
 import { users } from "../../data/global";
 import type {
   Comment,
@@ -29,6 +30,7 @@ import {
   findCommentIdByActivity,
   findDiscussionIdByActivity,
   formatCollabKicker,
+  getCollabAtDate,
   getTaskDocumentRefs,
   toDiscussionTask,
 } from "./utils";
@@ -51,13 +53,30 @@ export default function CollabPage() {
   );
 
   // 顶层状态
-  const [discussionList, setDiscussionList] =
+  const [allDiscussions, setDiscussionList] =
     useState<DiscussionBrief[]>(initialDiscussions);
-  const [detailMap, setDetailMap] = useState<Record<number, DiscussionDetail>>(
+  const [allDetails, setDetailMap] = useState<Record<number, DiscussionDetail>>(
     initialDiscussionDetails,
   );
-  const [activityList, setActivityList] =
+  const [allActivities, setActivityList] =
     useState<Activity[]>(initialActivities);
+  // 看过去的期时，只留那天以前的讨论、评论和动态
+  const { isPast, today } = useIssue();
+  const {
+    discussions: discussionList,
+    detailMap,
+    activities: activityList,
+  } = useMemo(
+    () =>
+      isPast
+        ? getCollabAtDate(allDiscussions, allDetails, allActivities, taskMap, today)
+        : {
+            discussions: allDiscussions,
+            detailMap: allDetails,
+            activities: allActivities,
+          },
+    [isPast, allDiscussions, allDetails, allActivities, taskMap, today],
+  );
   const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
   const [draftDiscussion, setDraftDiscussion] =
     useState<DiscussionDetail | null>(null);
@@ -115,7 +134,10 @@ export default function CollabPage() {
   }, [location.pathname, location.search, navigate]);
 
   // 当前展示的讨论详情（草稿会话优先）
-  const currentDetail = draftDiscussion ?? detailMap[selectedId];
+  const currentDetail =
+    draftDiscussion ??
+    detailMap[selectedId] ??
+    detailMap[discussionList[0]?.id];
 
   // 当前讨论所属任务下可以 @ 的文件
   const taskDocuments = useMemo(
@@ -127,11 +149,11 @@ export default function CollabPage() {
   const todayActivityCount = useMemo(() => {
     return activityList.filter(
       (act) =>
-        act.createdAt.startsWith(collabTodayDate) ||
+        act.createdAt.startsWith(today) ||
         act.createdAt === "刚刚" ||
         act.createdAt.endsWith("刚刚"),
     ).length;
-  }, [activityList]);
+  }, [activityList, today]);
 
   const overdueCount = useMemo(() => {
     return Object.values(detailMap).filter(
@@ -328,7 +350,7 @@ export default function CollabPage() {
     <section className="view" id="view-team" data-view="team">
       <CollabHeader
         kicker={kicker}
-        onCreate={() => setDrawer({ taskId: null, lockTask: false })}
+        onCreate={isPast ? undefined : () => setDrawer({ taskId: null, lockTask: false })}
       />
       <div className="tg">
         <ThreadsPanel
@@ -345,7 +367,7 @@ export default function CollabPage() {
           replyInitial={draftDiscussion !== null ? draftInitial : null}
           onTaskClick={handleTaskClick}
           onOpenDocument={handleOpenDocument}
-          onSendReply={handleSendReply}
+          onSendReply={isPast ? undefined : handleSendReply}
         />
         <ActivityFeedPanel
           activities={activityList}

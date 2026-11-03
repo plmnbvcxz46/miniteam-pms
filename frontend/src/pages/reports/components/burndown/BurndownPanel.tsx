@@ -1,12 +1,11 @@
-import type { Burndown, BurndownRange } from "../../../../types/reports";
+import type { Burndown } from "../../../../types/reports";
 import BurndownChart from "./BurndownChart";
 
 interface BurndownPanelProps {
   burndown: Burndown;
-  range: BurndownRange;
 }
 
-export default function BurndownPanel({ burndown, range }: BurndownPanelProps) {
+export default function BurndownPanel({ burndown }: BurndownPanelProps) {
   return (
     <section className="pnl span2">
       <div className="phd">
@@ -41,7 +40,7 @@ export default function BurndownPanel({ burndown, range }: BurndownPanelProps) {
         </div>
       </div>
       <div className="chartbox">
-        <BurndownChart burndown={burndown} range={range} />
+        <BurndownChart burndown={burndown} />
       </div>
     </section>
   );

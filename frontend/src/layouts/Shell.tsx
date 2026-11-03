@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
+import { useAccess } from "../access/useAccess";
 import { useAuth, useMe } from "../auth/useAuth";
 import { getProfile } from "../data/settings";
 import type { ProfileUpdate } from "../types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
-import { notifications as initialNotifications, projects as initialProjects } from "../data/global";
-import type { ProjectSave, ProjectSummary } from "../types/global";
+import { notifications as initialNotifications } from "../data/global";
 import { useTaskStore } from "../pages/board/taskStore";
 import { getColumnTasks } from "../pages/board/utils";
+import NoProject from "./components/NoProject";
 import ProjectSwitch from "./components/sidebar/ProjectSwitch";
 import SidebarNav from "./components/sidebar/SidebarNav";
 import SummaryCard from "./components/sidebar/SummaryCard";
@@ -18,12 +19,15 @@ import IssueSwitch from "./components/topbar/IssueSwitch";
 import NotificationBell from "./components/topbar/NotificationBell";
 import AccountMenu from "./components/topbar/AccountMenu";
 import WeekLine from "./components/topbar/WeekLine";
+import type { ShellContext } from "./useProjectPeriod";
 
 export default function Shell() {
   const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
   const settingsOpen = settingsSection !== null;
   const me = useMe();
   const { switchAccount } = useAuth();
+  const { projects, currentProject, selectProject, canCreateProject, createProject } =
+    useAccess();
   // 改过的个人资料按账号记着，切换账号后各看各的
   const [profileEdits, setProfileEdits] = useState<Record<number, ProfileUpdate>>({});
   // 新注册的账号不在人员列表里，姓名取登录身份
@@ -34,8 +38,6 @@ export default function Shell() {
   const setProfile = (values: ProfileUpdate) =>
     setProfileEdits((prev) => ({ ...prev, [me.user.id]: values }));
   const [projectFormOpen, setProjectFormOpen] = useState(false);
-  const [projectList, setProjectList] = useState(initialProjects);
-  const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
   const [notificationList, setNotificationList] = useState(initialNotifications);
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
@@ -48,44 +50,28 @@ export default function Shell() {
     switchAccount(userId);
   };
 
-  // POST /projects：新建后加进列表并切过去，创建人是项目经理
-  const handleCreateProject = (values: ProjectSave) => {
-    const project: ProjectSummary = {
-      id: Math.max(0, ...projectList.map((p) => p.id)) + 1,
-      name: values.name,
-      status: "ACTIVE",
-      startDate: values.startDate,
-      planEnd: values.planEnd,
-      issueNo: 1,
-      headline: null,
-      myProjectRole: "PM",
-    };
-    setProjectList((prev) => [project, ...prev]);
-    setCurrentProjectId(project.id);
-    setProjectFormOpen(false);
-  };
   return (
     <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
       {/* 左侧边栏 */}
       <aside className="index" id="index">
         <ProjectSwitch
-          projects={projectList}
-          currentId={currentProjectId}
-          onSelect={setCurrentProjectId}
-          onCreate={() => setProjectFormOpen(true)}
+          projects={projects}
+          currentId={currentProject?.id ?? null}
+          onSelect={selectProject}
+          onCreate={canCreateProject ? () => setProjectFormOpen(true) : undefined}
         />
         <SidebarNav
           riskCount={riskCount}
           onOpenSettings={() => setSettingsSection("people")}
         />
-        <SummaryCard />
+        {currentProject && <SummaryCard period={currentProject} />}
       </aside>
 
       {/* 顶部栏 */}
       <header className="masthead" id="masthead">
         <IssueSwitch />
         <div className="slot">
-          <WeekLine />
+          {currentProject && <WeekLine period={currentProject} />}
         </div>
         <NotificationBell
           notifications={notificationList}
@@ -105,9 +91,13 @@ export default function Shell() {
         />
       </header>
 
-      {/* 主视图内容区域 */}
+      {/* 主视图内容区域：没有能进的项目时没有页面可看 */}
       <main>
-        <Outlet />
+        {currentProject ? (
+          <Outlet context={{ period: currentProject } satisfies ShellContext} />
+        ) : (
+          <NoProject canCreate={canCreateProject} onCreate={() => setProjectFormOpen(true)} />
+        )}
       </main>
 
       {/* 设置抽屉 */}
@@ -124,7 +114,10 @@ export default function Shell() {
       {projectFormOpen && (
         <NewProjectDrawer
           onClose={() => setProjectFormOpen(false)}
-          onSubmit={handleCreateProject}
+          onSubmit={(values) => {
+            createProject(values);
+            setProjectFormOpen(false);
+          }}
         />
       )}
 

@@ -1,4 +1,5 @@
 import { currentProjectId, users } from "../../data/global";
+import type { IssueTaskState } from "../../data/issueSnapshots";
 import { getPriorityLabel, milestones } from "../../data/task";
 import type { TaskStatus, UserBrief } from "../../types/global";
 import type {
@@ -6,6 +7,7 @@ import type {
   TaskDetail,
   TaskFormValues,
 } from "../../types/task";
+import { daysBetween } from "../../utils/date";
 import { applyTaskStatus, getDueDate } from "./task/utils";
 
 /** 某一列的任务，按列内顺序排列 */
@@ -41,27 +43,6 @@ export function moveTaskTo(
     next[id] = { ...next[id], sortOrder };
   });
   return next;
-}
-
-/**
- * 看板上能看到哪些任务：有“编辑任务”权限的看全部，
- * 其他人只看自己负责的，加上关键路径上别人的任务（只读）
- */
-export function isTaskVisible(
-  task: TaskDetail,
-  userId: number,
-  canEditTask: boolean,
-): boolean {
-  return canEditTask || task.critical || task.assignee?.id === userId;
-}
-
-/** 能不能改任务的状态：有“编辑任务”权限的改任何人的，其他人只能改自己负责的 */
-export function canMoveTask(
-  task: TaskDetail,
-  userId: number,
-  canEditTask: boolean,
-): boolean {
-  return canEditTask || task.assignee?.id === userId;
 }
 
 /**
@@ -176,7 +157,7 @@ function toTaskFields(values: TaskFormValues) {
   };
 }
 
-/** 新建任务，放到待开始列最上面。优先级接通接口后由后端计算 */
+/** 新建任务，放到待开始列最上面。优先级得分不在这里算，由 TaskProvider 按评分算法得出 */
 export function createTask(
   tasks: Record<number, TaskDetail>,
   taskId: number,
@@ -184,7 +165,6 @@ export function createTask(
   today: string,
   creator: UserBrief,
 ): Record<number, TaskDetail> {
-  const score = 50 + values.predecessorIds.length * 10;
   const createdAt = `${today} 刚刚`;
   const task: TaskDetail = {
     ...toTaskFields(values),
@@ -192,7 +172,7 @@ export function createTask(
     taskNo: taskId,
     status: "TODO",
     progress: 0,
-    priority: { label: getPriorityLabel(score), score },
+    priority: { label: getPriorityLabel(0), score: 0 },
     critical: false,
     overdueDays: 0,
     sortOrder: 0,
@@ -233,4 +213,28 @@ export function updateTask(
   };
   const written = writeTask(tasks, task, values.predecessorIds);
   return applyTaskStatus(written, taskId, task.status, today);
+}
+
+/** 任务在某一期当时的样子：状态和进度取快照，逾期天数按那一天重新算，前后置任务里还没创建的去掉 */
+export function getTaskAtIssue(
+  task: TaskDetail,
+  states: Record<number, IssueTaskState>,
+  today: string,
+): TaskDetail {
+  const { status, progress } = states[task.id];
+  const atIssue = (dep: DependencyTask): DependencyTask[] =>
+    states[dep.task.id] ? [{ ...dep, status: states[dep.task.id].status }] : [];
+  return {
+    ...task,
+    status,
+    progress,
+    overdueDays:
+      status !== "DONE" && task.dueDate && task.dueDate < today
+        ? daysBetween(task.dueDate, today)
+        : 0,
+    actualStart: status === "TODO" ? null : task.actualStart,
+    actualEnd: status === "DONE" ? task.actualEnd : null,
+    predecessors: task.predecessors.flatMap(atIssue),
+    successors: task.successors.flatMap(atIssue),
+  };
 }

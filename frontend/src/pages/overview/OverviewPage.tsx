@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMe } from "../../auth/useAuth";
-import { currentProjectPeriod, users } from "../../data/global";
-import { getProjectToday } from "../../utils/date";
+import { useAccess } from "../../access/useAccess";
+import { users } from "../../data/global";
+import { useProjectPeriod } from "../../layouts/useProjectPeriod";
+import { useIssue } from "../../issue/useIssue";
 import { useTaskStore } from "../board/taskStore";
 import { computeCpm, getForecast, getTimelineTasks } from "../timeline/utils";
 import CriticalChainPanel from "./components/critical/CriticalChainPanel";
@@ -26,9 +27,10 @@ import "./css/overview.css";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { permissions } = useMe();
+  const { canEditTask } = useAccess();
+  const period = useProjectPeriod();
   const { taskMap, openTaskForm } = useTaskStore();
-  const today = getProjectToday();
+  const { today } = useIssue();
 
   const all = useMemo(() => Object.values(taskMap), [taskMap]);
   // 关键路径和预测与时间线页同一套算法
@@ -36,7 +38,7 @@ export default function OverviewPage() {
   const cpm = useMemo(() => computeCpm(tasks), [tasks]);
   const forecast = useMemo(() => getForecast(tasks, cpm), [tasks, cpm]);
 
-  const stats = getOverviewStats(all, cpm, today, currentProjectPeriod);
+  const stats = getOverviewStats(all, cpm, today, period);
   const headline = getHeadline(stats.overdue, cpm);
   const todos = getTodos(all, today);
   const chain = getCriticalChain(tasks, cpm);
@@ -49,10 +51,10 @@ export default function OverviewPage() {
   return (
     <section className="view" id="view-overview" data-view="overview">
       <OverviewHeader
-        kicker={formatKicker(stats, today, currentProjectPeriod)}
-        onCreateTask={permissions.canEditTask ? () => openTaskForm() : undefined}
+        kicker={formatKicker(stats, today, period)}
+        onCreateTask={canEditTask ? () => openTaskForm() : undefined}
       />
-      <FigureStrip stats={stats} planEnd={currentProjectPeriod.planEnd} />
+      <FigureStrip stats={stats} planEnd={period.planEnd} />
 
       <div className="ov1">
         <SchedulePanel
