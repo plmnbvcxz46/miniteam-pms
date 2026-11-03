@@ -89,6 +89,10 @@
 .tb-frame.tail {
   border-left: 0;
 }
+/* 还没完成的逾期段：右端就是今天，不画黑边，让今天线盖在橙色上 */
+.tb-frame.tail:not(.dashed) {
+  border-right: 0;
+}
 .tb-unused {
   z-index: 1;
   height: calc(var(--tb-bar) - 8px);

@@ -254,7 +254,7 @@
   color: var(--signal);
 }
 .cpmp > div:last-child {
-  padding: 4px 16px 8px;
+  padding: 0 16px 8px;
   max-height: 150px;
   overflow-y: auto;
   scrollbar-width: thin;

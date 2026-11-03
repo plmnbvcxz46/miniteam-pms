@@ -1,39 +1,23 @@
 import type { TaskDetail } from "../../../../types/task";
-import type { CpmResult, TimelineForecast } from "../../utils";
+import type { CpmResult } from "../../utils";
 import CriticalRow from "./CriticalRow";
 
 interface CriticalPanelProps {
   /** 按开始日排好的任务 */
   tasks: TaskDetail[];
   cpm: CpmResult;
-  forecast: TimelineForecast;
 }
 
-export default function CriticalPanel({
-  tasks,
-  cpm,
-  forecast,
-}: CriticalPanelProps) {
-  // 关键路径上的任务，按最早开始排
-  const path = tasks
-    .filter((task) => cpm.rows[task.id].slack === 0)
-    .sort((a, b) => cpm.rows[a.id].es - cpm.rows[b.id].es);
-
+export default function CriticalPanel({ tasks, cpm }: CriticalPanelProps) {
   return (
     <section className="pnl cpmp">
       <div className="phd">
         <div>
-          <span className="k">// CPM · 单位：工作日</span>
+          <span className="k">// CPM</span>
           <h2>关键路径计算</h2>
         </div>
         <span className="u">
-          关键路径 {path.map((task) => task.title).join(" → ")} · 总工期{" "}
-          {cpm.total}
-          {forecast.delayDays > 0 && (
-            <>
-              · 预计晚<em>+{forecast.delayDays}</em>
-            </>
-          )}
+          总工期 <em>{cpm.total}</em> 个工作日
         </span>
       </div>
 
