@@ -500,14 +500,6 @@ code {
   position: relative;
   flex-shrink: 0;
 }
-.bell i {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 7px;
-  height: 7px;
-  background: var(--ink);
-}
 .bell:hover {
   background: var(--wash);
 }

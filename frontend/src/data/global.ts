@@ -53,6 +53,9 @@ export const currentProjectPeriod: ProjectPeriod = {
   planEnd: "2026-11-29",
 };
 
+/** 未读通知数（对应 GET /notifications 的未读数量），顶栏铃铛据此变色 */
+export const unreadNotificationCount = 3;
+
 /** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 utils/date 的 getProjectToday() 读取 */
 export const projectTodayDate = "2026-10-22";
 
