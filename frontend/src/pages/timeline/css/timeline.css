@@ -1,0 +1,300 @@
+/* ==========================================================================
+   时间线 (Timeline)：依赖排期 + 关键路径计算
+   ========================================================================== */
+
+/* 一屏内展示，做法同协作页：页面高度 = 视口高度 − 顶部栏，超出的在面板里滚动 */
+#view-timeline {
+  flex: none;
+  height: calc(100vh - 94px);
+  max-height: calc(100vh - 94px);
+  min-height: 480px;
+  overflow: hidden;
+}
+.gp {
+  flex: 1;
+}
+/* 任务多了在面板里竖向滚动，表头和名称列固定 */
+.gp > .scroll-x {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.gp .phd > .r {
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  flex-direction: row;
+}
+.gp .pred {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-left: 22px;
+  border-left: 1.5px solid var(--ink);
+}
+.gp .pred span {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: right;
+}
+.gp .pred b {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 0.85;
+  letter-spacing: -2px;
+  color: var(--signal);
+}
+.gp .pred b.ok {
+  color: var(--ink);
+}
+
+/* ---------- 横轴 ---------- */
+.gt {
+  padding-bottom: 24px;
+}
+.gt-head {
+  position: sticky;
+  top: 0;
+  z-index: 7;
+  background: var(--paper);
+  display: flex;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+}
+.gt-gut {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  flex-shrink: 0;
+  background: var(--paper);
+}
+.gt-axis {
+  position: relative;
+  height: 44px;
+  flex-shrink: 0;
+}
+.gt-wk,
+.gt-d {
+  position: absolute;
+  box-sizing: border-box;
+}
+.gt-wk {
+  top: 0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 0 2px 6px;
+  border-left: 1.5px solid var(--ink);
+  white-space: nowrap;
+}
+.gt-d {
+  top: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 0 5px;
+  text-align: center;
+}
+.gt-d.off {
+  color: var(--mute);
+  font-weight: 500;
+}
+.gt-d.today {
+  box-shadow: inset 0 0 0 2px var(--signal);
+}
+
+/* ---------- 任务行 ---------- */
+.gt-body {
+  position: relative;
+}
+.gt-row {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-bottom: 1px dashed var(--ink);
+}
+.gt-row.last {
+  border-bottom: 2.5px solid var(--ink);
+}
+.gt-name {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: sticky;
+  left: 0;
+  z-index: 6;
+  width: var(--name);
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding-right: 8px;
+  background: var(--paper);
+}
+.gt-name b {
+  font-weight: 900;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gt-name small {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mute);
+}
+.gt-name:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+/* 关键路径上的任务：名称前一小块黑 */
+.gt-name.crit b::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  background: var(--ink);
+}
+.gt-lane {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+}
+/* 共用时间轴：任务条不留白，今天线由整张图统一画 */
+.gt-lane .tb-compact {
+  --tb-bar: 14px;
+  --tb-trk: 40px;
+  padding: 0;
+}
+.gt-lane .tb-compact .tb-now {
+  display: none;
+}
+
+/* ---------- 今天 / 计划 / 预测 竖线 ---------- */
+.gt-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  z-index: 3;
+}
+.gt-line.today {
+  border-left: 1.5px solid var(--signal);
+}
+.gt-line.plan {
+  border-left: 1.5px dashed var(--ink);
+}
+.gt-line.pred {
+  border-left: 3px solid var(--signal);
+}
+.gt-flag {
+  position: absolute;
+  bottom: -20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.gt-flag.left {
+  transform: translateX(calc(-100% - 6px));
+}
+.gt-flag.late {
+  color: var(--signal-text);
+}
+
+/* ---------- 依赖线 ---------- */
+.gt-deps {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+.gt-deps path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.gt-deps path.free {
+  stroke-dasharray: 4 4;
+}
+.gt-deps .head {
+  fill: var(--ink);
+  stroke: none;
+}
+
+/* ---------- 关键路径计算 ---------- */
+.cpmp {
+  padding: 0;
+  flex-shrink: 0;
+}
+.cpmp .phd {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 16px;
+  border: 0;
+}
+.cpmp .phd .k {
+  color: #cfcfca;
+}
+.cpmp .phd .u {
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 11px;
+}
+.cpmp .phd .u em {
+  font-style: normal;
+  color: var(--signal);
+}
+.cpmp > div:last-child {
+  padding: 4px 16px 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.cpm thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+}
+.cpm tr.crit td {
+  font-weight: 800;
+}
+.cpm tr.crit td:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 5px;
+  background: var(--ink);
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.cpm tr:not(.crit) td:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 5px;
+  border: 1px dashed var(--ink);
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+/* 进入页面时竖线从上往下划出 */
+.enter .gt-line {
+  animation: linedown 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (max-width: 900px) {
+  #view-timeline {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+}

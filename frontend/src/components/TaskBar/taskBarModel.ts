@@ -88,19 +88,21 @@ function clip(span: TimeSpan, limit: TimeSpan): TimeSpan | null {
  * 任务条的几何：主体始终是计划区间（开始日 00:00 ～ 截止日 24:00），逾期段追加在右侧。
  * 状态取任务的状态字段，只有逾期由日期判断：今天 > 截止日且未完成，或完成日 > 截止日
  * @param pad 时间轴两端留白的天数，概览小条传 0
+ * @param sharedRange 多个任务条共用一条时间轴（时间线页）时传入，覆盖按单个任务算的范围
  */
 export function buildTaskBar(
   task: TaskBarTask,
   activities: Activity[],
   today: string,
   pad?: number,
+  sharedRange?: AxisRange,
 ): TaskBarModel | null {
   if (!task.planStart || !task.dueDate) return null;
 
   const start = toDay(task.planStart);
   const due = dayEnd(task.dueDate);
   const now = toDay(today);
-  const range = getAxisRange(task, today, pad);
+  const range = sharedRange ?? getAxisRange(task, today, pad);
 
   const frames: BarFrame[] = [];
   const fills: BarFill[] = [];

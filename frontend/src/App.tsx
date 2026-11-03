@@ -6,7 +6,7 @@ import TaskProvider from "./pages/board/TaskProvider";
 import ReportsPage from "./pages/reports/ReportsPage";
 import DocumentsPage from "./pages/documents/DocumentsPage";
 import MembersPage from "./pages/members/MembersPage";
-import ProgressPage from "./pages/progress/ProgressPage";
+import TimelinePage from "./pages/timeline/TimelinePage";
 import CollabPage from "./pages/collab/CollabPage";
 import TaskPage from "./pages/board/task/TaskPage";
 
@@ -19,7 +19,7 @@ const router = createHashRouter([
       { path: "overview", element: <OverviewPage /> },
       { path: "board", element: <BoardPage /> },
       { path: "board/task", element: <TaskPage /> },
-      { path: "progress", element: <ProgressPage /> },
+      { path: "timeline", element: <TimelinePage /> },
       { path: "reports", element: <ReportsPage /> },
       { path: "collab", element: <CollabPage /> },
       { path: "documents", element: <DocumentsPage /> },

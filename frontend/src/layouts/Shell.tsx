@@ -55,7 +55,7 @@ export default function Shell() {
               {riskCount}
             </span>
           </NavLink>
-          <NavLink to="/progress">进度</NavLink>
+          <NavLink to="/timeline">时间线</NavLink>
           <NavLink to="/reports">统计报表</NavLink>
         </nav>
 
