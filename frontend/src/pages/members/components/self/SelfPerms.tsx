@@ -11,7 +11,7 @@ export default function SelfPerms({ permissions }: SelfPermsProps) {
       <div className="phd">
         <div>
           <span className="k">// ACCESS</span>
-          <h2 id="me-perm-h">我的权限</h2>
+          <h2 id="me-perm-h">项目权限</h2>
         </div>
       </div>
       <dl className="me-perm-list">

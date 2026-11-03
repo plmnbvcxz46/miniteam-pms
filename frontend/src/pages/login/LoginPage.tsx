@@ -1,17 +1,10 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../auth/useAuth";
 import { accounts as demoAccounts } from "../../data/auth";
-import { roleLabel } from "../../data/global";
-import { projectMembers } from "../../data/members";
 import type { AuthField } from "../../types/auth";
 import "./css/login.css";
 
 const REMEMBER_KEY = "pms.rememberedUsername";
-
-/** 演示账号标签：有项目的显示在第一个项目里的角色，没有的显示系统角色 */
-function firstProjectRole(userId: number) {
-  return projectMembers[1]?.find((m) => m.user.id === userId)?.projectRole ?? null;
-}
 
 function readRemembered(): string {
   try {
@@ -144,7 +137,7 @@ export default function LoginPage() {
                   id="auth-name"
                   autoFocus
                   autoComplete="name"
-                  placeholder="显示在成员列表里的名字"
+                  placeholder="真实姓名"
                   ref={(el) => {
                     inputs.current.realName = el;
                   }}
@@ -167,7 +160,7 @@ export default function LoginPage() {
                 autoComplete="username"
                 autoCapitalize="off"
                 spellCheck={false}
-                placeholder="输入账号，如 pm_a"
+                placeholder="账号"
                 ref={(el) => {
                   inputs.current.username = el;
                 }}
@@ -188,7 +181,7 @@ export default function LoginPage() {
                 type="password"
                 autoFocus={!isRegister && !!remembered}
                 autoComplete={isRegister ? "new-password" : "current-password"}
-                placeholder="输入密码"
+                placeholder="密码"
                 ref={(el) => {
                   inputs.current.password = el;
                 }}
@@ -238,11 +231,7 @@ export default function LoginPage() {
                   onClick={() => pickDemo(account.user.username)}
                 >
                   <b>{account.user.username}</b>
-                  <span>
-                    {firstProjectRole(account.user.id)
-                      ? roleLabel[firstProjectRole(account.user.id)!]
-                      : account.roleName}
-                  </span>
+                  <span>{account.roleName}</span>
                 </button>
               ))}
             </div>

@@ -8,7 +8,7 @@ export default function SelfHeader({ openCount, hours }: SelfHeaderProps) {
     <div className="vh">
       <div className="vl">
         <div className="k">
-          {openCount} 项未完成 · 本周 {hours} 小时
+          未完成 {openCount} 项 · 本周工时 {hours}
         </div>
         <h1 className="vt">
           我的<em>信息</em>

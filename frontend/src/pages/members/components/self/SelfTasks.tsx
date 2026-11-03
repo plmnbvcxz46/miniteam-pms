@@ -36,7 +36,7 @@ export default function SelfTasks({ tasks }: SelfTasksProps) {
       <div className="phd">
         <div>
           <span className="k">// TASKS</span>
-          <h2 id="me-task-h">我负责的任务</h2>
+          <h2 id="me-task-h">负责任务</h2>
         </div>
         <span className="n">{tasks.length}</span>
       </div>
@@ -81,9 +81,7 @@ export default function SelfTasks({ tasks }: SelfTasksProps) {
           ))}
         </ul>
       ) : (
-        <div className="me-empty">
-          {tasks.length === 0 ? "没有负责的任务" : "任务已全部完成"}
-        </div>
+        <div className="me-empty">—</div>
       )}
     </section>
   );

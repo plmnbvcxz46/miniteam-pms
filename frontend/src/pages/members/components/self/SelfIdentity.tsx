@@ -19,7 +19,7 @@ export default function SelfIdentity({
       <div className="phd">
         <div>
           <span className="k">// PROFILE</span>
-          <h2 id="me-id-h">我是谁</h2>
+          <h2 id="me-id-h">基本信息</h2>
         </div>
       </div>
       <div className="me-id-body">

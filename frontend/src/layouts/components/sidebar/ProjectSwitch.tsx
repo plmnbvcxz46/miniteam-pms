@@ -81,9 +81,6 @@ export default function ProjectSwitch({
                     ` · ${roleLabel[project.myProjectRole]}`}
                   {` · 第 ${project.issueNo} 期`}
                 </span>
-                {project.headline && (
-                  <span className="hl">{project.headline}</span>
-                )}
               </button>
             ))}
           </div>

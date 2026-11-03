@@ -427,16 +427,6 @@ code {
   font-size: 13px;
   color: var(--mute);
 }
-/* 项目：头条单独成行，竖线提示是要看的信息 */
-.projs .hl {
-  grid-column: 2 / 4;
-  margin-top: 4px;
-  padding-left: 8px;
-  border-left: 3px solid var(--signal);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-}
 .projs button.arch .no,
 .projs button.arch .hd,
 .projs button.arch .dt {

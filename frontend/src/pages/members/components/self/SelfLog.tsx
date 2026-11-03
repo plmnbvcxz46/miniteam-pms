@@ -12,7 +12,7 @@ export default function SelfLog({ logs }: SelfLogProps) {
       <div className="phd">
         <div>
           <span className="k">// LOGS</span>
-          <h2 id="me-log-h">我的变更</h2>
+          <h2 id="me-log-h">变更记录</h2>
         </div>
       </div>
       {logs.length > 0 ? (
@@ -27,7 +27,7 @@ export default function SelfLog({ logs }: SelfLogProps) {
           ))}
         </div>
       ) : (
-        <div className="me-empty">暂无变更记录</div>
+        <div className="me-empty">—</div>
       )}
     </section>
   );

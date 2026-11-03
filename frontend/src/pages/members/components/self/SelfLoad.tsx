@@ -28,7 +28,7 @@ export default function SelfLoad({ hours, capacity }: SelfLoadProps) {
       <div className="me-load-body">
         <div className="me-big">
           {hours}
-          <small>/ {capacity} h</small>
+          <small>（{capacity}）</small>
         </div>
         <div
           className="track"
