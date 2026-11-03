@@ -184,6 +184,9 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
     setPermLogs,
     roleOf: (userId) => (projectId === null ? null : roleIn(projectId, userId)),
     canEditTask: permissions.canEditTask && !isPast,
+    canDeleteTask:
+      (isAdmin || (projectId !== null && roleIn(projectId, me.user.id) === "PM")) &&
+      !isPast,
     canViewTask: (task) => isTaskVisible(task, me.user.id, permissions.canEditTask),
     canMoveTask: (task) =>
       !isPast && canMoveTaskRule(task, me.user.id, permissions.canEditTask),

@@ -16,7 +16,13 @@ import { useDocumentStore } from "../documents/documentStore";
 import { toDocumentBrief } from "../documents/utils";
 import { calculatePriorities, readPriorityConfig } from "./priority";
 import { TaskStoreContext, type TaskStore } from "./taskStore";
-import { createTask, getTaskAtIssue, moveTaskTo, updateTask } from "./utils";
+import {
+  createTask,
+  getTaskAtIssue,
+  moveTaskTo,
+  removeTask,
+  updateTask,
+} from "./utils";
 
 /** 新建任务在看板上高亮的时长 */
 const FRESH_MS = 2400;
@@ -24,7 +30,7 @@ const FRESH_MS = 2400;
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
   const { user: currentUser } = useMe();
-  const { canEditTask, canMoveTask } = useAccess();
+  const { canEditTask, canDeleteTask, canMoveTask } = useAccess();
   const { isPast, viewing, today } = useIssue();
   const [baseTaskMap, setTaskMap] =
     useState<Record<number, TaskDetail>>(initialTaskDetails);
@@ -135,6 +141,19 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const deleteTask = (taskId: number) => {
+    // 页面上没权限的人看不到入口，这里再挡一道，防止别处误调用
+    if (isPast) return "过去的期只能查看";
+    if (!canDeleteTask) return "只有项目经理和系统管理员能删除任务";
+    setTaskMap((prev) => removeTask(prev, taskId));
+    setActivityMap((prev) =>
+      Object.fromEntries(
+        Object.entries(prev).filter(([id]) => Number(id) !== taskId),
+      ),
+    );
+    return null;
+  };
+
   return (
     <TaskStoreContext.Provider
       value={{
@@ -147,6 +166,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         },
         closeTaskForm: () => setTaskForm(null),
         saveTaskForm,
+        deleteTask,
         freshTaskId,
       }}
     >

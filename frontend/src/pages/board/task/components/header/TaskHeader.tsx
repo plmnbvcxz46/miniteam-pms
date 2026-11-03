@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { taskStatusLabel } from "../../../../../data/global";
 import { taskStatusKey } from "../../../../../data/task";
 import type { TaskStatus } from "../../../../../types/global";
@@ -11,6 +12,8 @@ interface TaskHeaderProps {
   onChangeStatus?: (status: TaskStatus) => void;
   /** 没有“编辑任务”权限时不传，编辑按钮不显示 */
   onEdit?: () => void;
+  /** 只有项目经理和系统管理员能删，其他人不传，删除按钮不显示 */
+  onDelete?: () => void;
 }
 
 export default function TaskHeader({
@@ -18,7 +21,10 @@ export default function TaskHeader({
   onBack,
   onChangeStatus,
   onEdit,
+  onDelete,
 }: TaskHeaderProps) {
+  // 删除要点两次，点别处就取消
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const taskCode = `T-${task.taskNo ?? task.id}`;
 
   return (
@@ -57,7 +63,7 @@ export default function TaskHeader({
           {task.critical && <span className="crit">在关键路径上</span>}
         </p>
       </div>
-      {(onChangeStatus || onEdit) && (
+      {(onChangeStatus || onEdit || onDelete) && (
         <div className="va tk-acts">
           {onChangeStatus && (
             <StatusChips status={task.status} onChange={onChangeStatus} />
@@ -65,6 +71,16 @@ export default function TaskHeader({
           {onEdit && (
             <button className="btn" type="button" onClick={onEdit}>
               编辑
+            </button>
+          )}
+          {onDelete && (
+            <button
+              className="btn risk"
+              type="button"
+              onClick={() => (confirmDelete ? onDelete() : setConfirmDelete(true))}
+              onBlur={() => setConfirmDelete(false)}
+            >
+              {confirmDelete ? "再点一次确认删除" : "删除"}
             </button>
           )}
         </div>
