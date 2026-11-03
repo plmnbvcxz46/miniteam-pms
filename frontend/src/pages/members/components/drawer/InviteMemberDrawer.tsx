@@ -21,15 +21,17 @@ interface InviteMemberDrawerProps {
   }) => void;
 }
 
-export default function InviteMemberDrawer({
-  isOpen,
+/** 关着时不渲染，打开时才挂上表单，每次打开都是新的表单状态 */
+export default function InviteMemberDrawer(props: InviteMemberDrawerProps) {
+  return props.isOpen ? <InviteMemberForm {...props} /> : null;
+}
+
+function InviteMemberForm({
   onClose,
   candidates,
   permDefs,
   onSubmit,
 }: InviteMemberDrawerProps) {
-  if (!isOpen) return null;
-
   const [selectedUserId, setSelectedUserId] = useState<number>(
     candidates[0]?.id ?? 0,
   );
