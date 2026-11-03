@@ -37,6 +37,24 @@ export const users = {
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
 
+/**
+ * 我的系统权限编码（对应 GET /auth/me 的 permissions），由我的系统角色决定。
+ * 当前用户是项目经理，没有 system:view，所以看不到系统管理里的人员、角色、字典、日志、参数；
+ * 想预览这些分区，在数组里加上 "system:view"
+ */
+export const mySystemPermissions: string[] = [
+  "project:overview:view",
+  "project:task:list",
+  "project:task:move",
+  "project:schedule:view",
+  "project:schedule:edit",
+  "project:report:view",
+  "collab:thread:list",
+  "collab:doc:list",
+  "collab:doc:upload",
+  "project:member:list",
+];
+
 /** 我在当前项目的角色（对应 ProjectDetail.myProjectRole） */
 export const myProjectRole: ProjectRole = "PM";
 

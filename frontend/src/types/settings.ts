@@ -26,6 +26,13 @@ export interface SystemUser {
   createdAt: string;
 }
 
+/** 修改个人信息请求体（ProfileUpdate），PUT /auth/me */
+export interface ProfileUpdate {
+  realName: string;
+  email: string;
+  skillTags: string[];
+}
+
 /** 新增用户请求体（UserCreate），POST /users */
 export interface UserCreate {
   username: string;

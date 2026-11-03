@@ -5,6 +5,7 @@ import type {
   DictType,
   LogItem,
   Permission,
+  ProfileUpdate,
   Role,
   SystemUser,
 } from "../types/settings";
@@ -54,6 +55,13 @@ export const logActionLabel: Record<string, string> = {
 
 const { pmA, devA, devB, qaC } = users;
 const guest: UserBrief = { id: 6, username: "guest", realName: "访客" };
+
+/** 我的个人资料（GET /auth/me 的 user），姓名取自 currentUser */
+export const myProfile: ProfileUpdate = {
+  realName: pmA.realName,
+  email: "pm_a@example.com",
+  skillTags: ["项目管理", "需求分析"],
+};
 
 /** GET /roles */
 export const roles: Role[] = [
