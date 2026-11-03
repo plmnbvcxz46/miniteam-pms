@@ -6,8 +6,11 @@ import type { TaskDetail, TaskFormValues } from "../../types/task";
 export interface TaskStore {
   taskMap: Record<number, TaskDetail>;
   activityMap: Record<number, Activity[]>;
-  /** 把任务移到某列的第 index 位，对应 PUT /tasks/{taskId}/position */
-  moveTask: (taskId: number, status: TaskStatus, index: number) => void;
+  /**
+   * 把任务移到某列的第 index 位，对应 PUT /tasks/{taskId}/position。
+   * 没有移动时返回原因（例如关联的文档还没定稿），移动成功返回 null
+   */
+  moveTask: (taskId: number, status: TaskStatus, index: number) => string | null;
   /** 打开中的任务表单：taskId 为空是新建，否则是编辑 */
   taskForm: { taskId: number | null } | null;
   openTaskForm: (taskId?: number) => void;

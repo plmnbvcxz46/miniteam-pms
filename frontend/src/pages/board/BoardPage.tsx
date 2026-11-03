@@ -21,7 +21,8 @@ export default function BoardPage() {
   const [filter, setFilter] = useState<BoardFilter>("all");
 
   const handleDrop = (taskId: number, target: DropTarget) => {
-    moveTask(taskId, target.status, target.index);
+    const blocked = moveTask(taskId, target.status, target.index);
+    if (blocked) window.alert(blocked);
   };
   const { drag, handlePress, wasDragged } = useCardDrag(handleDrop);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import type { DocumentItem } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../types/documents";
 import { getDayOffset, getTimelinePercent, getDocStatus } from "../../utils";
 
 interface TimelineBarProps {
@@ -31,7 +31,7 @@ function TimelineBar({ className = "b on", fromOffset, toOffset }: TimelineBarPr
 }
 
 interface DocumentRevisingItemProps {
-  doc: DocumentItem;
+  doc: BoundDocument;
   orderIndex: number;
   isSelected: boolean;
   todayOffset: number;
@@ -77,7 +77,7 @@ export default function DocumentRevisingItem({
       <span className="dn">
         <b>{doc.n}</b>
         <small>
-          {doc.task} · {doc.who}
+          {doc.taskTitle} · {doc.who}
         </small>
       </span>
       <span className="trk" aria-hidden="true">

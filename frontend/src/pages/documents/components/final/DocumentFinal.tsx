@@ -1,10 +1,10 @@
-import type { DocumentItem } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../types/documents";
 import DocumentFinalHeader from "./DocumentFinalHeader";
 import DocumentFinalItem from "./DocumentFinalItem";
 
 interface DocumentFinalProps {
   /** 定稿文档列表 */
-  docs: DocumentItem[];
+  docs: BoundDocument[];
   /** 当前选中的文档 ID */
   selectedId: number | null;
   /** 选中回调 */
