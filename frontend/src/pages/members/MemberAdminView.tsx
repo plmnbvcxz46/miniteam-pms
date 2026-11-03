@@ -8,6 +8,8 @@ import type {
 import { roleLabel } from "../../data/global";
 import type { Member } from "../../types/members";
 import { useAccess } from "../../access/useAccess";
+import { useIssue } from "../../issue/useIssue";
+import { useTaskStore } from "../board/taskStore";
 import { useMe } from "../../auth/useAuth";
 import { permDefs, inviteCandidates } from "../../data/members";
 import { defaultWeeklyCapacity } from "../../data/settings";
@@ -23,11 +25,27 @@ import "./css/members.css";
 export default function MemberAdminView() {
   const {
     permissions,
-    members: memberList,
+    members: accessMembers,
     setMembers: setMemberList,
     permLogs: logList,
     setPermLogs: setLogList,
   } = useAccess();
+
+  const { isPast } = useIssue();
+  const { taskMap } = useTaskStore();
+  // 看过去的期时，负责任务数按当时的任务重算
+  const memberList = useMemo(
+    () =>
+      isPast
+        ? accessMembers.map((m) => ({
+            ...m,
+            taskCount: Object.values(taskMap).filter(
+              (t) => t.status !== "DONE" && t.assignee?.id === m.user.id,
+            ).length,
+          }))
+        : accessMembers,
+    [accessMembers, isPast, taskMap],
+  );
 
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -37,7 +55,8 @@ export default function MemberAdminView() {
 
   // 权限与人数统计
   const { user: currentUser } = useMe();
-  const canManageMember = permissions.canManageMember;
+  // 过去的期只读
+  const canManageMember = permissions.canManageMember && !isPast;
   const overCapacityCount = useMemo(
     () => getOverCapacityCount(memberList),
     [memberList],

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useMe } from "../../auth/useAuth";
+import { useIssue } from "../../issue/useIssue";
 import type { DocumentItem } from "../../types/documents";
 import { formatDayLabel } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
@@ -10,13 +11,14 @@ import DocumentFinal from "./components/final/DocumentFinal";
 import DocumentDetail from "./components/detail/DocumentDetail";
 import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
 import { useDocumentStore } from "./documentStore";
-import { bindDocToTask, getDocToday } from "./utils";
+import { bindDocToTask } from "./utils";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
   // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
   const { docs: rawDocs, setDocs: setDocList, finalizeDocument } = useDocumentStore();
-  const currentDate = getDocToday();
+  const { isPast, today } = useIssue();
+  const currentDate = formatDayLabel(today);
   const { user: currentUser } = useMe();
 
   // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
@@ -175,7 +177,7 @@ export default function DocumentsPage() {
         currentDate={currentDate}
         searchKeyword={searchKeyword}
         onSearchChange={setSearchKeyword}
-        onUploadClick={handleOpenNewUpload}
+        onUploadClick={isPast ? undefined : handleOpenNewUpload}
       />
 
       <div className="dg">
@@ -197,8 +199,8 @@ export default function DocumentsPage() {
           doc={selectedDoc}
           currentDate={currentDate}
           onTaskClick={(taskId) => navigate(`/board/task?id=${taskId}`)}
-          onUploadVersion={handleOpenVersionUpload}
-          onFinalize={handleFinalize}
+          onUploadVersion={isPast ? undefined : handleOpenVersionUpload}
+          onFinalize={isPast ? undefined : handleFinalize}
         />
       </div>
 

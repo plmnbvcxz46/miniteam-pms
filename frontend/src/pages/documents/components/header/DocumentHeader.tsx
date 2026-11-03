@@ -51,13 +51,15 @@ export default function DocumentHeader({
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </label>
-        <button
-          className="btn primary go"
-          type="button"
-          onClick={onUploadClick}
-        >
-          + 上传文档
-        </button>
+        {onUploadClick && (
+          <button
+            className="btn primary go"
+            type="button"
+            onClick={onUploadClick}
+          >
+            + 上传文档
+          </button>
+        )}
       </div>
     </div>
   );

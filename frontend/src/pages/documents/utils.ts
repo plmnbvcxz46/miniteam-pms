@@ -47,6 +47,41 @@ export function getDayOffset(str: string): number {
   return toDay(toDate(str)) - toDay(getAxisStart());
 }
 
+/** "M.DD" 转成 yyyy-MM-dd，年份取项目所在年 */
+function toIsoDate(md: string): string {
+  const [m, d] = md.split(/[.-]/).map(Number);
+  return `${getProjectToday().slice(0, 4)}-${pad2(m)}-${pad2(d)}`;
+}
+
+/**
+ * 文档在某一天的样子：只留那天以前的版本，最新版本、更新人、更新日期取其中最新的一条，
+ * 第一个版本还没上传的文档不出现，定稿日（最后更新日）在那天之后的还算修订中
+ */
+export function getDocsAtDate(docs: DocumentItem[], date: string): DocumentItem[] {
+  return docs.flatMap((doc) => {
+    const versions = doc.hist
+      .map((record) =>
+        Array.isArray(record)
+          ? { version: record[0], date: record[1], operator: record[2] }
+          : record,
+      )
+      .map((record, i) => ({ record, source: doc.hist[i] }))
+      .filter(({ record }) => toIsoDate(record.date) <= date);
+    if (versions.length === 0) return [];
+    const { record } = versions[0];
+    return [
+      {
+        ...doc,
+        v: record.version,
+        who: record.operator,
+        up: record.date,
+        final: doc.final && toIsoDate(doc.up) <= date ? true : undefined,
+        hist: versions.map(({ source }) => source),
+      },
+    ];
+  });
+}
+
 /**
  * 文档绑定了任务时，截止日跟随任务截止日；没绑任务的文档用自己的 due。
  * 是否定稿是文档自己的状态，可以早于任务完成，不跟随任务

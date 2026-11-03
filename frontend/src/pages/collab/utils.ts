@@ -447,3 +447,54 @@ export function finalizeMention(value: MentionValue): MentionValue {
     documents: value.documents.filter((doc) => text.includes(`@${doc.name}`)),
   };
 }
+
+/**
+ * 讨论、评论和动态在某一天的样子：只留那天以前发生的，
+ * 评论数和最后评论时间按留下的评论重算，关联的任务还没创建时不再关联
+ */
+export function getCollabAtDate(
+  discussions: DiscussionBrief[],
+  details: Record<number, DiscussionDetail>,
+  activities: Activity[],
+  taskMap: Record<number, TaskDetail>,
+  date: string,
+) {
+  const upTo = (createdAt: string) => createdAt.slice(0, 10) <= date;
+  const detailMap: Record<number, DiscussionDetail> = {};
+  for (const detail of Object.values(details)) {
+    if (!upTo(detail.createdAt)) continue;
+    const task = detail.task ? taskMap[detail.task.id] : undefined;
+    detailMap[detail.id] = {
+      ...detail,
+      comments: detail.comments.filter((c) => upTo(c.createdAt)),
+      task:
+        detail.task && task
+          ? { ...detail.task, status: task.status, overdueDays: task.overdueDays }
+          : null,
+    };
+  }
+  const briefs = discussions.flatMap((brief) => {
+    const detail = detailMap[brief.id];
+    if (!detail) return [];
+    const last = detail.comments[detail.comments.length - 1];
+    return [
+      {
+        ...brief,
+        task: detail.task && { id: detail.task.id, taskNo: detail.task.taskNo, title: detail.task.title },
+        commentCount: detail.comments.length,
+        lastCommentAt: last?.createdAt ?? detail.createdAt,
+      },
+    ];
+  });
+  return {
+    discussions: briefs,
+    detailMap,
+    activities: activities.filter(
+      (act) =>
+        /^\d{4}-\d{2}-\d{2}/.test(act.createdAt) &&
+        upTo(act.createdAt) &&
+        (act.targetType !== "DISCUSSION" ||
+          (act.targetId !== null && !!detailMap[act.targetId])),
+    ),
+  };
+}
