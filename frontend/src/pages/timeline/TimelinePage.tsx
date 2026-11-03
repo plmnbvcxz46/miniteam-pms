@@ -52,7 +52,7 @@ export default function TimelinePage() {
         scale={scale}
         onOpenTask={(taskId) => navigate(`/board/task?id=${taskId}`)}
       />
-      <CriticalPanel tasks={tasks} cpm={cpm} forecast={forecast} />
+      <CriticalPanel tasks={tasks} cpm={cpm} />
     </section>
   );
 }

@@ -87,10 +87,9 @@ export default function GanttPanel({
           </div>
           <div className="pred">
             <span>
-              本阶段预测
+              预测完成
               <br />
-              计划 {formatDayLabel(forecast.planEnd)}
-              {late ? ` · 晚 ${forecast.delayDays} 天` : " · 按时"}
+              {late ? `晚 ${forecast.delayDays} 天` : "按时"}
             </span>
             <b className={late ? "" : "ok"}>
               {formatDayLabel(forecast.predictedEnd)}
