@@ -24,7 +24,7 @@ export default function LoadPanel({ workload }: LoadPanelProps) {
           <span className="k">// WORKLOAD</span>
           <h2>成员工时</h2>
         </div>
-        <span className="u">单位：小时 · 虚线为每周上限</span>
+        <span className="u">单位：小时 · 虚线为上限</span>
       </div>
       <div className="load" id="load">
         {members.map((member) => (

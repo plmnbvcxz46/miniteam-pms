@@ -42,7 +42,7 @@ export default function ReportsPage() {
       />
 
       <div className="rpt">
-        <BurndownPanel burndown={currentBurndown} range={range} />
+        <BurndownPanel burndown={currentBurndown} />
         <LoadPanel workload={workload} />
         <WeeklyPanel items={weeklyCompleted} />
         <DeviationPanel items={durationDeviation} />
