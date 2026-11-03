@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { useMe } from "../../../auth/useAuth";
 import type { ProfileUpdate } from "../../../types/settings";
-import Switch from "../components/Switch";
+
+/** 技能标签：每个最长 12 个字，最多 10 个 */
+const MAX_TAG_LENGTH = 12;
+const MAX_TAGS = 10;
 
 interface MePanelProps {
   profile: ProfileUpdate;
@@ -15,10 +18,10 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
   const [email, setEmail] = useState(profile.email);
   const [skillTags, setSkillTags] = useState(profile.skillTags);
   const [tagInput, setTagInput] = useState("");
+  const [tagError, setTagError] = useState("");
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [saved, setSaved] = useState(false);
-  const [calm, setCalm] = useState(() => document.body.classList.contains("calm"));
   const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -31,10 +34,24 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
 
   const addTag = () => {
     const tag = tagInput.trim();
-    if (tag && !skillTags.includes(tag)) {
+    if (!tag) {
+      setTagInput("");
+      return;
+    }
+    if (tag.length > MAX_TAG_LENGTH) {
+      setTagError(`标签最长 ${MAX_TAG_LENGTH} 个字`);
+      return;
+    }
+    if (skillTags.length >= MAX_TAGS) {
+      setTagError(`最多 ${MAX_TAGS} 个标签`);
+      return;
+    }
+    // React 和 react 算同一个标签
+    if (!skillTags.some((t) => t.toLowerCase() === tag.toLowerCase())) {
       setSkillTags([...skillTags, tag]);
       touch();
     }
+    setTagError("");
     setTagInput("");
   };
 
@@ -52,12 +69,6 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
     setRealName(name);
     setEmail(mail);
     setSaved(true);
-  };
-
-  // 减少动态效果：全站关掉动画和过渡
-  const changeCalm = (on: boolean) => {
-    setCalm(on);
-    document.body.classList.toggle("calm", on);
   };
 
   return (
@@ -131,7 +142,10 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
                   aria-label="新技能标签"
                   placeholder="输入后回车"
                   value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
+                  onChange={(e) => {
+                    setTagInput(e.target.value);
+                    setTagError("");
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -142,6 +156,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
                 <button className="btn" type="button" onClick={addTag}>
                   添加
                 </button>
+                {tagError && <span className="msg err">{tagError}</span>}
               </div>
             </div>
           </div>
@@ -182,17 +197,6 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
                   {message && <span className="msg">{message}</span>}
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="blk">
-        <h2>偏好</h2>
-        <div className="rows">
-          <div className="srow">
-            <span className="lb">减少动态效果</span>
-            <div>
-              <Switch label="减少动态效果" value={calm} onChange={changeCalm} />
             </div>
           </div>
         </div>

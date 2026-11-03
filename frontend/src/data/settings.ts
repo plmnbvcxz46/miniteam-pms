@@ -36,7 +36,7 @@ export const logActionLabel: Record<string, string> = {
   UPLOAD: "上传文档",
   REVISE: "修订文档",
   LOGIN: "账号登录",
-  LOGIN_FAIL: "账号登录",
+  LOGIN_FAIL: "登录失败",
 };
 
 /* =========================================================
@@ -260,13 +260,11 @@ export const logs: LogItem[] = [
 
 /** GET /configs */
 export const configs: ConfigItem[] = [
-  { key: "account.default_password", value: "********", name: "新用户默认密码", remark: "新增人员和重置密码时使用", updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.allow_register", value: "false", name: "允许自助注册", remark: null, updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.lock_threshold", value: "5", name: "登录失败锁定", remark: "连续失败多少次后锁定账号", updatedAt: "2026-09-18 09:00:00" },
-  { key: "account.session_minutes", value: "120", name: "会话超时", remark: "分钟", updatedAt: "2026-09-18 09:00:00" },
-  { key: "layout.headline_max", value: "24", name: "头条字数上限", remark: null, updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.importance", value: "0.4", name: "重要度权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.urgency", value: "0.3", name: "紧急度权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.dependency", value: "0.2", name: "依赖影响权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
-  { key: "priority.weight.delay", value: "0.1", name: "延期风险权重", remark: "四个权重之和须为 1", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.importance", value: "0.30", name: "优先级权重 w1", remark: "重要度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.urgency", value: "0.30", name: "优先级权重 w2", remark: "紧急度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.time", value: "0.25", name: "优先级权重 w3", remark: "时间紧迫度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.weight.block", value: "0.15", name: "优先级权重 w4", remark: "阻塞影响度", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.alpha", value: "0.5", name: "关键路径加权系数 α", remark: "阻塞影响度中关键路径任务的额外加权", updatedAt: "2026-09-18 09:00:00" },
+  { key: "priority.top_n", value: "5", name: "今日待办条数", remark: null, updatedAt: "2026-09-18 09:00:00" },
+  { key: "member.weekly_capacity", value: "40", name: "默认每周工时上限", remark: "小时", updatedAt: "2026-09-18 09:00:00" },
 ];

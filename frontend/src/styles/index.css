@@ -1902,6 +1902,10 @@ select.in {
   height: 26px;
   padding: 0 6px;
 }
+.matrix .fixed {
+  font-family: var(--mono);
+  font-weight: 700;
+}
 .logday {
   display: flex;
   flex-direction: column;
@@ -1938,9 +1942,6 @@ select.in {
   font-size: 11px;
   font-weight: 700;
 }
-.lg.fail b {
-  color: var(--signal-text);
-}
 /* 系统管理里的操作反馈 */
 .ss .msg {
   margin: 0;
@@ -1961,10 +1962,6 @@ select.in {
   font-family: var(--mono);
   font-weight: 400;
   color: var(--mute);
-}
-body.calm * {
-  animation: none !important;
-  transition: none !important;
 }
 
 /* form drawer */

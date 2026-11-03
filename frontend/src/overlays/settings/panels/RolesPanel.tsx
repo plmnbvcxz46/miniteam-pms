@@ -78,17 +78,22 @@ function GroupRows({ group, items, roles, onToggle }: GroupRowsProps) {
           </td>
           {roles.map((role) => (
             <td className="p" key={role.id}>
-              <button
-                className="pm"
-                type="button"
-                aria-pressed={role.permissions.includes(permission.code)}
-                aria-label={`${role.name} ${permission.name}`}
-                // 超级管理员的权限不能改，避免把自己锁在系统外
-                disabled={role.code === "SUPER_ADMIN"}
-                onClick={() => onToggle(role.id, permission.code)}
-              >
-                <i />
-              </button>
+              {role.code === "SUPER_ADMIN" ? (
+                // 超级管理员的权限不能改，避免把自己锁在系统外：只显示，不给开关
+                <span className="fixed">
+                  {role.permissions.includes(permission.code) ? "✓" : "—"}
+                </span>
+              ) : (
+                <button
+                  className="pm"
+                  type="button"
+                  aria-pressed={role.permissions.includes(permission.code)}
+                  aria-label={`${role.name} ${permission.name}`}
+                  onClick={() => onToggle(role.id, permission.code)}
+                >
+                  <i />
+                </button>
+              )}
             </td>
           ))}
         </tr>

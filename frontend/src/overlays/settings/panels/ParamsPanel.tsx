@@ -1,14 +1,8 @@
 import { useState } from "react";
 import { configs } from "../../../data/settings";
-import Switch from "../components/Switch";
 
 const initialValues = Object.fromEntries(configs.map((c) => [c.key, c.value]));
 const weightConfigs = configs.filter((c) => c.key.startsWith("priority.weight."));
-const numberKeys = [
-  "account.lock_threshold",
-  "account.session_minutes",
-  "layout.headline_max",
-];
 
 export default function ParamsPanel() {
   const [values, setValues] = useState(initialValues);
@@ -27,17 +21,30 @@ export default function ParamsPanel() {
 
   // PUT /configs/{key}：逐项校验后保存
   const handleSave = () => {
-    const badNumber = numberKeys.find((key) => {
-      const n = Number(values[key]);
-      return !Number.isInteger(n) || n <= 0;
+    const badWeight = weightConfigs.find((c) => {
+      const n = Number(values[c.key]);
+      return values[c.key].trim() === "" || Number.isNaN(n) || n < 0 || n > 1;
     });
-    if (badNumber) {
-      const name = configs.find((c) => c.key === badNumber)!.name;
-      setError(`${name}要填大于 0 的整数`);
+    if (badWeight) {
+      setError(`${badWeight.remark}权重要填 0 到 1 之间的数`);
       return;
     }
     if (Math.abs(weightSum - 1) > 0.001) {
       setError(`四个优先级权重之和须为 1，现在是 ${weightSum.toFixed(2)}`);
+      return;
+    }
+    const alpha = Number(values["priority.alpha"]);
+    if (values["priority.alpha"].trim() === "" || Number.isNaN(alpha) || alpha < 0) {
+      setError("关键路径加权系数要填不小于 0 的数");
+      return;
+    }
+    const badInteger = ["priority.top_n", "member.weekly_capacity"].find((key) => {
+      const n = Number(values[key]);
+      return !Number.isInteger(n) || n <= 0;
+    });
+    if (badInteger) {
+      const name = configs.find((c) => c.key === badInteger)!.name;
+      setError(`${name}要填大于 0 的整数`);
       return;
     }
     setMessage("已保存");
@@ -46,54 +53,13 @@ export default function ParamsPanel() {
   return (
     <section className="ss" id="ss-params">
       <div className="blk">
-        <h2>账号安全</h2>
-        <div className="rows">
-          <div className="srow">
-            <span className="lb">允许自助注册</span>
-            <div>
-              <Switch
-                label="允许自助注册"
-                value={values["account.allow_register"] === "true"}
-                onChange={(on) => set("account.allow_register", String(on))}
-              />
-            </div>
-          </div>
-          <NumberRow
-            id="s-lock"
-            label="登录失败锁定"
-            unit="次"
-            value={values["account.lock_threshold"]}
-            onChange={(v) => set("account.lock_threshold", v)}
-          />
-          <NumberRow
-            id="s-sess"
-            label="会话超时"
-            unit="分钟"
-            value={values["account.session_minutes"]}
-            onChange={(v) => set("account.session_minutes", v)}
-          />
-        </div>
-      </div>
-      <div className="blk">
-        <h2>版面</h2>
-        <div className="rows">
-          <NumberRow
-            id="s-hl"
-            label="头条字数上限"
-            unit="字"
-            value={values["layout.headline_max"]}
-            onChange={(v) => set("layout.headline_max", v)}
-          />
-        </div>
-      </div>
-      <div className="blk">
         <h2>优先级权重</h2>
         <div className="rows">
           {weightConfigs.map((config) => (
             <NumberRow
               key={config.key}
               id={`s-${config.key}`}
-              label={config.name.replace("权重", "")}
+              label={config.remark ?? config.name}
               unit=""
               value={values[config.key]}
               onChange={(v) => set(config.key, v)}
@@ -108,6 +74,32 @@ export default function ParamsPanel() {
               <span>须为 1</span>
             </div>
           </div>
+          <NumberRow
+            id="s-alpha"
+            label="关键路径加权系数"
+            unit="α"
+            value={values["priority.alpha"]}
+            onChange={(v) => set("priority.alpha", v)}
+          />
+        </div>
+      </div>
+      <div className="blk">
+        <h2>默认值</h2>
+        <div className="rows">
+          <NumberRow
+            id="s-topn"
+            label="今日待办条数"
+            unit="条"
+            value={values["priority.top_n"]}
+            onChange={(v) => set("priority.top_n", v)}
+          />
+          <NumberRow
+            id="s-cap"
+            label="每周工时上限"
+            unit="小时"
+            value={values["member.weekly_capacity"]}
+            onChange={(v) => set("member.weekly_capacity", v)}
+          />
         </div>
       </div>
       <div className="acts">
