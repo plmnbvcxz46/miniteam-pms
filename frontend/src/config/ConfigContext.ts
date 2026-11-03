@@ -6,8 +6,8 @@ import { createContext } from "react";
  */
 export interface ConfigState {
   values: Record<string, string>;
-  /** 保存修改后的参数 */
-  save: (values: Record<string, string>) => void;
+  /** 保存修改后的参数：只提交有变化的项，失败时抛 ApiError */
+  save: (values: Record<string, string>) => Promise<void>;
 }
 
 export const ConfigContext = createContext<ConfigState | null>(null);

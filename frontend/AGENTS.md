@@ -39,7 +39,7 @@ src/
 |---|---|
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | OpenAPI 公共 schema |
 | `currentProjectId` | 路由或项目上下文 |
-| 当前登录身份（用户、系统角色） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`；账号假数据在 `data/auth.ts` |
+| 当前登录身份（用户、系统角色） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`，已接真实接口，token 存在 `sessionStorage`（`src/api/http.ts`） |
 | 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目，权限取自 `data/members.ts` 的 `projectMembers`（对应 `GET /projects`、`GET /projects/{projectId}/members`） |
 | 正在看哪一期、各页面的“今天” | `src/issue/` 的 `useIssue()`。过去的期只读；接口对应 `GET /projects/{projectId}/issues` 和 `GET /projects/{projectId}/issues/{issueDate}` |
 | `users`（项目成员的 `UserBrief`，各模块假数据共用） | `GET /projects/{projectId}/members` 的 `user` |
@@ -61,7 +61,11 @@ src/
 | 报表 Excel 导出 | `utils/xlsx.ts` 手写 | 读 `GET /projects/{projectId}/reports/export` 返回的文件 |
 | 项目和权限判断 | `src/access/` | 登录态和 `GET /projects` 的结果 |
 
-假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。已知和文档不一致的地方：系统角色前端只分系统管理员和普通用户，后端种子里还是 5 个角色。
+假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。系统角色已统一为系统管理员 `ADMIN` 和普通用户 `USER` 两种。
+
+### 已接真实接口的部分
+
+请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志。
 
 ### 模块（`types/<模块>.ts`、`data/<模块>.ts`）
 

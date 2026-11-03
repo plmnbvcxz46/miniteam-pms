@@ -37,7 +37,9 @@ const router = createHashRouter([
 
 /** 没登录只显示登录页，登录后才挂上各页面的数据 */
 function AuthGate() {
-  const { me } = useAuth();
+  const { me, loading } = useAuth();
+  // 正在用 token 恢复登录：先别闪一下登录页
+  if (loading) return null;
   if (!me) return <LoginPage />;
   return (
     <IssueProvider>

@@ -21,7 +21,7 @@ export default function ParamsPanel() {
   );
 
   // PUT /configs/{key}：逐项校验后保存
-  const handleSave = () => {
+  const handleSave = async () => {
     const badWeight = weightConfigs.find((c) => {
       const n = Number(values[c.key]);
       return values[c.key].trim() === "" || Number.isNaN(n) || n < 0 || n > 1;
@@ -48,8 +48,12 @@ export default function ParamsPanel() {
       setError(`${name}要填大于 0 的整数`);
       return;
     }
-    save(values);
-    setMessage("已保存");
+    try {
+      await save(values);
+      setMessage("已保存");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "保存失败");
+    }
   };
 
   return (

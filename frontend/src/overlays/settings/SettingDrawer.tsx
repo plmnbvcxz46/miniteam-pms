@@ -13,7 +13,7 @@ interface SettingsDrawerProps {
   /** 打开时先显示哪个分区 */
   initialSection?: SectionId;
   profile: ProfileUpdate;
-  onSaveProfile: (values: ProfileUpdate) => void;
+  onSaveProfile: (values: ProfileUpdate) => Promise<void>;
   onClose: () => void;
 }
 

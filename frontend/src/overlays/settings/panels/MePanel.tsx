@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { authApi } from "../../../api/auth";
 import { useMe } from "../../../auth/useAuth";
 import type { ProfileUpdate } from "../../../types/settings";
 
@@ -8,8 +9,8 @@ const MAX_TAGS = 10;
 
 interface MePanelProps {
   profile: ProfileUpdate;
-  /** PUT /auth/me */
-  onSave: (values: ProfileUpdate) => void;
+  /** PUT /auth/me，失败时抛 ApiError */
+  onSave: (values: ProfileUpdate) => Promise<void>;
 }
 
 export default function MePanel({ profile, onSave }: MePanelProps) {
@@ -22,6 +23,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -55,17 +57,23 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
     setTagInput("");
   };
 
-  const handleSave = (e: FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     const name = realName.trim();
     const mail = email.trim();
-    const nameMsg = name ? "" : "姓名不能为空";
+    const nameMsg = !name ? "姓名不能为空" : name.length > 32 ? "姓名最长 32 个字" : "";
     const emailMsg =
       mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail) ? "邮箱格式不对" : "";
     setNameError(nameMsg);
     setEmailError(emailMsg);
+    setSaveError("");
     if (nameMsg || emailMsg) return;
-    onSave({ realName: name, email: mail, skillTags });
+    try {
+      await onSave({ realName: name, email: mail, skillTags });
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "保存失败");
+      return;
+    }
     setRealName(name);
     setEmail(mail);
     setSaved(true);
@@ -166,6 +174,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
             保存资料
           </button>
           {saved && <span className="msg">已保存</span>}
+          {saveError && <span className="msg err">{saveError}</span>}
         </div>
       </form>
       <div className="blk">
@@ -218,12 +227,18 @@ function PasswordForm({
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!oldPassword) setError("填写旧密码");
-    else if (newPassword.length < 6) setError("新密码至少 6 位");
-    else if (newPassword !== confirm) setError("两次输入的新密码不一致");
-    else onDone();
+    if (!oldPassword) return setError("填写旧密码");
+    if (newPassword.length < 6) return setError("新密码至少 6 位");
+    if (newPassword.length > 64) return setError("新密码最长 64 位");
+    if (newPassword !== confirm) return setError("两次输入的新密码不一致");
+    try {
+      await authApi.changePassword({ oldPassword, newPassword });
+    } catch (error) {
+      return setError(error instanceof Error ? error.message : "修改失败");
+    }
+    onDone();
   };
 
   return (

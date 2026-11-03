@@ -3353,7 +3353,7 @@ paths:
       - 系统管理
       summary: 修改参数
       operationId: updateConfig
-      description: 四个优先级权重之和须为 1，否则返回 400。
+      description: 权重的取值须在 0 到 1 之间，α 不能小于 0，今日待办条数和每周工时须为正整数，否则返回 400。权重是逐个保存的，后端无法校验“四个之和为 1”，由前端保存前校验。
       parameters:
       - name: key
         in: path
@@ -3568,10 +3568,10 @@ components:
           format: int64
         roleCode:
           type: string
-          example: PM
+          example: USER
         roleName:
           type: string
-          example: 项目经理
+          example: 普通用户
         email:
           type: string
           nullable: true

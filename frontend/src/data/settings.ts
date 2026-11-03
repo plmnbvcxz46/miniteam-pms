@@ -24,6 +24,7 @@ export const logTargetLabel: Record<string, string> = {
   DISCUSSION: "协作",
   DOCUMENT: "文档",
   AUTH: "登录",
+  USER: "账号",
 };
 
 /** 日志里 action 的中文名 */
@@ -36,6 +37,12 @@ export const logActionLabel: Record<string, string> = {
   REVISE: "修订文档",
   LOGIN: "账号登录",
   LOGIN_FAIL: "登录失败",
+  REGISTER: "注册",
+  ENABLE: "启用账号",
+  DISABLE: "停用账号",
+  RESET_PASSWORD: "重置密码",
+  CHANGE_ROLE: "修改账号类型",
+  DELETE: "删除",
 };
 
 /* =========================================================
