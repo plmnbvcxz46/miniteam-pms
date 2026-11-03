@@ -110,7 +110,6 @@ export interface AssigneeCandidate {
 export interface TaskFormValues {
   title: string;
   description: string;
-  milestoneId: number | null;
   assigneeId: number | null;
   /** yyyy-MM-dd */
   planStart: string;

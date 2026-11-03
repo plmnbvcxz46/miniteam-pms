@@ -19,9 +19,6 @@ export default function TaskHeader({
   onChangeStatus,
   onEdit,
 }: TaskHeaderProps) {
-  const milestoneLabel = task.milestone?.name
-    ? task.milestone.name.replace(/^([A-Za-z0-9]+)\s+/, "$1 · ")
-    : "未归入阶段";
   const taskCode = `T-${task.taskNo ?? task.id}`;
 
   return (
@@ -36,10 +33,6 @@ export default function TaskHeader({
           </span>
           <span className="tk-crumb">
             <span>任务</span>
-            <span className="tk-slash" aria-hidden="true">
-              /
-            </span>
-            <span>{milestoneLabel}</span>
             <span className="tk-slash" aria-hidden="true">
               /
             </span>

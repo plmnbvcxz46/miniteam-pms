@@ -2,7 +2,7 @@ import { useId, useState, type FormEvent } from "react";
 import Drawer from "../../components/Drawer";
 import { workload } from "../../data/reports";
 import { systemUsers } from "../../data/settings";
-import { milestones, taskTodayDate } from "../../data/task";
+import { taskTodayDate } from "../../data/task";
 import { getPredecessorOptions } from "../../pages/board/utils";
 import type {
   AssigneeCandidate,
@@ -23,7 +23,6 @@ const assigneeCandidates: AssigneeCandidate[] = workload.members.map(
     capacity: item.capacity,
   }),
 );
-const milestoneOptions = Object.values(milestones);
 
 interface TaskDrawerProps {
   /** 为空是新建，否则编辑这个任务 */
@@ -43,9 +42,6 @@ export default function TaskDrawer({
   const assigneeLabelId = useId();
 
   const [title, setTitle] = useState(task?.title ?? "");
-  const [milestoneId, setMilestoneId] = useState<number | null>(
-    task ? task.milestoneId : null,
-  );
   const [assigneeId, setAssigneeId] = useState<number | null>(
     task?.assignee?.id ?? null,
   );
@@ -72,7 +68,6 @@ export default function TaskDrawer({
     onSubmit({
       title: title.trim(),
       description: description.trim() || "还没有说明。",
-      milestoneId,
       assigneeId,
       planStart: planStart || taskTodayDate,
       planDays: Math.max(1, parseInt(planDays, 10) || 1),
@@ -112,24 +107,6 @@ export default function TaskDrawer({
             />
           </div>
           {titleError && <div className="err">{titleError}</div>}
-        </div>
-
-        <div className="fr">
-          <span className="lb">所属阶段</span>
-          <div className="chips">
-            {milestoneOptions.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                aria-pressed={item.id === milestoneId}
-                onClick={() =>
-                  setMilestoneId(item.id === milestoneId ? null : item.id)
-                }
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="fr">

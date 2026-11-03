@@ -1,6 +1,6 @@
 import { currentProjectId, users } from "../../data/global";
 import type { IssueTaskState } from "../../data/issueSnapshots";
-import { getPriorityLabel, milestones } from "../../data/task";
+import { getPriorityLabel } from "../../data/task";
 import type { TaskStatus, UserBrief } from "../../types/global";
 import type {
   DependencyTask,
@@ -142,13 +142,9 @@ function writeTask(
 function toTaskFields(values: TaskFormValues) {
   const assignee =
     Object.values(users).find((user) => user.id === values.assigneeId) ?? null;
-  const milestone =
-    Object.values(milestones).find((m) => m.id === values.milestoneId) ?? null;
   return {
     title: values.title,
     description: values.description,
-    milestone,
-    milestoneId: milestone?.id ?? null,
     assignee,
     planStart: values.planStart,
     planDays: values.planDays,
@@ -177,6 +173,8 @@ export function createTask(
     overdueDays: 0,
     sortOrder: 0,
     parentId: null,
+    milestoneId: null,
+    milestone: null,
     actualEnd: null,
     projectId: currentProjectId,
     creator,

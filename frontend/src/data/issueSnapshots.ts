@@ -8,7 +8,7 @@ export interface IssueTaskState {
 
 /**
  * 过去各期的任务快照，按期号、任务 id；第 32 期（今天）用任务本身的数据。
- * 没出现在某期里的任务，说明那一期还没创建。接口接通后对应 GET /projects/{projectId}/issues/{issueNo}
+ * 没出现在某期里的任务，说明那一期还没创建。接口接通后对应 GET /projects/{projectId}/issues/{issueDate}
  */
 export const issueTaskStates: Record<number, Record<number, IssueTaskState>> = {
   31: {
