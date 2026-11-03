@@ -21,7 +21,7 @@ export default function NotificationBell() {
         {hasUnread && (
           <mask id="bell-notch" maskUnits="userSpaceOnUse" x="-2" y="-2" width="20" height="20">
             <rect x="-2" y="-2" width="20" height="20" fill="white" stroke="none" />
-            <rect x="10" y="-2" width="8" height="8" fill="black" stroke="none" />
+            <rect x="8.75" y="-2" width="9.25" height="9.25" fill="black" stroke="none" />
           </mask>
         )}
         <g mask={hasUnread ? "url(#bell-notch)" : undefined}>
@@ -31,7 +31,7 @@ export default function NotificationBell() {
           </g>
         </g>
         {hasUnread && (
-          <rect x="11" y="0.5" width="4.5" height="4.5" fill="var(--signal)" stroke="none" />
+          <rect x="10" y="1.5" width="4.5" height="4.5" fill="var(--signal)" stroke="none" />
         )}
       </svg>
     </button>
