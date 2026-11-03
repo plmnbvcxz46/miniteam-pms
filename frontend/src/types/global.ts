@@ -62,6 +62,14 @@ export interface Activity {
   createdAt: string;
 }
 
+/** 项目起止日期（对应 ProjectSummary 的 startDate / planEnd） */
+export interface ProjectPeriod {
+  /** yyyy-MM-dd */
+  startDate: string;
+  /** yyyy-MM-dd */
+  planEnd: string;
+}
+
 /** 当前期号信息（顶栏“第 32 期 2026 年 10 月 22 日 周四”） */
 export interface IssueInfo {
   issueNo: string;
