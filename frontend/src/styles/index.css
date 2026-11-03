@@ -477,6 +477,46 @@ code {
 .notes .no.risk-t {
   color: var(--signal-text);
 }
+/* 账号切换浮层 */
+.accts {
+  left: auto;
+  right: 0;
+  width: 360px;
+}
+.accts button.off {
+  cursor: default;
+}
+.accts button.off:hover {
+  background: transparent;
+}
+.accts button.off:hover .hd {
+  text-decoration: none;
+}
+.accts button.off .no,
+.accts button.off .hd,
+.accts button.off .tm,
+.accts button.off .dt {
+  color: #8f8d86;
+}
+.afoot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1.5px solid var(--ink);
+}
+.afoot .pfoot {
+  border-top: 0;
+}
+.afoot .pfoot + .pfoot {
+  border-left: 1.5px solid var(--ink);
+}
+.afoot .out::after {
+  content: none;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* 底部操作行 */
 .issues .pnew,
 .issues .pfoot {
@@ -622,6 +662,15 @@ code {
 }
 .bell:hover {
   background: var(--wash);
+}
+.me-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.me[aria-expanded="true"],
+.me.swapped {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
 }
 .me {
   all: unset;

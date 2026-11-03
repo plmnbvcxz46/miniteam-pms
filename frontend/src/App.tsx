@@ -1,4 +1,7 @@
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
+import AuthProvider from "./auth/AuthProvider";
+import { useAuth } from "./auth/useAuth";
+import LoginPage from "./pages/login/LoginPage";
 import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
@@ -29,12 +32,23 @@ const router = createHashRouter([
   },
 ]);
 
-export default function App() {
+/** 没登录只显示登录页，登录后才挂上各页面的数据 */
+function AuthGate() {
+  const { me } = useAuth();
+  if (!me) return <LoginPage />;
   return (
     <DocumentProvider>
       <TaskProvider>
         <RouterProvider router={router} />
       </TaskProvider>
     </DocumentProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthGate />
+    </AuthProvider>
   );
 }

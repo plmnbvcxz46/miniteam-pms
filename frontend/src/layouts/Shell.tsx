@@ -1,7 +1,9 @@
 import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
-import { myProfile } from "../data/settings";
+import { useAuth, useMe } from "../auth/useAuth";
+import { getProfile } from "../data/settings";
+import type { ProfileUpdate } from "../types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
@@ -14,19 +16,37 @@ import SidebarNav from "./components/sidebar/SidebarNav";
 import SummaryCard from "./components/sidebar/SummaryCard";
 import IssueSwitch from "./components/topbar/IssueSwitch";
 import NotificationBell from "./components/topbar/NotificationBell";
-import UserChip from "./components/topbar/UserChip";
+import AccountMenu from "./components/topbar/AccountMenu";
 import WeekLine from "./components/topbar/WeekLine";
 
 export default function Shell() {
   const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
   const settingsOpen = settingsSection !== null;
-  const [profile, setProfile] = useState(myProfile);
+  const me = useMe();
+  const { switchAccount } = useAuth();
+  // 改过的个人资料按账号记着，切换账号后各看各的
+  const [profileEdits, setProfileEdits] = useState<Record<number, ProfileUpdate>>({});
+  // 新注册的账号不在人员列表里，姓名取登录身份
+  const profile = profileEdits[me.user.id] ?? {
+    ...getProfile(me.user.id),
+    realName: me.user.realName,
+  };
+  const setProfile = (values: ProfileUpdate) =>
+    setProfileEdits((prev) => ({ ...prev, [me.user.id]: values }));
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [projectList, setProjectList] = useState(initialProjects);
   const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
   const [notificationList, setNotificationList] = useState(initialNotifications);
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
+
+  // 切换账号：先收起上一个身份打开的抽屉，避免残留它的可编辑表单
+  const handleSwitchAccount = (userId: number) => {
+    setSettingsSection(null);
+    setProjectFormOpen(false);
+    closeTaskForm();
+    switchAccount(userId);
+  };
 
   // POST /projects：新建后加进列表并切过去，创建人是项目经理
   const handleCreateProject = (values: ProjectSave) => {
@@ -78,7 +98,11 @@ export default function Shell() {
             setNotificationList((prev) => prev.map((n) => ({ ...n, isRead: true })))
           }
         />
-        <UserChip realName={profile.realName} onClick={() => setSettingsSection("me")} />
+        <AccountMenu
+          realName={profile.realName}
+          onOpenProfile={() => setSettingsSection("me")}
+          onSwitch={handleSwitchAccount}
+        />
       </header>
 
       {/* 主视图内容区域 */}

@@ -56,12 +56,15 @@ export const logActionLabel: Record<string, string> = {
 const { pmA, devA, devB, qaC } = users;
 const guest: UserBrief = { id: 6, username: "guest", realName: "访客" };
 
-/** 我的个人资料（GET /auth/me 的 user），姓名取自 currentUser */
-export const myProfile: ProfileUpdate = {
-  realName: pmA.realName,
-  email: "pm_a@example.com",
-  skillTags: ["项目管理", "需求分析"],
-};
+/** 某个账号的个人资料（GET /auth/me 的 user） */
+export function getProfile(userId: number): ProfileUpdate {
+  const user = systemUsers.find((u) => u.id === userId);
+  return {
+    realName: user?.realName ?? "",
+    email: user?.email ?? "",
+    skillTags: user?.skillTags ?? [],
+  };
+}
 
 /** GET /roles */
 export const roles: Role[] = [
