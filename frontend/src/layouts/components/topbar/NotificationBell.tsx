@@ -1,6 +1,6 @@
 import { unreadNotificationCount } from "../../../data/global";
 
-/** 铃铛：黑色表示没有未读通知，橙色表示有 */
+/** 空心铃铛：描边黑色表示没有未读通知，橙色表示有 */
 export default function NotificationBell() {
   const hasUnread = unreadNotificationCount > 0;
   return (
@@ -14,16 +14,12 @@ export default function NotificationBell() {
         height="20"
         viewBox="0 0 16 16"
         fill="none"
-        stroke="var(--ink)"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
+        stroke={hasUnread ? "var(--signal)" : "var(--ink)"}
+        strokeWidth="1.6"
         aria-hidden="true"
       >
-        <path
-          d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z"
-          fill={hasUnread ? "var(--signal)" : "var(--ink)"}
-        />
-        <path d="M6.5 14h3" strokeLinecap="round" />
+        <path d="M4 11V7a4 4 0 018 0v4l1 1.5H3L4 11z" />
+        <path d="M6.5 14h3" />
       </svg>
     </button>
   );
