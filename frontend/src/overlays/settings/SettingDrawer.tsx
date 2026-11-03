@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { sections, type SectionId } from "./sections";
+import { resolveSection, visibleSections, type SectionId } from "./sections";
+import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectRulesPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
@@ -10,8 +11,7 @@ import LogsPanel from "./panels/LogsPanel";
 import ParamsPanel from "./panels/ParamsPanel";
 import type { JSX } from "react/jsx-runtime";
 
-const panels: Record<SectionId, JSX.Element> = {
-  me: <MePanel />,
+const panels: Record<Exclude<SectionId, "me">, JSX.Element> = {
   proj: <ProjectRulesPanel />,
   people: <PeoplePanel />,
   roles: <RolesPanel />,
@@ -23,14 +23,20 @@ const panels: Record<SectionId, JSX.Element> = {
 interface SettingsDrawerProps {
   /** 打开时先显示哪个分区 */
   initialSection?: SectionId;
+  profile: ProfileUpdate;
+  onSaveProfile: (values: ProfileUpdate) => void;
   onClose: () => void;
 }
 
 export default function SettingsDrawer({
   initialSection = "people",
+  profile,
+  onSaveProfile,
   onClose,
 }: SettingsDrawerProps) {
-  const [active, setActive] = useState<SectionId>(initialSection);
+  const [active, setActive] = useState<SectionId>(() =>
+    resolveSection(initialSection),
+  );
   // 标签和左侧索引共用：点击或回车切换分区
   const link = (id: SectionId) => ({
     role: "button" as const,
@@ -56,9 +62,9 @@ export default function SettingsDrawer({
 
         {/* 顶部标签：分组变化处插一条分隔线 */}
         <nav className="ov-tabs" aria-label="设置分区">
-          {sections.map((s, k) => (
+          {visibleSections.map((s, k) => (
             <span key={s.id} style={{ display: "contents" }}>
-              {k > 0 && s.group !== sections[k - 1].group && (
+              {k > 0 && s.group !== visibleSections[k - 1].group && (
                 <i className="tsep" aria-hidden="true" />
               )}
               <a {...link(s.id)}>{s.name}</a>
@@ -74,7 +80,11 @@ export default function SettingsDrawer({
       <div className="double ov-rule"><i /><i /></div>
 
       <div className="ov-main">
-        <div className="ov-body">{panels[active]}</div>
+        <div className="ov-body">{active === "me" ? (
+            <MePanel profile={profile} onSave={onSaveProfile} />
+          ) : (
+            panels[active]
+          )}</div>
       </div>
     </Drawer>
   );

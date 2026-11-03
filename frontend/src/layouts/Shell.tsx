@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
+import { myProfile } from "../data/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
@@ -19,6 +20,7 @@ import WeekLine from "./components/topbar/WeekLine";
 export default function Shell() {
   const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
   const settingsOpen = settingsSection !== null;
+  const [profile, setProfile] = useState(myProfile);
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [projectList, setProjectList] = useState(initialProjects);
   const [currentProjectId, setCurrentProjectId] = useState(initialProjects[0].id);
@@ -76,7 +78,7 @@ export default function Shell() {
             setNotificationList((prev) => prev.map((n) => ({ ...n, isRead: true })))
           }
         />
-        <UserChip onClick={() => setSettingsSection("me")} />
+        <UserChip realName={profile.realName} onClick={() => setSettingsSection("me")} />
       </header>
 
       {/* 主视图内容区域 */}
@@ -88,6 +90,8 @@ export default function Shell() {
       {settingsSection && (
         <SettingsDrawer
           initialSection={settingsSection}
+          profile={profile}
+          onSaveProfile={setProfile}
           onClose={() => setSettingsSection(null)}
         />
       )}

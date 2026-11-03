@@ -1,11 +1,17 @@
 import { currentUser, myProjectRole, roleLabel } from "../../../data/global";
 
-export default function UserChip({ onClick }: { onClick: () => void }) {
+interface UserChipProps {
+  /** 个人资料里改过姓名后跟着变 */
+  realName: string;
+  onClick: () => void;
+}
+
+export default function UserChip({ realName, onClick }: UserChipProps) {
   return (
     <button className="me" type="button" onClick={onClick}>
-      <span>{currentUser.realName.slice(0, 1)}</span>
+      <span>{realName.slice(0, 1)}</span>
       <em>
-        {currentUser.realName}
+        {realName}
         <small>
           {currentUser.username} · {roleLabel[myProjectRole]}
         </small>
