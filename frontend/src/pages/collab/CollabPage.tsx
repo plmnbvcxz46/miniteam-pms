@@ -83,6 +83,35 @@ export default function CollabPage() {
     }
   }, [location.pathname, location.state, navigate]);
 
+  // 通知点进来：/collab?discussionId=&commentId=，选中那个讨论并定位到那条消息，和点击动态是同一套定位。
+  // 地址变了就在渲染时调整状态，随后把地址里的参数清掉，刷新或前进后退不会重复定位
+  const [seenSearch, setSeenSearch] = useState("");
+  const [jumpCount, setJumpCount] = useState(0);
+  if (location.search !== seenSearch) {
+    setSeenSearch(location.search);
+    const params = new URLSearchParams(location.search);
+    const discussionId = Number(params.get("discussionId"));
+    const commentId = Number(params.get("commentId"));
+    if (discussionId && detailMap[discussionId]) {
+      setJumpCount(jumpCount + 1);
+      setDraftDiscussion(null);
+      setDraftInitial(null);
+      setActiveActivityId(null);
+      setSelectedId(discussionId);
+      setFlashComment(
+        commentId &&
+          detailMap[discussionId].comments.some((c) => c.id === commentId)
+          ? { commentId, triggerKey: jumpCount + 1 }
+          : null,
+      );
+    }
+  }
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get("discussionId")) {
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
+
   // 当前展示的讨论详情（草稿会话优先）
   const currentDetail = draftDiscussion ?? detailMap[selectedId];
 

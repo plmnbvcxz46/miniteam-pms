@@ -107,8 +107,8 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         id: 103,
         user: devA,
         content:
-          "权限部分卡在按钮级权限标识的格式上，<em>project:task:move</em> 这种三段式可以吗？",
-        mentions: [],
+          "@测试经理 A 权限部分卡在按钮级权限标识的格式上，<em>project:task:move</em> 这种三段式可以吗？",
+        mentions: [pmA],
         documents: [],
         createdAt: "2026-10-22 09:18:00",
       },
@@ -148,8 +148,8 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
         id: 201,
         user: devB,
         content:
-          "依赖线打算用 SVG 按任务条的实际位置生成，ECharts 的自定义系列不好做描边动画。",
-        mentions: [],
+          "@测试经理 A 依赖线打算用 SVG 按任务条的实际位置生成，ECharts 的自定义系列不好做描边动画。",
+        mentions: [pmA],
         documents: [],
         createdAt: "2026-10-21 10:02:00",
       },
@@ -211,8 +211,8 @@ export const discussionDetails: Record<number, DiscussionDetail> = {
       {
         id: 304,
         user: qaC,
-        content: "收到，我把顺序写进 PPT 最后一页。",
-        mentions: [],
+        content: "@测试经理 A 收到，彩排顺序我写进 PPT 最后一页了，你看一下。",
+        mentions: [pmA],
         documents: [],
         createdAt: "2026-10-21 15:02:00",
       },
