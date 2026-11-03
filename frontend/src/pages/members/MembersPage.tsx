@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { PermKey, Activity } from "../../types/global";
+import type { PermKey, Activity, MemberPermissions } from "../../types/global";
 import type { Member } from "../../types/members";
 import { useMe } from "../../auth/useAuth";
 import {
@@ -87,7 +87,7 @@ export default function MembersPage() {
     user: typeof inviteCandidates[number];
     projectRole: Member["projectRole"];
     position: string;
-    permissions: Member["canEditTask" & string] extends boolean ? import("../../types/global").MemberPermissions : never;
+    permissions: MemberPermissions;
   }) => {
     const nowStr = formatFullDateTime(new Date());
     const newMember: Member = {

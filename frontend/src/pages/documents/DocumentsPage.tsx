@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useMe } from "../../auth/useAuth";
 import type { DocumentItem } from "../../types/documents";
 import { formatDayLabel } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
@@ -15,8 +16,8 @@ import "./css/documents.css";
 export default function DocumentsPage() {
   // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
   const { docs: rawDocs, setDocs: setDocList, finalizeDocument } = useDocumentStore();
-  const [currentDate, setCurrentDate] = useState<string>(getDocToday());
-  void setCurrentDate; // 预留后续期数/快照切换状态变更入口
+  const currentDate = getDocToday();
+  const { user: currentUser } = useMe();
 
   // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
   // 没带或不存在时默认选中 3，即 "接口文档"
@@ -124,7 +125,7 @@ export default function DocumentsPage() {
         n: finalDocName,
         taskId: data.taskId,
         v: "v0.1",
-        who: "测试经理 A",
+        who: currentUser.realName,
         up: currentDate,
         due: formatDayLabel(tasks[data.taskId]?.dueDate ?? "2026-10-30"),
         final: false,
@@ -132,7 +133,7 @@ export default function DocumentsPage() {
           {
             version: "v0.1",
             date: currentDate,
-            operator: "测试经理 A",
+            operator: currentUser.realName,
             comment: data.note,
             fileName: uploadedFileName || `${finalDocName}_v0.1.docx`,
             fileSize: uploadedFileSize,
@@ -151,7 +152,7 @@ export default function DocumentsPage() {
           const newVersionItem = {
             version: nextV,
             date: currentDate,
-            operator: "测试经理 A",
+            operator: currentUser.realName,
             comment: data.note,
             fileName: uploadedFileName || `${d.n}_${nextV}.docx`,
             fileSize: uploadedFileSize,

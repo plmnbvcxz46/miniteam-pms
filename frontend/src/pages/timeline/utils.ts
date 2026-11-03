@@ -34,7 +34,7 @@ export interface TimelineForecast {
 }
 
 /** 当天是不是周末 */
-function isWeekend(date: string): boolean {
+export function isWeekend(date: string): boolean {
   const day = new Date(toDay(date) * 86400000).getUTCDay();
   return day === 0 || day === 6;
 }

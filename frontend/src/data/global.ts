@@ -173,6 +173,9 @@ export const roleLabel: Record<ProjectRole, string> = {
   TESTER: "测试人员",
 };
 
+/** 任务状态的先后顺序，看板列和状态按钮都按它排 */
+export const taskStatusOrder: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
+
 /** 任务状态中文名 */
 export const taskStatusLabel: Record<TaskStatus, string> = {
   TODO: "待开始",

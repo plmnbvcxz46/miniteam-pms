@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useMe } from "../../auth/useAuth";
-import type { TaskStatus } from "../../types/global";
+import { taskStatusOrder } from "../../data/global";
 import type { TaskDetail } from "../../types/task";
 import BlockedBy from "./components/column/BlockedBy";
 import BoardColumn from "./components/column/BoardColumn";
@@ -18,8 +18,6 @@ import {
   toFullIndex,
 } from "./utils";
 import "./css/board.css";
-
-const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 export default function BoardPage() {
   const navigate = useNavigate();
@@ -72,7 +70,7 @@ export default function BoardPage() {
 
       <div className="scroll-x">
         <div className="board" id="board">
-          {STATUS_ORDER.map((status) => (
+          {taskStatusOrder.map((status) => (
             <BoardColumn
               key={status}
               status={status}

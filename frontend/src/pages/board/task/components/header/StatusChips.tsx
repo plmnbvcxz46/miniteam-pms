@@ -1,8 +1,6 @@
-import { taskStatusLabel } from "../../../../../data/global";
+import { taskStatusLabel, taskStatusOrder } from "../../../../../data/global";
 import { taskStatusKey } from "../../../../../data/task";
 import type { TaskStatus } from "../../../../../types/global";
-
-const STATUS_ORDER: TaskStatus[] = ["TODO", "DOING", "BLOCKED", "DONE"];
 
 interface StatusChipsProps {
   status: TaskStatus;
@@ -12,7 +10,7 @@ interface StatusChipsProps {
 export default function StatusChips({ status, onChange }: StatusChipsProps) {
   return (
     <div className="chips" role="group" aria-label="任务状态">
-      {STATUS_ORDER.map((item) => (
+      {taskStatusOrder.map((item) => (
         <button
           key={item}
           type="button"
