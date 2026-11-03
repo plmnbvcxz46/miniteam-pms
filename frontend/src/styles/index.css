@@ -201,63 +201,82 @@ code {
   margin-top: auto;
   background: var(--ink);
   color: var(--paper);
-  padding: 14px;
+  padding: 12px 14px 13px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
-.sum-card .k {
+.sum-card .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.sum-card .head span {
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
   color: #cfcfca;
 }
-.sum-card .big {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
+.sum-card .head b {
   font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 900;
   line-height: 1;
 }
-.sum-card .big b {
-  font-size: 40px;
-  font-weight: 900;
-  letter-spacing: -1px;
-  color: var(--signal);
-}
-.sum-card .big span {
-  font-size: 12px;
+.sum-card .head b small {
+  margin-left: 3px;
+  font-size: 11px;
   font-weight: 700;
 }
-.sum-card .row {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+/* 斜线是时间走了多少，实心是任务完成了多少，实心没追上斜线就是落后 */
+.sum-card .gauge {
+  position: relative;
+  height: 8px;
+  border: 1.5px solid var(--paper);
 }
-.sum-card .row p {
-  margin: 0;
+.sum-card .gauge i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+.sum-card .gauge .time {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--paper) 0 1.5px,
+    transparent 1.5px 4px
+  );
+}
+.sum-card .gauge .done {
+  background: var(--paper);
+}
+.sum-card .legend {
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
   font-size: 10px;
   color: #cfcfca;
 }
-.sum-card .row p b {
-  font-weight: 700;
-  color: var(--paper);
+.sum-card .legend span::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border: 1px solid var(--paper);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--paper) 0 1px,
+    transparent 1px 3px
+  );
 }
-.sum-card .bar {
-  height: 8px;
-  border: 1.5px solid var(--paper);
-}
-.sum-card .bar i {
-  display: block;
-  height: 100%;
+.sum-card .legend .go::before {
   background: var(--paper);
 }
-.sum-card .bar.go i {
-  background: var(--signal);
+.sum-card .legend b {
+  margin-left: 4px;
+  font-weight: 700;
+  color: var(--paper);
 }
 
 /* popovers: projects + past issues */
