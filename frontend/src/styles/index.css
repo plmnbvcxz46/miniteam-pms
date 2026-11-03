@@ -167,19 +167,23 @@ code {
   font-size: 14px;
   cursor: pointer;
 }
-.grp a::before {
+.grp a svg {
+  flex-shrink: 0;
+}
+/* 设置抽屉的索引没有图标，仍用小方块作项目符号 */
+.ov-index .grp a::before {
   content: "";
   width: 6px;
   height: 6px;
   border: 1.5px solid var(--ink);
   flex-shrink: 0;
 }
+.ov-index .grp a[aria-current="page"]::before {
+  background: var(--ink);
+}
 .grp a[aria-current="page"] {
   background: var(--signal);
   font-weight: 700;
-}
-.grp a[aria-current="page"]::before {
-  background: var(--ink);
 }
 .grp a:not([aria-current="page"]):hover {
   background: var(--wash);
@@ -197,47 +201,86 @@ code {
   color: var(--mute);
   pointer-events: none;
 }
-.arch-card {
+.sum-card {
   margin-top: auto;
   background: var(--ink);
   color: var(--paper);
-  padding: 14px;
+  padding: 12px 14px 13px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
-.arch-card i {
-  display: block;
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid var(--paper);
-}
-.arch-card b {
-  font-weight: 900;
-  font-size: 15px;
-}
-.arch-card p {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  line-height: 1.5;
-  color: #cfcfca;
-}
-.arch-card button {
-  all: unset;
-  cursor: pointer;
+.sum-card .head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 8px 10px;
+  align-items: baseline;
 }
-.arch-card button:hover {
-  background: var(--wash);
+.sum-card .head span {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #cfcfca;
+}
+.sum-card .head b {
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+}
+.sum-card .head b small {
+  margin-left: 3px;
+  font-size: 11px;
+  font-weight: 700;
+}
+/* 斜线是时间走了多少，实心是任务完成了多少，实心没追上斜线就是落后 */
+.sum-card .gauge {
+  position: relative;
+  height: 8px;
+  border: 1.5px solid var(--paper);
+}
+.sum-card .gauge i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+.sum-card .gauge .time {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--paper) 0 1.5px,
+    transparent 1.5px 4px
+  );
+}
+.sum-card .gauge .done {
+  background: var(--paper);
+}
+.sum-card .legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #cfcfca;
+}
+.sum-card .legend span::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border: 1px solid var(--paper);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--paper) 0 1px,
+    transparent 1px 3px
+  );
+}
+.sum-card .legend .go::before {
+  background: var(--paper);
+}
+.sum-card .legend b {
+  margin-left: 4px;
+  font-weight: 700;
+  color: var(--paper);
 }
 
 /* popovers: projects + past issues */
@@ -456,14 +499,6 @@ code {
   justify-content: center;
   position: relative;
   flex-shrink: 0;
-}
-.bell i {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 7px;
-  height: 7px;
-  background: var(--ink);
 }
 .bell:hover {
   background: var(--wash);

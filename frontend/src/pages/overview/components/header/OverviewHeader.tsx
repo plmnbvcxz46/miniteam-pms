@@ -16,9 +16,6 @@ export default function OverviewHeader({
         </h1>
       </div>
       <div className="va">
-        <button className="btn open-issues" type="button">
-          往期 ▾
-        </button>
         <button className="btn go" type="button" onClick={onCreateTask}>
           + 新建任务
         </button>

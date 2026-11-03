@@ -61,6 +61,15 @@ export function formatDayLabel(date: string): string {
   return date.slice(5).replace("-", ".");
 }
 
+const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
+
+/** yyyy-MM-dd 转成 "2026 年 10 月 22 日 周四" */
+export function formatFullDate(date: string): string {
+  const [year, month, day] = date.split("-").map(Number);
+  const weekday = new Date(toDay(date) * DAY_MS).getUTCDay();
+  return `${year} 年 ${month} 月 ${day} 日 周${WEEKDAY_LABELS[weekday]}`;
+}
+
 /**
  * 解析 yyyy-MM-dd HH:mm:ss 为时间点。
  * 前端自己追加的记录时间是 “yyyy-MM-dd 刚刚”，没有具体时刻，按当天中午算
