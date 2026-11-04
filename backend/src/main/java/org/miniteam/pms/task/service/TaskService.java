@@ -12,6 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.miniteam.pms.common.exception.BusinessException;
 import org.miniteam.pms.common.result.ResultCode;
+import org.miniteam.pms.document.DocumentViews;
+import org.miniteam.pms.document.dto.DocumentBriefVO;
+import org.miniteam.pms.document.entity.Document;
+import org.miniteam.pms.document.mapper.DocumentMapper;
 import org.miniteam.pms.project.IssueCalendar;
 import org.miniteam.pms.project.ProjectAccess;
 import org.miniteam.pms.project.ProjectContext;
@@ -60,6 +64,7 @@ public class TaskService {
     private final DependencyMapper dependencyMapper;
     private final MemberMapper memberMapper;
     private final ConfigMapper configMapper;
+    private final DocumentMapper documentMapper;
     private final ProjectAccess access;
     private final OperationLogService logService;
 
@@ -68,12 +73,14 @@ public class TaskService {
             DependencyMapper dependencyMapper,
             MemberMapper memberMapper,
             ConfigMapper configMapper,
+            DocumentMapper documentMapper,
             ProjectAccess access,
             OperationLogService logService) {
         this.taskMapper = taskMapper;
         this.dependencyMapper = dependencyMapper;
         this.memberMapper = memberMapper;
         this.configMapper = configMapper;
+        this.documentMapper = documentMapper;
         this.access = access;
         this.logService = logService;
     }
@@ -104,6 +111,7 @@ public class TaskService {
         ProjectTaskSnapshot snap = snapshot(ctx);
         TaskStatus wanted = status == null || status.isBlank() ? null : TaskStatus.parse(status);
         String kw = keyword == null ? "" : keyword.trim().toLowerCase();
+        Map<Long, List<DocumentBriefVO>> docs = detail ? documentBriefs(projectId, snap) : Map.of();
         return snap.tasks.stream()
                 .filter(t -> visible(ctx, snap, t))
                 .filter(t -> wanted == null || t.getStatus().equals(wanted.name()))
@@ -113,15 +121,16 @@ public class TaskService {
                 .filter(t -> parentId == null || parentId.equals(t.getParentId()))
                 .filter(t ->
                         kw.isEmpty() || t.getTitle().toLowerCase().contains(kw) || ("t-" + t.getTaskNo()).equals(kw))
-                .map(t -> detail ? (Object) detail(t, snap) : card(t, snap))
+                .map(t -> detail ? (Object) detail(t, snap, docs) : card(t, snap))
                 .toList();
     }
 
     /** 一份任务快照里某个人看得到的全部任务（完整详情），往期快照用 */
-    public List<TaskDetailVO> visibleDetails(ProjectTaskSnapshot snap, boolean canEditTask, Long userId) {
+    public List<TaskDetailVO> visibleDetails(
+            ProjectTaskSnapshot snap, boolean canEditTask, Long userId, Map<Long, List<DocumentBriefVO>> docs) {
         return snap.tasks.stream()
                 .filter(t -> snap.visibleTo(canEditTask, userId, t))
-                .map(t -> detail(t, snap))
+                .map(t -> detail(t, snap, docs))
                 .toList();
     }
 
@@ -170,7 +179,7 @@ public class TaskService {
         if (!visible(ctx, snap, task)) {
             throw new BusinessException(ResultCode.FORBIDDEN, "没有权限查看这个任务");
         }
-        return detail(task, snap);
+        return detail(task, snap, documentBriefs(task.getProjectId(), snap));
     }
 
     public List<ActivityVO> activities(Long taskId) {
@@ -363,6 +372,12 @@ public class TaskService {
         taskMapper.lockProject(task.getProjectId());
         task = load(taskId);
         TaskStatus old = TaskStatus.parse(task.getStatus());
+        if (status == TaskStatus.DONE && old != TaskStatus.DONE) {
+            Document pending = documentMapper.firstUnfinalByTask(taskId);
+            if (pending != null) {
+                throw new BusinessException(ResultCode.CONFLICT, "文档《" + pending.getName() + "》还没定稿，定稿后才能完成任务");
+            }
+        }
         if (index != null) {
             ProjectTaskSnapshot snap = snapshot(ctx);
             if (old != status) {
@@ -536,7 +551,13 @@ public class TaskService {
 
     private TaskDetailVO reload(ProjectContext ctx, Long taskId) {
         ProjectTaskSnapshot snap = snapshot(ctx);
-        return detail(snap.byId.get(taskId), snap);
+        return detail(snap.byId.get(taskId), snap, documentBriefs(ctx.project().getId(), snap));
+    }
+
+    /** 项目里每个任务上的文档简要信息，一次查完 */
+    private Map<Long, List<DocumentBriefVO>> documentBriefs(Long projectId, ProjectTaskSnapshot snap) {
+        List<Document> docs = documentMapper.listByProject(projectId);
+        return DocumentViews.briefsByTask(docs, snap.byId, snap.today);
     }
 
     /** 有“编辑任务”权限的看全部，其他人看自己负责的和关键路径上的 */
@@ -594,7 +615,7 @@ public class TaskService {
         return result;
     }
 
-    private TaskDetailVO detail(Task t, ProjectTaskSnapshot snap) {
+    private TaskDetailVO detail(Task t, ProjectTaskSnapshot snap, Map<Long, List<DocumentBriefVO>> docs) {
         TaskCardVO c = card(t, snap);
         int used;
         if (isDone(t)) {
@@ -640,7 +661,7 @@ public class TaskService {
                 dependencies(snap, snap.preds.getOrDefault(t.getId(), List.of()), t.getId(), true),
                 dependencies(snap, snap.succs.getOrDefault(t.getId(), List.of()), t.getId(), false),
                 subtasks,
-                List.of(),
+                docs.getOrDefault(t.getId(), List.of()),
                 List.of(),
                 t.getCreatedAt(),
                 t.getUpdatedAt());
