@@ -95,6 +95,8 @@ export interface DefectDensity {
 
 /** 成员负载（WorkloadMember） */
 export interface WorkloadMember {
+  /** 技能标签，指派负责人的选择器用。接口里总有，报表页自己算的行没有 */
+  skillTags?: string[];
   user: UserBrief;
   /** 未完成任务预估工时之和 */
   loadHours: number;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.task.mapper.DependencyMapper">
+
+    <select id="listByProject" resultType="org.miniteam.pms.task.entity.TaskDependency">
+        SELECT id, project_id, pre_task_id, next_task_id
+        FROM task_dependency
+        WHERE project_id = #{projectId}
+        ORDER BY id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task_dependency (project_id, pre_task_id, next_task_id)
+        VALUES (#{projectId}, #{preTaskId}, #{nextTaskId})
+    </insert>
+
+    <delete id="deleteByNextTask">
+        DELETE FROM task_dependency WHERE next_task_id = #{nextTaskId}
+    </delete>
+</mapper>
