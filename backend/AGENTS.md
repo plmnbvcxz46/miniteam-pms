@@ -24,6 +24,7 @@
 - 除登录、注册外的接口都要带 JWT，由 `auth/AuthInterceptor` 统一校验。身份只从 `AuthContext.require()` 取，**不要信请求里传的用户 id**；只有系统管理员能做的事用 `AuthContext.requireAdmin()`，无权限抛 403。
 - 项目内的权限（是不是成员、能不能编辑任务等）不在拦截器里做，写在对应模块的 Service 里，每个接口自己校验。带 `projectId` 的接口，Service 第一步调 `ProjectAccess.require(projectId)`：项目不存在 404、不是成员且不是系统管理员 403，返回的 `ProjectContext` 再用 `can(ProjectPerm.XXX)`、`requirePm()`、`requireWritable()`（已归档的项目只读，409）判断。系统管理员所有项目都能进、所有权限都有。
 - 任务模块（`task/`）：优先级得分和关键路径标记不落库，读任务时按项目里全部任务现算，算法是纯函数、有单元测试：`PriorityCalculator`（得分，权重读系统参数）、`CriticalPath`（CPM，甘特图、关键路径面板、预测完工复用它）、`WorkdayCalendar`（工作日，不含法定节假日）、`DependencyGraph`（依赖成环检查）。同一项目里生成任务编号和重排看板列前先 `TaskMapper.lockProject` 锁项目行。
+- 进度和报表（`progress/`、`report/`）：计算都在纯函数里（`ProgressCalculator`、`ProgressForecast`、`ReportCalculator`、`XlsxWriter`），输入是 `ProjectData`（项目起止日期、`task/ProjectTaskSnapshot`、成员）和 `Viewer`（谁在看），不碰数据库；`ProjectDataLoader` 负责读库。往期快照 `IssueSnapshotService` 每日零点（`@Scheduled`，`Asia/Shanghai`）存原始任务、依赖、成员，读往期时用同一套计算类重新算。给这几个实体删字段会让旧存档读不出来。
 - 记操作日志用 `OperationLogService.record(...)`，失败不会影响业务。
 - 数据库里的 JSON 数组列（技能标签、权限编码）在 XML 里用 `typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"`，Java 侧是 `List<String>`。
 - 本机第一次启动时用户表是空的，会自动创建管理员 `admin` / `123456`，用它登录；开发库建好之后这个账号已经存在。

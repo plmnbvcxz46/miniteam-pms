@@ -3,7 +3,6 @@ package org.miniteam.pms.project.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.miniteam.pms.common.result.Result;
-import org.miniteam.pms.project.dto.IssueSummaryVO;
 import org.miniteam.pms.project.dto.ProjectSave;
 import org.miniteam.pms.project.dto.ProjectSummaryVO;
 import org.miniteam.pms.project.dto.ProjectVO;
@@ -51,10 +50,5 @@ public class ProjectController {
     public Result<Void> archive(@PathVariable Long projectId) {
         projectService.archive(projectId);
         return Result.ok();
-    }
-
-    @GetMapping("/{projectId}/issues")
-    public Result<List<IssueSummaryVO>> issues(@PathVariable Long projectId) {
-        return Result.ok(projectService.issues(projectId));
     }
 }

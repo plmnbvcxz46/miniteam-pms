@@ -24,6 +24,15 @@
         ORDER BY p.id DESC
     </select>
 
+    <select id="listForSnapshot" resultType="org.miniteam.pms.project.entity.Project">
+        SELECT p.id, p.name, p.description, p.owner_id, o.username AS owner_username, o.real_name AS owner_real_name,
+               p.status, p.start_date, p.plan_end, p.actual_end, p.created_at
+        FROM project p
+        JOIN sys_user o ON o.id = p.owner_id
+        WHERE p.status &lt;&gt; 'ARCHIVED' AND p.start_date &lt;= #{date}
+        ORDER BY p.id
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO project (name, description, owner_id, status, start_date, plan_end)
         VALUES (#{name}, #{description}, #{ownerId}, #{status}, #{startDate}, #{planEnd})

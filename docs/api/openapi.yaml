@@ -823,7 +823,7 @@ paths:
       - 项目
       summary: 概览
       operationId: getOverview
-      description: 今日实时数据。往期见「往期日报」。
+      description: 今日实时数据，往期见「往期日报」。统计、待办、排期只算调用人看得到的任务（有“编辑任务”权限的看全部，其他人看自己负责的和关键路径上未完成的）；预测完工是整个项目的，不随可见范围变。headline.title 是整句话（逗号前后各一段）；schedule 是今天所在这一周（周一到周日）每个成员未完成的任务条，逾期的画到今天。
       parameters:
       - name: projectId
         in: path
@@ -1313,7 +1313,7 @@ paths:
       - 任务
       summary: 今日待办
       operationId: getTodo
-      description: 当前用户未完成任务按优先级评分排序。
+      description: 当前用户负责的未完成任务按优先级得分从高到低排序，得分相同先到期的在前。limit 为空取系统参数 priority.top_n，0 返回空数组，负数 400。dueTag：逾期 / 今天 / 周几 / 下周几，更远的写“M月D日”，没有截止日写“无截止”。
       parameters:
       - name: projectId
         in: path
@@ -1352,7 +1352,7 @@ paths:
       - 任务
       summary: 优先级排序
       operationId: getPriorityRanking
-      description: 项目内全部未完成任务的评分与排序。
+      description: 调用人看得到的全部未完成任务的评分与排序（得分从高到低，相同先到期的在前）。timeUrgency、blockImpact 是评分的两个中间值，保留两位小数。
       parameters:
       - name: projectId
         in: path
@@ -1776,6 +1776,7 @@ paths:
       - 进度
       summary: 甘特图
       operationId: getGantt
+      description: 只返回有排期（计划开始和截止日都有）且调用人看得到的任务，按计划开始日、编号排。label 是字母编号 A、B、…、Z、AA…，按全部有排期任务排，不随调用人变。critical 是总时差为 0（已完成的也算，和任务卡上的 critical 不同），totalFloat 是总时差（工作日），overrunDays 是已逾期的天数；任务逾期时 predictedEnd 画到今天，否则等于 planEnd。plannedEnd、predictedEnd、delayDays 是整个项目的预测：计划完成日取全部任务截止日的最大值，延期天数取未完成的关键路径任务里逾期最多的，预测完成日 = 计划完成日 + 延期天数个工作日。里程碑不实现，milestoneId 忽略；from、to 只用来裁剪返回的任务（和 [from, to] 有交集的），to 早于 from 返回 400。
       parameters:
       - name: projectId
         in: path
@@ -1826,7 +1827,7 @@ paths:
       - 进度
       summary: 关键路径计算
       operationId: getCriticalPath
-      description: 已完成任务按实际耗时、未完成按计划工期重算。
+      description: 全部任务按计划工期（工作日）一起算关键路径，rows 只列有排期且调用人看得到的任务，按最早开始排；path 是总时差为 0 的任务（已完成的也算）。delayCause 是拖得最久的未完成关键任务，没有逾期为 null。里程碑不实现，milestoneId 忽略。
       parameters:
       - name: projectId
         in: path
@@ -1862,6 +1863,7 @@ paths:
       - 统计报表
       summary: 完成率、按期率、延期率
       operationId: getReportSummary
+      description: 只算调用人看得到的任务。按期率：已完成的任务里完成日不晚于截止日的占比；延期率 = 1 - 按期率（没有已完成任务时都为 0）。weekNo 是今天在项目第几周，项目还没开始或已超过计划周数为 0。
       parameters:
       - name: projectId
         in: path
@@ -1891,6 +1893,7 @@ paths:
       - 统计报表
       summary: 燃尽图
       operationId: getBurndown
+      description: 以“项”为单位，只算调用人看得到的任务。planned：截止日在这一天之后的任务数；actual：这一天结束时还没完成的任务数，今天之后为空；predicted：从今天剩余的项数按线性降到预测完成日，今天之前为空。range=all 从项目开始日起每 7 天一个点并加上计划、预测完成日，range=week 是今天所在这一周的周一到周日。
       parameters:
       - name: projectId
         in: path
@@ -1929,6 +1932,7 @@ paths:
       - 统计报表
       summary: 每周完成任务
       operationId: getWeeklyCompleted
+      description: 项目计划的每一周（从开始日起每 7 天一周）完成的任务数。
       parameters:
       - name: projectId
         in: path
@@ -1960,6 +1964,7 @@ paths:
       - 统计报表
       summary: 工期偏差
       operationId: getDurationDeviation
+      description: 最近完成的 5 个任务；实际天数按日历天（含首尾）算，偏差为正表示超期。里程碑不实现，milestoneId 忽略。
       parameters:
       - name: projectId
         in: path
@@ -1997,6 +2002,7 @@ paths:
       - 统计报表
       summary: 全项目预测完工
       operationId: getForecast
+      description: 口径同甘特图的预测（整个项目的，不随可见范围变）；remaining 是调用人看得到的未完成任务数。
       parameters:
       - name: projectId
         in: path
@@ -2058,6 +2064,7 @@ paths:
       - 统计报表
       summary: 导出报表
       operationId: exportReport
+      description: 一张表的 Excel：概况、成员工时、每周完成、工期偏差，文件名“统计报表_日期.xlsx”（Content-Disposition 用 UTF-8 编码）。数据口径同上面的报表接口。
       parameters:
       - name: projectId
         in: path
@@ -3079,7 +3086,7 @@ paths:
       - 往期日报
       summary: 往期列表
       operationId: listIssues
-      description: 最近一期在前。期号从项目开始日期起每天一期，开始当天是第 1 期；还没到开始日期按第 1 期算，已归档的项目停在结束日期。头条、预测完工、延期天数要等任务模块，现在返回 null、null、0、false。
+      description: 最近一期在前。期号从项目开始日期起每天一期，开始当天是第 1 期；还没到开始日期按第 1 期算，已归档的项目停在结束日期。当前这一期的头条、预测完工、延期天数是实时算的；过去的期取每日零点存下的，没有存档的期（项目开始后服务没有跑过的日子）是 null、null、0、false。risk 即延期天数大于 0。
       parameters:
       - name: projectId
         in: path
@@ -3111,7 +3118,7 @@ paths:
       - 往期日报
       summary: 某期快照
       operationId: getIssue
-      description: 只读。每日零点生成。
+      description: 只读。每日零点给每个还在进行的项目存一份“昨天结束时”的任务、依赖、成员，服务启动时补一次昨天缺的；读往期时用这份数据按那一天的日期重新算出各页面的数据，再按调用人的权限过滤（和当前用同一套规则）。当前这一期（今天，已归档的项目是结束日期）直接按实时数据算。日期早于项目开始日期或晚于当前这一期返回 404“没有这一期”，过去的期没有存档返回 404“这一期没有存档”。
       parameters:
       - name: projectId
         in: path
@@ -5914,7 +5921,7 @@ components:
           snapshot:
             type: object
             additionalProperties: true
-            description: 当日各页面数据，键为 overview、board、gantt、criticalPath、reports、discussions、documents，值的结构与对应实时接口的 data 相同
+            description: '当日各页面数据，键为：tasks（TaskDetail 数组，调用人看得到的任务，看板按 status、sortOrder 自己排）、overview、gantt、criticalPath（结构同对应实时接口的 data）、reports（summary、burndownAll、burndownWeek、weeklyCompleted、deviations、forecast、workload，结构同各报表接口的 data）、members（那一天已在项目里的成员和当时的负载：user、joinedAt、weeklyCapacity、weeklyHours、taskCount、overCapacity）、discussions、documents（讨论、文档模块接通前是空数组）'
         required:
         - snapshot
     LogItem:

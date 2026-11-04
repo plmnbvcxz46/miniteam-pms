@@ -15,6 +15,9 @@ public interface ProjectMapper {
     /** all 为真时返回全部项目（系统管理员），否则只返回 userId 加入的 */
     List<Project> list(@Param("userId") Long userId, @Param("all") boolean all, @Param("status") String status);
 
+    /** 还没归档、开始日期不晚于 date 的项目（每日生成往期快照用） */
+    List<Project> listForSnapshot(@Param("date") LocalDate date);
+
     void insert(Project project);
 
     void update(

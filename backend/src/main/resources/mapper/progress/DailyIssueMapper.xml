@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.progress.mapper.DailyIssueMapper">
+
+    <select id="listByProject" resultType="org.miniteam.pms.progress.entity.DailyIssue">
+        SELECT id, project_id, issue_date, issue_no, headline, predicted_end, delay_days, created_at
+        FROM daily_issue
+        WHERE project_id = #{projectId}
+        ORDER BY issue_date DESC
+    </select>
+
+    <select id="find" resultType="org.miniteam.pms.progress.entity.DailyIssue">
+        SELECT id, project_id, issue_date, issue_no, headline, predicted_end, delay_days, snapshot, created_at
+        FROM daily_issue
+        WHERE project_id = #{projectId} AND issue_date = #{issueDate}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM daily_issue WHERE project_id = #{projectId} AND issue_date = #{issueDate}
+    </select>
+
+    <insert id="upsert">
+        INSERT INTO daily_issue (project_id, issue_date, issue_no, headline, predicted_end, delay_days, snapshot)
+        VALUES (#{projectId}, #{issueDate}, #{issueNo}, #{headline}, #{predictedEnd}, #{delayDays}, #{snapshot})
+        ON DUPLICATE KEY UPDATE issue_no = VALUES(issue_no), headline = VALUES(headline),
+            predicted_end = VALUES(predicted_end), delay_days = VALUES(delay_days), snapshot = VALUES(snapshot)
+    </insert>
+</mapper>

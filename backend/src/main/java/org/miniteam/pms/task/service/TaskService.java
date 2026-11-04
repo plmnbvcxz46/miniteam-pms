@@ -117,6 +117,14 @@ public class TaskService {
                 .toList();
     }
 
+    /** 一份任务快照里某个人看得到的全部任务（完整详情），往期快照用 */
+    public List<TaskDetailVO> visibleDetails(ProjectTaskSnapshot snap, boolean canEditTask, Long userId) {
+        return snap.tasks.stream()
+                .filter(t -> snap.visibleTo(canEditTask, userId, t))
+                .map(t -> detail(t, snap))
+                .toList();
+    }
+
     public BoardVO board(Long projectId, String filter) {
         ProjectContext ctx = access.require(projectId);
         ProjectTaskSnapshot snap = snapshot(ctx);
