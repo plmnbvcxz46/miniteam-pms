@@ -86,7 +86,7 @@ export default function GanttPanel({
             </span>
             <span>
               <i className="key over" />
-              阻塞 / 逾期
+              阻塞 / 逾期 / 未按时开始
             </span>
           </div>
           <div className="pred">

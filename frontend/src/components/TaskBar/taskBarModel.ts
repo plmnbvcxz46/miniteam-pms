@@ -17,7 +17,7 @@ export interface TimeSpan {
 
 /**
  * 框内填充：
- * ink 实心黑（正常用掉的时间）/ warn 橙色斜纹（阻塞、逾期，未完成）/ past 黑色斜纹（已完成任务的历史异常）
+ * ink 实心黑（正常用掉的时间）/ warn 橙色斜纹（阻塞、逾期、到了开始日还没开始，未完成）/ past 黑色斜纹（已完成任务的历史异常）
  */
 export interface BarFill extends TimeSpan {
   kind: "ink" | "warn" | "past";
@@ -46,7 +46,7 @@ export interface TaskBarModel {
 /** 生成任务条需要的任务字段 */
 export type TaskBarTask = Pick<
   TaskDetail,
-  "status" | "planStart" | "dueDate" | "actualEnd"
+  "status" | "planStart" | "dueDate" | "actualStart" | "actualEnd"
 >;
 
 /**
@@ -136,11 +136,22 @@ export function buildTaskBar(
     }
   } else {
     frames.push({ from: start, to: due, dashed: false, tail: false });
-    if (task.status === "DOING" || task.status === "BLOCKED") {
-      const elapsed = { from: start, to: Math.min(now, due) };
-      if (elapsed.to > elapsed.from) {
-        fills.push({ ...elapsed, kind: "ink" });
-        addBlocked(elapsed, "warn");
+    // 今天线左边的计划段只有几种含义：正在做（黑）、阻塞、到了开始日还没开始（和阻塞一样画橙色斜纹，状态字段不改）
+    const elapsedEnd = Math.min(now, due);
+    if (elapsedEnd > start) {
+      if (task.status === "TODO") {
+        fills.push({ from: start, to: elapsedEnd, kind: "warn" });
+      } else {
+        // 实际开始晚于计划开始的，中间那段空档同样是没按时开始
+        const begun = task.actualStart
+          ? Math.min(Math.max(toDay(task.actualStart), start), elapsedEnd)
+          : start;
+        if (begun > start) fills.push({ from: start, to: begun, kind: "warn" });
+        const elapsed = { from: begun, to: elapsedEnd };
+        if (elapsed.to > elapsed.from) {
+          fills.push({ ...elapsed, kind: "ink" });
+          addBlocked(elapsed, "warn");
+        }
       }
     }
     if (now > due) {
