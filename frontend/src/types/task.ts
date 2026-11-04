@@ -95,9 +95,8 @@ export interface TaskDetail extends TaskCard {
 }
 
 /**
- * 负责人候选人：项目成员加上他的技能标签
- * - skillTags 来自 User.skillTags（Member 里没有这个字段）
- * - load / capacity 来自 GET /projects/{projectId}/workload 的 loadHours / capacity
+ * 负责人候选人，来自 GET /projects/{projectId}/workload：
+ * skillTags 是成员的技能标签，load / capacity 是 loadHours / capacity
  */
 export interface AssigneeCandidate {
   user: UserBrief;
@@ -115,4 +114,26 @@ export interface TaskFormValues {
   planStart: string;
   planDays: number;
   predecessorIds: number[];
+}
+
+/** 新建任务请求体（TaskCreate），只有标题必填；页面表单目前只填其中几项 */
+export interface TaskCreate {
+  title: string;
+  description?: string;
+  assigneeId?: number | null;
+  planStart?: string;
+  planDays?: number;
+  predecessorIds?: number[];
+}
+
+/**
+ * 修改任务请求体（TaskUpdate），没传的字段不变；
+ * assigneeId、planStart 传 null 表示清空。改了 planStart 或 planDays 后截止日期由后端按工作日重算
+ */
+export interface TaskUpdate {
+  title?: string;
+  description?: string;
+  assigneeId?: number | null;
+  planStart?: string | null;
+  planDays?: number;
 }

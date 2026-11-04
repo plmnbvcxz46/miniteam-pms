@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.task.mapper.TaskMapper">
+
+    <resultMap id="taskMap" type="org.miniteam.pms.task.entity.Task">
+        <id property="id" column="id"/>
+        <result property="requiredSkills" column="required_skills"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"/>
+    </resultMap>
+
+    <sql id="selectTask">
+        SELECT t.id, t.project_id, t.task_no, t.milestone_id, t.parent_id, t.title, t.description, t.status,
+               t.assignee_id, a.username AS assignee_username, a.real_name AS assignee_real_name,
+               t.creator_id, c.username AS creator_username, c.real_name AS creator_real_name,
+               t.importance, t.urgency, t.plan_days, t.est_hours, t.required_skills, t.progress,
+               t.plan_start, t.due_date, t.actual_start, t.actual_end, t.sort_order, t.created_at, t.updated_at
+        FROM task t
+        LEFT JOIN sys_user a ON a.id = t.assignee_id
+        JOIN sys_user c ON c.id = t.creator_id
+    </sql>
+
+    <select id="findById" resultMap="taskMap">
+        <include refid="selectTask"/>
+        WHERE t.id = #{id}
+    </select>
+
+    <select id="listByProject" resultMap="taskMap">
+        <include refid="selectTask"/>
+        WHERE t.project_id = #{projectId}
+        ORDER BY t.sort_order, t.id
+    </select>
+
+    <select id="listByStatus" resultMap="taskMap">
+        <include refid="selectTask"/>
+        WHERE t.project_id = #{projectId} AND t.status = #{status}
+        ORDER BY t.sort_order, t.id
+    </select>
+
+    <select id="lockProject" resultType="long">
+        SELECT id FROM project WHERE id = #{projectId} FOR UPDATE
+    </select>
+
+    <select id="maxTaskNo" resultType="int">
+        SELECT COALESCE(MAX(task_no), 0) FROM task WHERE project_id = #{projectId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task (project_id, task_no, milestone_id, parent_id, title, description, status, assignee_id,
+                          creator_id, importance, urgency, plan_days, est_hours, required_skills, progress,
+                          plan_start, due_date, actual_start, actual_end, sort_order)
+        VALUES (#{projectId}, #{taskNo}, #{milestoneId}, #{parentId}, #{title}, #{description}, #{status},
+                #{assigneeId}, #{creatorId}, #{importance}, #{urgency}, #{planDays}, #{estHours},
+                #{requiredSkills,typeHandler=org.miniteam.pms.common.mybatis.JsonStringListTypeHandler},
+                #{progress}, #{planStart}, #{dueDate}, #{actualStart}, #{actualEnd}, #{sortOrder})
+    </insert>
+
+    <update id="update">
+        UPDATE task
+        SET title = #{title}, description = #{description}, assignee_id = #{assigneeId}, parent_id = #{parentId},
+            importance = #{importance}, urgency = #{urgency}, plan_days = #{planDays}, est_hours = #{estHours},
+            required_skills = #{requiredSkills,typeHandler=org.miniteam.pms.common.mybatis.JsonStringListTypeHandler},
+            plan_start = #{planStart}, due_date = #{dueDate}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE task
+        SET status = #{status}, progress = #{progress}, actual_start = #{actualStart}, actual_end = #{actualEnd},
+            sort_order = #{sortOrder}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateSortOrder">
+        UPDATE task SET sort_order = #{sortOrder} WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM task WHERE id = #{id}
+    </delete>
+
+    <select id="workloadByProject" resultType="org.miniteam.pms.task.entity.WorkloadRow">
+        SELECT assignee_id AS user_id, COALESCE(SUM(est_hours), 0) AS load_hours, COUNT(*) AS task_count
+        FROM task
+        WHERE project_id = #{projectId} AND assignee_id IS NOT NULL AND status &lt;&gt; 'DONE'
+        GROUP BY assignee_id
+    </select>
+</mapper>

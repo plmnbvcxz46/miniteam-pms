@@ -14,7 +14,9 @@ import org.miniteam.pms.project.dto.MemberVO;
 import org.miniteam.pms.project.dto.PermissionsUpdate;
 import org.miniteam.pms.project.entity.ProjectMember;
 import org.miniteam.pms.project.mapper.MemberMapper;
+import org.miniteam.pms.report.service.WorkloadService;
 import org.miniteam.pms.system.service.OperationLogService;
+import org.miniteam.pms.task.mapper.TaskMapper;
 import org.miniteam.pms.user.entity.SysUser;
 import org.miniteam.pms.user.mapper.UserMapper;
 import org.springframework.dao.DuplicateKeyException;
@@ -28,13 +30,19 @@ public class MemberService {
     private static final String TARGET_MEMBER = "MEMBER";
 
     private final MemberMapper memberMapper;
+    private final TaskMapper taskMapper;
     private final UserMapper userMapper;
     private final ProjectAccess access;
     private final OperationLogService logService;
 
     public MemberService(
-            MemberMapper memberMapper, UserMapper userMapper, ProjectAccess access, OperationLogService logService) {
+            MemberMapper memberMapper,
+            TaskMapper taskMapper,
+            UserMapper userMapper,
+            ProjectAccess access,
+            OperationLogService logService) {
         this.memberMapper = memberMapper;
+        this.taskMapper = taskMapper;
         this.userMapper = userMapper;
         this.access = access;
         this.logService = logService;
@@ -51,7 +59,10 @@ public class MemberService {
 
     public List<MemberVO> list(Long projectId) {
         access.require(projectId);
-        return memberMapper.listByProject(projectId).stream().map(MemberVO::of).toList();
+        var load = WorkloadService.byUser(taskMapper, projectId);
+        return memberMapper.listByProject(projectId).stream()
+                .map(m -> MemberVO.of(m, load.get(m.getUserId())))
+                .toList();
     }
 
     @Transactional
@@ -96,7 +107,7 @@ public class MemberService {
                 user.getId(),
                 "INVITE",
                 ctx.user().realName() + " 邀请 " + user.getRealName() + " 加入项目");
-        return MemberVO.of(memberMapper.find(projectId, user.getId()));
+        return toVO(projectId, user.getId());
     }
 
     @Transactional
@@ -146,7 +157,7 @@ public class MemberService {
                     ctx.user().realName() + " 把 " + target.getRealName() + " 的岗位改为"
                             + (target.getPosition() == null ? "空" : target.getPosition()));
         }
-        return MemberVO.of(memberMapper.find(projectId, userId));
+        return toVO(projectId, userId);
     }
 
     @Transactional
@@ -172,7 +183,7 @@ public class MemberService {
         logChange(ctx, target, ProjectPerm.EDIT_SCHEDULE, oldSchedule, target.isCanEditSchedule());
         logChange(ctx, target, ProjectPerm.EDIT_DOC, oldDoc, target.isCanEditDoc());
         logChange(ctx, target, ProjectPerm.MANAGE_MEMBER, oldManage, target.isCanManageMember());
-        return MemberVO.of(memberMapper.find(projectId, userId));
+        return toVO(projectId, userId);
     }
 
     private void logChange(ProjectContext ctx, ProjectMember target, ProjectPerm perm, boolean before, boolean after) {
@@ -186,6 +197,12 @@ public class MemberService {
                 target.getUserId(),
                 after ? "GRANT" : "REVOKE",
                 ctx.user().realName() + (after ? " 授予 " : " 收回 ") + target.getRealName() + " " + perm.label());
+    }
+
+    private MemberVO toVO(Long projectId, Long userId) {
+        return MemberVO.of(
+                memberMapper.find(projectId, userId),
+                WorkloadService.byUser(taskMapper, projectId).get(userId));
     }
 
     private ProjectMember load(Long projectId, Long userId) {

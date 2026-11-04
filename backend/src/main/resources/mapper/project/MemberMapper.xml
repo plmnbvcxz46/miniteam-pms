@@ -2,20 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.miniteam.pms.project.mapper.MemberMapper">
 
+    <resultMap id="memberMap" type="org.miniteam.pms.project.entity.ProjectMember">
+        <id property="id" column="id"/>
+        <result property="skillTags" column="skill_tags"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonStringListTypeHandler"/>
+    </resultMap>
+
     <sql id="selectMember">
-        SELECT m.id, m.project_id, m.user_id, u.username, u.real_name, u.weekly_capacity,
+        SELECT m.id, m.project_id, m.user_id, u.username, u.real_name, u.weekly_capacity, u.skill_tags,
                m.project_role, m.position, m.can_edit_task, m.can_edit_schedule, m.can_edit_doc,
                m.can_manage_member, m.joined_at
         FROM project_member m
         JOIN sys_user u ON u.id = m.user_id
     </sql>
 
-    <select id="find" resultType="org.miniteam.pms.project.entity.ProjectMember">
+    <select id="find" resultMap="memberMap">
         <include refid="selectMember"/>
         WHERE m.project_id = #{projectId} AND m.user_id = #{userId}
     </select>
 
-    <select id="listByProject" resultType="org.miniteam.pms.project.entity.ProjectMember">
+    <select id="listByProject" resultMap="memberMap">
         <include refid="selectMember"/>
         WHERE m.project_id = #{projectId}
         ORDER BY (m.project_role = 'PM') DESC, m.joined_at, m.id
