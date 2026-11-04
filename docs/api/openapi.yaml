@@ -4168,6 +4168,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/CriticalNode'
+            totalDuration:
+              type: integer
+              format: int32
+              description: 总工期（工作日）
             plannedEnd:
               type: string
               format: date
@@ -4178,6 +4182,7 @@ components:
               example: '2026-10-22'
           required:
           - nodes
+          - totalDuration
           - plannedEnd
           - predictedEnd
       required:

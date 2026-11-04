@@ -360,6 +360,6 @@ public final class ProgressCalculator {
                         .map(t -> new OverviewVO.Node(
                                 t.getId(), labels.get(t.getId()), t.getTitle(), t.getStatus(), snap.overdueDays(t)))
                         .toList();
-        return new OverviewVO.Path(nodes, f.plannedEnd(), f.predictedEnd());
+        return new OverviewVO.Path(nodes, snap.cpm.total(), f.plannedEnd(), f.predictedEnd());
     }
 }

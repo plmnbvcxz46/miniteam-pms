@@ -55,6 +55,7 @@ public record OverviewVO(
 
     public record Path(
             List<Node> nodes,
+            int totalDuration,
             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate plannedEnd,
             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate predictedEnd) {}
 
