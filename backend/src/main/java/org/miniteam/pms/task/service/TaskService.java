@@ -142,14 +142,16 @@ public class TaskService {
 
     // ---------- 读 ----------
 
-    public List<TaskCardVO> list(
+    /** 列表，detail 为 true 时每项带详情字段（TaskDetail），前端一次取完整任务表用 */
+    public List<?> list(
             Long projectId,
             String status,
             Long assigneeId,
             boolean mine,
             boolean criticalOnly,
             Long parentId,
-            String keyword) {
+            String keyword,
+            boolean detail) {
         ProjectContext ctx = access.require(projectId);
         Snapshot snap = snapshot(ctx);
         TaskStatus wanted = status == null || status.isBlank() ? null : TaskStatus.parse(status);
@@ -163,7 +165,7 @@ public class TaskService {
                 .filter(t -> parentId == null || parentId.equals(t.getParentId()))
                 .filter(t ->
                         kw.isEmpty() || t.getTitle().toLowerCase().contains(kw) || ("t-" + t.getTaskNo()).equals(kw))
-                .map(t -> card(t, snap))
+                .map(t -> detail ? (Object) detail(t, snap) : card(t, snap))
                 .toList();
     }
 

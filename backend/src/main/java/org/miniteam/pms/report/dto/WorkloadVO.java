@@ -7,7 +7,8 @@ import org.miniteam.pms.user.dto.UserBriefVO;
 public record WorkloadVO(List<Member> members, double variance) {
 
     /**
-     * loadHours：未完成任务的预估工时之和；weeklyHours 目前和 loadHours 同一口径（本周工时按任务预估工时折算）。
+     * loadHours：未完成任务的预估工时之和；weeklyHours 目前和 loadHours 同一口径（本周工时按任务预估工时折算）；
+     * skillTags 是成员的技能标签，指派负责人的选择器用。
      */
     public record Member(
             UserBriefVO user,
@@ -15,5 +16,6 @@ public record WorkloadVO(List<Member> members, double variance) {
             double weeklyHours,
             int capacity,
             int taskCount,
-            boolean overCapacity) {}
+            boolean overCapacity,
+            List<String> skillTags) {}
 }

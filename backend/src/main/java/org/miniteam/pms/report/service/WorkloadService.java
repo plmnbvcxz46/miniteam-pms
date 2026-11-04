@@ -46,7 +46,8 @@ public class WorkloadService {
                             load,
                             capacity,
                             r == null ? 0 : r.getTaskCount(),
-                            load > capacity);
+                            load > capacity,
+                            m.getSkillTags() == null ? List.of() : m.getSkillTags());
                 })
                 .toList();
         double mean = members.stream()

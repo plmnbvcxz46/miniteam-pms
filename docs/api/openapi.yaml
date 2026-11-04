@@ -1206,6 +1206,13 @@ paths:
         required: false
         schema:
           type: string
+      - name: detail
+        in: query
+        required: false
+        description: 为 true 时每项返回 TaskDetail 的全部字段（TaskCard 的超集），前端一次取完整任务表用，省得逐个请求详情。
+        schema:
+          type: boolean
+          default: false
       responses:
         '200':
           description: 成功
@@ -5187,6 +5194,11 @@ components:
           format: int32
         overCapacity:
           type: boolean
+        skillTags:
+          type: array
+          items:
+            type: string
+          description: 成员的技能标签，指派负责人的选择器用
       required:
       - user
       - loadHours

@@ -33,15 +33,17 @@ public class TaskController {
     }
 
     @GetMapping("/projects/{projectId}/tasks")
-    public Result<List<TaskCardVO>> list(
+    public Result<List<?>> list(
             @PathVariable Long projectId,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(defaultValue = "false") boolean mine,
             @RequestParam(defaultValue = "false") boolean criticalOnly,
             @RequestParam(required = false) Long parentId,
-            @RequestParam(required = false) String keyword) {
-        return Result.ok(taskService.list(projectId, status, assigneeId, mine, criticalOnly, parentId, keyword));
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "false") boolean detail) {
+        return Result.ok(
+                taskService.list(projectId, status, assigneeId, mine, criticalOnly, parentId, keyword, detail));
     }
 
     @PostMapping("/projects/{projectId}/tasks")
