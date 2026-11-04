@@ -1158,6 +1158,7 @@ paths:
       - 任务
       summary: 任务列表
       operationId: listTasks
+      description: 有“编辑任务”权限的成员看到全部任务，其他成员只看到自己负责的和关键路径上的。priority、critical、overdueDays 由后端按项目当前全部任务现算（见 backend/AGENTS.md）。milestoneId 固定为 null。
       parameters:
       - name: projectId
         in: path
@@ -1228,7 +1229,8 @@ paths:
       - 任务
       summary: 新建任务
       operationId: createTask
-      description: 带 predecessorIds 时同时建立依赖，成环返回 409。
+      description: 需要“编辑任务”权限。只有 title 必填；没传 planDays 按 1，estHours 按 planDays×8，importance、urgency 按 3；传了 planStart 没传 dueDate 时，dueDate 按工作日（跳过周六日）算。新任务放在所在列最前面。负责人必须是项目成员（400）。带 predecessorIds 时同时建立依赖，成环返回 409「依赖存在环」。
+
       parameters:
       - name: projectId
         in: path
@@ -1264,6 +1266,7 @@ paths:
       - 任务
       summary: 看板
       operationId: getBoard
+      description: 四列任务按 sortOrder 排列；可见范围同任务列表。blockedImpacts 是被「阻塞」状态任务拖累的未完成后续任务。
       parameters:
       - name: projectId
         in: path
@@ -1374,6 +1377,7 @@ paths:
       - 任务
       summary: 任务详情
       operationId: getTask
+      description: 可见范围同任务列表，看不到的任务返回 403。documents、discussions 在文档、讨论模块接通前返回空数组，milestone 固定为 null。usedDays：已完成为计划工期，待开始为 0，其余为从计划开始到今天经过的工作日数。
       parameters:
       - name: taskId
         in: path
@@ -1402,6 +1406,7 @@ paths:
       - 任务
       summary: 编辑任务
       operationId: updateTask
+      description: 需要“编辑任务”权限，没传的字段不变；assigneeId、planStart、dueDate、parentId 传 null 表示清空。改了计划开始或工期、又没传 dueDate 时，dueDate 按工作日重新算。不能改状态（用 status、position 接口）和前置任务（用 predecessors 接口）。
       parameters:
       - name: taskId
         in: path
@@ -1436,7 +1441,7 @@ paths:
       - 任务
       summary: 删除任务
       operationId: deleteTask
-      description: 依赖随之删除；子任务、讨论、文档、缺陷的关联置空。
+      description: 只有项目经理和系统管理员能删；依赖随之删除；子任务、讨论、文档、缺陷的关联置空。前端在过去的期里不允许删除（后端目前不存快照，没有这层限制）。
       parameters:
       - name: taskId
         in: path
@@ -1459,6 +1464,7 @@ paths:
       - 任务
       summary: 修改状态
       operationId: changeTaskStatus
+      description: 有“编辑任务”权限的成员可以改任何人的任务，其他成员只能改自己负责的（403）。状态变了就放到目标列最前面。移到「已完成」记下完成日、进度 100；离开「已完成」清空完成日、进度归 0；第一次开始（进行中、阻塞、已完成）记下实际开始日；移回「待开始」清空实际开始和完成日。
       parameters:
       - name: taskId
         in: path
@@ -1494,7 +1500,7 @@ paths:
       - 任务
       summary: 看板拖动
       operationId: moveTask
-      description: 改变状态并调整列内顺序。
+      description: 权限和状态变化同 PUT /tasks/{taskId}/status。index 是目标列里的位置（从 0 起），超过列里任务数按放到最后算，小于 0 返回 400；目标列和原列的 sortOrder 重排为 0..n-1。
       parameters:
       - name: taskId
         in: path
@@ -1602,6 +1608,7 @@ paths:
       - 任务
       summary: 任务操作记录
       operationId: listTaskActivities
+      description: 最近 100 条，新的在前，action 有 CREATE、UPDATE、STATUS、DELETE。状态变化的 detail 为“某某 把任务移到阻塞”，前端用它推算阻塞区间。
       parameters:
       - name: taskId
         in: path
@@ -1724,7 +1731,7 @@ paths:
       - 依赖
       summary: 设置前置任务
       operationId: setPredecessors
-      description: 整体替换该任务的前置任务，成环返回 409。
+      description: 需要“编辑任务”权限。整体替换该任务的前置任务，必须在同一项目里；依赖自己返回 400，成环返回 409「依赖存在环」。
       parameters:
       - name: taskId
         in: path
@@ -2067,6 +2074,7 @@ paths:
       - 统计报表
       summary: 成员负载
       operationId: getWorkload
+      description: 每个成员未完成任务的预估工时之和 loadHours、任务数 taskCount。weeklyHours 目前和 loadHours 同一口径（本周工时按未完成任务的预估工时折算），overCapacity 为 loadHours 超过 capacity；variance 为各成员 loadHours 的总体方差，保留两位小数。成员页 Member 的 weeklyHours、taskCount、overCapacity 同口径。
       parameters:
       - name: projectId
         in: path
