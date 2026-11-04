@@ -5,7 +5,8 @@ import { useDismiss } from "../../useDismiss";
 
 export default function IssueSwitch() {
   const [open, setOpen] = useState(false);
-  const { issues, viewing, isPast, setViewing, backToToday } = useIssue();
+  const { issues, viewing, isPast, setViewing, backToToday, snapshotStatus, snapshotError } =
+    useIssue();
   const rootRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, rootRef, close);
@@ -33,6 +34,12 @@ export default function IssueSwitch() {
           <path d="M2 4l4 4 4-4" />
         </svg>
       </button>
+      {snapshotStatus === "missing" && <span className="issue-note">这一期没有存档</span>}
+      {snapshotStatus === "error" && (
+        <span className="issue-note err" role="alert">
+          {snapshotError}
+        </span>
+      )}
       {isPast && (
         <button
           className="back"

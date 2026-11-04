@@ -1,11 +1,11 @@
 import { Fragment } from "react";
-import type { TaskDetail } from "../../../../types/task";
+import type { CriticalNode } from "../../../../types/progress";
 import { formatDayLabel } from "../../../../utils/date";
 import type { TimelineForecast } from "../../../timeline/utils";
 import { isLate } from "../../utils";
 
 interface CriticalChainPanelProps {
-  chain: TaskDetail[];
+  chain: CriticalNode[];
   forecast: TimelineForecast;
   /** 总工期（工作日） */
   totalDays: number;
@@ -31,21 +31,21 @@ export default function CriticalChainPanel({
         </span>
       </div>
       <div className="chain">
-        {chain.map((task, i) => {
-          const hot = task.status !== "DONE" && task.overdueDays > 0;
+        {chain.map((node, i) => {
+          const hot = node.status !== "DONE" && node.overrunDays > 0;
           return (
-            <Fragment key={task.id}>
+            <Fragment key={node.taskId}>
               {i > 0 && "→"}
               {hot ? (
                 <>
                   <span className="hot">
-                    <b>{task.title}</b>
+                    <b>{node.title}</b>
                     <i />
                   </span>
-                  <em>+{task.overdueDays}</em>
+                  <em>+{node.overrunDays}</em>
                 </>
               ) : (
-                <span>{task.title}</span>
+                <span>{node.title}</span>
               )}
             </Fragment>
           );

@@ -1,47 +1,36 @@
-import type { TimelineForecast } from "../../../timeline/utils";
-import type { Headline } from "../../utils";
+import type { Headline } from "../../../../types/progress";
 import { pad2 } from "../../../../utils/date";
 import { formatForecastRange, isLate } from "../../utils";
 
 interface HeadlinePanelProps {
   headline: Headline;
-  forecast: TimelineForecast;
   onOpenTask: (taskId: number) => void;
   onOpenBoard: () => void;
 }
 
 export default function HeadlinePanel({
   headline,
-  forecast,
   onOpenTask,
   onOpenBoard,
 }: HeadlinePanelProps) {
-  const { task, blocked } = headline;
+  const target = headline.targetTaskId;
+  // 标题是整句话，逗号前后各一段
+  const [first, ...rest] = headline.title.split("，");
+  const forecast = {
+    planEnd: headline.plannedEnd,
+    predictedEnd: headline.predictedEnd,
+    delayDays: headline.delayDays,
+  };
 
   return (
-    <section className={task ? "hero" : "hero calm"}>
+    <section className={target !== null ? "hero" : "hero calm"}>
       <div className="hk">
         <span>// HEADLINE</span>
         <span className="chip">风险</span>
       </div>
       <p className="headline">
-        {task ? (
-          <>
-            <span>
-              {task.title}逾期 {task.overdueDays} 天，
-            </span>
-            <span>
-              {blocked.length > 0
-                ? `${blocked.length} 项任务因此受阻`
-                : "暂未影响后续任务"}
-            </span>
-          </>
-        ) : (
-          <>
-            <span>无逾期任务，</span>
-            <span>进度正常</span>
-          </>
-        )}
+        <span>{rest.length > 0 ? `${first}，` : first}</span>
+        {rest.length > 0 && <span>{rest.join("，")}</span>}
       </p>
       <div className="big">
         <b>{isLate(forecast) ? `+${pad2(forecast.delayDays)}` : "00"}</b>
@@ -51,23 +40,21 @@ export default function HeadlinePanel({
           {formatForecastRange(forecast)}
         </span>
       </div>
-      {blocked.length > 0 && (
+      {headline.blockedTasks.length > 0 && (
         <div className="tags">
-          {blocked.map((dep) => (
-            <span
-              key={dep.dependencyId}
-              onClick={() => onOpenTask(dep.task.id)}
-            >
-              {dep.task.title}
+          {headline.blockedTasks.map((task) => (
+            <span key={task.id} onClick={() => onOpenTask(task.id)}>
+              {task.title}
             </span>
           ))}
         </div>
       )}
       <a
         className="go"
-        onClick={() => (task ? onOpenTask(task.id) : onOpenBoard())}
+        onClick={() => (target !== null ? onOpenTask(target) : onOpenBoard())}
       >
-        {task ? "查看逾期任务" : "查看看板"} <span aria-hidden="true">→</span>
+        {target !== null ? "查看逾期任务" : "查看看板"}{" "}
+        <span aria-hidden="true">→</span>
       </a>
     </section>
   );

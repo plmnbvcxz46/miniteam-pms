@@ -115,6 +115,17 @@ export interface Workload {
   variance: number;
 }
 
+/** 报表页用到的全部数据：往期快照的 reports 就是它，实时的由几个报表接口各取一份拼成 */
+export interface Reports {
+  summary: ReportSummary;
+  burndownAll: Burndown;
+  burndownWeek: Burndown;
+  weeklyCompleted: WeeklyCompleted[];
+  deviations: DurationDeviation[];
+  forecast: Forecast;
+  workload: Workload;
+}
+
 /** 范围切换按钮（纯前端常量，不来自接口） */
 export interface RangeOption {
   value: BurndownRange;

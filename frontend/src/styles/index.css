@@ -577,6 +577,35 @@ code {
   border: 2px solid var(--signal);
   color: var(--signal-text);
 }
+/* 页面取不到数据、过去的期没有存档时的整页提示 */
+.page-note {
+  margin: 0;
+  padding: 24px 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mute);
+}
+.page-note.err {
+  color: var(--signal-text);
+}
+.issue-note {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  white-space: nowrap;
+  padding: 4px 10px;
+  background: var(--paper);
+  border: 1.5px solid var(--signal);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--signal-text);
+}
+.issue-note.err {
+  color: var(--signal-text);
+}
 .back {
   all: unset;
   box-sizing: border-box;

@@ -1,8 +1,12 @@
-import type { ProjectPeriod, UserBrief } from "../../types/global";
-import type { DependencyTask, TaskDetail } from "../../types/task";
+import type { ProjectPeriod, TaskStatus, UserBrief } from "../../types/global";
+import type {
+  OverviewStats,
+  ScheduleRow,
+  TodoItem,
+} from "../../types/progress";
+import type { TaskDetail } from "../../types/task";
 import {
   addDays,
-  dayEnd,
   formatDayLabel,
   formatWeekNo,
   getTotalWeeks,
@@ -11,7 +15,7 @@ import {
   weekStartOf,
 } from "../../utils/date";
 import { taskStatusKey } from "../../data/task";
-import type { CpmResult, TimelineForecast } from "../timeline/utils";
+import type { TimelineForecast } from "../timeline/utils";
 
 /** 一周的天数 */
 export const WEEK_DAYS = 7;
@@ -24,11 +28,6 @@ export function getDayProgress(): number {
   return (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
 }
 
-/** 未完成 */
-function isOpen(task: TaskDetail): boolean {
-  return task.status !== "DONE";
-}
-
 /** 页头小标题：第 05/10 周 · 已完成 3 项 · 待推进 8 项 · 逾期 1 项（期号和日期顶栏已有，不重复） */
 export function formatKicker(
   stats: OverviewStats,
@@ -37,110 +36,44 @@ export function formatKicker(
 ): string {
   const week = getWeekIndex(period.startDate, today);
   const weeks = getTotalWeeks(period.startDate, period.planEnd);
-  return `第 ${formatWeekNo(week, weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.left} 项 · 逾期 ${stats.overdue.length} 项`;
+  return `第 ${formatWeekNo(week, weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.remaining} 项 · 逾期 ${stats.overdue} 项`;
 }
 
-/* ---------- 四个数字 ---------- */
-
-export interface OverviewStats {
-  total: number;
-  done: number;
-  left: number;
-  /** 未完成的任务里在关键路径上的数量 */
-  criticalLeft: number;
-  /** 未完成且已逾期的任务，逾期最久的在前 */
-  overdue: TaskDetail[];
-  /** 离项目计划结束还剩几天 */
-  daysLeft: number;
-}
-
-export function getOverviewStats(
-  all: TaskDetail[],
-  cpm: CpmResult,
-  today: string,
-  period: ProjectPeriod,
-): OverviewStats {
-  const open = all.filter(isOpen);
-  return {
-    total: all.length,
-    done: all.length - open.length,
-    left: open.length,
-    criticalLeft: open.filter((task) => cpm.rows[task.id]?.slack === 0).length,
-    overdue: open
-      .filter((task) => task.overdueDays > 0)
-      .sort((a, b) => b.overdueDays - a.overdueDays),
-    daysLeft: Math.max(0, Math.round(toDay(period.planEnd) - toDay(today))),
-  };
-}
-
-/* ---------- 今日头条 ---------- */
-
-export interface Headline {
-  /** 最该关注的逾期任务，没有逾期为空 */
-  task: TaskDetail | null;
-  /** 因它受阻的后续任务（还没完成的） */
-  blocked: DependencyTask[];
-}
-
-/** 逾期任务里先看在关键路径上的，再看逾期最久的 */
-export function getHeadline(overdue: TaskDetail[], cpm: CpmResult): Headline {
-  const task =
-    [...overdue].sort(
-      (a, b) =>
-        Number(cpm.rows[b.id]?.slack === 0) -
-          Number(cpm.rows[a.id]?.slack === 0) || b.overdueDays - a.overdueDays,
-    )[0] ?? null;
-  return {
-    task,
-    blocked: task?.successors.filter((dep) => dep.status !== "DONE") ?? [],
-  };
+/** 逾期最久的未完成任务（四个数字里“逾期”下面那行字用），没有为空 */
+export function getWorstOverdue(tasks: TaskDetail[]): TaskDetail | null {
+  return (
+    tasks
+      .filter((task) => task.status !== "DONE" && task.overdueDays > 0)
+      .sort((a, b) => b.overdueDays - a.overdueDays || a.taskNo - b.taskNo)[0] ??
+    null
+  );
 }
 
 /* ---------- 今日待办 ---------- */
 
-export interface TodoItemData {
-  task: TaskDetail;
+export interface TodoRow {
+  id: number;
+  title: string;
+  /** 任务现在的状态，决定前面小方块的颜色；任务表里还没有这个任务时为空 */
+  status: TaskStatus | null;
   /** 标签文字 */
   tag: string;
   /** late 已逾期 / now 今天截止 */
-  tone: "late" | "now";
+  tone: "late" | "now" | "";
 }
 
-/** 今日待办：已逾期的和今天截止的任务 */
-export function getTodos(all: TaskDetail[], today: string): TodoItemData[] {
-  return all
-    .filter(isOpen)
-    .flatMap((task): TodoItemData[] => {
-      if (task.overdueDays > 0) {
-        return [{ task, tag: `逾期 ${task.overdueDays} 天`, tone: "late" }];
-      }
-      if (task.dueDate === today) {
-        return [{ task, tag: "今天截止", tone: "now" }];
-      }
-      return [];
-    })
-    .sort(
-      (a, b) =>
-        b.task.overdueDays - a.task.overdueDays ||
-        a.task.taskNo - b.task.taskNo,
-    );
-}
-
-/* ---------- 关键路径 ---------- */
-
-/** 关键路径上的任务（总时差为 0），按最早开始排 */
-export function getCriticalChain(
-  tasks: TaskDetail[],
-  cpm: CpmResult,
-): TaskDetail[] {
-  return tasks
-    .filter((task) => cpm.rows[task.id]?.slack === 0)
-    .sort((a, b) => cpm.rows[a.id].es - cpm.rows[b.id].es);
-}
-
-/** 预测比计划晚了没有 */
-export function isLate(forecast: TimelineForecast): boolean {
-  return forecast.delayDays > 0;
+/** 接口的待办（按得分排好）换成面板的行；状态从任务表里按 id 找 */
+export function toTodoRows(
+  items: TodoItem[],
+  taskMap: Record<number, TaskDetail>,
+): TodoRow[] {
+  return items.map((item) => ({
+    id: item.task.id,
+    title: item.task.title,
+    status: taskMap[item.task.id]?.status ?? null,
+    tag: item.overdueDays > 0 ? `逾期 ${item.overdueDays} 天` : item.dueTag,
+    tone: item.overdueDays > 0 ? "late" : item.dueTag === "今天" ? "now" : "",
+  }));
 }
 
 /* ---------- 本周成员排期 ---------- */
@@ -167,8 +100,9 @@ export function getWeek(today: string): WeekDay[] {
   });
 }
 
-export interface ScheduleBar {
-  task: TaskDetail;
+export interface ScheduleBarView {
+  taskId: number;
+  title: string;
   /** 占一周的百分比 */
   left: number;
   width: number;
@@ -179,63 +113,54 @@ export interface ScheduleBar {
 
 export interface ScheduleRowData {
   user: UserBrief;
-  bars: ScheduleBar[];
+  bars: ScheduleBarView[];
   lanes: number;
 }
 
 /**
- * 每个成员这一周要做的事：未完成、和本周有交集的任务。
- * 逾期的任务条画到今天（逾期的部分还在占人）；同一个人的任务重叠时往下叠一行
+ * 接口给的是每个成员本周的任务条（起止日期都含），这里换算成一周里的位置，
+ * 同一个人的任务重叠时往下叠一行
  */
-export function getSchedule(
-  all: TaskDetail[],
-  members: UserBrief[],
+export function toScheduleRows(
+  rows: ScheduleRow[],
   week: WeekDay[],
-  today: string,
 ): ScheduleRowData[] {
   const weekStart = toDay(week[0].date);
-  const weekEnd = weekStart + WEEK_DAYS;
 
-  return members.map((user) => {
-    const spans = all
-      .filter(
-        (task) =>
-          isOpen(task) &&
-          task.assignee?.id === user.id &&
-          task.planStart &&
-          task.dueDate,
-      )
-      .map((task) => {
-        const last = task.overdueDays > 0 ? today : task.dueDate!;
-        return {
-          task,
-          start: Math.max(toDay(task.planStart!), weekStart),
-          end: Math.min(Math.max(dayEnd(last), dayEnd(task.dueDate!)), weekEnd),
-        };
-      })
-      .filter((span) => span.end > span.start)
+  return rows.map((row) => {
+    const spans = row.bars
+      .map((bar) => ({
+        bar,
+        start: toDay(bar.start),
+        end: toDay(bar.end) + 1,
+      }))
       .sort((a, b) => a.start - b.start);
 
     const laneEnds: number[] = [];
-    const bars = spans.map(({ task, start, end }): ScheduleBar => {
+    const bars = spans.map(({ bar, start, end }): ScheduleBarView => {
       let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
       if (lane === -1) lane = laneEnds.length;
       laneEnds[lane] = end;
+      const key = taskStatusKey[bar.status];
       return {
-        task,
+        taskId: bar.taskId,
+        title: bar.title,
         left: ((start - weekStart) / WEEK_DAYS) * 100,
         width: ((end - start) / WEEK_DAYS) * 100,
         lane,
         // 色块沿用任务状态的 .key 颜色：进行中 on、阻塞 stuck，其余是 next
-        tone:
-          taskStatusKey[task.status] === "on" ||
-          taskStatusKey[task.status] === "stuck"
-            ? (taskStatusKey[task.status] as "on" | "stuck")
-            : "next",
+        tone: key === "on" || key === "stuck" ? key : "next",
       };
     });
-    return { user, bars, lanes: Math.max(1, laneEnds.length) };
+    return { user: row.user, bars, lanes: Math.max(1, laneEnds.length) };
   });
+}
+
+/* ---------- 预测 ---------- */
+
+/** 预测比计划晚了没有 */
+export function isLate(forecast: { delayDays: number }): boolean {
+  return forecast.delayDays > 0;
 }
 
 /** 计划 → 预测 的日期文字，没晚就只写计划 */

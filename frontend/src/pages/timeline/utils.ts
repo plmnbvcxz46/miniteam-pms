@@ -1,15 +1,14 @@
+import type { CriticalPath } from "../../types/progress";
 import type { TaskDetail } from "../../types/task";
 import {
-  addDays,
   dayEnd,
-  isWeekend,
   toDateString,
   toDay,
   weekStartTime,
   type AxisRange,
 } from "../../utils/date";
 
-/** 关键路径法（CPM）算出的一行，单位都是工作日，从项目第 0 天算起 */
+/** 关键路径法（CPM）的一行，单位都是工作日，从项目第 0 天算起。由后端算，见 GET /critical-path */
 export interface CpmRow {
   /** 最早开始 / 最早完成 */
   es: number;
@@ -35,87 +34,30 @@ export interface TimelineForecast {
 }
 
 
-/** date 之后的第 n 个工作日（跳过周六日），n 为 0 返回 date 本身 */
-function addWorkdays(date: string, n: number): string {
-  let current = date;
-  for (let left = n; left > 0;) {
-    current = addDays(current, 1);
-    if (!isWeekend(current)) left -= 1;
-  }
-  return current;
+/** 接口的关键路径结果（GET /critical-path）换成时间线页用的形状：总时差 totalFloat 即 slack */
+export function toCpm(path: CriticalPath): CpmResult {
+  return {
+    rows: Object.fromEntries(
+      path.rows.map((row) => [
+        row.taskId,
+        { es: row.es, ef: row.ef, ls: row.ls, lf: row.lf, slack: row.totalFloat },
+      ]),
+    ),
+    total: path.totalDuration,
+  };
 }
 
-/**
- * 关键路径法：正推最早时间，倒推最迟时间，总时差 = 最迟开始 − 最早开始。
- * 工期取任务的计划工期，依赖取前置任务。接通算法接口后，这里改读接口返回的结果
- */
-export function computeCpm(tasks: TaskDetail[]): CpmResult {
-  const byId = new Map(tasks.map((task) => [task.id, task]));
-  const preds = (task: TaskDetail) =>
-    task.predecessors.map((dep) => dep.task.id).filter((id) => byId.has(id));
-
-  const es = new Map<number, number>();
-  const earliestStart = (id: number, trail: Set<number>): number => {
-    const known = es.get(id);
-    if (known !== undefined) return known;
-    // 依赖成环时不再往下走，避免死循环（表单已经排除了成环的选项）
-    if (trail.has(id)) return 0;
-    trail.add(id);
-    const task = byId.get(id)!;
-    const start = Math.max(
-      0,
-      ...preds(task).map(
-        (pid) => earliestStart(pid, trail) + byId.get(pid)!.planDays,
-      ),
-    );
-    trail.delete(id);
-    es.set(id, start);
-    return start;
+/** 接口的预测（甘特图、关键路径、总览里都带）换成时间线页用的形状 */
+export function toForecast(f: {
+  plannedEnd: string;
+  predictedEnd: string;
+  delayDays: number;
+}): TimelineForecast {
+  return {
+    planEnd: f.plannedEnd,
+    predictedEnd: f.predictedEnd,
+    delayDays: f.delayDays,
   };
-  tasks.forEach((task) => earliestStart(task.id, new Set()));
-
-  const total = Math.max(
-    0,
-    ...tasks.map((task) => es.get(task.id)! + task.planDays),
-  );
-
-  const successors = new Map<number, number[]>();
-  tasks.forEach((task) =>
-    preds(task).forEach((pid) =>
-      successors.set(pid, [...(successors.get(pid) ?? []), task.id]),
-    ),
-  );
-
-  const lf = new Map<number, number>();
-  const latestFinish = (id: number, trail: Set<number>): number => {
-    const known = lf.get(id);
-    if (known !== undefined) return known;
-    if (trail.has(id)) return total;
-    trail.add(id);
-    const finish = Math.min(
-      total,
-      ...(successors.get(id) ?? []).map(
-        (sid) => latestFinish(sid, trail) - byId.get(sid)!.planDays,
-      ),
-    );
-    trail.delete(id);
-    lf.set(id, finish);
-    return finish;
-  };
-
-  const rows: Record<number, CpmRow> = {};
-  for (const task of tasks) {
-    const start = es.get(task.id)!;
-    const finish = latestFinish(task.id, new Set());
-    rows[task.id] = {
-      es: start,
-      ef: start + task.planDays,
-      ls: finish - task.planDays,
-      lf: finish,
-      slack: finish - task.planDays - start,
-    };
-  }
-  return { rows, total };
 }
 
 /** 画在时间线上的任务：有排期的，按开始日排，同一天按编号 */
@@ -128,31 +70,6 @@ export function getTimelineTasks(
       (a, b) =>
         toDay(a.planStart!) - toDay(b.planStart!) || a.taskNo - b.taskNo,
     );
-}
-
-/**
- * 预测：关键路径上未完成的任务里逾期最多的那个，把整个项目往后拖几天。
- * 这是前端的估算，后端的进度预测算法接通后改读接口
- */
-export function getForecast(
-  tasks: TaskDetail[],
-  cpm: CpmResult,
-): TimelineForecast {
-  const planEnd = tasks.reduce(
-    (latest, task) => (task.dueDate! > latest ? task.dueDate! : latest),
-    tasks[0]?.dueDate ?? "",
-  );
-  const delayDays = Math.max(
-    0,
-    ...tasks
-      .filter((task) => task.status !== "DONE" && cpm.rows[task.id].slack === 0)
-      .map((task) => task.overdueDays),
-  );
-  return {
-    planEnd,
-    predictedEnd: planEnd ? addWorkdays(planEnd, delayDays) : planEnd,
-    delayDays,
-  };
 }
 
 /**
