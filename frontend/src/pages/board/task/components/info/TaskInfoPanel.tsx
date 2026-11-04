@@ -28,7 +28,7 @@ export default function TaskInfoPanel({
         </div>
       </div>
       <div className="scroll-y">
-        <p className="tk-desc">{task.description}</p>
+        <p className="tk-desc">{task.description ?? "还没有说明。"}</p>
         <div className="phd" style={{ marginTop: "16px" }}>
           <div>
             <span className="k">// LINKS</span>

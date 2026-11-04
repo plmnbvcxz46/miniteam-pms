@@ -41,7 +41,7 @@ export function setUnauthorizedHandler(handler: (() => void) | null) {
   unauthorizedHandler = handler;
 }
 
-type Query = Record<string, string | number | undefined | null>;
+type Query = Record<string, string | number | boolean | undefined | null>;
 
 function withQuery(path: string, query?: Query): string {
   if (!query) return path;

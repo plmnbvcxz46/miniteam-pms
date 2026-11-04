@@ -49,15 +49,15 @@ export default function TaskPage() {
   };
 
   // 切换状态时放到目标列最上面
-  const handleChangeStatus = (status: TaskStatus) => {
+  const handleChangeStatus = async (status: TaskStatus) => {
     if (status === task.status) return;
-    const blocked = moveTask(task.id, status, 0);
+    const blocked = await moveTask(task.id, status, 0);
     if (blocked) window.alert(blocked);
   };
 
   // 删除后这个任务没了，上面的“任务不存在”会自动回到看板
-  const handleDelete = () => {
-    const blocked = deleteTask(task.id);
+  const handleDelete = async () => {
+    const blocked = await deleteTask(task.id);
     if (blocked) window.alert(blocked);
   };
 

@@ -24,9 +24,9 @@ export default function BoardPage() {
   const isShown = canViewTask;
   const canMove = canMoveTask;
 
-  const handleDrop = (taskId: number, target: DropTarget) => {
+  const handleDrop = async (taskId: number, target: DropTarget) => {
     const index = toFullIndex(taskMap, taskId, target, isShown);
-    const blocked = moveTask(taskId, target.status, index);
+    const blocked = await moveTask(taskId, target.status, index);
     if (blocked) window.alert(blocked);
   };
   const { drag, handlePress, wasDragged } = useCardDrag(handleDrop);

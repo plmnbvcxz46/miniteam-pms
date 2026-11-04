@@ -1,170 +1,206 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useAccess } from "../../access/useAccess";
-import { useMe } from "../../auth/useAuth";
-import { useConfigs } from "../../config/useConfigs";
-import { issueTaskStates } from "../../data/issueSnapshots";
+import { activityApi } from "../../api/project";
+import { taskApi } from "../../api/task";
 import { useIssue } from "../../issue/useIssue";
-import { taskStatusLabel } from "../../data/global";
-import {
-  taskActivities as initialTaskActivities,
-  taskDetails as initialTaskDetails,
-  taskTodayDate,
-} from "../../data/task";
 import type { Activity, TaskStatus } from "../../types/global";
 import type { TaskDetail, TaskFormValues } from "../../types/task";
+import { getLocalToday } from "../../utils/date";
 import { useDocumentStore } from "../documents/documentStore";
 import { toDocumentBrief } from "../documents/utils";
-import { calculatePriorities, readPriorityConfig } from "./priority";
 import { TaskStoreContext, type TaskStore } from "./taskStore";
-import {
-  createTask,
-  getTaskAtIssue,
-  moveTaskTo,
-  removeTask,
-  updateTask,
-} from "./utils";
+import { moveTaskTo } from "./utils";
 
 /** 新建任务在看板上高亮的时长 */
 const FRESH_MS = 2400;
+/** 任务操作记录一次取多少条（接口单次上限），时间线用它推算阻塞区间 */
+const ACTIVITY_LIMIT = 100;
+const NO_TASKS: Record<number, TaskDetail> = {};
+const NO_ACTIVITIES: Record<number, Activity[]> = {};
 
+/** 一个项目的任务表和操作记录，两样一起取一起换 */
+interface Loaded {
+  tasks: Record<number, TaskDetail>;
+  activities: Record<number, Activity[]>;
+}
+
+async function load(projectId: number): Promise<Loaded> {
+  const [list, logs] = await Promise.all([
+    taskApi.list(projectId),
+    activityApi.list(projectId, { targetType: "TASK", limit: ACTIVITY_LIMIT }),
+  ]);
+  const activities: Record<number, Activity[]> = {};
+  for (const log of logs) {
+    if (log.targetId !== null) (activities[log.targetId] ??= []).push(log);
+  }
+  return { tasks: Object.fromEntries(list.map((task) => [task.id, task])), activities };
+}
+
+function messageOf(e: unknown): string {
+  return e instanceof Error ? e.message : "操作失败，请稍后再试";
+}
+
+/**
+ * 任务数据：来自 GET /projects/{projectId}/tasks?detail=true，优先级、关键路径标记、逾期天数由后端算。
+ * 按项目 id 做 key，切换项目时整个重来。第一次加载完之前不显示页面。
+ * 写操作失败时 moveTask / deleteTask 返回原因，saveTaskForm 抛 ApiError（message 是写给用户看的原因）
+ */
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
-  const { user: currentUser } = useMe();
-  const { canEditTask, canDeleteTask, canMoveTask, isDemoProject } = useAccess();
-  const { isPast, viewing, today } = useIssue();
-  // 任务还没接接口：只有演示项目有假数据，其他项目是空的
-  const [baseTaskMap, setTaskMap] = useState<Record<number, TaskDetail>>(
-    isDemoProject ? initialTaskDetails : {},
-  );
-  const { values: configValues } = useConfigs();
-  // 任务关联的文档由文档数据按 taskId 得出，不在任务里另存一份；
-  // 未完成任务的优先级得分由评分算法和系统参数里的权重得出，改了任务或权重就跟着变
-  const taskMap = useMemo(() => {
-    // 看过去的期时，任务取当时的状态，那时还没创建的任务不出现
-    const states = isPast ? (issueTaskStates[viewing.issueNo] ?? {}) : null;
-    const visible = states
-      ? Object.values(baseTaskMap).flatMap((task) =>
-          states[task.id] ? [getTaskAtIssue(task, states, today)] : [],
-        )
-      : Object.values(baseTaskMap);
-    const withDocs = visible.map((task) => ({
-      ...task,
-      documents: docs
-        .filter((doc) => doc.taskId === task.id)
-        .map((doc) => toDocumentBrief(doc, task, today)),
-    }));
-    const priorities = calculatePriorities(
-      withDocs,
-      today,
-      readPriorityConfig(configValues),
-    );
-    return Object.fromEntries(
-      withDocs.map((task) => [
-        task.id,
-        priorities[task.id] ? { ...task, priority: priorities[task.id] } : task,
-      ]),
-    ) as Record<number, TaskDetail>;
-  }, [baseTaskMap, docs, configValues, isPast, viewing.issueNo, today]);
-  const [allActivityMap, setActivityMap] = useState<Record<number, Activity[]>>(
-    isDemoProject ? initialTaskActivities : {},
-  );
-  // 看过去的期时，操作记录只留那一天以前的
-  const activityMap = useMemo(() => {
-    if (!isPast) return allActivityMap;
-    return Object.fromEntries(
-      Object.entries(allActivityMap).map(([id, list]) => [
-        id,
-        list.filter((log) => log.createdAt.slice(0, 10) <= today),
-      ]),
-    );
-  }, [allActivityMap, isPast, today]);
+  const { currentProject, canEditTask, canDeleteTask, canMoveTask } = useAccess();
+  const { isPast, today } = useIssue();
+  const projectId = currentProject?.id ?? null;
+
+  const [loaded, setLoaded] = useState<Loaded | null>(null);
+  const [error, setError] = useState("");
+  // 加一就重新取一遍，失败后点“重试”用
+  const [attempt, setAttempt] = useState(0);
   const [taskForm, setTaskForm] = useState<TaskStore["taskForm"]>(null);
   const [freshTaskId, setFreshTaskId] = useState<number | null>(null);
   const freshTimer = useRef<number | undefined>(undefined);
 
-  // 追加一条操作记录
-  const addLog = (taskId: number, action: string, text: string) => {
-    const newActivity: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "TASK",
-      targetId: taskId,
-      action,
-      detail: `${currentUser.realName} ${text}`,
-      createdAt: `${taskTodayDate} 刚刚`,
+  useEffect(() => {
+    if (projectId === null) return;
+    let alive = true;
+    load(projectId)
+      .then((data) => alive && setLoaded(data))
+      .catch((e: unknown) => alive && setError(messageOf(e)));
+    return () => {
+      alive = false;
     };
-    setActivityMap((prev) => ({
-      ...prev,
-      [taskId]: [newActivity, ...(prev[taskId] ?? [])],
-    }));
+  }, [projectId, attempt]);
+
+  /** 写操作之后重新取一遍，让页面和后端一致 */
+  const reload = async () => {
+    if (projectId !== null) setLoaded(await load(projectId));
   };
 
-  // 移动任务；换了列才追加操作记录。
-  // 关联的文档没定稿时不能完成任务，这时不移动，返回原因
-  const moveTask = (taskId: number, status: TaskStatus, index: number) => {
+  // 任务关联的文档由文档数据按 taskId 得出（文档还没接接口），不在任务里另存一份
+  const taskMap = useMemo(() => {
+    const tasks = loaded?.tasks ?? NO_TASKS;
+    return Object.fromEntries(
+      Object.values(tasks).map((task) => [
+        task.id,
+        {
+          ...task,
+          documents: docs
+            .filter((doc) => doc.taskId === task.id)
+            .map((doc) => toDocumentBrief(doc, task, today)),
+        },
+      ]),
+    ) as Record<number, TaskDetail>;
+  }, [loaded, docs, today]);
+
+  // 移动任务（乐观更新，失败回滚）。关联的文档没定稿时不能完成任务。没有移动时返回原因，成功返回 null
+  const moveTask = async (taskId: number, status: TaskStatus, index: number) => {
     // 页面上没权限的人看不到入口，这里再挡一道，防止别处误调用
     if (isPast) return "过去的期只能查看";
-    if (!canMoveTask(taskMap[taskId])) return "没有权限修改这个任务的状态";
+    const task = taskMap[taskId];
+    if (!task || !canMoveTask(task)) return "没有权限修改这个任务的状态";
     if (status === "DONE") {
       const pending = docs.find((doc) => doc.taskId === taskId && !doc.final);
       if (pending) return `文档《${pending.n}》还没定稿，定稿后才能完成任务`;
     }
-    const statusChanged = taskMap[taskId].status !== status;
-    setTaskMap((prev) =>
-      moveTaskTo(prev, taskId, status, index, taskTodayDate),
+    const before = loaded;
+    setLoaded(
+      (prev) =>
+        prev && {
+          ...prev,
+          tasks: moveTaskTo(prev.tasks, taskId, status, index, getLocalToday()),
+        },
     );
-    if (statusChanged) {
-      addLog(taskId, "STATUS", `把任务移到${taskStatusLabel[status]}`);
+    try {
+      await taskApi.position(taskId, status, index);
+      await reload();
+      return null;
+    } catch (e) {
+      setLoaded(before);
+      return messageOf(e);
     }
-    return null;
   };
 
-  const saveTaskForm = (values: TaskFormValues) => {
+  const saveTaskForm = async (values: TaskFormValues) => {
+    if (isPast) throw new Error("过去的期只能查看");
+    if (!canEditTask || projectId === null) throw new Error("没有编辑任务的权限");
     const editingId = taskForm?.taskId ?? null;
-    setTaskForm(null);
-    // 新建和修改任务都需要“编辑任务”权限
-    if (!canEditTask) return;
-
-    if (editingId !== null) {
-      setTaskMap((prev) => updateTask(prev, editingId, values, taskTodayDate));
-      addLog(editingId, "UPDATE", "修改了任务");
-      return;
+    try {
+      if (editingId !== null) {
+        const old = taskMap[editingId];
+        await taskApi.update(editingId, {
+          title: values.title,
+          description: values.description,
+          assigneeId: values.assigneeId,
+          planStart: values.planStart,
+          planDays: values.planDays,
+        });
+        const before = old.predecessors.map((dep) => dep.task.id).sort();
+        const after = [...values.predecessorIds].sort();
+        if (before.join() !== after.join()) {
+          await taskApi.setPredecessors(editingId, values.predecessorIds);
+        }
+      } else {
+        const created = await taskApi.create(projectId, {
+          title: values.title,
+          description: values.description,
+          assigneeId: values.assigneeId,
+          planStart: values.planStart,
+          planDays: values.planDays,
+          predecessorIds: values.predecessorIds,
+        });
+        setFreshTaskId(created.id);
+        window.clearTimeout(freshTimer.current);
+        freshTimer.current = window.setTimeout(() => setFreshTaskId(null), FRESH_MS);
+      }
+    } finally {
+      // 改到一半失败（例如前置任务成环）时，已经保存的部分也要在页面上反映出来
+      await reload().catch(() => undefined);
     }
-
-    const newId = Math.max(...Object.keys(taskMap).map(Number)) + 1;
-    setTaskMap((prev) => createTask(prev, newId, values, taskTodayDate, currentUser));
-    addLog(newId, "CREATE", "创建任务");
-
-    setFreshTaskId(newId);
-    window.clearTimeout(freshTimer.current);
-    freshTimer.current = window.setTimeout(
-      () => setFreshTaskId(null),
-      FRESH_MS,
-    );
+    setTaskForm(null);
   };
 
-  const deleteTask = (taskId: number) => {
+  const deleteTask = async (taskId: number) => {
     // 页面上没权限的人看不到入口，这里再挡一道，防止别处误调用
     if (isPast) return "过去的期只能查看";
     if (!canDeleteTask) return "只有项目经理和系统管理员能删除任务";
-    setTaskMap((prev) => removeTask(prev, taskId));
-    setActivityMap((prev) =>
-      Object.fromEntries(
-        Object.entries(prev).filter(([id]) => Number(id) !== taskId),
-      ),
-    );
-    return null;
+    try {
+      await taskApi.remove(taskId);
+      await reload();
+      return null;
+    } catch (e) {
+      return messageOf(e);
+    }
   };
+
+  if (error) {
+    return (
+      <div className="msg err" role="alert" style={{ padding: 24 }}>
+        {error}
+        <button
+          className="btn"
+          type="button"
+          style={{ marginLeft: 12 }}
+          onClick={() => {
+            setError("");
+            setAttempt((n) => n + 1);
+          }}
+        >
+          重试
+        </button>
+      </div>
+    );
+  }
+  // 没有项目时没有任务可取；有项目时第一次取回来之前先不渲染
+  if (projectId !== null && loaded === null) return null;
 
   return (
     <TaskStoreContext.Provider
       value={{
         taskMap,
-        activityMap,
+        activityMap: loaded?.activities ?? NO_ACTIVITIES,
         moveTask,
         taskForm,
         openTaskForm: (taskId) => {
-          if (canEditTask) setTaskForm({ taskId: taskId ?? null });
+          if (canEditTask && !isPast) setTaskForm({ taskId: taskId ?? null });
         },
         closeTaskForm: () => setTaskForm(null),
         saveTaskForm,
