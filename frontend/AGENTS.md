@@ -54,10 +54,7 @@ src/
 
 | 替身 | 位置 | 接口接通后 |
 |---|---|---|
-| 关键路径（时差）、预测完工、延期天数 | `pages/timeline/utils.ts` 的 `computeCpm`、`getForecast`，总览 `pages/overview/utils.ts` 也在用 | 读 `GET /projects/{projectId}/critical-path`、`/gantt`、`/overview`（后端的 `CriticalPath` 已有，接口在下一个模块做）。任务卡上的 `critical`、`priority` 已经读后端 |
-| 统计报表的概况、燃尽图、每周完成、工期偏差、成员负载 | `pages/reports/derive.ts` | 读 `GET /projects/{projectId}/reports/*` |
-| 往期各页面的样子 | 任务页往期**显示当前任务、只读**（后端不存快照），成员工时取 `data/issueMemberHours.ts`，文档、讨论、动态、变更记录按时间从现有数据筛出 | 切期时读 `GET /projects/{projectId}/issues/{issueDate}` 的 `snapshot`，快照里没有成员页，要和后端确认 |
-| 报表 Excel 导出 | `utils/xlsx.ts` 手写 | 读 `GET /projects/{projectId}/reports/export` 返回的文件 |
+| 往期的文档、讨论、动态、变更记录 | 按时间从现有假数据里筛出（`getDocsAtDate` 等）；任务、时间线、总览、报表、成员页的往期已读快照 | 文档、讨论模块接通后，后端把它们放进快照的 `discussions`、`documents`，前端改读 `snapshot` |
 
 **演示项目**：文档、讨论等页面还没接接口（任务已接通，所有项目都读真实任务），它们的假数据只属于 `id = currentProjectId`（`data/global.ts`，现在是 1）的那个项目，其他项目这些页面是空的（`useAccess().isDemoProject`，`App.tsx` 里按项目 id 做 key，切换项目时这些页面的数据整个重来）。接通哪个模块，就把它从“演示项目才有”改成读接口。
 
@@ -65,7 +62,7 @@ src/
 
 ### 已接真实接口的部分
 
-请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载。任务数据在 `pages/board/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
+请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载、甘特图和关键路径（`/gantt`、`/critical-path`）、总览（`/overview`）、统计报表（`/reports/*`，含 Excel 导出）、往期快照（`/issues/{issueDate}`）。进度和报表的数据由后端算，页面用 `issue/useIssueData.ts` 取：看今天调实时接口（任务表每变一次重新取），看过去的期读 `IssueProvider` 里取回的快照（没有存档时页面提示“这一期没有存档”）。任务数据在 `pages/board/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
 
 ### 模块（`types/<模块>.ts`、`data/<模块>.ts`）
 

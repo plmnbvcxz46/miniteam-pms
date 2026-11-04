@@ -10,7 +10,8 @@ interface ReportsHeaderProps {
   range: BurndownRange;
   rangeOptions: RangeOption[];
   onRangeChange: (range: BurndownRange) => void;
-  onExport: () => void;
+  /** 看过去的期时不传，按钮不显示 */
+  onExport?: () => void;
 }
 
 export default function ReportsHeader({
@@ -46,9 +47,11 @@ export default function ReportsHeader({
             );
           })}
         </div>
-        <button className="btn" type="button" onClick={onExport}>
-          导出
-        </button>
+        {onExport && (
+          <button className="btn" type="button" onClick={onExport}>
+            导出
+          </button>
+        )}
       </div>
     </div>
   );

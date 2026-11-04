@@ -8,6 +8,7 @@ import type {
   ProjectSummary,
 } from "../types/global";
 import type { Member, MemberAdd, MemberUpdate } from "../types/members";
+import type { IssueSnapshot } from "../types/progress";
 import { http } from "./http";
 
 export const projectApi = {
@@ -17,6 +18,9 @@ export const projectApi = {
   update: (id: number, body: ProjectSave) => http.put<Project>(`/projects/${id}`, body),
   archive: (id: number) => http.post<void>(`/projects/${id}/archive`),
   issues: (id: number) => http.get<IssueSummary[]>(`/projects/${id}/issues`),
+  /** 某一期的快照；过去的期没有存档时 404“这一期没有存档” */
+  issue: (id: number, issueDate: string) =>
+    http.get<IssueSnapshot>(`/projects/${id}/issues/${issueDate}`),
 };
 
 export const memberApi = {

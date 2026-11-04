@@ -91,7 +91,44 @@ async function request<T>(
   return payload?.data as T;
 }
 
+/** 下载文件（Excel 等）：带着登录信息请求，失败时同样抛 ApiError 带接口返回的原因 */
+async function download(path: string): Promise<{ blob: Blob; fileName: string | null }> {
+  const token = getToken();
+  let response: Response;
+  try {
+    response = await fetch(`/api${path}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+  } catch {
+    throw new ApiError(0, "无法连接服务器，请稍后再试");
+  }
+  if (!response.ok) {
+    let payload: { code?: number; message?: string } | null = null;
+    try {
+      payload = await response.json();
+    } catch {
+      // 不是 JSON，按 HTTP 状态处理
+    }
+    const code = payload?.code ?? response.status;
+    if (code === 401 && token) unauthorizedHandler?.();
+    throw new ApiError(code, payload?.message || "下载失败，请稍后再试");
+  }
+  // Content-Disposition: attachment; filename*=UTF-8''%E7%BB%9F...
+  const disposition = response.headers.get("Content-Disposition") ?? "";
+  const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+  let fileName: string | null = null;
+  if (encoded) {
+    try {
+      fileName = decodeURIComponent(encoded);
+    } catch {
+      fileName = null;
+    }
+  }
+  return { blob: await response.blob(), fileName };
+}
+
 export const http = {
+  download,
   get: <T>(path: string, query?: Query) => request<T>("GET", path, { query }),
   post: <T>(path: string, body?: unknown) => request<T>("POST", path, { body }),
   put: <T>(path: string, body?: unknown) => request<T>("PUT", path, { body }),

@@ -57,7 +57,12 @@ public final class PriorityCalculator {
             int openSuccessors,
             boolean critical) {}
 
-    public record Priority(String label, int score) {}
+    /** timeUrgency、blockImpact 是评分的两个中间值（0 到 1），优先级排名页要显示 */
+    public record Priority(String label, int score, double timeUrgency, double blockImpact) {
+
+        /** 已完成的任务没有得分 */
+        public static final Priority NONE = new Priority("低", 0, 0, 0);
+    }
 
     public static String label(int score) {
         if (score >= 70) return "高";
@@ -93,7 +98,7 @@ public final class PriorityCalculator {
                     + config.time() * u
                     + config.block() * b;
             int score = weightSum > 0 ? (int) Math.round(weighted / weightSum * 100) : 0;
-            result.put(t.id(), new Priority(label(score), score));
+            result.put(t.id(), new Priority(label(score), score, u, b));
         }
         return result;
     }

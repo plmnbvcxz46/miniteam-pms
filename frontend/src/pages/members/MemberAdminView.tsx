@@ -3,7 +3,6 @@ import type { PermKey, MemberPermissions, ProjectRole } from "../../types/global
 import type { MemberAdd } from "../../types/members";
 import { useAccess } from "../../access/useAccess";
 import { useIssue } from "../../issue/useIssue";
-import { useTaskStore } from "../board/taskStore";
 import { permDefs } from "../../data/members";
 import { getLoadScale } from "../../utils/load";
 import { getOverCapacityCount } from "./utils";
@@ -26,20 +25,8 @@ export default function MemberAdminView() {
   } = useAccess();
 
   const { isPast } = useIssue();
-  const { taskMap } = useTaskStore();
-  // 看过去的期时，负责任务数按当时的任务重算
-  const memberList = useMemo(
-    () =>
-      isPast
-        ? accessMembers.map((m) => ({
-            ...m,
-            taskCount: Object.values(taskMap).filter(
-              (t) => t.status !== "DONE" && t.assignee?.id === m.user.id,
-            ).length,
-          }))
-        : accessMembers,
-    [accessMembers, isPast, taskMap],
-  );
+  // 看过去的期时，成员的负责任务数已经是那一期快照里的（见 AccessProvider）
+  const memberList = accessMembers;
 
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");

@@ -263,10 +263,12 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 | `headline` | VARCHAR(255) | 是 |  | 当日头条 |
 | `predicted_end` | DATE | 是 |  | 当日预测完工日期 |
 | `delay_days` | INT | 否 | 0 | 当日预测延期天数 |
-| `snapshot` | JSON | 否 |  | 当日各页面状态快照 |
+| `snapshot` | JSON | 否 |  | 当日结束时的原始数据 `{tasks, dependencies, members}`，读往期时再按那一天的日期重新算出各页面的数据 |
 | `created_at` | DATETIME | 否 | CURRENT_TIMESTAMP | 创建时间 |
 
 唯一：`project_id, issue_date`
+
+每天零点给每个还没归档的项目写一行（昨天那一期），同一天重复生成会覆盖；当前这一期（今天）不存档。
 
 ### 任务
 

@@ -48,10 +48,16 @@ function messageOf(e: unknown): string {
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
   const { currentProject, canEditTask, canDeleteTask, canMoveTask } = useAccess();
-  const { isPast, today } = useIssue();
+  const { isPast, today, snapshot } = useIssue();
   const projectId = currentProject?.id ?? null;
 
-  const [loaded, setLoaded] = useState<Loaded | null>(null);
+  const [loaded, setLoadedState] = useState<Loaded | null>(null);
+  // 任务表每换一次加一，时间线、总览、报表据此重新取各自的接口
+  const [version, setVersion] = useState(0);
+  const setLoaded: typeof setLoadedState = (value) => {
+    setLoadedState(value);
+    setVersion((n) => n + 1);
+  };
   const [error, setError] = useState("");
   // 加一就重新取一遍，失败后点“重试”用
   const [attempt, setAttempt] = useState(0);
@@ -63,7 +69,11 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     if (projectId === null) return;
     let alive = true;
     load(projectId)
-      .then((data) => alive && setLoaded(data))
+      .then((data) => {
+        if (!alive) return;
+        setLoadedState(data);
+        setVersion((n) => n + 1);
+      })
       .catch((e: unknown) => alive && setError(messageOf(e)));
     return () => {
       alive = false;
@@ -77,7 +87,10 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
 
   // 任务关联的文档由文档数据按 taskId 得出（文档还没接接口），不在任务里另存一份
   const taskMap = useMemo(() => {
-    const tasks = loaded?.tasks ?? NO_TASKS;
+    // 看过去的期时用那一期快照里的任务，取到之前是空的
+    const tasks = isPast
+      ? Object.fromEntries((snapshot?.tasks ?? []).map((task) => [task.id, task]))
+      : (loaded?.tasks ?? NO_TASKS);
     return Object.fromEntries(
       Object.values(tasks).map((task) => [
         task.id,
@@ -89,7 +102,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         },
       ]),
     ) as Record<number, TaskDetail>;
-  }, [loaded, docs, today]);
+  }, [loaded, docs, today, isPast, snapshot]);
 
   // 移动任务（乐观更新，失败回滚）。关联的文档没定稿时不能完成任务。没有移动时返回原因，成功返回 null
   const moveTask = async (taskId: number, status: TaskStatus, index: number) => {
@@ -102,7 +115,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
       if (pending) return `文档《${pending.n}》还没定稿，定稿后才能完成任务`;
     }
     const before = loaded;
-    setLoaded(
+    setLoadedState(
       (prev) =>
         prev && {
           ...prev,
@@ -114,7 +127,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
       await reload();
       return null;
     } catch (e) {
-      setLoaded(before);
+      setLoadedState(before);
       return messageOf(e);
     }
   };
@@ -197,6 +210,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
       value={{
         taskMap,
         activityMap: loaded?.activities ?? NO_ACTIVITIES,
+        version,
         moveTask,
         taskForm,
         openTaskForm: (taskId) => {

@@ -12,7 +12,6 @@ import org.miniteam.pms.project.ProjectAccess;
 import org.miniteam.pms.project.ProjectContext;
 import org.miniteam.pms.project.ProjectPerm;
 import org.miniteam.pms.project.ProjectRole;
-import org.miniteam.pms.project.dto.IssueSummaryVO;
 import org.miniteam.pms.project.dto.PermissionsVO;
 import org.miniteam.pms.project.dto.ProjectSave;
 import org.miniteam.pms.project.dto.ProjectSummaryVO;
@@ -26,7 +25,7 @@ import org.miniteam.pms.user.dto.UserBriefVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 项目的增删改查、归档和期列表。 */
+/** 项目的增删改查和归档。往期列表、往期快照见 progress 包的 IssueSnapshotService。 */
 @Service
 public class ProjectService {
 
@@ -126,13 +125,6 @@ public class ProjectService {
                 projectId,
                 "ARCHIVE",
                 ctx.user().realName() + " 归档了项目");
-    }
-
-    /** 往期列表，最近一期在前。快照要等任务模块，这里只给期号和日期。 */
-    public List<IssueSummaryVO> issues(Long projectId) {
-        Project project = access.require(projectId).project();
-        LocalDate date = effectiveDate(project, IssueCalendar.today());
-        return IssueCalendar.issues(project.getStartDate(), date);
     }
 
     private ProjectSummaryVO toSummary(Project p, LocalDate today) {

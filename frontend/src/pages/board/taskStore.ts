@@ -6,6 +6,8 @@ import type { TaskDetail, TaskFormValues } from "../../types/task";
 export interface TaskStore {
   taskMap: Record<number, TaskDetail>;
   activityMap: Record<number, Activity[]>;
+  /** 任务表每重新取一次加一；时间线、总览、报表据此重新取各自的接口 */
+  version: number;
   /**
    * 把任务移到某列的第 index 位，对应 PUT /tasks/{taskId}/position。
    * 先在页面上移动，接口失败再退回。没有移动时返回原因（没权限、文档还没定稿、接口报错），移动成功返回 null

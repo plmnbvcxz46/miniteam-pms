@@ -20,9 +20,9 @@ import org.miniteam.pms.project.dto.ActivityVO;
 import org.miniteam.pms.project.mapper.MemberMapper;
 import org.miniteam.pms.system.mapper.ConfigMapper;
 import org.miniteam.pms.system.service.OperationLogService;
-import org.miniteam.pms.task.CriticalPath;
 import org.miniteam.pms.task.DependencyGraph;
 import org.miniteam.pms.task.PriorityCalculator;
+import org.miniteam.pms.task.ProjectTaskSnapshot;
 import org.miniteam.pms.task.TaskStatus;
 import org.miniteam.pms.task.WorkdayCalendar;
 import org.miniteam.pms.task.dto.BoardVO;
@@ -78,66 +78,14 @@ public class TaskService {
         this.logService = logService;
     }
 
-    /** 一个项目里全部任务和依赖，以及据此算出的关键路径、优先级 */
-    private static final class Snapshot {
-        final LocalDate today;
-        final List<Task> tasks;
-        final Map<Long, Task> byId = new HashMap<>();
-        final List<TaskDependency> deps;
-        final Map<Long, List<Long>> preds = new HashMap<>();
-        final Map<Long, List<Long>> succs = new HashMap<>();
-        final Map<Long, Boolean> critical = new HashMap<>();
-        final Map<Long, PriorityCalculator.Priority> priority;
-
-        Snapshot(ProjectContext ctx, List<Task> tasks, List<TaskDependency> deps, Map<String, String> configs) {
-            this.today = IssueCalendar.effectiveDate(
-                    ctx.project().getStartDate(), ctx.project().getActualEnd(), IssueCalendar.today());
-            this.tasks = tasks;
-            this.deps = deps;
-            tasks.forEach(t -> byId.put(t.getId(), t));
-            for (TaskDependency d : deps) {
-                if (byId.containsKey(d.getPreTaskId()) && byId.containsKey(d.getNextTaskId())) {
-                    preds.computeIfAbsent(d.getNextTaskId(), k -> new ArrayList<>())
-                            .add(d.getPreTaskId());
-                    succs.computeIfAbsent(d.getPreTaskId(), k -> new ArrayList<>())
-                            .add(d.getNextTaskId());
-                }
-            }
-            CriticalPath.Result cpm = CriticalPath.compute(tasks.stream()
-                    .map(t ->
-                            new CriticalPath.Node(t.getId(), t.getPlanDays(), preds.getOrDefault(t.getId(), List.of())))
-                    .toList());
-            tasks.forEach(t -> critical.put(
-                    t.getId(), !isDone(t) && cpm.rows().get(t.getId()).critical()));
-            this.priority = PriorityCalculator.calculate(
-                    tasks.stream()
-                            .map(t -> new PriorityCalculator.Input(
-                                    t.getId(),
-                                    isDone(t),
-                                    t.getImportance(),
-                                    t.getUrgency(),
-                                    t.getPlanDays(),
-                                    t.getDueDate(),
-                                    (int) succs.getOrDefault(t.getId(), List.of()).stream()
-                                            .filter(id -> !isDone(byId.get(id)))
-                                            .count(),
-                                    critical.get(t.getId())))
-                            .toList(),
-                    today,
-                    PriorityCalculator.Config.from(configs));
-        }
-
-        Map<Long, List<Long>> successorMap() {
-            return succs;
-        }
-    }
-
-    private Snapshot snapshot(ProjectContext ctx) {
+    private ProjectTaskSnapshot snapshot(ProjectContext ctx) {
         Long projectId = ctx.project().getId();
         Map<String, String> configs = configMapper.listAll().stream()
                 .collect(Collectors.toMap(c -> c.getConfigKey(), c -> c.getConfigValue(), (a, b) -> a));
-        return new Snapshot(
-                ctx, taskMapper.listByProject(projectId), dependencyMapper.listByProject(projectId), configs);
+        LocalDate today = IssueCalendar.effectiveDate(
+                ctx.project().getStartDate(), ctx.project().getActualEnd(), IssueCalendar.today());
+        return new ProjectTaskSnapshot(
+                today, taskMapper.listByProject(projectId), dependencyMapper.listByProject(projectId), configs);
     }
 
     // ---------- 读 ----------
@@ -153,7 +101,7 @@ public class TaskService {
             String keyword,
             boolean detail) {
         ProjectContext ctx = access.require(projectId);
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         TaskStatus wanted = status == null || status.isBlank() ? null : TaskStatus.parse(status);
         String kw = keyword == null ? "" : keyword.trim().toLowerCase();
         return snap.tasks.stream()
@@ -169,9 +117,17 @@ public class TaskService {
                 .toList();
     }
 
+    /** 一份任务快照里某个人看得到的全部任务（完整详情），往期快照用 */
+    public List<TaskDetailVO> visibleDetails(ProjectTaskSnapshot snap, boolean canEditTask, Long userId) {
+        return snap.tasks.stream()
+                .filter(t -> snap.visibleTo(canEditTask, userId, t))
+                .map(t -> detail(t, snap))
+                .toList();
+    }
+
     public BoardVO board(Long projectId, String filter) {
         ProjectContext ctx = access.require(projectId);
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         String f = filter == null || filter.isBlank() ? "all" : filter;
         if (!List.of("all", "mine", "critical").contains(f)) {
             throw new BusinessException(ResultCode.BAD_REQUEST, "filter 只能是 all、mine、critical");
@@ -210,7 +166,7 @@ public class TaskService {
     public TaskDetailVO get(Long taskId) {
         Task task = load(taskId);
         ProjectContext ctx = access.require(task.getProjectId());
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         if (!visible(ctx, snap, task)) {
             throw new BusinessException(ResultCode.FORBIDDEN, "没有权限查看这个任务");
         }
@@ -266,7 +222,7 @@ public class TaskService {
         task.setSortOrder(0);
         task.setStatus(TaskStatus.TODO.name());
         task.setProgress(0);
-        Snapshot before = snapshot(ctx);
+        ProjectTaskSnapshot before = snapshot(ctx);
         applyStatus(task, status, before.today);
         taskMapper.insert(task);
         place(task, status, 0);
@@ -408,7 +364,7 @@ public class TaskService {
         task = load(taskId);
         TaskStatus old = TaskStatus.parse(task.getStatus());
         if (index != null) {
-            Snapshot snap = snapshot(ctx);
+            ProjectTaskSnapshot snap = snapshot(ctx);
             if (old != status) {
                 applyStatus(task, status, snap.today);
             }
@@ -425,7 +381,7 @@ public class TaskService {
                         ctx.user().realName() + " 把任务移到" + STATUS_LABEL.get(status));
             }
         }
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         return card(snap.byId.get(taskId), snap);
     }
 
@@ -437,7 +393,7 @@ public class TaskService {
         ctx.requireWritable();
         taskMapper.lockProject(task.getProjectId());
         replacePredecessors(ctx, task, preTaskIds);
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         return dependencies(snap, snap.preds.getOrDefault(taskId, List.of()), taskId, true);
     }
 
@@ -449,7 +405,7 @@ public class TaskService {
         if (ids.contains(task.getId())) {
             throw new BusinessException(ResultCode.BAD_REQUEST, "任务不能依赖自己");
         }
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         for (Long id : ids) {
             Task pre = snap.byId.get(id);
             if (pre == null) {
@@ -579,12 +535,12 @@ public class TaskService {
     }
 
     private TaskDetailVO reload(ProjectContext ctx, Long taskId) {
-        Snapshot snap = snapshot(ctx);
+        ProjectTaskSnapshot snap = snapshot(ctx);
         return detail(snap.byId.get(taskId), snap);
     }
 
     /** 有“编辑任务”权限的看全部，其他人看自己负责的和关键路径上的 */
-    private boolean visible(ProjectContext ctx, Snapshot snap, Task task) {
+    private boolean visible(ProjectContext ctx, ProjectTaskSnapshot snap, Task task) {
         return ctx.can(ProjectPerm.EDIT_TASK)
                 || snap.critical.get(task.getId())
                 || ctx.user().id().equals(task.getAssigneeId());
@@ -600,8 +556,8 @@ public class TaskService {
                 : new UserBriefVO(t.getAssigneeId(), t.getAssigneeUsername(), t.getAssigneeRealName());
     }
 
-    private TaskCardVO card(Task t, Snapshot snap) {
-        PriorityCalculator.Priority p = snap.priority.getOrDefault(t.getId(), new PriorityCalculator.Priority("低", 0));
+    private TaskCardVO card(Task t, ProjectTaskSnapshot snap) {
+        PriorityCalculator.Priority p = snap.priorityOf(t.getId());
         return new TaskCardVO(
                 t.getId(),
                 t.getTaskNo(),
@@ -620,7 +576,7 @@ public class TaskService {
     }
 
     private List<DependencyTaskVO> dependencies(
-            Snapshot snap, List<Long> otherIds, Long taskId, boolean asPredecessors) {
+            ProjectTaskSnapshot snap, List<Long> otherIds, Long taskId, boolean asPredecessors) {
         List<DependencyTaskVO> result = new ArrayList<>();
         for (Long otherId : otherIds) {
             Task other = snap.byId.get(otherId);
@@ -638,7 +594,7 @@ public class TaskService {
         return result;
     }
 
-    private TaskDetailVO detail(Task t, Snapshot snap) {
+    private TaskDetailVO detail(Task t, ProjectTaskSnapshot snap) {
         TaskCardVO c = card(t, snap);
         int used;
         if (isDone(t)) {

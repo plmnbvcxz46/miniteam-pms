@@ -1,14 +1,12 @@
-import { useMemo, useState } from "react";
-import { useAccess } from "../../access/useAccess";
+import { useState } from "react";
+import { reportApi } from "../../api/report";
 import { defaultRange, rangeOptions } from "../../data/reports";
 import { useIssue } from "../../issue/useIssue";
-import { useProjectPeriod } from "../../layouts/useProjectPeriod";
+import { useIssueData } from "../../issue/useIssueData";
+import { useProject } from "../../project/useProject";
 import type { BurndownRange } from "../../types/reports";
 import { downloadBlob } from "../../utils/download";
-import { buildXlsx } from "../../utils/xlsx";
-import { buildReport } from "./derive";
 import { useTaskStore } from "../board/taskStore";
-import { REPORT_SHEET_WIDTHS, buildReportRows } from "./utils";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";
 import LoadPanel from "./components/load/LoadPanel";
@@ -20,35 +18,56 @@ import "./css/reports.css";
 export default function ReportsPage() {
   // 顶层状态：燃尽图范围（本周 / 全周期）
   const [range, setRange] = useState<BurndownRange>(defaultRange);
+  const [exportError, setExportError] = useState("");
 
-  const { taskMap } = useTaskStore();
-  const { members } = useAccess();
-  const { today } = useIssue();
-  const period = useProjectPeriod();
-  const report = useMemo(
-    () => buildReport(taskMap, members, period, today),
-    [taskMap, members, period, today],
-  );
-  const { summary, weeklyCompleted, deviations, forecast, workload } = report;
+  const { version } = useTaskStore();
+  const { isPast } = useIssue();
+  const { currentProject } = useProject();
 
-  // 根据当前选择的范围获取燃尽图数据
-  const currentBurndown = range === "week" ? report.burndownWeek : report.burndownAll;
+  // GET /projects/{projectId}/reports/*：概况、燃尽、每周完成、工期偏差、预测、成员负载都由后端算
+  const {
+    data: report,
+    error,
+    missing,
+  } = useIssueData(reportApi.all, (pages) => pages.reports, version);
 
-  // 报表导出（对齐 GET /projects/{projectId}/reports/export，接口返回 Excel 文件）
-  const handleExport = () => {
-    const rows = buildReportRows({
-      summary,
-      workload,
-      weeklyCompleted,
-      deviations,
-    });
-    downloadBlob(
-      `统计报表_${currentBurndown.today}.xlsx`,
-      new Blob([buildXlsx("统计报表", rows, REPORT_SHEET_WIDTHS)], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      }),
+  if (missing) {
+    return (
+      <section className="view" id="view-reports" data-view="reports">
+        <p className="page-note">这一期没有存档，看不到当时的报表。</p>
+      </section>
     );
-  };
+  }
+  if (error) {
+    return (
+      <section className="view" id="view-reports" data-view="reports">
+        <p className="page-note err" role="alert">
+          {error}
+        </p>
+      </section>
+    );
+  }
+  if (!report) return null;
+
+  const { summary, weeklyCompleted, deviations, forecast, workload } = report;
+  // 根据当前选择的范围获取燃尽图数据
+  const currentBurndown =
+    range === "week" ? report.burndownWeek : report.burndownAll;
+
+  // 报表导出：GET /projects/{projectId}/reports/export 直接返回 Excel（只导出今天这一期）
+  const projectId = currentProject?.id ?? null;
+  const handleExport =
+    isPast || projectId === null
+      ? undefined
+      : async () => {
+          setExportError("");
+          try {
+            const { blob, fileName } = await reportApi.export(projectId);
+            downloadBlob(fileName ?? `统计报表_${currentBurndown.today}.xlsx`, blob);
+          } catch (e) {
+            setExportError(e instanceof Error ? e.message : "导出失败，请稍后再试");
+          }
+        };
 
   return (
     <section className="view" id="view-reports" data-view="reports">
@@ -59,6 +78,11 @@ export default function ReportsPage() {
         onRangeChange={setRange}
         onExport={handleExport}
       />
+      {exportError && (
+        <p className="page-note err" role="alert">
+          {exportError}
+        </p>
+      )}
 
       <div className="rpt">
         <BurndownPanel burndown={currentBurndown} />

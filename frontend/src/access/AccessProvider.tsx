@@ -1,7 +1,6 @@
 import { useMemo, type ReactNode } from "react";
 import { useMe } from "../auth/useAuth";
 import { currentProjectId } from "../data/global";
-import { issueMemberHours } from "../data/issueMemberHours";
 import { useIssue } from "../issue/useIssue";
 import { useProject } from "../project/useProject";
 import { isSystemAdmin } from "../types/auth";
@@ -17,7 +16,7 @@ import {
 export default function AccessProvider({ children }: { children: ReactNode }) {
   const me = useMe();
   const project = useProject();
-  const { isPast, viewing, today } = useIssue();
+  const { isPast, today, snapshot } = useIssue();
   const isAdmin = isSystemAdmin(me);
   const { currentProject, detail } = project;
   const projectId = currentProject?.id ?? null;
@@ -25,21 +24,26 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
   // 过去的期和已归档的项目都是只读
   const readOnly = isPast || isArchived;
 
-  // 看过去的期时，成员只留当时已加入的，本周工时取当时的；变更记录只留那一天以前的
+  // 看过去的期时，成员只留那天已加入的，本周工时、负责任务数取那一期快照里的；快照还没取到时按加入时间先筛一遍
   const members = useMemo(() => {
     if (!isPast) return project.members;
-    const hours = issueMemberHours[viewing.issueNo] ?? {};
-    return project.members
-      .filter((m) => m.joinedAt.slice(0, 10) <= today)
-      .map((m) => {
-        const weeklyHours = hours[m.user.username] ?? m.weeklyHours;
-        return {
-          ...m,
-          weeklyHours,
-          overCapacity: weeklyHours > m.weeklyCapacity,
-        };
-      });
-  }, [project.members, isPast, viewing.issueNo, today]);
+    if (snapshot) {
+      const past = new Map(snapshot.members.map((m) => [m.user.id, m]));
+      return project.members
+        .filter((m) => past.has(m.user.id))
+        .map((m) => {
+          const p = past.get(m.user.id)!;
+          return {
+            ...m,
+            weeklyHours: p.weeklyHours,
+            weeklyCapacity: p.weeklyCapacity,
+            taskCount: p.taskCount,
+            overCapacity: p.overCapacity,
+          };
+        });
+    }
+    return project.members.filter((m) => m.joinedAt.slice(0, 10) <= today);
+  }, [project.members, isPast, snapshot, today]);
   const permLogs = useMemo(
     () =>
       isPast

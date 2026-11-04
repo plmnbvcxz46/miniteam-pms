@@ -17,22 +17,22 @@ export default function ScheduleRow({ row, onOpen }: ScheduleRowProps) {
       <div className="lane" style={{ height: laneHeight }}>
         {row.bars.map((bar) => (
           <button
-            key={bar.task.id}
+            key={bar.taskId}
             className={`bar ${bar.tone}`}
             type="button"
-            title={bar.task.title}
+            title={bar.title}
             style={{
               left: `${bar.left}%`,
               width: `${bar.width}%`,
               top: bar.lane * (BAR_HEIGHT + BAR_GAP),
               height: BAR_HEIGHT,
             }}
-            onClick={() => onOpen(bar.task.id)}
+            onClick={() => onOpen(bar.taskId)}
           >
             {bar.tone === "stuck" ? (
-              <span>{bar.task.title}</span>
+              <span>{bar.title}</span>
             ) : (
-              bar.task.title
+              bar.title
             )}
           </button>
         ))}

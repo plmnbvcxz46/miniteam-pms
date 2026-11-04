@@ -127,8 +127,10 @@ export function buildTaskBar(
     frames.push({ from: start, to: bodyEnd, dashed: true, tail: false });
     addBlocked({ from: start, to: bodyEnd }, "past");
     if (finished > due) {
-      frames.push({ from: due, to: finished, dashed: true, tail: true });
-      fills.push({ from: due, to: finished, kind: "past" });
+      // 逾期段最多画到今天 00:00，和未完成任务的逾期段一致；今天完成的，完成标记仍在今天 24:00
+      const tailEnd = Math.min(finished, Math.max(due, now));
+      frames.push({ from: due, to: tailEnd, dashed: true, tail: true });
+      fills.push({ from: due, to: tailEnd, kind: "past" });
     } else if (finished < due) {
       unused = { from: finished, to: due };
     }
