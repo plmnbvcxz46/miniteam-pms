@@ -28,8 +28,9 @@ export default function SettingsDrawer({
     permissions,
     currentProject,
     projectDescription,
+    projectRole,
     saveProject,
-    setProjectStatus,
+    archiveProject,
   } = useAccess();
   const visibleSections = getVisibleSections({
     isAdmin,
@@ -93,8 +94,9 @@ export default function SettingsDrawer({
               key={currentProject.id}
               project={currentProject}
               description={projectDescription}
+              canEdit={isAdmin || projectRole === "PM"}
               onSave={saveProject}
-              onSetStatus={setProjectStatus}
+              onArchive={archiveProject}
             />
           )}
           {current === "people" && <PeoplePanel />}

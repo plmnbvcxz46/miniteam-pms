@@ -100,6 +100,26 @@ export interface ProjectSummary extends ProjectPeriod {
   myProjectRole: ProjectRole | null;
 }
 
+/** 项目详情（Project），GET /projects/{projectId} */
+export interface Project extends ProjectPeriod {
+  id: number;
+  name: string;
+  description: string | null;
+  /** 创建项目的人 */
+  owner: UserBrief;
+  status: ProjectStatus;
+  /** 实际结束日期 yyyy-MM-dd，归档时记下 */
+  actualEnd: string | null;
+  issueNo: number;
+  totalWeeks: number;
+  currentWeek: number;
+  myProjectRole: ProjectRole | null;
+  /** 我在这个项目里的权限，系统管理员全是 true */
+  myPermissions: MemberPermissions;
+  /** yyyy-MM-dd HH:mm:ss */
+  createdAt: string;
+}
+
 /** 新建项目请求体（ProjectSave），POST /projects */
 export interface ProjectSave extends ProjectPeriod {
   name: string;

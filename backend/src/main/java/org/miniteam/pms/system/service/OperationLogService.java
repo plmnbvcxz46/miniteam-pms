@@ -2,8 +2,10 @@ package org.miniteam.pms.system.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.List;
 import org.miniteam.pms.common.result.PageResult;
 import org.miniteam.pms.system.dto.LogItemVO;
+import org.miniteam.pms.system.entity.LogRow;
 import org.miniteam.pms.system.mapper.OperationLogMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,12 @@ public class OperationLogService {
         long total = mapper.count(userId, projectId, targetType, from, to);
         var rows = mapper.list(userId, projectId, targetType, from, to, offset, safeSize);
         return PageResult.of(total, rows.stream().map(LogItemVO::of).toList());
+    }
+
+    /** 某个项目的动态，权限由调用方先校验。 */
+    public List<LogRow> listByProject(Long projectId, String targetType, Long targetId, Long before, int limit) {
+        int safeLimit = Math.min(Math.max(limit, 1), MAX_PAGE_SIZE);
+        return mapper.listByProject(projectId, targetType, targetId, before, safeLimit);
     }
 
     private static String currentIp() {

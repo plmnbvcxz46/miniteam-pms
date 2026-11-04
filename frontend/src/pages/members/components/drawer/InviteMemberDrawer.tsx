@@ -1,24 +1,20 @@
 import React, { useState } from "react";
+import { userApi } from "../../../../api/system";
 import Drawer from "../../../../components/Drawer";
 import type { MemberPermissions, ProjectRole, UserBrief } from "../../../../types/global";
-import type { PermDef } from "../../../../types/members";
+import type { MemberAdd, PermDef } from "../../../../types/members";
 
 interface InviteMemberDrawerProps {
   /** 是否打开 */
   isOpen: boolean;
   /** 关闭回调 */
   onClose: () => void;
-  /** 候选用户列表 */
-  candidates: UserBrief[];
+  /** 已经在项目里的用户，搜索结果里去掉 */
+  memberIds: number[];
   /** 权限行列表配置 */
   permDefs: PermDef[];
-  /** 确认邀请回调 */
-  onSubmit: (data: {
-    user: UserBrief;
-    projectRole: ProjectRole;
-    position: string;
-    permissions: MemberPermissions;
-  }) => void;
+  /** 确认邀请，POST /projects/{projectId}/members；失败抛错，message 显示在抽屉里 */
+  onSubmit: (body: MemberAdd) => Promise<void>;
 }
 
 /** 关着时不渲染，打开时才挂上表单，每次打开都是新的表单状态 */
@@ -28,13 +24,17 @@ export default function InviteMemberDrawer(props: InviteMemberDrawerProps) {
 
 function InviteMemberForm({
   onClose,
-  candidates,
+  memberIds,
   permDefs,
   onSubmit,
 }: InviteMemberDrawerProps) {
-  const [selectedUserId, setSelectedUserId] = useState<number>(
-    candidates[0]?.id ?? 0,
-  );
+  // 候选人：按姓名或账号搜（GET /users/search），不在这里一次列出所有用户
+  const [keyword, setKeyword] = useState("");
+  const [found, setFound] = useState<UserBrief[] | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number>(0);
+  const [submitting, setSubmitting] = useState(false);
+  const candidates = (found ?? []).filter((u) => !memberIds.includes(u.id));
   const [role, setRole] = useState<ProjectRole>("MEMBER");
   const [position, setPosition] = useState<string>("");
   const [perms, setPerms] = useState<MemberPermissions>({
@@ -73,23 +73,49 @@ function InviteMemberForm({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSearch = async () => {
+    const text = keyword.trim();
+    if (!text) {
+      setErrorMsg("请输入姓名或账号再搜索");
+      return;
+    }
+    setErrorMsg("");
+    setSearching(true);
+    try {
+      const list = await userApi.search(text);
+      setFound(list);
+      const first = list.find((u) => !memberIds.includes(u.id));
+      setSelectedUserId(first?.id ?? 0);
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : "搜索失败，请稍后再试");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const targetUser = candidates.find((c) => c.id === selectedUserId);
     if (!targetUser) {
-      setErrorMsg("请选择要邀请的用户");
+      setErrorMsg("请先搜索并选择要邀请的用户");
       return;
     }
 
     setErrorMsg("");
-    onSubmit({
-      user: targetUser,
-      projectRole: role,
-      position: position.trim() || (role === "PM" ? "项目经理" : role === "TESTER" ? "测试" : "开发"),
-      permissions: perms,
-    });
-    onClose();
+    setSubmitting(true);
+    try {
+      await onSubmit({
+        userId: targetUser.id,
+        projectRole: role,
+        position: position.trim() || (role === "PM" ? "项目经理" : role === "TESTER" ? "测试" : "开发"),
+        ...perms,
+      });
+      onClose();
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "邀请失败，请稍后再试");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -120,23 +146,49 @@ function InviteMemberForm({
             <span className="lb">
               选择用户<b>*</b>
             </span>
-            {candidates.length > 0 ? (
-              <select
-                value={selectedUserId}
-                onChange={(e) => setSelectedUserId(Number(e.target.value))}
-                style={{ width: "100%", height: "36px", padding: "0 8px" }}
-              >
-                {candidates.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.realName} ({u.username})
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <div style={{ color: "var(--mute)", fontSize: "12px", paddingTop: "8px" }}>
-                暂无可邀请的新用户（所有候选人已在项目中）
+            <div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  type="text"
+                  placeholder="输入姓名或账号搜索"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      void handleSearch();
+                    }
+                  }}
+                />
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={searching}
+                  onClick={() => void handleSearch()}
+                >
+                  {searching ? "搜索中…" : "搜索"}
+                </button>
               </div>
-            )}
+              {candidates.length > 0 ? (
+                <select
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(Number(e.target.value))}
+                  style={{ width: "100%", height: "36px", padding: "0 8px", marginTop: 8 }}
+                >
+                  {candidates.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.realName} ({u.username})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                found !== null && (
+                  <div style={{ color: "var(--mute)", fontSize: "12px", paddingTop: "8px" }}>
+                    没有可邀请的用户（没搜到，或搜到的人已在项目中）
+                  </div>
+                )
+              )}
+            </div>
           </div>
 
           {/* 项目角色 */}
@@ -226,9 +278,9 @@ function InviteMemberForm({
             <button
               className="btn primary go"
               type="submit"
-              disabled={candidates.length === 0}
+              disabled={candidates.length === 0 || submitting}
             >
-              确认邀请
+              {submitting ? "邀请中…" : "确认邀请"}
             </button>
           </div>
         </form>

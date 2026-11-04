@@ -1,7 +1,6 @@
-import type { Activity, UserBrief } from "../types/global";
+import type { Activity } from "../types/global";
 import type { Member, MemberSnapshot, PermDef } from "../types/members";
 import { currentIssue, currentProjectId, users } from "./global";
-import { defaultWeeklyCapacity } from "./settings";
 
 /* 全局数据（登录用户、项目 ID、期号、角色名）见 ./global */
 
@@ -83,48 +82,6 @@ export const members: Member[] = [
   },
 ];
 
-/** 按项目角色给默认权限：项目经理全开，其他人只有编辑文档 */
-export function makeMember(
-  user: UserBrief,
-  projectRole: Member["projectRole"],
-  position: string,
-  joinedAt: string,
-): Member {
-  const isPm = projectRole === "PM";
-  return {
-    user,
-    projectRole,
-    position,
-    weeklyHours: 0,
-    weeklyCapacity: defaultWeeklyCapacity,
-    overCapacity: false,
-    taskCount: 0,
-    joinedAt,
-    canEditTask: isPm,
-    canEditSchedule: isPm,
-    canEditDoc: true,
-    canManageMember: isPm,
-  };
-}
-
-/**
- * 各个项目的成员，按项目 id。只有项目 1 有完整的任务、文档等数据，
- * 其他项目只有成员关系，用来区分一个人在不同项目里的角色和权限。
- * 系统管理员不用在这里，他对所有项目开放
- */
-export const projectMembers: Record<number, Member[]> = {
-  1: members,
-  2: [
-    makeMember(devB, "PM", "前端开发", "2026-10-05 09:00:00"),
-    makeMember(pmA, "MEMBER", "评审", "2026-10-05 09:10:00"),
-    makeMember(qaC, "TESTER", "测试", "2026-10-06 10:00:00"),
-  ],
-  3: [
-    makeMember(pmA, "PM", "项目经理", "2026-03-02 09:00:00"),
-    makeMember(devA, "MEMBER", "后端开发", "2026-03-02 09:20:00"),
-  ],
-};
-
 /** GET /projects/{projectId}/activities?targetType=MEMBER（按时间倒序） */
 export const permLogs: Activity[] = [
   {
@@ -163,20 +120,6 @@ export const permLogs: Activity[] = [
     detail: "测试经理 A 创建项目",
     createdAt: "2026-09-21 09:00:00",
   },
-];
-
-/** 各个项目的变更记录，按项目 id；只有项目 1 有历史记录 */
-export const projectPermLogs: Record<number, Activity[]> = {
-  1: permLogs,
-  2: [],
-  3: [],
-};
-
-/** GET /users/search?keyword=...（邀请成员抽屉的候选人，已排除项目内成员） */
-export const inviteCandidates: UserBrief[] = [
-  { id: 5, username: "dev_d", realName: "普通员工 D" },
-  { id: 6, username: "dev_e", realName: "普通员工 E" },
-  { id: 7, username: "qa_f", realName: "测试员 F" },
 ];
 
 /** 当前默认期数快照对象 */

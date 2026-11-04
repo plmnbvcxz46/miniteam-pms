@@ -1,10 +1,8 @@
 import type {
   IssueInfo,
-  IssueSummary,
   Notification,
   NotificationType,
   ProjectRole,
-  ProjectSummary,
   TaskStatus,
   UserBrief,
 } from "../types/global";
@@ -27,61 +25,6 @@ export const users = {
   devB: { id: 3, username: "dev_b", realName: "普通员工 B" },
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
-
-/** GET /projects，项目切换浮层 */
-export const projects: ProjectSummary[] = [
-  {
-    id: 1,
-    name: "测试项目 App",
-    status: "ACTIVE",
-    startDate: "2026-09-21",
-    planEnd: "2026-11-29",
-    issueNo: 32,
-    headline: "接口文档逾期 2 天，已移到阻塞",
-    myProjectRole: null,
-  },
-  {
-    id: 2,
-    name: "课程设计网站",
-    status: "ACTIVE",
-    startDate: "2026-10-05",
-    planEnd: "2026-12-20",
-    issueNo: 18,
-    headline: null,
-    myProjectRole: null,
-  },
-  {
-    id: 3,
-    name: "数据库实验",
-    status: "ARCHIVED",
-    startDate: "2026-03-02",
-    planEnd: "2026-06-21",
-    issueNo: 112,
-    headline: null,
-    myProjectRole: null,
-  },
-];
-
-/** GET /projects/{projectId} 的 description，按项目 id */
-export const projectDescriptions: Record<number, string> = {
-  1: "小型软件团队项目管理系统的课程设计",
-  2: "",
-  3: "数据库课程实验，已结项",
-};
-
-/** GET /projects/{projectId}/issues，按期号倒序，第一项是今天 */
-export const issues: IssueSummary[] = [
-  { issueNo: 32, issueDate: "2026-10-22", headline: "接口文档逾期 2 天，已移到阻塞", predictedEnd: "2026-12-01", delayDays: 2, risk: true },
-  { issueNo: 31, issueDate: "2026-10-21", headline: "答辩 PPT 第二版上传", predictedEnd: "2026-11-30", delayDays: 1, risk: true },
-  { issueNo: 30, issueDate: "2026-10-20", headline: "数据库表设计评审通过", predictedEnd: "2026-11-29", delayDays: 0, risk: false },
-  { issueNo: 29, issueDate: "2026-10-19", headline: "周会确定彩排时间", predictedEnd: "2026-11-29", delayDays: 0, risk: false },
-  { issueNo: 28, issueDate: "2026-10-18", headline: null, predictedEnd: "2026-11-29", delayDays: 0, risk: false },
-  { issueNo: 27, issueDate: "2026-10-17", headline: "菜单接口开始联调", predictedEnd: "2026-11-29", delayDays: 0, risk: false },
-  { issueNo: 26, issueDate: "2026-10-16", headline: "甘特图依赖线方案定稿", predictedEnd: "2026-11-28", delayDays: 0, risk: false },
-  { issueNo: 25, issueDate: "2026-10-15", headline: null, predictedEnd: "2026-11-28", delayDays: 0, risk: false },
-  { issueNo: 24, issueDate: "2026-10-14", headline: "看板拖拽完成", predictedEnd: "2026-11-28", delayDays: 0, risk: false },
-  { issueNo: 23, issueDate: "2026-10-13", headline: "权限模型确认", predictedEnd: "2026-11-27", delayDays: 0, risk: false },
-];
 
 /** GET /notifications，按时间倒序。未读数量由 isRead 算出 */
 export const notifications: Notification[] = [

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.project.mapper.ProjectMapper">
+
+    <sql id="selectProject">
+        SELECT p.id, p.name, p.description, p.owner_id, o.username AS owner_username, o.real_name AS owner_real_name,
+               p.status, p.start_date, p.plan_end, p.actual_end, p.created_at, m.project_role AS my_role
+        FROM project p
+        JOIN sys_user o ON o.id = p.owner_id
+        LEFT JOIN project_member m ON m.project_id = p.id AND m.user_id = #{userId}
+    </sql>
+
+    <select id="findById" resultType="org.miniteam.pms.project.entity.Project">
+        <include refid="selectProject"/>
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="list" resultType="org.miniteam.pms.project.entity.Project">
+        <include refid="selectProject"/>
+        <where>
+            <if test="!all">AND m.id IS NOT NULL</if>
+            <if test="status != null and status != ''">AND p.status = #{status}</if>
+        </where>
+        ORDER BY p.id DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO project (name, description, owner_id, status, start_date, plan_end)
+        VALUES (#{name}, #{description}, #{ownerId}, #{status}, #{startDate}, #{planEnd})
+    </insert>
+
+    <update id="update">
+        UPDATE project
+        SET name = #{name}, description = #{description}, start_date = #{startDate}, plan_end = #{planEnd}
+        WHERE id = #{id}
+    </update>
+
+    <update id="archive">
+        UPDATE project SET status = 'ARCHIVED', actual_end = #{actualEnd} WHERE id = #{id}
+    </update>
+</mapper>

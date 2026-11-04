@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.project.mapper.MemberMapper">
+
+    <sql id="selectMember">
+        SELECT m.id, m.project_id, m.user_id, u.username, u.real_name, u.weekly_capacity,
+               m.project_role, m.position, m.can_edit_task, m.can_edit_schedule, m.can_edit_doc,
+               m.can_manage_member, m.joined_at
+        FROM project_member m
+        JOIN sys_user u ON u.id = m.user_id
+    </sql>
+
+    <select id="find" resultType="org.miniteam.pms.project.entity.ProjectMember">
+        <include refid="selectMember"/>
+        WHERE m.project_id = #{projectId} AND m.user_id = #{userId}
+    </select>
+
+    <select id="listByProject" resultType="org.miniteam.pms.project.entity.ProjectMember">
+        <include refid="selectMember"/>
+        WHERE m.project_id = #{projectId}
+        ORDER BY (m.project_role = 'PM') DESC, m.joined_at, m.id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO project_member (project_id, user_id, project_role, position, can_edit_task, can_edit_schedule,
+                                    can_edit_doc, can_manage_member)
+        VALUES (#{projectId}, #{userId}, #{projectRole}, #{position}, #{canEditTask}, #{canEditSchedule},
+                #{canEditDoc}, #{canManageMember})
+    </insert>
+
+    <update id="update">
+        UPDATE project_member
+        SET project_role = #{projectRole}, position = #{position}, can_edit_task = #{canEditTask},
+            can_edit_schedule = #{canEditSchedule}, can_edit_doc = #{canEditDoc},
+            can_manage_member = #{canManageMember}
+        WHERE project_id = #{projectId} AND user_id = #{userId}
+    </update>
+
+    <select id="countByRole" resultType="int">
+        SELECT COUNT(*) FROM project_member WHERE project_id = #{projectId} AND project_role = #{projectRole}
+    </select>
+</mapper>

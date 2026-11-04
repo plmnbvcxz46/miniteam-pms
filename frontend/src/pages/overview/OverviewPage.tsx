@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccess } from "../../access/useAccess";
-import { users } from "../../data/global";
 import { useProjectPeriod } from "../../layouts/useProjectPeriod";
 import { useIssue } from "../../issue/useIssue";
 import { useTaskStore } from "../board/taskStore";
@@ -27,7 +26,7 @@ import "./css/overview.css";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { canEditTask } = useAccess();
+  const { canEditTask, members } = useAccess();
   const period = useProjectPeriod();
   const { taskMap, openTaskForm } = useTaskStore();
   const { today } = useIssue();
@@ -44,7 +43,12 @@ export default function OverviewPage() {
   const chain = getCriticalChain(tasks, cpm);
   const week = getWeek(today);
   const dayProgress = getDayProgress();
-  const schedule = getSchedule(all, Object.values(users), week, today);
+  const schedule = getSchedule(
+    all,
+    members.map((m) => m.user),
+    week,
+    today,
+  );
 
   const openTask = (taskId: number) => navigate(`/board/task?id=${taskId}`);
 

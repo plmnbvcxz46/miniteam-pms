@@ -28,6 +28,19 @@
         LIMIT #{offset}, #{size}
     </select>
 
+    <select id="listByProject" resultType="org.miniteam.pms.system.entity.LogRow">
+        SELECT l.id, l.user_id, u.username, u.real_name, l.project_id,
+               l.target_type, l.target_id, l.action, l.detail, l.created_at
+        FROM operation_log l
+        LEFT JOIN sys_user u ON u.id = l.user_id
+        WHERE l.project_id = #{projectId}
+        <if test="targetType != null and targetType != ''">AND l.target_type = #{targetType}</if>
+        <if test="targetId != null">AND l.target_id = #{targetId}</if>
+        <if test="before != null">AND l.id &lt; #{before}</if>
+        ORDER BY l.id DESC
+        LIMIT #{limit}
+    </select>
+
     <select id="count" resultType="long">
         SELECT COUNT(*) FROM operation_log l
         <include refid="filter"/>

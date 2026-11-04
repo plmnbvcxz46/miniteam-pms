@@ -1,9 +1,11 @@
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
 import AccessProvider from "./access/AccessProvider";
+import { useAccess } from "./access/useAccess";
 import AuthProvider from "./auth/AuthProvider";
 import { useAuth } from "./auth/useAuth";
 import ConfigProvider from "./config/ConfigProvider";
 import IssueProvider from "./issue/IssueProvider";
+import ProjectProvider from "./project/ProjectProvider";
 import LoginPage from "./pages/login/LoginPage";
 import Shell from "./layouts/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
@@ -35,6 +37,21 @@ const router = createHashRouter([
   },
 ]);
 
+/**
+ * 任务、文档等还没接接口的页面，数据是前端假数据，只属于演示项目。
+ * 按项目 id 做 key，切换项目时这些页面的数据整个重来
+ */
+function ProjectScope() {
+  const { currentProject } = useAccess();
+  return (
+    <DocumentProvider key={currentProject?.id ?? 0}>
+      <TaskProvider>
+        <RouterProvider router={router} />
+      </TaskProvider>
+    </DocumentProvider>
+  );
+}
+
 /** 没登录只显示登录页，登录后才挂上各页面的数据 */
 function AuthGate() {
   const { me, loading } = useAuth();
@@ -42,15 +59,13 @@ function AuthGate() {
   if (loading) return null;
   if (!me) return <LoginPage />;
   return (
-    <IssueProvider>
-      <AccessProvider>
-        <DocumentProvider>
-          <TaskProvider>
-            <RouterProvider router={router} />
-          </TaskProvider>
-        </DocumentProvider>
-      </AccessProvider>
-    </IssueProvider>
+    <ProjectProvider>
+      <IssueProvider>
+        <AccessProvider>
+          <ProjectScope />
+        </AccessProvider>
+      </IssueProvider>
+    </ProjectProvider>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { docs as initialDocs } from "../../data/documents";
+import { useAccess } from "../../access/useAccess";
+import { docs as demoDocs } from "../../data/documents";
 import { useIssue } from "../../issue/useIssue";
 import type { DocumentItem } from "../../types/documents";
 import { DocumentStoreContext } from "./documentStore";
@@ -10,7 +11,9 @@ export default function DocumentProvider({
 }: {
   children: ReactNode;
 }) {
-  const [baseDocs, setDocs] = useState<DocumentItem[]>(initialDocs);
+  const { isDemoProject } = useAccess();
+  // 文档还没接接口：只有演示项目有假数据，其他项目是空的
+  const [baseDocs, setDocs] = useState<DocumentItem[]>(isDemoProject ? demoDocs : []);
   const { isPast, today } = useIssue();
   // 看过去的期时，文档取当时的版本
   const docs = useMemo(
