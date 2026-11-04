@@ -662,7 +662,7 @@ paths:
       - 项目
       summary: 新建项目
       operationId: createProject
-      description: 创建人自动成为项目经理。
+      description: 任何登录用户都可以新建，创建人自动成为项目经理（权限全开）。结束日期不能早于开始日期，跨度不超过 10 年。
       requestBody:
         required: true
         content:
@@ -853,6 +853,7 @@ paths:
       - 成员
       summary: 成员列表
       operationId: listMembers
+      description: 项目经理在前，其余按加入时间。本周工时和负责的任务数要等任务模块，现在固定为 0。
       parameters:
       - name: projectId
         in: path
@@ -883,6 +884,7 @@ paths:
       - 成员
       summary: 邀请成员
       operationId: addMember
+      description: 需要「管理成员」权限。权限字段不传就按角色给默认值（项目经理全开，其他人只有编辑文档）；设为项目经理要项目经理或系统管理员；用户不存在或已停用 400，已是成员 409，已归档的项目 409。
       parameters:
       - name: projectId
         in: path
@@ -913,12 +915,12 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/members/{userId}:
-    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 成员
       summary: 修改角色与岗位
       operationId: updateMember
+      description: 需要「管理成员」权限；把人设为项目经理或改动项目经理，只有项目经理和系统管理员可以；不能把最后一位项目经理改成别的角色（409）。改成项目经理时权限全开，从项目经理改回去恢复默认（只有编辑文档）。已归档的项目返回 409。
       parameters:
       - name: projectId
         in: path
@@ -983,12 +985,12 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /projects/{projectId}/members/{userId}/permissions:
-    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 成员
       summary: 修改权限
       operationId: updateMemberPermissions
+      description: 需要「管理成员」权限；四项权限都要传；项目经理的权限不能改（400）；每一项变化记一条变更记录。已归档的项目返回 409。
       parameters:
       - name: projectId
         in: path
@@ -3062,6 +3064,7 @@ paths:
       - 往期日报
       summary: 往期列表
       operationId: listIssues
+      description: 最近一期在前。期号从项目开始日期起每天一期，开始当天是第 1 期；还没到开始日期按第 1 期算，已归档的项目停在结束日期。头条、预测完工、延期天数要等任务模块，现在返回 null、null、0、false。
       parameters:
       - name: projectId
         in: path

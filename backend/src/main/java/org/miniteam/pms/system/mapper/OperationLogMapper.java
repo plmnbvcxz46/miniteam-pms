@@ -27,6 +27,14 @@ public interface OperationLogMapper {
             @Param("offset") int offset,
             @Param("size") int size);
 
+    /** 项目动态：按 ID 倒序，before 不为空时只取比它更早的 */
+    List<LogRow> listByProject(
+            @Param("projectId") Long projectId,
+            @Param("targetType") String targetType,
+            @Param("targetId") Long targetId,
+            @Param("before") Long before,
+            @Param("limit") int limit);
+
     long count(
             @Param("userId") Long userId,
             @Param("projectId") Long projectId,
