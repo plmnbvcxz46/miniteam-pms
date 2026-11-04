@@ -40,9 +40,9 @@ src/
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | OpenAPI 公共 schema |
 | `currentProjectId` | 路由或项目上下文 |
 | 当前登录身份（用户、系统角色） | `src/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`，已接真实接口，token 存在 `sessionStorage`（`src/api/http.ts`） |
-| 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目，权限取自 `data/members.ts` 的 `projectMembers`（对应 `GET /projects`、`GET /projects/{projectId}/members`） |
-| 正在看哪一期、各页面的“今天” | `src/issue/` 的 `useIssue()`。过去的期只读；接口对应 `GET /projects/{projectId}/issues` 和 `GET /projects/{projectId}/issues/{issueDate}` |
-| `users`（项目成员的 `UserBrief`，各模块假数据共用） | `GET /projects/{projectId}/members` 的 `user` |
+| 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。项目、成员、权限变更记录来自接口（`src/project/` 的 `ProjectProvider` 取 `GET /projects`、`/projects/{id}`、`/members`、`/activities`），`useAccess()` 在上面加“看过去的期和已归档项目只读”。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目；权限以接口的 `myPermissions` 为准 |
+| 正在看哪一期、各页面的“今天” | `src/issue/` 的 `useIssue()`。过去的期只读；期列表来自 `GET /projects/{projectId}/issues`（期号按项目开始日期每天一期），某期快照 `GET /projects/{projectId}/issues/{issueDate}` 还没接 |
+| `users`（项目成员的 `UserBrief`，各模块假数据共用） | 概览、协作页已改用 `useAccess().members` 的 `user`；`data/global.ts` 的 `users` 只剩给演示项目的假数据当作者和负责人 |
 | `currentIssue`（`IssueInfo`：期号、`M.DD` 日期、完整日期） | 期号取项目详情的 `issueNo`；日期直接取本地当前时间，不走接口 |
 | `roleLabel` 等枚举中文名 | 前端常量 |
 
@@ -59,13 +59,14 @@ src/
 | 统计报表的概况、燃尽图、每周完成、工期偏差、成员负载 | `pages/reports/derive.ts` | 读 `GET /projects/{projectId}/reports/*` |
 | 往期各页面的样子 | 任务取 `data/issueSnapshots.ts`，成员工时取 `data/issueMemberHours.ts`，文档、讨论、动态、变更记录按时间从现有数据筛出 | 切期时读 `GET /projects/{projectId}/issues/{issueDate}` 的 `snapshot`，快照里没有成员页，要和后端确认 |
 | 报表 Excel 导出 | `utils/xlsx.ts` 手写 | 读 `GET /projects/{projectId}/reports/export` 返回的文件 |
-| 项目和权限判断 | `src/access/` | 登录态和 `GET /projects` 的结果 |
+
+**演示项目**：任务、文档、讨论等页面还没接接口，它们的假数据只属于 `id = currentProjectId`（`data/global.ts`，现在是 1）的那个项目，其他项目这些页面是空的（`useAccess().isDemoProject`，`App.tsx` 里按项目 id 做 key，切换项目时这些页面的数据整个重来）。接通哪个模块，就把它从“演示项目才有”改成读接口。
 
 假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。系统角色已统一为系统管理员 `ADMIN` 和普通用户 `USER` 两种。
 
 ### 已接真实接口的部分
 
-请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志。
+请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
 
 ### 模块（`types/<模块>.ts`、`data/<模块>.ts`）
 

@@ -9,8 +9,7 @@ interface ProjectSwitchProps {
   /** 没有能进的项目时为空 */
   currentId: number | null;
   onSelect: (id: number) => void;
-  /** 不能新建项目的人不传，浮层里不显示“新建项目” */
-  onCreate?: () => void;
+  onCreate: () => void;
 }
 
 export default function ProjectSwitch({
@@ -84,18 +83,16 @@ export default function ProjectSwitch({
               </button>
             ))}
           </div>
-          {onCreate && (
-            <button
-              type="button"
-              className="pnew"
-              onClick={() => {
-                close();
-                onCreate();
-              }}
-            >
-              新建项目
-            </button>
-          )}
+          <button
+            type="button"
+            className="pnew"
+            onClick={() => {
+              close();
+              onCreate();
+            }}
+          >
+            新建项目
+          </button>
         </div>
       )}
     </div>

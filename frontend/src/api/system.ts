@@ -6,10 +6,13 @@ import type {
   UserCreate,
   UserUpdate,
 } from "../types/settings";
-import type { PageResult } from "../types/global";
+import type { PageResult, UserBrief } from "../types/global";
 import { http } from "./http";
 
 export const userApi = {
+  /** 邀请成员时搜人：任何登录用户可用，只搜启用的账号 */
+  search: (keyword: string, limit = 10) =>
+    http.get<UserBrief[]>("/users/search", { keyword, limit }),
   list: (query: { keyword?: string; page?: number; size?: number } = {}) =>
     http.get<PageResult<SystemUser>>("/users", query),
   create: (body: UserCreate) => http.post<SystemUser>("/users", body),

@@ -1,34 +1,28 @@
 import { useState, useMemo } from "react";
-import type {
-  PermKey,
-  Activity,
-  MemberPermissions,
-  ProjectRole,
-} from "../../types/global";
-import { roleLabel } from "../../data/global";
-import type { Member } from "../../types/members";
+import type { PermKey, MemberPermissions, ProjectRole } from "../../types/global";
+import type { MemberAdd } from "../../types/members";
 import { useAccess } from "../../access/useAccess";
 import { useIssue } from "../../issue/useIssue";
 import { useTaskStore } from "../board/taskStore";
-import { useMe } from "../../auth/useAuth";
-import { permDefs, inviteCandidates } from "../../data/members";
-import { defaultWeeklyCapacity } from "../../data/settings";
+import { permDefs } from "../../data/members";
 import { getLoadScale } from "../../utils/load";
-import { formatFullDateTime, getOverCapacityCount } from "./utils";
+import { getOverCapacityCount } from "./utils";
 import MembersHeader from "./components/header/MembersHeader";
 import MemberCrew from "./components/crew/MemberCrew";
 import PermLog from "./components/log/PermLog";
 import InviteMemberDrawer from "./components/drawer/InviteMemberDrawer";
 import "./css/members.css";
 
-/** 项目经理和有“管理成员”权限的人看到的成员管理页：成员和变更记录在访问层，改了权限马上生效 */
+/** 项目经理和有“管理成员”权限的人看到的成员管理页：成员和变更记录来自接口，改了马上刷新 */
 export default function MemberAdminView() {
   const {
     permissions,
+    isArchived,
     members: accessMembers,
-    setMembers: setMemberList,
     permLogs: logList,
-    setPermLogs: setLogList,
+    inviteMember,
+    changeMemberRole,
+    setMemberPermissions,
   } = useAccess();
 
   const { isPast } = useIssue();
@@ -52,11 +46,11 @@ export default function MemberAdminView() {
 
   // 抽屉显隐
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  // 改角色、改权限失败时的提示（邀请失败显示在抽屉里）
+  const [actionError, setActionError] = useState("");
 
-  // 权限与人数统计
-  const { user: currentUser } = useMe();
   // 过去的期只读
-  const canManageMember = permissions.canManageMember && !isPast;
+  const canManageMember = permissions.canManageMember && !isPast && !isArchived;
   const overCapacityCount = useMemo(
     () => getOverCapacityCount(memberList),
     [memberList],
@@ -82,109 +76,38 @@ export default function MemberAdminView() {
     );
   }, [memberList, searchKeyword]);
 
-  // 抽屉中过滤掉已在项目内的候选人
-  const availableCandidates = useMemo(() => {
-    const existingUserIds = new Set(memberList.map((m) => m.user.id));
-    return inviteCandidates.filter((c) => !existingUserIds.has(c.id));
-  }, [memberList]);
-
-  // 切换成员权限并追加变更日志
-  const handleTogglePerm = (userId: number, permKey: PermKey) => {
-    const targetMember = memberList.find((m) => m.user.id === userId);
-    if (!targetMember || targetMember.projectRole === "PM") {
-      return;
+  const run = async (action: () => Promise<void>) => {
+    setActionError("");
+    try {
+      await action();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "操作失败，请稍后再试");
     }
-
-    const nextVal = !targetMember[permKey];
-    const permDef = permDefs.find((p) => p.key === permKey);
-    const verb = nextVal ? "授予" : "收回";
-
-    // 更新成员权限列表
-    setMemberList((prev) =>
-      prev.map((m) =>
-        m.user.id === userId ? { ...m, [permKey]: nextVal } : m,
-      ),
-    );
-
-    // 记录权限变更动态
-    const newLog: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "MEMBER",
-      targetId: userId,
-      action: nextVal ? "GRANT" : "REVOKE",
-      detail: `${currentUser.realName} ${verb} ${targetMember.user.realName} ${permDef?.label || ""}`,
-      createdAt: formatFullDateTime(new Date()),
-    };
-    setLogList((prev) => [newLog, ...prev]);
   };
 
-  // 修改成员在本项目里的角色：改成项目经理时全部权限打开，从项目经理改成别的角色时回到默认权限
+  // 切换成员的一项权限；变更记录由后端写，刷新后出现在下面
+  const handleTogglePerm = (userId: number, permKey: PermKey) => {
+    const target = memberList.find((m) => m.user.id === userId);
+    if (!target || target.projectRole === "PM") return;
+    const next: MemberPermissions = {
+      canEditTask: target.canEditTask,
+      canEditSchedule: target.canEditSchedule,
+      canEditDoc: target.canEditDoc,
+      canManageMember: target.canManageMember,
+      [permKey]: !target[permKey],
+    };
+    void run(() => setMemberPermissions(userId, next));
+  };
+
+  // 修改成员在本项目里的角色：改成项目经理时全部权限打开，从项目经理改成别的角色时回到默认权限（后端处理）
   const handleChangeRole = (userId: number, role: ProjectRole) => {
     const target = memberList.find((m) => m.user.id === userId);
     if (!target || target.projectRole === role) return;
-    const permissions: MemberPermissions =
-      role === "PM"
-        ? { canEditTask: true, canEditSchedule: true, canEditDoc: true, canManageMember: true }
-        : target.projectRole === "PM"
-          ? { canEditTask: false, canEditSchedule: false, canEditDoc: true, canManageMember: false }
-          : {
-              canEditTask: target.canEditTask,
-              canEditSchedule: target.canEditSchedule,
-              canEditDoc: target.canEditDoc,
-              canManageMember: target.canManageMember,
-            };
-    setMemberList((prev) =>
-      prev.map((m) =>
-        m.user.id === userId ? { ...m, projectRole: role, ...permissions } : m,
-      ),
-    );
-    const newLog: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "MEMBER",
-      targetId: userId,
-      action: "ROLE",
-      detail: `${currentUser.realName} 把 ${target.user.realName} 的角色改为${roleLabel[role]}`,
-      createdAt: formatFullDateTime(new Date()),
-    };
-    setLogList((prev) => [newLog, ...prev]);
+    void run(() => changeMemberRole(userId, role));
   };
 
-  // 邀请成员提交
-  const handleInviteSubmit = (data: {
-    user: typeof inviteCandidates[number];
-    projectRole: Member["projectRole"];
-    position: string;
-    permissions: MemberPermissions;
-  }) => {
-    const nowStr = formatFullDateTime(new Date());
-    const newMember: Member = {
-      user: data.user,
-      projectRole: data.projectRole,
-      position: data.position,
-      weeklyHours: 0,
-      weeklyCapacity: defaultWeeklyCapacity,
-      overCapacity: false,
-      taskCount: 0,
-      joinedAt: nowStr,
-      ...data.permissions,
-    };
-
-    setMemberList((prev) => [...prev, newMember]);
-
-    // 记录邀请动态
-    const newLog: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "MEMBER",
-      targetId: data.user.id,
-      action: "INVITE",
-      detail: `${currentUser.realName} 邀请 ${data.user.realName} 加入项目`,
-      createdAt: nowStr,
-    };
-    setLogList((prev) => [newLog, ...prev]);
-  };
+  // 邀请成员提交：失败时抛错，由抽屉显示
+  const handleInviteSubmit = (body: MemberAdd) => inviteMember(body);
 
   return (
     <section className="view" id="view-members" data-view="members">
@@ -206,12 +129,18 @@ export default function MemberAdminView() {
         onChangeRole={handleChangeRole}
       />
 
+      {actionError && (
+        <p className="msg err" role="alert">
+          {actionError}
+        </p>
+      )}
+
       <PermLog logs={logList} />
 
       <InviteMemberDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        candidates={availableCandidates}
+        memberIds={memberList.map((m) => m.user.id)}
         permDefs={permDefs}
         onSubmit={handleInviteSubmit}
       />

@@ -30,10 +30,12 @@ const FRESH_MS = 2400;
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { docs } = useDocumentStore();
   const { user: currentUser } = useMe();
-  const { canEditTask, canDeleteTask, canMoveTask } = useAccess();
+  const { canEditTask, canDeleteTask, canMoveTask, isDemoProject } = useAccess();
   const { isPast, viewing, today } = useIssue();
-  const [baseTaskMap, setTaskMap] =
-    useState<Record<number, TaskDetail>>(initialTaskDetails);
+  // 任务还没接接口：只有演示项目有假数据，其他项目是空的
+  const [baseTaskMap, setTaskMap] = useState<Record<number, TaskDetail>>(
+    isDemoProject ? initialTaskDetails : {},
+  );
   const { values: configValues } = useConfigs();
   // 任务关联的文档由文档数据按 taskId 得出，不在任务里另存一份；
   // 未完成任务的优先级得分由评分算法和系统参数里的权重得出，改了任务或权重就跟着变
@@ -64,7 +66,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     ) as Record<number, TaskDetail>;
   }, [baseTaskMap, docs, configValues, isPast, viewing.issueNo, today]);
   const [allActivityMap, setActivityMap] = useState<Record<number, Activity[]>>(
-    initialTaskActivities,
+    isDemoProject ? initialTaskActivities : {},
   );
   // 看过去的期时，操作记录只留那一天以前的
   const activityMap = useMemo(() => {

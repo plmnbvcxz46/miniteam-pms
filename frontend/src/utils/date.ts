@@ -41,6 +41,11 @@ export function getProjectToday(): string {
   return projectTodayDate;
 }
 
+/** 本机此刻在项目所在地（Asia/Shanghai）是哪一天，yyyy-MM-dd；新建项目的默认开始日期等用它 */
+export function getLocalToday(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai" }).format(new Date());
+}
+
 /** yyyy-MM-dd 的 00:00 */
 export function toDay(date: string): DayTime {
   return Date.parse(date) / DAY_MS;

@@ -36,6 +36,12 @@ export interface MemberAdd extends Partial<MemberPermissions> {
   position?: string;
 }
 
+/** 修改成员角色和岗位请求体（MemberUpdate），没传的字段不变，岗位传空字符串表示清空 */
+export interface MemberUpdate {
+  projectRole?: ProjectRole;
+  position?: string;
+}
+
 /** 权限行的展示配置（纯前端常量，不来自接口） */
 export interface PermDef {
   key: PermKey;

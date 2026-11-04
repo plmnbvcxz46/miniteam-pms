@@ -7,9 +7,9 @@ import {
   discussionDetails as initialDiscussionDetails,
   discussions as initialDiscussions,
 } from "../../data/collab";
+import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
 import { useIssue } from "../../issue/useIssue";
-import { users } from "../../data/global";
 import type {
   Comment,
   DiscussionBrief,
@@ -46,20 +46,25 @@ export default function CollabPage() {
   const location = useLocation();
   const { taskMap } = useTaskStore();
   const { user: currentUser } = useMe();
+  const { members } = useAccess();
   // 可以 @ 的成员：项目成员里除了自己
   const mentionUsers = useMemo(
-    () => Object.values(users).filter((user) => user.id !== currentUser.id),
-    [currentUser.id],
+    () => members.map((m) => m.user).filter((user) => user.id !== currentUser.id),
+    [members, currentUser.id],
   );
 
   // 顶层状态
-  const [allDiscussions, setDiscussionList] =
-    useState<DiscussionBrief[]>(initialDiscussions);
-  const [allDetails, setDetailMap] = useState<Record<number, DiscussionDetail>>(
-    initialDiscussionDetails,
+  // 讨论还没接接口：只有演示项目有假数据，其他项目是空的
+  const { isDemoProject } = useAccess();
+  const [allDiscussions, setDiscussionList] = useState<DiscussionBrief[]>(
+    isDemoProject ? initialDiscussions : [],
   );
-  const [allActivities, setActivityList] =
-    useState<Activity[]>(initialActivities);
+  const [allDetails, setDetailMap] = useState<Record<number, DiscussionDetail>>(
+    isDemoProject ? initialDiscussionDetails : {},
+  );
+  const [allActivities, setActivityList] = useState<Activity[]>(
+    isDemoProject ? initialActivities : [],
+  );
   // 看过去的期时，只留那天以前的讨论、评论和动态
   const { isPast, today } = useIssue();
   const {
@@ -77,7 +82,9 @@ export default function CollabPage() {
           },
     [isPast, allDiscussions, allDetails, allActivities, taskMap, today],
   );
-  const [selectedId, setSelectedId] = useState<number>(defaultDiscussionId);
+  const [selectedId, setSelectedId] = useState<number>(
+    isDemoProject ? defaultDiscussionId : 0,
+  );
   const [draftDiscussion, setDraftDiscussion] =
     useState<DiscussionDetail | null>(null);
   // 草稿对话预先放进回复框的内容（文件动态会带上 @ 这份文件）

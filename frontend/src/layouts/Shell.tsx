@@ -25,8 +25,7 @@ export default function Shell() {
   const settingsOpen = settingsSection !== null;
   const me = useMe();
   const { updateProfile } = useAuth();
-  const { projects, currentProject, selectProject, canCreateProject, createProject } =
-    useAccess();
+  const { projects, currentProject, selectProject, createProject } = useAccess();
   // 个人资料取登录身份，保存走 PUT /auth/me
   const profile: ProfileUpdate = {
     realName: me.user.realName,
@@ -46,7 +45,7 @@ export default function Shell() {
           projects={projects}
           currentId={currentProject?.id ?? null}
           onSelect={selectProject}
-          onCreate={canCreateProject ? () => setProjectFormOpen(true) : undefined}
+          onCreate={() => setProjectFormOpen(true)}
         />
         <SidebarNav
           riskCount={riskCount}
@@ -83,7 +82,7 @@ export default function Shell() {
         {currentProject ? (
           <Outlet context={{ period: currentProject } satisfies ShellContext} />
         ) : (
-          <NoProject canCreate={canCreateProject} onCreate={() => setProjectFormOpen(true)} />
+          <NoProject onCreate={() => setProjectFormOpen(true)} />
         )}
       </main>
 
@@ -101,8 +100,8 @@ export default function Shell() {
       {projectFormOpen && (
         <NewProjectDrawer
           onClose={() => setProjectFormOpen(false)}
-          onSubmit={(values) => {
-            createProject(values);
+          onSubmit={async (values) => {
+            await createProject(values);
             setProjectFormOpen(false);
           }}
         />
