@@ -1,0 +1,46 @@
+name: 构建 MinIO 镜像
+
+# MinIO 官方不再发布社区版镜像，从源码构建，耗时较长（几分钟到十几分钟）。
+# 所以单独放一个工作流，不放进每次合并都跑的“发布镜像”里：只在手动触发，
+# 或者 deploy/minio.Dockerfile 变了（比如升级了版本）时构建。
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - deploy/minio.Dockerfile
+
+concurrency: minio-image
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  minio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 镜像名（owner 必须小写）
+        id: meta
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "image=ghcr.io/${OWNER}/miniteam-pms-minio" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/minio.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha,scope=minio
+          cache-to: type=gha,mode=max,scope=minio

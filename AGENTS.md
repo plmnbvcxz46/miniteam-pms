@@ -11,6 +11,7 @@
 | `frontend/` | 前端：React 19 + TypeScript + Vite，包管理器 pnpm | VS Code 只打开这个文件夹 |
 | `backend/` | 后端：Java 21 + Spring Boot 4.0 + MyBatis + MySQL，Maven 构建，根包 `org.miniteam.pms` | IDEA 只打开这个文件夹 |
 | `docs/` | 只放 Markdown 和小图片；Word/PPT 放外部，在 `docs/README.md` 登记链接 | 任意 |
+| `deploy/` | 给别人自部署用的 Docker 配置（compose、各镜像的 Dockerfile），线上服务器不用它，见 `deploy/README.md` | 任意 |
 | `.github/workflows/` | CI 和自动部署 | 只有组长改 |
 
 ## 给 AI 的硬性规则

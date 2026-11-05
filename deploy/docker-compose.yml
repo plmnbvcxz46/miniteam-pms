@@ -1,0 +1,146 @@
+# 自部署：一条命令起整套系统（数据库、对象存储、后端、前端）。
+#   1. 下载本文件和 .env.example、init-env.sh 放在同一个目录（也可以不下 init-env.sh，手填 .env）
+#   2. sh init-env.sh        生成 .env，里面的密码都是随机的
+#   3. docker compose up -d  浏览器打开 http://服务器地址:80，管理员账号见 .env
+# 详细说明和备份、升级方法见 README.md。
+#
+# 后端、前端、MinIO 用 GitHub 上发布好的镜像；镜像还没发布时，在仓库里执行
+#   docker compose -f deploy/docker-compose.yml up -d --build
+# 会改成本地构建（需要整个仓库）。
+
+name: miniteam-pms
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?在 .env 里设置 MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?在 .env 里设置 DB_PASSWORD}
+      TZ: Asia/Shanghai
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci", "--default-time-zone=+08:00"]
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  minio:
+    image: ghcr.io/plmnbvcxz46/miniteam-pms-minio:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/minio.Dockerfile
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?在 .env 里设置 MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?在 .env 里设置 MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "mc ready local || wget -qO- http://127.0.0.1:9000/minio/health/live >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # 只跑一次：建桶、建一个只能访问这个桶的用户，后端用它的密钥。重复执行没有副作用
+  minio-init:
+    image: ghcr.io/plmnbvcxz46/miniteam-pms-minio:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/minio.Dockerfile
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      OSS_BUCKET: ${OSS_BUCKET:-app}
+      OSS_ACCESS_KEY: ${OSS_ACCESS_KEY:?在 .env 里设置 OSS_ACCESS_KEY}
+      OSS_SECRET_KEY: ${OSS_SECRET_KEY:?在 .env 里设置 OSS_SECRET_KEY}
+    configs:
+      - source: minio-init
+        target: /minio-init.sh
+    entrypoint: ["sh", "/minio-init.sh"]
+
+  backend:
+    image: ghcr.io/plmnbvcxz46/miniteam-pms-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/backend.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/app?sslMode=DISABLED&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?在 .env 里设置 JWT_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?在 .env 里设置 ADMIN_PASSWORD}
+      OSS_ENDPOINT: http://minio:9000
+      OSS_BUCKET: ${OSS_BUCKET:-app}
+      OSS_ACCESS_KEY: ${OSS_ACCESS_KEY}
+      OSS_SECRET_KEY: ${OSS_SECRET_KEY}
+      OSS_PATH_STYLE: "true"
+
+  frontend:
+    image: ghcr.io/plmnbvcxz46/miniteam-pms-frontend:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/frontend.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-80}:80"
+
+# 建桶脚本直接写在这里，这样只下载这一个 compose 文件就够了（$$ 是 compose 里 $ 的转义写法）
+configs:
+  minio-init:
+    content: |
+      #!/bin/sh
+      # 建桶、建只能访问这个桶的用户。重复执行没有副作用（已存在就跳过或覆盖密钥）。
+      set -eu
+
+      # MinIO 刚起来时可能还没接受连接，等一会儿
+      i=0
+      until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD" >/dev/null 2>&1; do
+        i=$$((i + 1))
+        if [ "$$i" -ge 30 ]; then
+          echo "连不上 MinIO" >&2
+          exit 1
+        fi
+        sleep 2
+      done
+
+      mc mb --ignore-existing "local/$$OSS_BUCKET"
+
+      cat > /tmp/policy.json <<EOF
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": ["s3:*"],
+            "Resource": ["arn:aws:s3:::$$OSS_BUCKET", "arn:aws:s3:::$$OSS_BUCKET/*"]
+          }
+        ]
+      }
+      EOF
+
+      mc admin policy create local app-rw /tmp/policy.json 2>/dev/null || mc admin policy create local app-rw /tmp/policy.json --overwrite 2>/dev/null || true
+      mc admin user add local "$$OSS_ACCESS_KEY" "$$OSS_SECRET_KEY"
+      mc admin policy attach local app-rw --user "$$OSS_ACCESS_KEY" 2>/dev/null || true
+      echo "对象存储初始化完成：桶 $$OSS_BUCKET，用户 $$OSS_ACCESS_KEY"
+
+volumes:
+  mysql-data:
+  minio-data:
