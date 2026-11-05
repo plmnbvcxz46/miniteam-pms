@@ -263,7 +263,7 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 | `headline` | VARCHAR(255) | 是 |  | 当日头条 |
 | `predicted_end` | DATE | 是 |  | 当日预测完工日期 |
 | `delay_days` | INT | 否 | 0 | 当日预测延期天数 |
-| `snapshot` | JSON | 否 |  | 当日结束时的原始数据 `{tasks, dependencies, members}`，读往期时再按那一天的日期重新算出各页面的数据 |
+| `snapshot` | JSON | 否 |  | 当日结束时的原始数据 `{tasks, dependencies, members, documents}`（documents 是文档和它的全部版本的元数据，不含文件内容；旧存档没有这一项，按没有文档算），读往期时再按那一天的日期重新算出各页面的数据 |
 | `created_at` | DATETIME | 否 | CURRENT_TIMESTAMP | 创建时间 |
 
 唯一：`project_id, issue_date`
@@ -397,7 +397,7 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 | `version` | VARCHAR(16) | 否 |  | 版本号 |
 | `change_note` | VARCHAR(255) | 是 |  | 本版改动 |
 | `file_name` | VARCHAR(255) | 否 |  | 原始文件名 |
-| `file_path` | VARCHAR(255) | 否 |  | 存储路径 |
+| `file_path` | VARCHAR(255) | 否 |  | 文件在对象存储（S3 协议）里的 key，形如 `{projectId}/{documentId}/{uuid}.{扩展名}`，不用用户给的文件名拼 |
 | `file_size` | BIGINT | 否 | 0 | 字节 |
 | `content_type` | VARCHAR(128) | 是 |  | 文件类型 |
 | `uploader_id` | BIGINT | 否 |  | 上传人 |

@@ -17,10 +17,26 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 1
 
+  servlet:
+    multipart:
+      # 文档上传：单个文件 20MB（nginx 的 client_max_body_size 要大于这个）
+      max-file-size: 20MB
+      max-request-size: 25MB
+
 server:
   port: ${SERVER_PORT:8080}
 
 app:
+  storage:
+    # 文档文件存 S3 协议的对象存储（自建 MinIO、阿里云 OSS、腾讯 COS 都行）。本机默认值连开发环境的开发桶，
+    # 服务器上用环境变量改成线上的；密钥不进仓库，开发密钥写在 backend/application-local.yaml
+    endpoint: ${OSS_ENDPOINT:http://127.0.0.1:9000}
+    bucket: ${OSS_BUCKET:app-dev}
+    access-key: ${OSS_ACCESS_KEY:unset}
+    secret-key: ${OSS_SECRET_KEY:unset}
+    region: ${OSS_REGION:us-east-1}
+    # MinIO 要用路径风格；阿里云 OSS、腾讯 COS 设为 false
+    path-style: ${OSS_PATH_STYLE:true}
   jwt:
     # 没配就每次启动随机生成（重启后需重新登录）；线上必须用环境变量固定
     secret: ${JWT_SECRET:}

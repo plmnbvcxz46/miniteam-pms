@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.document.mapper.DocumentMapper">
+
+    <sql id="selectDocument">
+        SELECT d.id, d.project_id, d.task_id, d.name, d.category, d.owner_id,
+               o.username AS owner_username, o.real_name AS owner_real_name,
+               d.status, d.current_version, d.due_date, d.finalized_at, d.created_at, d.updated_at
+        FROM document d
+        JOIN sys_user o ON o.id = d.owner_id
+    </sql>
+
+    <sql id="selectVersion">
+        SELECT v.id, v.document_id, v.version, v.change_note, v.file_name, v.file_path, v.file_size,
+               v.content_type, v.uploader_id, u.username AS uploader_username, u.real_name AS uploader_real_name,
+               v.created_at
+        FROM document_version v
+        JOIN sys_user u ON u.id = v.uploader_id
+    </sql>
+
+    <select id="findById" resultType="org.miniteam.pms.document.entity.Document">
+        <include refid="selectDocument"/>
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="lock" resultType="long">
+        SELECT id FROM document WHERE id = #{id} FOR UPDATE
+    </select>
+
+    <select id="listByProject" resultType="org.miniteam.pms.document.entity.Document">
+        <include refid="selectDocument"/>
+        WHERE d.project_id = #{projectId}
+        ORDER BY d.id DESC
+    </select>
+
+    <select id="firstUnfinalByTask" resultType="org.miniteam.pms.document.entity.Document">
+        <include refid="selectDocument"/>
+        WHERE d.task_id = #{taskId} AND d.status != 'FINAL'
+        ORDER BY d.id
+        LIMIT 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO document (project_id, task_id, name, category, owner_id, status, current_version, due_date)
+        VALUES (#{projectId}, #{taskId}, #{name}, #{category}, #{ownerId}, #{status}, #{currentVersion}, #{dueDate})
+    </insert>
+
+    <update id="updateCurrentVersion">
+        UPDATE document SET current_version = #{currentVersion} WHERE id = #{id}
+    </update>
+
+    <update id="finalizeDocument">
+        UPDATE document SET status = 'FINAL', finalized_at = NOW() WHERE id = #{id}
+    </update>
+
+    <select id="findVersion" resultType="org.miniteam.pms.document.entity.DocumentVersion">
+        <include refid="selectVersion"/>
+        WHERE v.id = #{id}
+    </select>
+
+    <select id="listVersions" resultType="org.miniteam.pms.document.entity.DocumentVersion">
+        <include refid="selectVersion"/>
+        WHERE v.document_id = #{documentId}
+        ORDER BY v.id DESC
+    </select>
+
+    <select id="listVersionsByProject" resultType="org.miniteam.pms.document.entity.DocumentVersion">
+        <include refid="selectVersion"/>
+        JOIN document d ON d.id = v.document_id
+        WHERE d.project_id = #{projectId}
+        ORDER BY v.id DESC
+    </select>
+
+    <select id="countVersion" resultType="int">
+        SELECT COUNT(*) FROM document_version WHERE document_id = #{documentId} AND version = #{version}
+    </select>
+
+    <insert id="insertVersion" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO document_version (document_id, version, change_note, file_name, file_path, file_size,
+                                      content_type, uploader_id)
+        VALUES (#{documentId}, #{version}, #{changeNote}, #{fileName}, #{filePath}, #{fileSize},
+                #{contentType}, #{uploaderId})
+    </insert>
+</mapper>

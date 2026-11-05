@@ -1,6 +1,21 @@
-import type { DocumentItem } from "../types/documents";
 import type { IssueInfo } from "../types/global";
 import { currentIssue } from "./global";
+
+/**
+ * 讨论页还在用的假文档（文档页已经接了接口，讨论模块接通时一起删掉）。
+ * hist 是 [版本号, 日期, 操作人, 变更说明] 的简写元组
+ */
+export interface DemoDocument {
+  id: number;
+  n: string;
+  taskId?: number;
+  final?: boolean;
+  v: string;
+  who: string;
+  up: string;
+  due: string;
+  hist: [version: string, date: string, operator: string, comment: string][];
+}
 
 /**
  * 快照数据结构（预留快照切换功能使用）
@@ -8,10 +23,10 @@ import { currentIssue } from "./global";
  * 下面的 due 只在没绑任务时生效；是否定稿（final）是文档自己的状态
  */
 export interface DocumentSnapshot extends IssueInfo {
-  docs: DocumentItem[];
+  docs: DemoDocument[];
 }
 
-export const docs: DocumentItem[] = [
+export const docs: DemoDocument[] = [
   {
     id: 1,
     n: "需求规格说明书",

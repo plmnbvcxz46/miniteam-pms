@@ -3,6 +3,7 @@
  * 共享结构（UserBrief、TaskRef、IssueSummary 等）见 ./global
  */
 import type { IssueSummary, TaskRef, TaskStatus } from "./global";
+import type { DocumentDetailApi } from "./documents";
 import type { Reports } from "./reports";
 import type { TaskDetail } from "./task";
 
@@ -176,6 +177,8 @@ export interface IssuePages {
   criticalPath: CriticalPath;
   reports: Reports;
   members: PastMember[];
+  /** 当天的文档，版本记录只留那天以前的 */
+  documents: DocumentDetailApi[];
 }
 
 /** 某一期（IssueSnapshot），GET /projects/{projectId}/issues/{issueDate} */

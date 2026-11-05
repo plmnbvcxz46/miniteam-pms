@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import org.miniteam.pms.common.exception.BusinessException;
 import org.miniteam.pms.common.result.ResultCode;
+import org.miniteam.pms.document.DocumentViews;
+import org.miniteam.pms.document.entity.DocumentWithVersions;
+import org.miniteam.pms.document.service.DocumentService;
 import org.miniteam.pms.progress.ProgressCalculator;
 import org.miniteam.pms.progress.ProjectData;
 import org.miniteam.pms.progress.Viewer;
@@ -55,25 +58,38 @@ public class IssueSnapshotService {
     private static final Viewer EVERYTHING = new Viewer(0L, true);
 
     /** 存进 daily_issue.snapshot 的内容：原始数据，不含各页面算好的结果 */
-    public record StoredState(List<Task> tasks, List<TaskDependency> dependencies, List<ProjectMember> members) {}
+    public record StoredState(
+            List<Task> tasks,
+            List<TaskDependency> dependencies,
+            List<ProjectMember> members,
+            List<DocumentWithVersions> documents) {
+
+        /** 旧存档没有文档这一项，按没有文档算 */
+        public List<DocumentWithVersions> documentsOrEmpty() {
+            return documents == null ? List.of() : documents;
+        }
+    }
 
     private final ProjectAccess access;
     private final ProjectMapper projectMapper;
     private final DailyIssueMapper issueMapper;
     private final ProjectDataLoader loader;
     private final TaskService taskService;
+    private final DocumentService documentService;
 
     public IssueSnapshotService(
             ProjectAccess access,
             ProjectMapper projectMapper,
             DailyIssueMapper issueMapper,
             ProjectDataLoader loader,
-            TaskService taskService) {
+            TaskService taskService,
+            DocumentService documentService) {
         this.access = access;
         this.projectMapper = projectMapper;
         this.issueMapper = issueMapper;
         this.loader = loader;
         this.taskService = taskService;
+        this.documentService = documentService;
     }
 
     public static String encode(StoredState state) {
@@ -98,8 +114,8 @@ public class IssueSnapshotService {
         issue.setHeadline(headline.title());
         issue.setPredictedEnd(headline.predictedEnd());
         issue.setDelayDays(headline.delayDays());
-        issue.setSnapshot(
-                MAPPER.writeValueAsString(new StoredState(data.snap().tasks, data.snap().deps, data.members())));
+        issue.setSnapshot(MAPPER.writeValueAsString(new StoredState(
+                data.snap().tasks, data.snap().deps, data.members(), documentService.loadAll(project.getId()))));
         issueMapper.upsert(issue);
     }
 
@@ -170,18 +186,22 @@ public class IssueSnapshotService {
             throw new BusinessException(ResultCode.NOT_FOUND, "没有这一期");
         }
         ProjectData data;
+        List<DocumentWithVersions> docs;
         IssueSummaryVO summary;
         IssueSummaryVO base = new IssueSummaryVO(
                 IssueCalendar.issueNo(project.getStartDate(), issueDate), issueDate, null, null, 0, false);
         if (issueDate.equals(current)) {
             data = loader.load(project);
+            docs = documentService.loadAll(projectId);
             summary = liveSummary(base, data);
         } else {
             DailyIssue row = issueMapper.find(projectId, issueDate);
             if (row == null) {
                 throw new BusinessException(ResultCode.NOT_FOUND, "这一期没有存档");
             }
-            data = fromStored(project, issueDate, row);
+            StoredState state = decode(row.getSnapshot());
+            data = fromStored(project, issueDate, state);
+            docs = DocumentViews.asOf(state.documentsOrEmpty(), issueDate);
             summary = new IssueSummaryVO(
                     base.issueNo(),
                     issueDate,
@@ -197,14 +217,19 @@ public class IssueSnapshotService {
                 summary.predictedEnd(),
                 summary.delayDays(),
                 summary.risk(),
-                pages(data, ProjectDataLoader.viewer(ctx)));
+                pages(data, ProjectDataLoader.viewer(ctx), docs));
     }
 
-    /** 各页面当天的数据，键见 {@link IssueSnapshotVO}。文档、讨论还没有后端，先给空数组 */
-    private Map<String, Object> pages(ProjectData data, Viewer viewer) {
+    /** 各页面当天的数据，键见 {@link IssueSnapshotVO}。讨论还没有后端，先给空数组 */
+    private Map<String, Object> pages(ProjectData data, Viewer viewer, List<DocumentWithVersions> docs) {
         ReportsVO reports = ReportCalculator.build(data, viewer);
         Map<String, Object> pages = new LinkedHashMap<>();
-        List<TaskDetailVO> tasks = taskService.visibleDetails(data.snap(), viewer.canEditTask(), viewer.userId());
+        List<TaskDetailVO> tasks = taskService.visibleDetails(
+                data.snap(),
+                viewer.canEditTask(),
+                viewer.userId(),
+                DocumentViews.briefsByTask(
+                        docs.stream().map(DocumentWithVersions::document).toList(), data.snap().byId, data.today()));
         pages.put("tasks", tasks);
         pages.put("overview", ProgressCalculator.overview(data, viewer, loader.topN()));
         pages.put("gantt", ProgressCalculator.gantt(data, viewer, null, null));
@@ -212,7 +237,11 @@ public class IssueSnapshotService {
         pages.put("reports", reports);
         pages.put("members", pastMembers(data, reports.workload()));
         pages.put("discussions", List.of());
-        pages.put("documents", List.of());
+        pages.put(
+                "documents",
+                docs.stream()
+                        .map(d -> DocumentViews.detail(d, data.snap().byId, data.today()))
+                        .toList());
         return pages;
     }
 
@@ -233,8 +262,7 @@ public class IssueSnapshotService {
         return list;
     }
 
-    private ProjectData fromStored(Project project, LocalDate date, DailyIssue row) {
-        StoredState state = decode(row.getSnapshot());
+    private ProjectData fromStored(Project project, LocalDate date, StoredState state) {
         ProjectTaskSnapshot snap = new ProjectTaskSnapshot(date, state.tasks(), state.dependencies(), loader.configs());
         return new ProjectData(project.getStartDate(), project.getPlanEnd(), snap, state.members());
     }

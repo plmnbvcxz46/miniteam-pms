@@ -1,8 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useMe } from "../../auth/useAuth";
 import { useIssue } from "../../issue/useIssue";
-import type { DocumentItem } from "../../types/documents";
+import type { DocumentVersionItem } from "../../types/documents";
 import { formatDayLabel } from "../../utils/date";
 import { useTaskStore } from "../board/taskStore";
 import DocumentHeader from "./components/header/DocumentHeader";
@@ -11,15 +10,25 @@ import DocumentFinal from "./components/final/DocumentFinal";
 import DocumentDetail from "./components/detail/DocumentDetail";
 import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
 import { useDocumentStore } from "./documentStore";
-import { bindDocToTask } from "./utils";
+import { withTaskTitle } from "./utils";
 import "./css/documents.css";
 
 export default function DocumentsPage() {
-  // 顶层维护的文档数据集与当前快照基准日期（从假数据中注入）
-  const { docs: rawDocs, setDocs: setDocList, finalizeDocument } = useDocumentStore();
+  // 文档数据来自接口（看过去的期时是那一期快照里的）
+  const {
+    docs: rawDocs,
+    ready,
+    error,
+    missing,
+    createDocument,
+    addVersion,
+    finalizeDocument,
+    downloadVersion,
+  } = useDocumentStore();
   const { isPast, today } = useIssue();
   const currentDate = formatDayLabel(today);
-  const { user: currentUser } = useMe();
+  // 定稿、下载失败的原因
+  const [actionError, setActionError] = useState("");
 
   // 选中文档的 ID：地址栏 ?id= 指定的文档（如从讨论里的 @ 文件跳过来），
   // 没带或不存在时默认选中 3，即 "接口文档"
@@ -27,16 +36,16 @@ export default function DocumentsPage() {
   const location = useLocation();
   const { taskMap: tasks } = useTaskStore();
 
-  // 绑定了任务的文档，截止日跟着任务走
-  const docList = useMemo(
-    () => rawDocs.map((d) => bindDocToTask(d, tasks)),
-    [rawDocs, tasks],
-  );
+  // 没有所属任务的文档写“项目文档”（绑定了任务的文档，截止日由后端跟着任务算好）
+  const docList = useMemo(() => rawDocs.map(withTaskTitle), [rawDocs]);
   const [searchParams] = useSearchParams();
-  const [selectedId, setSelectedId] = useState<number | null>(() => {
+  // 选中的文档：地址栏 ?id= 指定的（如从讨论里的 @ 文件跳过来），没指定或不存在时选第一份
+  const [pickedId, setSelectedId] = useState<number | null>(() => {
     const linked = Number(searchParams.get("id"));
-    return rawDocs.some((d) => d.id === linked) ? linked : 3;
+    return Number.isFinite(linked) && linked > 0 ? linked : null;
   });
+  const selectedId =
+    docList.find((d) => d.id === pickedId)?.id ?? docList[0]?.id ?? null;
 
   // 搜索关键字
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -101,74 +110,68 @@ export default function DocumentsPage() {
     .map((task) => ({ id: task.id, name: task.title }));
 
   // 侧栏“定稿”
-  const handleFinalize = () => {
+  const handleFinalize = async () => {
     if (!selectedDoc) return;
     if (!window.confirm(`确定将《${selectedDoc.n}》定稿吗？定稿后不能再上传新版本。`)) {
       return;
     }
-    finalizeDocument(selectedDoc.id, currentDate);
+    setActionError("");
+    try {
+      await finalizeDocument(selectedDoc.id);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "定稿失败，请稍后再试");
+    }
   };
 
-  // 提交上传处理逻辑（增加到列表或在已有文档追加版本）
-  const handleUploadSubmit = (data: {
-    file: File | null;
+  // 下载某个版本的文件
+  const handleDownload = async (version: DocumentVersionItem) => {
+    setActionError("");
+    try {
+      await downloadVersion(version.id, version.fileName);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "下载失败，请稍后再试");
+    }
+  };
+
+  // 提交上传：新建文档，或给已有文档传新版本。失败时抛错，由抽屉显示原因
+  const handleUploadSubmit = async (data: {
+    file: File;
     docName: string;
     targetDocId: number | "new";
     note: string;
-    taskId: number;
+    taskId: number | null;
   }) => {
-    const uploadedFileName = data.file ? data.file.name : undefined;
-    const uploadedFileSize = data.file ? `${(data.file.size / (1024 * 1024)).toFixed(1)} MB` : "1.5 MB";
-
     if (data.targetDocId === "new") {
-      const finalDocName = data.docName || (data.file ? data.file.name.replace(/\.[^.]+$/, "") : "未命名文档");
-      const newDoc: DocumentItem = {
-        id: Math.max(0, ...docList.map((d) => d.id)) + 1,
-        n: finalDocName,
+      const name = data.docName || data.file.name.replace(/\.[^.]+$/, "");
+      const id = await createDocument({
+        file: data.file,
+        name,
         taskId: data.taskId,
-        v: "v0.1",
-        who: currentUser.realName,
-        up: currentDate,
-        due: formatDayLabel(tasks[data.taskId]?.dueDate ?? "2026-10-30"),
-        final: false,
-        hist: [
-          {
-            version: "v0.1",
-            date: currentDate,
-            operator: currentUser.realName,
-            comment: data.note,
-            fileName: uploadedFileName || `${finalDocName}_v0.1.docx`,
-            fileSize: uploadedFileSize,
-          },
-        ],
-      };
-      setDocList((prev) => [...prev, newDoc]);
-      setSelectedId(newDoc.id);
+        changeNote: data.note,
+      });
+      setSelectedId(id);
     } else {
-      setDocList((prev) =>
-        prev.map((d) => {
-          if (d.id !== data.targetDocId) return d;
-          const currentV = d.v.replace("v", "");
-          const [maj, min] = currentV.split(".").map(Number);
-          const nextV = `v${maj}.${(min || 0) + 1}`;
-          const newVersionItem = {
-            version: nextV,
-            date: currentDate,
-            operator: currentUser.realName,
-            comment: data.note,
-            fileName: uploadedFileName || `${d.n}_${nextV}.docx`,
-            fileSize: uploadedFileSize,
-          };
-          return {
-            ...d,
-            v: nextV,
-            up: currentDate,
-            hist: [newVersionItem, ...d.hist],
-          };
-        })
-      );
+      await addVersion(data.targetDocId, { file: data.file, changeNote: data.note });
     }
   };
+
+  if (missing) {
+    return (
+      <section className="view" id="view-docs">
+        <p className="page-note">这一期没有存档，看不到当时的文档。</p>
+      </section>
+    );
+  }
+  if (error) {
+    return (
+      <section className="view" id="view-docs">
+        <p className="page-note err" role="alert">
+          {error}
+        </p>
+      </section>
+    );
+  }
+  if (!ready) return null;
 
   return (
     <section className="view" id="view-docs">
@@ -179,6 +182,12 @@ export default function DocumentsPage() {
         onSearchChange={setSearchKeyword}
         onUploadClick={isPast ? undefined : handleOpenNewUpload}
       />
+
+      {actionError && (
+        <p className="page-note err" role="alert">
+          {actionError}
+        </p>
+      )}
 
       <div className="dg">
         <div className="dleft">
@@ -201,6 +210,7 @@ export default function DocumentsPage() {
           onTaskClick={(taskId) => navigate(`/board/task?id=${taskId}`)}
           onUploadVersion={isPast ? undefined : handleOpenVersionUpload}
           onFinalize={isPast ? undefined : handleFinalize}
+          onDownloadVersion={handleDownload}
         />
       </div>
 

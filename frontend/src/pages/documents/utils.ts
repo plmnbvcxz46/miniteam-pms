@@ -1,5 +1,8 @@
-import type { BoundDocument, DocumentItem } from "../../types/documents";
-import type { DocumentBrief, TaskDetail } from "../../types/task";
+import type {
+  BoundDocument,
+  DocumentDetailApi,
+  DocumentItem,
+} from "../../types/documents";
 import {
   addDays,
   formatDayLabel,
@@ -47,75 +50,42 @@ export function getDayOffset(str: string): number {
   return toDay(toDate(str)) - toDay(getAxisStart());
 }
 
-/** "M.DD" 转成 yyyy-MM-dd，年份取项目所在年 */
-function toIsoDate(md: string): string {
-  const [m, d] = md.split(/[.-]/).map(Number);
-  return `${getProjectToday().slice(0, 4)}-${pad2(m)}-${pad2(d)}`;
+/** yyyy-MM-dd HH:mm:ss 取日期部分，转成页面用的 MM.DD */
+function dayLabelOf(dateTime: string): string {
+  return formatDayLabel(dateTime.slice(0, 10));
 }
 
 /**
- * 文档在某一天的样子：只留那天以前的版本，最新版本、更新人、更新日期取其中最新的一条，
- * 第一个版本还没上传的文档不出现，定稿日（最后更新日）在那天之后的还算修订中
+ * 接口的文档详情转成页面用的文档：日期换成 MM.DD 文字，“最后上传人”取最新版本的上传人，
+ * 定稿的文档“更新日期”是定稿日期。绑定了任务的文档，截止日已经是任务的截止日（后端算好）
  */
-export function getDocsAtDate(docs: DocumentItem[], date: string): DocumentItem[] {
-  return docs.flatMap((doc) => {
-    const versions = doc.hist
-      .map((record) =>
-        Array.isArray(record)
-          ? { version: record[0], date: record[1], operator: record[2] }
-          : record,
-      )
-      .map((record, i) => ({ record, source: doc.hist[i] }))
-      .filter(({ record }) => toIsoDate(record.date) <= date);
-    if (versions.length === 0) return [];
-    const { record } = versions[0];
-    return [
-      {
-        ...doc,
-        v: record.version,
-        who: record.operator,
-        up: record.date,
-        final: doc.final && toIsoDate(doc.up) <= date ? true : undefined,
-        hist: versions.map(({ source }) => source),
-      },
-    ];
-  });
-}
-
-/**
- * 文档绑定了任务时，截止日跟随任务截止日；没绑任务的文档用自己的 due。
- * 是否定稿是文档自己的状态，可以早于任务完成，不跟随任务
- */
-export function bindDocToTask(
-  doc: DocumentItem,
-  taskMap: Record<number, TaskDetail>,
-): BoundDocument {
-  const task = doc.taskId === undefined ? undefined : taskMap[doc.taskId];
-  if (!task) return { ...doc, taskTitle: "项目文档" };
-  return {
-    ...doc,
-    taskTitle: task.title,
-    due: task.dueDate ? formatDayLabel(task.dueDate) : doc.due,
-  };
-}
-
-/** 任务详情里的文档简要信息：已逾期天数按任务截止日算 */
-export function toDocumentBrief(
-  doc: DocumentItem,
-  task: TaskDetail,
-  today: string,
-): DocumentBrief {
-  const overdue =
-    !doc.final && task.dueDate
-      ? Math.max(0, Math.round(toDay(today) - toDay(task.dueDate)))
-      : 0;
+export function toDocumentItem(doc: DocumentDetailApi): DocumentItem {
+  const final = doc.status === "FINAL";
   return {
     id: doc.id,
-    name: doc.n,
-    currentVersion: doc.v,
-    status: doc.final ? "FINAL" : "REVISING",
-    overdueDays: overdue,
+    n: doc.name,
+    taskId: doc.task?.id,
+    taskTitle: doc.task?.title,
+    final,
+    v: doc.currentVersion ?? "",
+    who: doc.versions[0]?.uploader.realName ?? doc.owner.realName,
+    up: dayLabelOf(final && doc.finalizedAt ? doc.finalizedAt : doc.updatedAt),
+    due: doc.dueDate ? formatDayLabel(doc.dueDate) : "",
+    hist: doc.versions.map((ver) => ({
+      id: ver.id,
+      version: ver.version,
+      date: dayLabelOf(ver.createdAt),
+      operator: ver.uploader.realName,
+      comment: ver.changeNote ?? "",
+      fileName: ver.fileName,
+      fileSize: ver.fileSize,
+    })),
   };
+}
+
+/** 没有所属任务的文档，页面上写“项目文档” */
+export function withTaskTitle(doc: DocumentItem): BoundDocument {
+  return { ...doc, taskTitle: doc.taskTitle ?? "项目文档" };
 }
 
 /**
@@ -143,6 +113,11 @@ export function getDocStatus(
 ): DocStatusInfo {
   if (doc.final) {
     return { status: "定稿", isLate: false, lateDays: 0 };
+  }
+
+  // 没有截止日（没绑任务、也没填）的文档不会逾期
+  if (!doc.due) {
+    return { status: "修订中", isLate: false, lateDays: 0 };
   }
 
   const currentOffset = getDayOffset(currentDate);

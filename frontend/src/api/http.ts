@@ -91,6 +91,34 @@ async function request<T>(
   return payload?.data as T;
 }
 
+/** 上传文件：multipart 表单，Content-Type 由浏览器带上 boundary，不要自己设 */
+async function upload<T>(path: string, form: FormData): Promise<T> {
+  const token = getToken();
+  let response: Response;
+  try {
+    response = await fetch(`/api${path}`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+  } catch {
+    throw new ApiError(0, "无法连接服务器，请稍后再试");
+  }
+  let payload: { code?: number; message?: string; data?: T } | null = null;
+  try {
+    payload = await response.json();
+  } catch {
+    // 不是 JSON（例如 nginx 的 413 页面），下面按 HTTP 状态处理
+  }
+  const code = payload?.code ?? response.status;
+  if (!response.ok || code !== 200) {
+    if (code === 401 && token) unauthorizedHandler?.();
+    const tooLarge = response.status === 413 ? "文件太大，单个文件不超过 20MB" : null;
+    throw new ApiError(code, payload?.message || tooLarge || "上传失败，请稍后再试");
+  }
+  return payload?.data as T;
+}
+
 /** 下载文件（Excel 等）：带着登录信息请求，失败时同样抛 ApiError 带接口返回的原因 */
 async function download(path: string): Promise<{ blob: Blob; fileName: string | null }> {
   const token = getToken();
@@ -129,6 +157,7 @@ async function download(path: string): Promise<{ blob: Blob; fileName: string | 
 
 export const http = {
   download,
+  upload,
   get: <T>(path: string, query?: Query) => request<T>("GET", path, { query }),
   post: <T>(path: string, body?: unknown) => request<T>("POST", path, { body }),
   put: <T>(path: string, body?: unknown) => request<T>("PUT", path, { body }),

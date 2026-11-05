@@ -14,6 +14,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /** 全局异常处理：HTTP 状态码与响应体 code 一致。 */
@@ -40,11 +42,17 @@ public class GlobalExceptionHandler {
         ConstraintViolationException.class,
         HttpMessageNotReadableException.class,
         MissingServletRequestParameterException.class,
+        MissingServletRequestPartException.class,
         MethodArgumentTypeMismatchException.class,
         HttpRequestMethodNotSupportedException.class
     })
     public ResponseEntity<Result<Void>> handleBadRequest(Exception e) {
         return build(ResultCode.BAD_REQUEST, ResultCode.BAD_REQUEST.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Result<Void>> handleTooLarge(MaxUploadSizeExceededException e) {
+        return build(ResultCode.BAD_REQUEST, "文件太大，单个文件不超过 20MB");
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

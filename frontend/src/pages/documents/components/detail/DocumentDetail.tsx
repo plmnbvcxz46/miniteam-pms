@@ -62,7 +62,8 @@ export default function DocumentDetail({
       />
 
       {/* 底部上传按钮 */}
-      {onUploadVersion && (
+      {/* 定稿后不能再传新版本，也不能再定稿 */}
+      {onUploadVersion && !doc.final && (
         <div className="up">
           <button
             className="btn primary"
@@ -72,7 +73,7 @@ export default function DocumentDetail({
           >
             上传新版本 <span aria-hidden="true">↑</span>
           </button>
-          {!doc.final && onFinalize && (
+          {onFinalize && (
             <button className="btn" type="button" onClick={onFinalize}>
               定稿 <span aria-hidden="true">✓</span>
             </button>

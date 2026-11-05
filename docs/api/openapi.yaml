@@ -1471,7 +1471,7 @@ paths:
       - 任务
       summary: 修改状态
       operationId: changeTaskStatus
-      description: 有“编辑任务”权限的成员可以改任何人的任务，其他成员只能改自己负责的（403）。状态变了就放到目标列最前面。移到「已完成」记下完成日、进度 100；离开「已完成」清空完成日、进度归 0；第一次开始（进行中、阻塞、已完成）记下实际开始日；移回「待开始」清空实际开始和完成日。
+      description: 有“编辑任务”权限的成员可以改任何人的任务，其他成员只能改自己负责的（403）。状态变了就放到目标列最前面。移到「已完成」记下完成日、进度 100；离开「已完成」清空完成日、进度归 0；第一次开始（进行中、阻塞、已完成）记下实际开始日；移回「待开始」清空实际开始和完成日。任务上有没定稿的文档时不能移到「已完成」（409，message 写明是哪份文档）。
       parameters:
       - name: taskId
         in: path
@@ -2746,13 +2746,16 @@ paths:
                   - data
         default:
           $ref: '#/components/responses/Error'
-    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 文档
       summary: 上传文档
       operationId: uploadDocument
-      description: 新建文档并作为第一个版本。
+      description: |-
+        新建文档并作为第一个版本。需要「编辑文档」权限，已归档的项目不能上传（409）。
+        文件只支持 doc、docx、pdf、md，单个不超过 20MB。version 不传时是 v0.1。
+        taskId 必须是本项目的任务，且任务没有完成（409）。ownerId 不传时是上传人，传了必须是项目成员。
+        文件存在对象存储（S3 协议）里，库里只记元数据。
       parameters:
       - name: projectId
         in: path
@@ -2875,6 +2878,9 @@ paths:
       - 文档
       summary: 修订中/定稿
       operationId: changeDocumentStatus
+      description: |-
+        需要「编辑文档」权限。定稿是单向的：已定稿的文档不能改回修订中（409）；还没有上传过文件的不能定稿（409）。
+        已定稿的再定稿什么也不做。任务上还有没定稿的文档时，这个任务不能移到「已完成」（任务状态和位置接口返回 409）。
       parameters:
       - name: documentId
         in: path
@@ -2905,12 +2911,14 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /documents/{documentId}/versions:
-    # 暂不实现：前端没有对应功能，之后按需补充
     post:
       tags:
       - 文档
       summary: 上传新版本
       operationId: uploadVersion
+      description: |-
+        需要「编辑文档」权限。已定稿的文档不能再上传新版本（409）。
+        version 不传时在当前版本上把次版本号加 1（v0.6 → v0.7）；传了必须是 v主.次 的格式，且不能和已有版本重复（409）。
       parameters:
       - name: documentId
         in: path
@@ -2946,6 +2954,7 @@ paths:
       - 文档
       summary: 下载
       operationId: downloadVersion
+      description: 项目成员可下载。由后端校验权限后从对象存储读出文件返回，不提供预签名链接。
       parameters:
       - name: versionId
         in: path
@@ -5795,6 +5804,7 @@ components:
           type: string
         category:
           type: string
+          description: 见字典 doc_category，不传是 OTHER
         taskId:
           type: integer
           format: int64
@@ -5809,12 +5819,12 @@ components:
         version:
           type: string
           example: v0.1
+          description: 不传是 v0.1
         changeNote:
           type: string
       required:
       - file
       - name
-      - version
     DocumentUpdate:
       type: object
       properties:
@@ -5847,11 +5857,11 @@ components:
           format: binary
         version:
           type: string
+          description: 不传时在当前版本上次版本号加 1
         changeNote:
           type: string
       required:
       - file
-      - version
     Notification:
       type: object
       properties:

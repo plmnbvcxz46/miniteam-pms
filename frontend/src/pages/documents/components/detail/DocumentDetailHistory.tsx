@@ -1,68 +1,28 @@
 import type {
   DocumentItem,
-  DocVersionRecord,
   DocumentVersionItem,
 } from "../../../../types/documents";
-import { downloadTextFile } from "../../../../utils/download";
 
 interface DocumentDetailHistoryProps {
   doc: DocumentItem;
+  /** 下载某个版本的文件；不传（例如看过去的期）就不显示下载按钮 */
   onDownloadVersion?: (version: DocumentVersionItem) => void;
 }
 
 /**
  * 格式化文件大小为易读字符串（如 1.8 MB、512 KB）
  */
-function formatFileSize(size?: string | number): string {
+function formatFileSize(size: number): string {
   if (!size) return "";
-  if (typeof size === "string") return size;
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-/**
- * 将版本记录（元组或对象）统一转换为标准对象
- */
-function normalizeVersion(
-  record: DocVersionRecord,
-  docName: string
-): DocumentVersionItem {
-  if (Array.isArray(record)) {
-    // [version, date, operator, comment]
-    return {
-      version: record[0],
-      date: record[1],
-      operator: record[2],
-      comment: record[3],
-      fileName: `${docName}_${record[0]}.docx`,
-      fileSize: "1.2 MB",
-    };
-  }
-  return record;
 }
 
 export default function DocumentDetailHistory({
   doc,
   onDownloadVersion,
 }: DocumentDetailHistoryProps) {
-  const handleDownload = (ver: DocumentVersionItem) => {
-    if (onDownloadVersion) {
-      onDownloadVersion(ver);
-      return;
-    }
-    // 接口接通后由 GET /document-versions/{versionId}/download 返回真实文件，
-    // 现在没有文件内容，先下载一份写着版本信息的文本
-    const note = [
-      `文档：${doc.n}`,
-      `版本：${ver.version}`,
-      `上传：${ver.date} ${ver.operator}`,
-      `说明：${ver.comment}`,
-      `文件：${ver.fileName ?? ""}`,
-    ].join("\r\n");
-    downloadTextFile(`${doc.n}_${ver.version}.txt`, note);
-  };
-
   return (
     <>
       <div className="hhead">
@@ -77,12 +37,11 @@ export default function DocumentDetailHistory({
       </div>
 
       <div className="hist scroll-y" id="doc-hist">
-        {doc.hist.map((record, idx) => {
-          const ver = normalizeVersion(record, doc.n);
+        {doc.hist.map((ver) => {
           const sizeStr = formatFileSize(ver.fileSize);
 
           return (
-            <div key={idx} className="hv">
+            <div key={ver.id} className="hv">
               <b>{ver.version}</b>
               <div className="hv-note">{ver.comment}</div>
 
@@ -95,14 +54,16 @@ export default function DocumentDetailHistory({
                       <span className="hv-file-size">({sizeStr})</span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    className="hv-download-btn"
-                    onClick={() => handleDownload(ver)}
-                    title={`下载 ${ver.fileName}`}
-                  >
-                    下载 ↓
-                  </button>
+                  {onDownloadVersion && (
+                    <button
+                      type="button"
+                      className="hv-download-btn"
+                      onClick={() => onDownloadVersion(ver)}
+                      title={`下载 ${ver.fileName}`}
+                    >
+                      下载 ↓
+                    </button>
+                  )}
                 </div>
               )}
 

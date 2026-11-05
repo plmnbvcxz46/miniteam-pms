@@ -7,7 +7,6 @@ import type { Activity, TaskStatus } from "../../types/global";
 import type { TaskDetail, TaskFormValues } from "../../types/task";
 import { getLocalToday } from "../../utils/date";
 import { useDocumentStore } from "../documents/documentStore";
-import { toDocumentBrief } from "../documents/utils";
 import { TaskStoreContext, type TaskStore } from "./taskStore";
 import { moveTaskTo } from "./utils";
 
@@ -46,9 +45,10 @@ function messageOf(e: unknown): string {
  * 写操作失败时 moveTask / deleteTask 返回原因，saveTaskForm 抛 ApiError（message 是写给用户看的原因）
  */
 export default function TaskProvider({ children }: { children: ReactNode }) {
-  const { docs } = useDocumentStore();
+  // 文档有写操作（传版本、定稿）后，任务详情里的文档状态也变了，要重新取任务表
+  const { version: documentVersion } = useDocumentStore();
   const { currentProject, canEditTask, canDeleteTask, canMoveTask } = useAccess();
-  const { isPast, today, snapshot } = useIssue();
+  const { isPast, snapshot } = useIssue();
   const projectId = currentProject?.id ?? null;
 
   const [loaded, setLoadedState] = useState<Loaded | null>(null);
@@ -78,42 +78,28 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [projectId, attempt]);
+  }, [projectId, attempt, documentVersion]);
 
   /** 写操作之后重新取一遍，让页面和后端一致 */
   const reload = async () => {
     if (projectId !== null) setLoaded(await load(projectId));
   };
 
-  // 任务关联的文档由文档数据按 taskId 得出（文档还没接接口），不在任务里另存一份
-  const taskMap = useMemo(() => {
-    // 看过去的期时用那一期快照里的任务，取到之前是空的
-    const tasks = isPast
-      ? Object.fromEntries((snapshot?.tasks ?? []).map((task) => [task.id, task]))
-      : (loaded?.tasks ?? NO_TASKS);
-    return Object.fromEntries(
-      Object.values(tasks).map((task) => [
-        task.id,
-        {
-          ...task,
-          documents: docs
-            .filter((doc) => doc.taskId === task.id)
-            .map((doc) => toDocumentBrief(doc, task, today)),
-        },
-      ]),
-    ) as Record<number, TaskDetail>;
-  }, [loaded, docs, today, isPast, snapshot]);
+  // 看过去的期时用那一期快照里的任务，取到之前是空的。任务详情里的文档由后端一起返回
+  const taskMap = useMemo(
+    () =>
+      isPast
+        ? Object.fromEntries((snapshot?.tasks ?? []).map((task) => [task.id, task]))
+        : (loaded?.tasks ?? NO_TASKS),
+    [loaded, isPast, snapshot],
+  );
 
-  // 移动任务（乐观更新，失败回滚）。关联的文档没定稿时不能完成任务。没有移动时返回原因，成功返回 null
+  // 移动任务（乐观更新，失败回滚）。关联的文档没定稿时后端不让完成任务（409），原因原样返回。没有移动时返回原因，成功返回 null
   const moveTask = async (taskId: number, status: TaskStatus, index: number) => {
     // 页面上没权限的人看不到入口，这里再挡一道，防止别处误调用
     if (isPast) return "过去的期只能查看";
     const task = taskMap[taskId];
     if (!task || !canMoveTask(task)) return "没有权限修改这个任务的状态";
-    if (status === "DONE") {
-      const pending = docs.find((doc) => doc.taskId === taskId && !doc.final);
-      if (pending) return `文档《${pending.n}》还没定稿，定稿后才能完成任务`;
-    }
     const before = loaded;
     setLoadedState(
       (prev) =>
@@ -211,6 +197,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         taskMap,
         activityMap: loaded?.activities ?? NO_ACTIVITIES,
         version,
+        reload: () => reload().catch(() => undefined),
         moveTask,
         taskForm,
         openTaskForm: (taskId) => {

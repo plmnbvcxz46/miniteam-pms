@@ -1,65 +1,92 @@
 /**
- * 文档版本实体结构（对齐后端 OpenAPI 契约）
+ * 文档模块类型（对齐 docs/api/openapi.yaml 的 DocumentItem、DocumentVersion、DocumentDetail）
  */
+import type { TaskRef, UserBrief } from "./global";
+import type { DocStatus } from "./task";
+
+export type { DocStatus };
+
+/** 文档版本（DocumentVersion） */
+export interface DocumentVersionApi {
+  id: number;
+  version: string;
+  changeNote: string | null;
+  fileName: string;
+  /** 字节 */
+  fileSize: number;
+  contentType: string | null;
+  uploader: UserBrief;
+  /** yyyy-MM-dd HH:mm:ss */
+  createdAt: string;
+  downloadUrl: string;
+}
+
+/** 文档（DocumentItem） */
+export interface DocumentItemApi {
+  id: number;
+  name: string;
+  category: string;
+  task: TaskRef | null;
+  owner: UserBrief;
+  status: DocStatus;
+  currentVersion: string | null;
+  /** 绑定了任务时是任务的截止日 */
+  dueDate: string | null;
+  overdueDays: number;
+  /** yyyy-MM-dd HH:mm:ss */
+  createdAt: string;
+  updatedAt: string;
+  finalizedAt: string | null;
+}
+
+/** 文档详情（DocumentDetail），版本记录新的在前 */
+export interface DocumentDetailApi extends DocumentItemApi {
+  versions: DocumentVersionApi[];
+}
+
+/** 页面里一个版本记录：日期是 MM.DD */
 export interface DocumentVersionItem {
+  /** 版本 id，下载用 */
+  id: number;
   /** 版本号，例如 "v1.2" */
   version: string;
-  /** 更新日期或时间戳，例如 "10.16" */
+  /** 上传日期，例如 "10.16" */
   date: string;
-  /** 操作人 / 上传者，例如 "测试经理 A" */
+  /** 上传人 */
   operator: string;
-  /** 变更说明 / 备注，例如 "补充非功能需求" */
+  /** 版本说明 */
   comment: string;
-  /** 物理文件名，例如 "需求规格说明书_v1.2.docx" */
-  fileName?: string;
-  /** 文件大小（格式化文字或字节数，例如 "1.8 MB" 或 1887436） */
-  fileSize?: string | number;
-  /** 文件下载地址（对应后端 /document-versions/{id}/download） */
-  downloadUrl?: string;
+  fileName: string;
+  /** 字节 */
+  fileSize: number;
 }
 
 /**
- * 版本记录的简写元组格式，假数据里还在用，页面里会统一转成对象
- * [版本号, 更新日期, 操作人, 变更说明]
- */
-export type DocHistoryTuple = [
-  version: string,
-  date: string,
-  operator: string,
-  comment: string,
-];
-
-/**
- * 版本项支持对象形式或元组形式
- */
-export type DocVersionRecord = DocumentVersionItem | DocHistoryTuple;
-
-/**
- * 项目文档数据项定义（底层事实数据模型）
+ * 页面用的文档（由接口的 DocumentDetail 转换而来，日期是 MM.DD 文字）
  */
 export interface DocumentItem {
-  /** 唯一标识，和任务、讨论里引用文档用的 id 是同一个 */
   id: number;
   /** 文档名称 */
   n: string;
-  /** 所属任务 ID，和任务模块的任务 id 是同一个，没有所属任务时为空 */
+  /** 所属任务 ID，没有所属任务时为空 */
   taskId?: number;
-  /** 是否定稿（可选，true 为已定稿） */
+  /** 所属任务的标题，没有所属任务时为空 */
+  taskTitle?: string;
+  /** 是否定稿 */
   final?: boolean;
   /** 当前最新版本号，例如 "v1.2" */
   v: string;
-  /** 最后修改人 / 责任人 */
+  /** 最后上传人 */
   who: string;
-  /** 最后更新日期，例如 "10.16" */
+  /** 最后更新日期，定稿的文档是定稿日期，例如 "10.16" */
   up: string;
-  /** 截止日期，例如 "10.16"；绑定了任务时以任务截止日为准 */
+  /** 截止日期，例如 "10.16"，没有为空字符串；绑定了任务时是任务的截止日 */
   due: string;
-  /** 版本历史记录（兼容元组或对象） */
-  hist: DocVersionRecord[];
+  /** 版本历史记录，新的在前 */
+  hist: DocumentVersionItem[];
 }
 
-/** 按所属任务补全后的文档：截止日取任务截止日，并带上任务名 */
+/** 补上所属任务标题后的文档：没有所属任务时为“项目文档” */
 export interface BoundDocument extends DocumentItem {
-  /** 所属任务的标题，没有所属任务时为“项目文档” */
   taskTitle: string;
 }

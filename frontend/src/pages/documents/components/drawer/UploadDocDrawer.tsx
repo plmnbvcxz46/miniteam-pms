@@ -15,14 +15,29 @@ interface UploadDocDrawerProps {
   taskOptions: { id: number; name: string }[];
   /** 新建文档时预选的任务（如从任务详情进来），不在下拉选项里时会补进去 */
   initialTask?: { id: number; name: string } | null;
-  /** 提交上传的回调 */
+  /** 提交上传的回调；失败时抛错，message 显示在抽屉里，成功后抽屉关闭 */
   onSubmit?: (data: {
-    file: File | null;
+    file: File;
     docName: string; // 文档业务名称（支持用户自定义修改或预填）
     targetDocId: number | "new"; // "new" 或是已有文档的 id
     note: string;
-    taskId: number;
-  }) => void;
+    taskId: number | null; // 新建文档时关联的任务，不关联为空
+  }) => Promise<void>;
+}
+
+/** 后端接受的文件：Word、PDF、Markdown，单个不超过 20 MB */
+const ALLOWED_EXTENSIONS = ["doc", "docx", "pdf", "md"];
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+/** 选中的文件不合规时返回原因 */
+function checkFile(file: File): string | null {
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  if (!ALLOWED_EXTENSIONS.includes(extension)) {
+    return "只支持 Word、PDF、Markdown 文件（doc、docx、pdf、md）";
+  }
+  if (file.size === 0) return "这个文件是空的";
+  if (file.size > MAX_FILE_SIZE) return "文件太大，单个文件不超过 20 MB";
+  return null;
 }
 
 /** 关着时不渲染，打开时才挂上表单，每次打开都是新的表单状态 */
@@ -53,12 +68,18 @@ function UploadDocForm({
 
   const [targetDocId, setTargetDocId] = useState<number | "new">(defaultTarget);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [docName, setDocName] = useState<string>("");
+  // 默认选中已有文档时，文档名显示它的名称（不能改）
+  const [docName, setDocName] = useState<string>(
+    defaultTarget === "new"
+      ? ""
+      : (docs.find((d) => d.id === defaultTarget)?.n ?? ""),
+  );
   const [note, setNote] = useState<string>("");
   const [taskId, setTaskId] = useState<number>(
     initialTask?.id ?? availableTasks[0]?.id ?? 0,
   );
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   // 任务选项
   const taskOptions =
@@ -88,8 +109,19 @@ function UploadDocForm({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+
+    if (!selectedFile) {
+      setErrorMsg("请选择要上传的文件");
+      return;
+    }
+    const fileProblem = checkFile(selectedFile);
+    if (fileProblem) {
+      setErrorMsg(fileProblem);
+      return;
+    }
 
     if (targetDocId === "new" && !docName.trim()) {
       setErrorMsg("请填写文档名称");
@@ -102,14 +134,20 @@ function UploadDocForm({
     }
 
     setErrorMsg("");
-    onSubmit?.({
-      file: selectedFile,
-      docName: docName.trim(),
-      targetDocId,
-      note: note.trim(),
-      taskId,
-    });
-    onClose();
+    setSubmitting(true);
+    try {
+      await onSubmit?.({
+        file: selectedFile,
+        docName: docName.trim(),
+        targetDocId,
+        note: note.trim(),
+        taskId: taskId === 0 ? null : taskId,
+      });
+      onClose();
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "上传失败，请稍后再试");
+      setSubmitting(false);
+    }
   };
 
   const isNewDoc = targetDocId === "new";
@@ -222,6 +260,7 @@ function UploadDocForm({
                 value={taskId}
                 onChange={(e) => setTaskId(Number(e.target.value))}
               >
+                <option value={0}>不关联任务（项目文档）</option>
                 {taskOptions.map((opt) => (
                   <option key={opt.id} value={opt.id}>
                     {opt.name}
@@ -253,8 +292,8 @@ function UploadDocForm({
             >
               取消
             </button>
-            <button className="btn primary go" type="submit">
-              确认上传
+            <button className="btn primary go" type="submit" disabled={submitting}>
+              {submitting ? "上传中…" : "确认上传"}
             </button>
           </div>
         </form>
