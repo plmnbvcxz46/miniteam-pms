@@ -1,0 +1,12 @@
+# 构建镜像时不要带进去的东西。最重要的是 backend/application-local.yaml：里面是开发库密码，镜像一旦发布出去谁都能拉
+.git
+**/node_modules
+**/target
+**/dist
+backend/application-local.yaml
+backend/application-local.yml
+**/.env
+**/.env.*
+!**/.env.example
+docs
+frontend/prototype
