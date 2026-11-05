@@ -23,8 +23,8 @@ class IssueSnapshotJsonTest {
         live.members().get(0).setSkillTags(List.of("后端", "测试"));
         live.snap().tasks.get(0).setRequiredSkills(List.of("设计"));
 
-        String json = IssueSnapshotService.encode(
-                new IssueSnapshotService.StoredState(live.snap().tasks, live.snap().deps, live.members(), List.of()));
+        String json = IssueSnapshotService.encode(new IssueSnapshotService.StoredState(
+                live.snap().tasks, live.snap().deps, live.members(), List.of(), List.of()));
         // 日期存成 ISO 字符串
         assertTrue(json.contains("\"planStart\":\"2026-10-19\""));
         IssueSnapshotService.StoredState state = IssueSnapshotService.decode(json);
@@ -56,5 +56,7 @@ class IssueSnapshotJsonTest {
         assertTrue(state.members().isEmpty());
         // 旧存档没有文档这一项，按没有文档算
         assertTrue(state.documentsOrEmpty().isEmpty());
+        // 旧存档没有讨论这一项，按没有讨论算
+        assertTrue(state.discussionsOrEmpty().isEmpty());
     }
 }

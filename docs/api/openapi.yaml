@@ -1384,7 +1384,7 @@ paths:
       - 任务
       summary: 任务详情
       operationId: getTask
-      description: 可见范围同任务列表，看不到的任务返回 403。documents、discussions 在文档、讨论模块接通前返回空数组，milestone 固定为 null。usedDays：已完成为计划工期，待开始为 0，其余为从计划开始到今天经过的工作日数。
+      description: 可见范围同任务列表，看不到的任务返回 403。documents、discussions 是挂在这个任务上的文档、讨论简要信息（讨论最近有回复的在前），milestone 固定为 null。usedDays：已完成为计划工期，待开始为 0，其余为从计划开始到今天经过的工作日数。
       parameters:
       - name: taskId
         in: path
@@ -2191,6 +2191,7 @@ paths:
       tags:
       - 团队协作
       summary: 讨论列表
+      description: 项目成员都能看；最近有回复的在前，taskId 只取这个任务的讨论。
       operationId: listDiscussions
       parameters:
       - name: projectId
@@ -2227,6 +2228,7 @@ paths:
       tags:
       - 团队协作
       summary: 发起讨论
+      description: 项目成员都能发起，同时写下第一条评论；归档的项目只读（409）。taskId 必须是本项目的任务；mentionIds 必须是项目成员（不能超过 20 个）；documentIds 必须属于 taskId 对应的任务，没有 taskId 时不能 @ 文档（400）。被 @ 的人（不含自己）收到通知。
       operationId: createDiscussion
       parameters:
       - name: projectId
@@ -2314,7 +2316,7 @@ paths:
       - 团队协作
       summary: 回复
       operationId: createComment
-      description: 被 @ 的用户收到通知。
+      description: 项目成员都能回复；归档的项目只读（409）。mentionIds、documentIds 的限制同发起讨论，文档要属于讨论所属的任务。被 @ 的人（不含自己）收到通知。
       parameters:
       - name: discussionId
         in: path
@@ -2978,6 +2980,7 @@ paths:
       - 通知
       summary: 通知列表
       operationId: listNotifications
+      description: 当前用户自己的通知（所有项目），新的在前。ASSIGN：任务被指派给你；MENTION：评论里 @ 了你，link 带 discussionId、commentId 可直接定位；DELAY：每天早上 9 点把你已逾期的任务汇总成一条（一个项目一条）。
       parameters:
       - name: unreadOnly
         in: query
@@ -3028,11 +3031,11 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /notifications/unread-count:
-    # 暂不实现：前端没有对应功能，之后按需补充
     get:
       tags:
       - 通知
       summary: 未读数
+      description: 当前用户所有项目里没读的通知数，顶栏铃铛用。
       operationId: getUnreadCount
       responses:
         '200':
@@ -3074,11 +3077,11 @@ paths:
         default:
           $ref: '#/components/responses/Error'
   /notifications/read-all:
-    # 暂不实现：前端没有对应功能，之后按需补充
     put:
       tags:
       - 通知
       summary: 全部已读
+      description: 把当前用户的通知全部标为已读。
       operationId: markAllRead
       responses:
         '200':
@@ -5936,7 +5939,7 @@ components:
           snapshot:
             type: object
             additionalProperties: true
-            description: '当日各页面数据，键为：tasks（TaskDetail 数组，调用人看得到的任务，看板按 status、sortOrder 自己排）、overview、gantt、criticalPath（结构同对应实时接口的 data）、reports（summary、burndownAll、burndownWeek、weeklyCompleted、deviations、forecast、workload，结构同各报表接口的 data）、members（那一天已在项目里的成员和当时的负载：user、joinedAt、weeklyCapacity、weeklyHours、taskCount、overCapacity）、discussions、documents（讨论、文档模块接通前是空数组）'
+            description: '当日各页面数据，键为：tasks（TaskDetail 数组，调用人看得到的任务，看板按 status、sortOrder 自己排）、overview、gantt、criticalPath（结构同对应实时接口的 data）、reports（summary、burndownAll、burndownWeek、weeklyCompleted、deviations、forecast、workload，结构同各报表接口的 data）、members（那一天已在项目里的成员和当时的负载：user、joinedAt、weeklyCapacity、weeklyHours、taskCount、overCapacity）、discussions（DiscussionDetail 数组，含评论，最近有回复的在前，只有那天以前发起的讨论和写下的评论）、documents（DocumentDetail 数组）。存档生成前的旧存档没有讨论、文档这两项，按空算'
         required:
         - snapshot
     LogItem:
