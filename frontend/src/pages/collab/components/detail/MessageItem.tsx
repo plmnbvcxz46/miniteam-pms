@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import type { Comment } from "../../../../types/collab";
+import { useIssue } from "../../../../issue/useIssue";
 import { formatMessageTime, parseRichInline, splitMentions } from "../../utils";
 
 interface MessageItemProps {
@@ -16,6 +17,7 @@ export default function MessageItem({
   availableDocIds = [],
   onOpenDocument,
 }: MessageItemProps) {
+  const { today } = useIssue();
   const segments = parseRichInline(comment.content);
 
   const classNames = ["msg", isFlashing ? "msg-flash" : ""]
@@ -60,7 +62,7 @@ export default function MessageItem({
     <article className={classNames} data-comment-id={comment.id} tabIndex={-1}>
       <header>
         <b>{comment.user.realName}</b>
-        <time>{formatMessageTime(comment.createdAt)}</time>
+        <time>{formatMessageTime(comment.createdAt, today)}</time>
       </header>
       <p>
         {segments.map((seg, idx) => {

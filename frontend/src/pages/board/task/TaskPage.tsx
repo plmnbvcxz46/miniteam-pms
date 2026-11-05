@@ -84,7 +84,9 @@ export default function TaskPage() {
           onOpenDocument={(documentId) =>
             navigate(`/documents?id=${documentId}`)
           }
-          onOpenDiscussion={() => navigate("/collab")}
+          onOpenDiscussion={(discussionId) =>
+            navigate(`/collab?discussionId=${discussionId}`)
+          }
           onUploadDocument={() =>
             navigate("/documents", { state: { uploadTaskId: task.id } })
           }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.collab.mapper.DiscussionMapper">
+
+    <sql id="selectDiscussion">
+        SELECT d.id, d.project_id, d.task_id, d.title, d.creator_id,
+               u.username AS creator_username, u.real_name AS creator_real_name,
+               t.task_no AS task_no, t.title AS task_title,
+               d.comment_count, d.last_comment_at, d.created_at
+        FROM discussion d
+        JOIN sys_user u ON u.id = d.creator_id
+        LEFT JOIN task t ON t.id = d.task_id
+    </sql>
+
+    <sql id="selectComment">
+        SELECT c.id, c.discussion_id, c.user_id, u.username AS user_username, u.real_name AS user_real_name,
+               c.content,
+               c.mentions AS mentions,
+               c.documents AS documents,
+               c.created_at
+        FROM comment c
+        JOIN sys_user u ON u.id = c.user_id
+    </sql>
+
+    <resultMap id="commentMap" type="org.miniteam.pms.collab.entity.Comment" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="mentions" column="mentions"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonLongListTypeHandler"/>
+        <result property="documents" column="documents"
+                typeHandler="org.miniteam.pms.common.mybatis.JsonLongListTypeHandler"/>
+    </resultMap>
+
+    <select id="findById" resultType="org.miniteam.pms.collab.entity.Discussion">
+        <include refid="selectDiscussion"/>
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="listByProject" resultType="org.miniteam.pms.collab.entity.Discussion">
+        <include refid="selectDiscussion"/>
+        WHERE d.project_id = #{projectId}
+        <if test="taskId != null">AND d.task_id = #{taskId}</if>
+        ORDER BY COALESCE(d.last_comment_at, d.created_at) DESC, d.id DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO discussion (project_id, task_id, title, creator_id)
+        VALUES (#{projectId}, #{taskId}, #{title}, #{creatorId})
+    </insert>
+
+    <update id="bump">
+        UPDATE discussion SET comment_count = comment_count + 1, last_comment_at = NOW() WHERE id = #{id}
+    </update>
+
+    <select id="listComments" resultMap="commentMap">
+        <include refid="selectComment"/>
+        WHERE c.discussion_id = #{discussionId}
+        ORDER BY c.id
+    </select>
+
+    <select id="listCommentsByProject" resultMap="commentMap">
+        <include refid="selectComment"/>
+        JOIN discussion d ON d.id = c.discussion_id
+        WHERE d.project_id = #{projectId}
+        ORDER BY c.id
+    </select>
+
+    <select id="findComment" resultMap="commentMap">
+        <include refid="selectComment"/>
+        WHERE c.id = #{id}
+    </select>
+
+    <insert id="insertComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment (discussion_id, user_id, content, mentions, documents)
+        VALUES (#{discussionId}, #{userId}, #{content},
+                #{mentions, typeHandler=org.miniteam.pms.common.mybatis.JsonLongListTypeHandler},
+                #{documents, typeHandler=org.miniteam.pms.common.mybatis.JsonLongListTypeHandler})
+    </insert>
+
+    <select id="listUsers" resultType="org.miniteam.pms.collab.entity.UserName">
+        SELECT id, username, real_name AS real_name FROM sys_user
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+</mapper>

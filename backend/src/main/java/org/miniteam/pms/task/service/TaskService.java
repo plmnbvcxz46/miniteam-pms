@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.miniteam.pms.collab.DiscussionViews;
+import org.miniteam.pms.collab.dto.DiscussionBriefVO;
+import org.miniteam.pms.collab.mapper.DiscussionMapper;
+import org.miniteam.pms.collab.service.NotificationService;
 import org.miniteam.pms.common.exception.BusinessException;
 import org.miniteam.pms.common.result.ResultCode;
 import org.miniteam.pms.document.DocumentViews;
@@ -65,8 +69,10 @@ public class TaskService {
     private final MemberMapper memberMapper;
     private final ConfigMapper configMapper;
     private final DocumentMapper documentMapper;
+    private final DiscussionMapper discussionMapper;
     private final ProjectAccess access;
     private final OperationLogService logService;
+    private final NotificationService notificationService;
 
     public TaskService(
             TaskMapper taskMapper,
@@ -74,15 +80,19 @@ public class TaskService {
             MemberMapper memberMapper,
             ConfigMapper configMapper,
             DocumentMapper documentMapper,
+            DiscussionMapper discussionMapper,
             ProjectAccess access,
-            OperationLogService logService) {
+            OperationLogService logService,
+            NotificationService notificationService) {
         this.taskMapper = taskMapper;
         this.dependencyMapper = dependencyMapper;
         this.memberMapper = memberMapper;
         this.configMapper = configMapper;
         this.documentMapper = documentMapper;
+        this.discussionMapper = discussionMapper;
         this.access = access;
         this.logService = logService;
+        this.notificationService = notificationService;
     }
 
     private ProjectTaskSnapshot snapshot(ProjectContext ctx) {
@@ -111,7 +121,7 @@ public class TaskService {
         ProjectTaskSnapshot snap = snapshot(ctx);
         TaskStatus wanted = status == null || status.isBlank() ? null : TaskStatus.parse(status);
         String kw = keyword == null ? "" : keyword.trim().toLowerCase();
-        Map<Long, List<DocumentBriefVO>> docs = detail ? documentBriefs(projectId, snap) : Map.of();
+        Links links = detail ? links(projectId, snap) : new Links(Map.of(), Map.of());
         return snap.tasks.stream()
                 .filter(t -> visible(ctx, snap, t))
                 .filter(t -> wanted == null || t.getStatus().equals(wanted.name()))
@@ -121,16 +131,15 @@ public class TaskService {
                 .filter(t -> parentId == null || parentId.equals(t.getParentId()))
                 .filter(t ->
                         kw.isEmpty() || t.getTitle().toLowerCase().contains(kw) || ("t-" + t.getTaskNo()).equals(kw))
-                .map(t -> detail ? (Object) detail(t, snap, docs) : card(t, snap))
+                .map(t -> detail ? (Object) detail(t, snap, links) : card(t, snap))
                 .toList();
     }
 
     /** 一份任务快照里某个人看得到的全部任务（完整详情），往期快照用 */
-    public List<TaskDetailVO> visibleDetails(
-            ProjectTaskSnapshot snap, boolean canEditTask, Long userId, Map<Long, List<DocumentBriefVO>> docs) {
+    public List<TaskDetailVO> visibleDetails(ProjectTaskSnapshot snap, boolean canEditTask, Long userId, Links links) {
         return snap.tasks.stream()
                 .filter(t -> snap.visibleTo(canEditTask, userId, t))
-                .map(t -> detail(t, snap, docs))
+                .map(t -> detail(t, snap, links))
                 .toList();
     }
 
@@ -179,7 +188,7 @@ public class TaskService {
         if (!visible(ctx, snap, task)) {
             throw new BusinessException(ResultCode.FORBIDDEN, "没有权限查看这个任务");
         }
-        return detail(task, snap, documentBriefs(task.getProjectId(), snap));
+        return detail(task, snap, links(task.getProjectId(), snap));
     }
 
     public List<ActivityVO> activities(Long taskId) {
@@ -247,6 +256,7 @@ public class TaskService {
                 task.getId(),
                 "CREATE",
                 ctx.user().realName() + " 创建任务");
+        notifyAssign(ctx, task);
         return reload(ctx, task.getId());
     }
 
@@ -258,6 +268,7 @@ public class TaskService {
         ctx.requireWritable();
 
         List<String> changes = new ArrayList<>();
+        boolean assigneeChanged = false;
         if (req.getTitle() != null
                 && !req.getTitle().isBlank()
                 && !req.getTitle().trim().equals(task.getTitle())) {
@@ -272,6 +283,7 @@ public class TaskService {
             requireMember(task.getProjectId(), req.getAssigneeId());
             task.setAssigneeId(req.getAssigneeId());
             changes.add("负责人");
+            assigneeChanged = true;
         }
         if (req.isParentIdSet() && !Objects.equals(req.getParentId(), task.getParentId())) {
             requireParent(task.getProjectId(), req.getParentId(), task.getId());
@@ -327,6 +339,9 @@ public class TaskService {
                     taskId,
                     "UPDATE",
                     ctx.user().realName() + " 修改了任务（" + String.join("、", changes) + "）");
+            if (assigneeChanged) {
+                notifyAssign(ctx, task);
+            }
         }
         return reload(ctx, taskId);
     }
@@ -551,7 +566,31 @@ public class TaskService {
 
     private TaskDetailVO reload(ProjectContext ctx, Long taskId) {
         ProjectTaskSnapshot snap = snapshot(ctx);
-        return detail(snap.byId.get(taskId), snap, documentBriefs(ctx.project().getId(), snap));
+        return detail(snap.byId.get(taskId), snap, links(ctx.project().getId(), snap));
+    }
+
+    /** 指派给别人时通知负责人，自己指派给自己不发 */
+    private void notifyAssign(ProjectContext ctx, Task task) {
+        Long assigneeId = task.getAssigneeId();
+        if (assigneeId == null || assigneeId.equals(ctx.user().id())) {
+            return;
+        }
+        notificationService.send(
+                assigneeId,
+                task.getProjectId(),
+                NotificationService.ASSIGN,
+                ctx.user().realName() + " 把任务指派给了你",
+                "T-" + task.getTaskNo() + " " + task.getTitle(),
+                "/board/task?id=" + task.getId());
+    }
+
+    /** 任务详情里挂着的文档和讨论的简要信息，按任务 ID 分好 */
+    public record Links(Map<Long, List<DocumentBriefVO>> documents, Map<Long, List<DiscussionBriefVO>> discussions) {}
+
+    private Links links(Long projectId, ProjectTaskSnapshot snap) {
+        return new Links(
+                documentBriefs(projectId, snap),
+                DiscussionViews.briefsByTask(discussionMapper.listByProject(projectId, null)));
     }
 
     /** 项目里每个任务上的文档简要信息，一次查完 */
@@ -615,7 +654,7 @@ public class TaskService {
         return result;
     }
 
-    private TaskDetailVO detail(Task t, ProjectTaskSnapshot snap, Map<Long, List<DocumentBriefVO>> docs) {
+    private TaskDetailVO detail(Task t, ProjectTaskSnapshot snap, Links links) {
         TaskCardVO c = card(t, snap);
         int used;
         if (isDone(t)) {
@@ -661,8 +700,8 @@ public class TaskService {
                 dependencies(snap, snap.preds.getOrDefault(t.getId(), List.of()), t.getId(), true),
                 dependencies(snap, snap.succs.getOrDefault(t.getId(), List.of()), t.getId(), false),
                 subtasks,
-                docs.getOrDefault(t.getId(), List.of()),
-                List.of(),
+                links.documents().getOrDefault(t.getId(), List.of()),
+                links.discussions().getOrDefault(t.getId(), List.of()),
                 t.getCreatedAt(),
                 t.getUpdatedAt());
     }

@@ -1,5 +1,3 @@
-import { collabTodayDate } from "../../data/collab";
-import { docs } from "../../data/documents";
 import { taskStatusLabel } from "../../data/global";
 import type {
   DiscussionBrief,
@@ -24,7 +22,7 @@ import { addDays } from "../../utils/date";
  */
 export function formatThreadShortTime(
   dateTimeStr: string | null,
-  todayDate: string = collabTodayDate,
+  todayDate: string,
 ): string {
   if (!dateTimeStr) return "";
   if (dateTimeStr === "刚刚" || dateTimeStr.endsWith("刚刚")) return "刚刚";
@@ -59,7 +57,7 @@ export function formatThreadShortTime(
  */
 export function formatMessageTime(
   dateTimeStr: string,
-  todayDate: string = collabTodayDate,
+  todayDate: string,
 ): string {
   if (!dateTimeStr) return "";
   if (dateTimeStr === "刚刚" || dateTimeStr.endsWith("刚刚")) return "刚刚";
@@ -329,6 +327,7 @@ export function createDraftFromActivity(
   activity: Activity,
   creator: UserBrief,
   taskMap: Record<number, TaskDetail>,
+  documentTaskId: (documentId: number) => number | null,
 ): { draft: DiscussionDetail; initialValue: MentionValue | null } {
   const match = activity.detail.match(/<b>(.*?)<\/b>/);
   const title = match && match[1] ? match[1].trim() : "新建讨论";
@@ -337,7 +336,7 @@ export function createDraftFromActivity(
   if (activity.targetId !== null) {
     if (activity.targetType === "TASK") taskId = activity.targetId;
     else if (activity.targetType === "DOCUMENT") {
-      taskId = findDocumentTaskId(activity.targetId);
+      taskId = documentTaskId(activity.targetId);
     }
   }
   const task = taskId !== null && taskMap[taskId] ? taskMap[taskId] : null;
@@ -354,7 +353,7 @@ export function createDraftFromActivity(
       id: -activity.id,
       title,
       creator,
-      createdAt: `${collabTodayDate} 刚刚`,
+      createdAt: "刚刚",
       task: task ? toDiscussionTask(task) : null,
       comments: [],
     },
@@ -364,12 +363,7 @@ export function createDraftFromActivity(
   };
 }
 
-/** 文档所属的任务 ID，没有所属任务返回 null。接通接口后取文档详情里的任务字段 */
-export function findDocumentTaskId(documentId: number): number | null {
-  return docs.find((item) => item.id === documentId)?.taskId ?? null;
-}
-
-/** 任务下可以 @ 的文档，没有任务时为空。接通接口后取 GET /tasks/{taskId} 的 documents */
+/** 任务下可以 @ 的文档，没有任务时为空，取任务详情里的 documents */
 export function getTaskDocumentRefs(
   taskId: number | null | undefined,
   taskMap: Record<number, TaskDetail>,
@@ -449,52 +443,34 @@ export function finalizeMention(value: MentionValue): MentionValue {
 }
 
 /**
- * 讨论、评论和动态在某一天的样子：只留那天以前发生的，
- * 评论数和最后评论时间按留下的评论重算，关联的任务还没创建时不再关联
+ * 项目动态在某一天的样子：只留那天以前发生的；
+ * 讨论动态要对应的讨论那天已经存在（讨论那天以前发起的，才在 discussionIds 里）
  */
-export function getCollabAtDate(
-  discussions: DiscussionBrief[],
-  details: Record<number, DiscussionDetail>,
+export function activitiesUpTo(
   activities: Activity[],
-  taskMap: Record<number, TaskDetail>,
+  discussionIds: Set<number>,
   date: string,
-) {
-  const upTo = (createdAt: string) => createdAt.slice(0, 10) <= date;
-  const detailMap: Record<number, DiscussionDetail> = {};
-  for (const detail of Object.values(details)) {
-    if (!upTo(detail.createdAt)) continue;
-    const task = detail.task ? taskMap[detail.task.id] : undefined;
-    detailMap[detail.id] = {
-      ...detail,
-      comments: detail.comments.filter((c) => upTo(c.createdAt)),
-      task:
-        detail.task && task
-          ? { ...detail.task, status: task.status, overdueDays: task.overdueDays }
-          : null,
-    };
-  }
-  const briefs = discussions.flatMap((brief) => {
-    const detail = detailMap[brief.id];
-    if (!detail) return [];
-    const last = detail.comments[detail.comments.length - 1];
-    return [
-      {
-        ...brief,
-        task: detail.task && { id: detail.task.id, taskNo: detail.task.taskNo, title: detail.task.title },
-        commentCount: detail.comments.length,
-        lastCommentAt: last?.createdAt ?? detail.createdAt,
-      },
-    ];
-  });
+): Activity[] {
+  return activities.filter(
+    (act) =>
+      act.createdAt.slice(0, 10) <= date &&
+      (act.targetType !== "DISCUSSION" ||
+        (act.targetId !== null && discussionIds.has(act.targetId))),
+  );
+}
+
+/** 讨论详情的列表项：评论数和最后评论时间取评论 */
+export function toBrief(detail: DiscussionDetail): DiscussionBrief {
+  const last = detail.comments[detail.comments.length - 1];
   return {
-    discussions: briefs,
-    detailMap,
-    activities: activities.filter(
-      (act) =>
-        /^\d{4}-\d{2}-\d{2}/.test(act.createdAt) &&
-        upTo(act.createdAt) &&
-        (act.targetType !== "DISCUSSION" ||
-          (act.targetId !== null && !!detailMap[act.targetId])),
-    ),
+    id: detail.id,
+    title: detail.title,
+    task: detail.task && {
+      id: detail.task.id,
+      taskNo: detail.task.taskNo,
+      title: detail.task.title,
+    },
+    commentCount: detail.comments.length,
+    lastCommentAt: last?.createdAt ?? null,
   };
 }

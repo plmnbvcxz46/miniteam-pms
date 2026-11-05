@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.miniteam.pms.collab.mapper.NotificationMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notification (user_id, project_id, type, title, content, link)
+        VALUES (#{userId}, #{projectId}, #{type}, #{title}, #{content}, #{link})
+    </insert>
+
+    <select id="list" resultType="org.miniteam.pms.collab.entity.Notification">
+        SELECT id, user_id, project_id, type, title, content, link, is_read AS `read`, created_at
+        FROM notification
+        WHERE user_id = #{userId}
+        <if test="unreadOnly">AND is_read = 0</if>
+        ORDER BY id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM notification
+        WHERE user_id = #{userId}
+        <if test="unreadOnly">AND is_read = 0</if>
+    </select>
+
+    <select id="countOwned" resultType="int">
+        SELECT COUNT(*) FROM notification WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+    <update id="markRead">
+        UPDATE notification SET is_read = 1 WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <update id="markAllRead">
+        UPDATE notification SET is_read = 1 WHERE user_id = #{userId} AND is_read = 0
+    </update>
+
+    <select id="countToday" resultType="int">
+        SELECT COUNT(*) FROM notification
+        WHERE user_id = #{userId} AND project_id = #{projectId} AND type = #{type}
+          AND created_at &gt;= CURDATE()
+    </select>
+</mapper>

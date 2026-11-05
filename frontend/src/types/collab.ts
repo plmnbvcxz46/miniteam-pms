@@ -2,14 +2,7 @@
  * 团队协作模块类型定义（对齐 docs/api/openapi.yaml 的“团队协作”标签）
  * 共享结构（UserBrief、TaskRef、TaskStatus、Activity、IssueInfo 等）见 ./global
  */
-import type {
-  Activity,
-  DocumentRef,
-  IssueInfo,
-  TaskRef,
-  TaskStatus,
-  UserBrief,
-} from "./global";
+import type { DocumentRef, TaskRef, TaskStatus, UserBrief } from "./global";
 
 /** 讨论列表项（DiscussionBrief），GET /projects/{projectId}/discussions 的数组元素 */
 export interface DiscussionBrief {
@@ -85,11 +78,4 @@ export interface DiscussionFormValues {
   taskId: number | null;
   /** 第一条评论的内容和 @ 的对象 */
   content: MentionValue;
-}
-
-/** 团队协作页快照（预留往期切换使用） */
-export interface CollabSnapshot extends IssueInfo {
-  discussions: DiscussionBrief[];
-  discussionDetails: Record<number, DiscussionDetail>;
-  activities: Activity[];
 }

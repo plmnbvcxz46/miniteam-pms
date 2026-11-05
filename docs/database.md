@@ -263,7 +263,7 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 | `headline` | VARCHAR(255) | 是 |  | 当日头条 |
 | `predicted_end` | DATE | 是 |  | 当日预测完工日期 |
 | `delay_days` | INT | 否 | 0 | 当日预测延期天数 |
-| `snapshot` | JSON | 否 |  | 当日结束时的原始数据 `{tasks, dependencies, members, documents}`（documents 是文档和它的全部版本的元数据，不含文件内容；旧存档没有这一项，按没有文档算），读往期时再按那一天的日期重新算出各页面的数据 |
+| `snapshot` | JSON | 否 |  | 当日结束时的原始数据 `{tasks, dependencies, members, documents, discussions}`（documents 是文档和它的全部版本的元数据，不含文件内容；discussions 是讨论和它的全部评论；旧存档没有这两项，按没有算），读往期时再按那一天的日期重新算出各页面的数据 |
 | `created_at` | DATETIME | 否 | CURRENT_TIMESTAMP | 创建时间 |
 
 唯一：`project_id, issue_date`
@@ -342,6 +342,7 @@ MySQL 8.0，字符集 utf8mb4，InnoDB。表结构以 `backend/src/main/resource
 | `user_id` | BIGINT | 否 |  | 用户 |
 | `content` | TEXT | 否 |  | 内容 |
 | `mentions` | JSON | 是 |  | @ 到的用户 ID |
+| `documents` | JSON | 是 |  | @ 到的文档 ID（V3 新增，必须是讨论所属任务下的文档） |
 | `created_at` | DATETIME | 否 | CURRENT_TIMESTAMP | 创建时间 |
 
 索引：`discussion_id, created_at`

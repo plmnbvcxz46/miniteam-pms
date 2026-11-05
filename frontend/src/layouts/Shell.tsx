@@ -7,7 +7,6 @@ import type { ProfileUpdate } from "../types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
-import { notifications as initialNotifications } from "../data/global";
 import { useTaskStore } from "../pages/board/taskStore";
 import { getColumnTasks } from "../pages/board/utils";
 import NoProject from "./components/NoProject";
@@ -18,6 +17,7 @@ import IssueSwitch from "./components/topbar/IssueSwitch";
 import NotificationBell from "./components/topbar/NotificationBell";
 import AccountMenu from "./components/topbar/AccountMenu";
 import WeekLine from "./components/topbar/WeekLine";
+import { useNotifications } from "./useNotifications";
 import type { ShellContext } from "./useProjectPeriod";
 
 export default function Shell() {
@@ -33,7 +33,7 @@ export default function Shell() {
     skillTags: me.skillTags,
   };
   const [projectFormOpen, setProjectFormOpen] = useState(false);
-  const [notificationList, setNotificationList] = useState(initialNotifications);
+  const notifications = useNotifications();
   const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
 
@@ -61,15 +61,13 @@ export default function Shell() {
           {currentProject && <WeekLine period={currentProject} />}
         </div>
         <NotificationBell
-          notifications={notificationList}
-          onRead={(id) =>
-            setNotificationList((prev) =>
-              prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-            )
-          }
-          onReadAll={() =>
-            setNotificationList((prev) => prev.map((n) => ({ ...n, isRead: true })))
-          }
+          notifications={notifications.list}
+          unreadCount={notifications.unreadCount}
+          currentProjectId={currentProject?.id ?? null}
+          onOpenBell={() => void notifications.refresh().catch(() => undefined)}
+          onRead={notifications.markRead}
+          onReadAll={notifications.markAllRead}
+          onSwitchProject={selectProject}
         />
         <AccountMenu
           realName={profile.realName}

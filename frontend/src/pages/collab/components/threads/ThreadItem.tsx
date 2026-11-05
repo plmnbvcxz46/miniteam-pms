@@ -1,4 +1,5 @@
 import type { DiscussionBrief } from "../../../../types/collab";
+import { useIssue } from "../../../../issue/useIssue";
 import { formatThreadShortTime } from "../../utils";
 
 interface ThreadItemProps {
@@ -16,6 +17,7 @@ export default function ThreadItem({
   overdueDays,
   onClick,
 }: ThreadItemProps) {
+  const { today } = useIssue();
   const classNames = ["thr", isClosed ? "closed" : ""]
     .filter(Boolean)
     .join(" ");
@@ -37,7 +39,7 @@ export default function ThreadItem({
         <span>{discussion.task?.title ?? "未关联任务"}</span>
         <span>
           {discussion.commentCount} 条 ·{" "}
-          {formatThreadShortTime(discussion.lastCommentAt)}
+          {formatThreadShortTime(discussion.lastCommentAt, today)}
         </span>
       </small>
     </button>

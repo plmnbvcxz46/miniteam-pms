@@ -28,8 +28,6 @@ export interface AccessState {
   selectProject: (id: number) => void;
   /** 当前项目已归档：归档后一切只读，和看过去的期一样 */
   isArchived: boolean;
-  /** 当前项目是不是带前端假数据的演示项目；任务、文档、讨论等还没接接口，只有它有内容 */
-  isDemoProject: boolean;
   /** POST /projects，任何登录用户都能新建，新建后创建人是项目经理；失败抛 ApiError */
   createProject: (values: ProjectSave) => Promise<void>;
   /** PUT /projects/{projectId}；失败抛 ApiError */

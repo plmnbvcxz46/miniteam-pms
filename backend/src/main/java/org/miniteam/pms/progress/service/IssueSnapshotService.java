@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.miniteam.pms.collab.DiscussionViews;
+import org.miniteam.pms.collab.entity.DiscussionWithComments;
+import org.miniteam.pms.collab.service.DiscussionService;
 import org.miniteam.pms.common.exception.BusinessException;
 import org.miniteam.pms.common.result.ResultCode;
 import org.miniteam.pms.document.DocumentViews;
@@ -62,11 +65,17 @@ public class IssueSnapshotService {
             List<Task> tasks,
             List<TaskDependency> dependencies,
             List<ProjectMember> members,
-            List<DocumentWithVersions> documents) {
+            List<DocumentWithVersions> documents,
+            List<DiscussionWithComments> discussions) {
 
         /** 旧存档没有文档这一项，按没有文档算 */
         public List<DocumentWithVersions> documentsOrEmpty() {
             return documents == null ? List.of() : documents;
+        }
+
+        /** 旧存档没有讨论这一项，按没有讨论算 */
+        public List<DiscussionWithComments> discussionsOrEmpty() {
+            return discussions == null ? List.of() : discussions;
         }
     }
 
@@ -76,6 +85,7 @@ public class IssueSnapshotService {
     private final ProjectDataLoader loader;
     private final TaskService taskService;
     private final DocumentService documentService;
+    private final DiscussionService discussionService;
 
     public IssueSnapshotService(
             ProjectAccess access,
@@ -83,13 +93,15 @@ public class IssueSnapshotService {
             DailyIssueMapper issueMapper,
             ProjectDataLoader loader,
             TaskService taskService,
-            DocumentService documentService) {
+            DocumentService documentService,
+            DiscussionService discussionService) {
         this.access = access;
         this.projectMapper = projectMapper;
         this.issueMapper = issueMapper;
         this.loader = loader;
         this.taskService = taskService;
         this.documentService = documentService;
+        this.discussionService = discussionService;
     }
 
     public static String encode(StoredState state) {
@@ -115,7 +127,11 @@ public class IssueSnapshotService {
         issue.setPredictedEnd(headline.predictedEnd());
         issue.setDelayDays(headline.delayDays());
         issue.setSnapshot(MAPPER.writeValueAsString(new StoredState(
-                data.snap().tasks, data.snap().deps, data.members(), documentService.loadAll(project.getId()))));
+                data.snap().tasks,
+                data.snap().deps,
+                data.members(),
+                documentService.loadAll(project.getId()),
+                discussionService.loadAll(project.getId()))));
         issueMapper.upsert(issue);
     }
 
@@ -187,12 +203,14 @@ public class IssueSnapshotService {
         }
         ProjectData data;
         List<DocumentWithVersions> docs;
+        List<DiscussionWithComments> discussions;
         IssueSummaryVO summary;
         IssueSummaryVO base = new IssueSummaryVO(
                 IssueCalendar.issueNo(project.getStartDate(), issueDate), issueDate, null, null, 0, false);
         if (issueDate.equals(current)) {
             data = loader.load(project);
             docs = documentService.loadAll(projectId);
+            discussions = discussionService.loadAll(projectId);
             summary = liveSummary(base, data);
         } else {
             DailyIssue row = issueMapper.find(projectId, issueDate);
@@ -202,6 +220,7 @@ public class IssueSnapshotService {
             StoredState state = decode(row.getSnapshot());
             data = fromStored(project, issueDate, state);
             docs = DocumentViews.asOf(state.documentsOrEmpty(), issueDate);
+            discussions = state.discussionsOrEmpty();
             summary = new IssueSummaryVO(
                     base.issueNo(),
                     issueDate,
@@ -217,26 +236,40 @@ public class IssueSnapshotService {
                 summary.predictedEnd(),
                 summary.delayDays(),
                 summary.risk(),
-                pages(data, ProjectDataLoader.viewer(ctx), docs));
+                pages(projectId, data, ProjectDataLoader.viewer(ctx), docs, discussions));
     }
 
-    /** 各页面当天的数据，键见 {@link IssueSnapshotVO}。讨论还没有后端，先给空数组 */
-    private Map<String, Object> pages(ProjectData data, Viewer viewer, List<DocumentWithVersions> docs) {
+    /** 各页面当天的数据，键见 {@link IssueSnapshotVO} */
+    private Map<String, Object> pages(
+            Long projectId,
+            ProjectData data,
+            Viewer viewer,
+            List<DocumentWithVersions> docs,
+            List<DiscussionWithComments> allDiscussions) {
+        List<DiscussionWithComments> discussions = DiscussionViews.asOf(allDiscussions, data.today());
         ReportsVO reports = ReportCalculator.build(data, viewer);
         Map<String, Object> pages = new LinkedHashMap<>();
         List<TaskDetailVO> tasks = taskService.visibleDetails(
                 data.snap(),
                 viewer.canEditTask(),
                 viewer.userId(),
-                DocumentViews.briefsByTask(
-                        docs.stream().map(DocumentWithVersions::document).toList(), data.snap().byId, data.today()));
+                new TaskService.Links(
+                        DocumentViews.briefsByTask(
+                                docs.stream()
+                                        .map(DocumentWithVersions::document)
+                                        .toList(),
+                                data.snap().byId,
+                                data.today()),
+                        DiscussionViews.briefsByTask(discussions.stream()
+                                .map(DiscussionWithComments::discussion)
+                                .toList())));
         pages.put("tasks", tasks);
         pages.put("overview", ProgressCalculator.overview(data, viewer, loader.topN()));
         pages.put("gantt", ProgressCalculator.gantt(data, viewer, null, null));
         pages.put("criticalPath", ProgressCalculator.criticalPath(data, viewer));
         pages.put("reports", reports);
         pages.put("members", pastMembers(data, reports.workload()));
-        pages.put("discussions", List.of());
+        pages.put("discussions", discussionService.details(projectId, discussions, data.snap().byId, data.today()));
         pages.put(
                 "documents",
                 docs.stream()

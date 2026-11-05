@@ -21,7 +21,7 @@ interface ThreadDetailPanelProps {
   onTaskClick?: (taskId: number) => void;
   onOpenDocument?: (documentId: number) => void;
   /** 为空时不显示回复框（过去的期只读） */
-  onSendReply?: (value: MentionValue) => void;
+  onSendReply?: (value: MentionValue) => Promise<void>;
 }
 
 export default function ThreadDetailPanel({

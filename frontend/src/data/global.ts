@@ -1,6 +1,5 @@
 import type {
   IssueInfo,
-  Notification,
   NotificationType,
   ProjectRole,
   TaskStatus,
@@ -25,60 +24,6 @@ export const users = {
   devB: { id: 3, username: "dev_b", realName: "普通员工 B" },
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
-
-/** GET /notifications，按时间倒序。未读数量由 isRead 算出 */
-export const notifications: Notification[] = [
-  {
-    id: 5,
-    type: "MENTION",
-    title: "普通员工 A 在“接口文档字段命名统一”里 @ 了你",
-    content: "权限部分卡在按钮级权限标识的格式上，project:task:move 这种三段式可以吗？",
-    link: "/collab?discussionId=1&commentId=103",
-    isRead: false,
-    projectId: 1,
-    createdAt: "2026-10-22 09:18:00",
-  },
-  {
-    id: 4,
-    type: "DELAY",
-    title: "T-139 补全接口文档已逾期 2 天",
-    content: "任务已移到阻塞，计划完成日期 2026-10-20。",
-    link: "/board/task?id=139",
-    isRead: false,
-    projectId: 1,
-    createdAt: "2026-10-22 08:00:00",
-  },
-  {
-    id: 3,
-    type: "MENTION",
-    title: "普通员工 C 在“周五彩排时间”里 @ 了你",
-    content: "彩排顺序我写进 PPT 最后一页了，你看一下。",
-    link: "/collab?discussionId=3&commentId=304",
-    isRead: false,
-    projectId: 1,
-    createdAt: "2026-10-21 15:02:00",
-  },
-  {
-    id: 2,
-    type: "MENTION",
-    title: "普通员工 B 在“甘特图依赖线怎么画”里 @ 了你",
-    content: "依赖线打算用 SVG 按任务条的实际位置生成。",
-    link: "/collab?discussionId=2&commentId=201",
-    isRead: true,
-    projectId: 1,
-    createdAt: "2026-10-21 10:02:00",
-  },
-  {
-    id: 1,
-    type: "SYSTEM",
-    title: "第 31 期日报已生成",
-    content: null,
-    link: null,
-    isRead: true,
-    projectId: 1,
-    createdAt: "2026-10-21 00:00:00",
-  },
-];
 
 /** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 utils/date 的 getProjectToday() 读取 */
 export const projectTodayDate = "2026-10-22";
