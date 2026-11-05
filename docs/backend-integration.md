@@ -182,7 +182,7 @@
 
 1. **讨论进快照**：`IssueSnapshotService.pages` 里的 `discussions` 现在是空数组，往期的协作页前端还在按时间从假数据里筛。把讨论和评论的原始数据加进 `StoredState`（和文档一样，缺这一项按空处理），前端改读 `snapshot.discussions`。
 2. **`TaskDetail.discussions`**：任务详情里的讨论简要信息现在返回空数组（`TaskService.detail`），要等讨论模块。
-3. **评论里 @文档**：表 `comment` 只有 `mentions`（@人的 id 数组），**没有存 @了哪些文档的列**，要新写 Flyway 脚本（新序号，不能改 V1、V2）加一列 JSON 或建关联表。`DocumentCreate.documentIds` 要校验文档属于这个任务（接口文档里写了）。
+3. **评论里 @文档**：表 `comment` 只有 `mentions`（@人的 id 数组），**没有存 @了哪些文档的列**，要新写 Flyway 脚本（新序号，不能改 V1、V2）加一列 JSON 或建关联表。`DiscussionCreate.documentIds`、`CommentCreate.documentIds` 要校验文档属于这个任务（接口文档里写了）。
 4. **通知**：表 `notification` 已有；前端铃铛现在是本地假数据（`layouts/Shell.tsx`、`data/global.ts`）。接口文档里 `GET /notifications/unread-count` 和 `PUT /notifications/read-all` 标了“暂不实现”，但前端铃铛在用未读数和全部已读，**要补实现并改文档**。通知类型有 ASSIGN、MENTION、DELAY、DEFECT、SYSTEM，生成点：@人（讨论模块）、指派任务（任务模块）、逾期（可以放定时任务）。
 5. **删假数据**：`frontend/src/data/documents.ts` 现在只剩讨论页在用（`pages/collab/utils.ts` 取文档所属任务），`data/collab.ts` 是讨论的假数据，讨论接通后一起删；`MentionInput` 里 @文档 的候选要改读 `DocumentProvider` 的真实文档。
 6. **同一个文档页的小限制**：文档的截止日取自任务，任务改了截止日后文档页要刷新才更新（`DocumentProvider` 不监听任务表）。
