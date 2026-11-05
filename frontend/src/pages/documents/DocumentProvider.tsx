@@ -1,39 +1,63 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { useAccess } from "../../access/useAccess";
-import { docs as demoDocs } from "../../data/documents";
-import { useIssue } from "../../issue/useIssue";
-import type { DocumentItem } from "../../types/documents";
-import { DocumentStoreContext } from "./documentStore";
-import { getDocsAtDate } from "./utils";
+import { documentApi } from "../../api/document";
+import { useIssueData } from "../../issue/useIssueData";
+import { useProject } from "../../project/useProject";
+import type { DocumentDetailApi } from "../../types/documents";
+import { downloadBlob } from "../../utils/download";
+import { DocumentStoreContext, type DocumentStore } from "./documentStore";
+import { toDocumentItem } from "./utils";
 
-export default function DocumentProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const { isDemoProject } = useAccess();
-  // 文档还没接接口：只有演示项目有假数据，其他项目是空的
-  const [baseDocs, setDocs] = useState<DocumentItem[]>(isDemoProject ? demoDocs : []);
-  const { isPast, today } = useIssue();
-  // 看过去的期时，文档取当时的版本
-  const docs = useMemo(
-    () => (isPast ? getDocsAtDate(baseDocs, today) : baseDocs),
-    [baseDocs, isPast, today],
+/** 取项目里的全部文档，每份带版本记录（列表接口不带版本，逐份取详情） */
+async function loadDocuments(projectId: number): Promise<DocumentDetailApi[]> {
+  const list = await documentApi.list(projectId);
+  return Promise.all(list.map((doc) => documentApi.get(doc.id)));
+}
+
+/**
+ * 文档数据：看今天时来自接口，看过去的期来自那一期快照里的 documents。
+ * 写操作成功后重新取一遍。
+ */
+export default function DocumentProvider({ children }: { children: ReactNode }) {
+  const { currentProject } = useProject();
+  const projectId = currentProject?.id ?? null;
+  // 每次写操作成功加一，useIssueData 据此重新取
+  const [version, setVersion] = useState(0);
+  const { data, error, missing } = useIssueData(
+    loadDocuments,
+    (pages) => pages.documents,
+    version,
   );
+  const docs = useMemo(() => (data ?? []).map(toDocumentItem), [data]);
 
-  // 定稿后更新日期记为今天，定稿列表上显示的“xx 定稿”取这个日期
-  const finalizeDocument = (documentId: number, today: string) => {
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === documentId ? { ...doc, final: true, up: today } : doc,
-      ),
-    );
+  const store: DocumentStore = {
+    docs,
+    ready: data !== null,
+    error,
+    missing,
+    version,
+    reload: () => setVersion((n) => n + 1),
+    createDocument: async (values) => {
+      if (projectId === null) throw new Error("还没有选中项目");
+      const created = await documentApi.create(projectId, values);
+      setVersion((n) => n + 1);
+      return created.id;
+    },
+    addVersion: async (documentId, values) => {
+      await documentApi.addVersion(documentId, values);
+      setVersion((n) => n + 1);
+    },
+    finalizeDocument: async (documentId) => {
+      await documentApi.finalize(documentId);
+      setVersion((n) => n + 1);
+    },
+    downloadVersion: async (versionId, fallbackName) => {
+      const { blob, fileName } = await documentApi.download(versionId);
+      downloadBlob(fileName ?? fallbackName, blob);
+    },
   };
 
   return (
-    <DocumentStoreContext.Provider
-      value={{ docs, setDocs, finalizeDocument }}
-    >
+    <DocumentStoreContext.Provider value={store}>
       {children}
     </DocumentStoreContext.Provider>
   );

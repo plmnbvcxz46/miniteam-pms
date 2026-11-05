@@ -47,12 +47,10 @@ export default function DocumentRevisingItem({
   currentDate,
   onSelect,
 }: DocumentRevisingItemProps) {
-  const vd = doc.hist.map((h) => {
-    const dateStr = Array.isArray(h) ? h[1] : h.date;
-    return getDayOffset(dateStr);
-  });
+  const vd = doc.hist.map((h) => getDayOffset(h.date));
   const first = Math.max(0, Math.min(...vd));
-  const due = getDayOffset(doc.due);
+  // 没有截止日的文档当作今天截止，条形图不画逾期
+  const due = doc.due ? getDayOffset(doc.due) : todayOffset;
 
   // 动态派生状态与逾期判定
   const { status, isLate } = getDocStatus(doc, currentDate);
@@ -93,7 +91,7 @@ export default function DocumentRevisingItem({
           className={`duelb${isLate ? " late" : ""}`}
           style={{ left: getTimelinePercent(due) }}
         >
-          截止 {doc.due}
+          {doc.due ? `截止 ${doc.due}` : "无截止日"}
         </i>
 
         {/* 已进行进度条 */}

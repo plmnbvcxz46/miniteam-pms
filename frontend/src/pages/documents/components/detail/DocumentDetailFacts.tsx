@@ -32,7 +32,7 @@ export default function DocumentDetailFacts({
       <dt>负责人</dt>
       <dd>{doc.who}</dd>
       <dt>截止</dt>
-      <dd>{doc.due}</dd>
+      <dd>{doc.due || "无"}</dd>
       <dt>状态</dt>
       <dd className={isLate ? "late" : ""}>{status}</dd>
     </dl>
