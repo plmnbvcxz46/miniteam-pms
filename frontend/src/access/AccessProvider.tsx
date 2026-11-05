@@ -1,6 +1,5 @@
 import { useMemo, type ReactNode } from "react";
 import { useMe } from "../auth/useAuth";
-import { currentProjectId } from "../data/global";
 import { useIssue } from "../issue/useIssue";
 import { useProject } from "../project/useProject";
 import { isSystemAdmin } from "../types/auth";
@@ -19,7 +18,6 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
   const { isPast, today, snapshot } = useIssue();
   const isAdmin = isSystemAdmin(me);
   const { currentProject, detail } = project;
-  const projectId = currentProject?.id ?? null;
   const isArchived = currentProject?.status === "ARCHIVED";
   // 过去的期和已归档的项目都是只读
   const readOnly = isPast || isArchived;
@@ -65,7 +63,6 @@ export default function AccessProvider({ children }: { children: ReactNode }) {
     projectDescription: detail?.description ?? "",
     selectProject: project.selectProject,
     isArchived,
-    isDemoProject: projectId === currentProjectId,
     createProject: project.createProject,
     saveProject: project.saveProject,
     archiveProject: project.archiveProject,

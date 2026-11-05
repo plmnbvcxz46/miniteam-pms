@@ -2,35 +2,48 @@ import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { notificationTypeLabel } from "../../../data/global";
 import type { Notification } from "../../../types/global";
-import { getProjectToday } from "../../../utils/date";
+import { getLocalToday } from "../../../utils/date";
 import { useDismiss } from "../../useDismiss";
 import { formatNotificationTime } from "../../utils";
 
 interface NotificationBellProps {
   notifications: Notification[];
-  onRead: (id: number) => void;
-  onReadAll: () => void;
+  /** 所有项目里没读的总数 */
+  unreadCount: number;
+  /** 当前项目，通知属于别的项目时先切过去再跳转 */
+  currentProjectId: number | null;
+  /** 打开铃铛时通知外面重新取一次 */
+  onOpenBell: () => void;
+  onRead: (id: number) => Promise<void>;
+  onReadAll: () => Promise<void>;
+  onSwitchProject: (projectId: number) => void;
 }
 
 /** 黑色空心铃铛，有未读通知时右上角多一个橙色方块，铃铛在方块周围留出缺口 */
 export default function NotificationBell({
   notifications,
+  unreadCount,
+  currentProjectId,
+  onOpenBell,
   onRead,
   onReadAll,
+  onSwitchProject,
 }: NotificationBellProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, rootRef, close);
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
   const hasUnread = unreadCount > 0;
-  const today = getProjectToday();
+  const today = getLocalToday();
 
   // 点通知：标为已读，有链接就跳过去（@ 通知会落到讨论里的那条消息）
   const handleOpen = (notification: Notification) => {
-    onRead(notification.id);
+    if (!notification.isRead) onRead(notification.id).catch(() => undefined);
     close();
+    if (notification.projectId !== null && notification.projectId !== currentProjectId) {
+      onSwitchProject(notification.projectId);
+    }
     if (notification.link) navigate(notification.link);
   };
 
@@ -42,7 +55,10 @@ export default function NotificationBell({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label={hasUnread ? `通知，${unreadCount} 条未读` : "通知"}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          if (!open) onOpenBell();
+          setOpen((v) => !v);
+        }}
       >
         <svg
           width="22"
@@ -104,7 +120,7 @@ export default function NotificationBell({
             ))}
           </div>
           {hasUnread && (
-            <button type="button" className="pfoot" onClick={onReadAll}>
+            <button type="button" className="pfoot" onClick={() => void onReadAll().catch(() => undefined)}>
               全部标为已读
             </button>
           )}

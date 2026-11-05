@@ -1,24 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  activities as initialActivities,
-  collabTodayDate,
-  defaultDiscussionId,
-  discussionDetails as initialDiscussionDetails,
-  discussions as initialDiscussions,
-} from "../../data/collab";
+import { collabApi } from "../../api/collab";
 import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
 import { useIssue } from "../../issue/useIssue";
+import { useProject } from "../../project/useProject";
 import type {
-  Comment,
-  DiscussionBrief,
   DiscussionDetail,
   DiscussionFormValues,
-  DiscussionTask,
   MentionValue,
 } from "../../types/collab";
 import type { Activity } from "../../types/global";
+import { useDocumentStore } from "../documents/documentStore";
 import { useTaskStore } from "../board/taskStore";
 import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
 import NewDiscussionDrawer from "./components/drawer/NewDiscussionDrawer";
@@ -26,14 +19,15 @@ import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";
 import CollabHeader from "./components/header/CollabHeader";
 import ThreadsPanel from "./components/threads/ThreadsPanel";
 import {
+  activitiesUpTo,
   createDraftFromActivity,
   findCommentIdByActivity,
   findDiscussionIdByActivity,
   formatCollabKicker,
-  getCollabAtDate,
   getTaskDocumentRefs,
-  toDiscussionTask,
+  toBrief,
 } from "./utils";
+import { useCollabData } from "./useCollabData";
 import "./css/collab.css";
 
 /** 从任务页跳过来发起讨论时，通过路由 state 带上任务 */
@@ -41,50 +35,52 @@ interface CollabLocationState {
   newDiscussionTaskId?: number;
 }
 
+/** 通知或任务页点进来要定位的讨论和消息，等数据取到再用 */
+interface PendingJump {
+  discussionId: number;
+  commentId: number;
+}
+
 export default function CollabPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { taskMap } = useTaskStore();
+  const { taskMap, reload: reloadTasks } = useTaskStore();
+  const { docs } = useDocumentStore();
   const { user: currentUser } = useMe();
   const { members } = useAccess();
+  const { currentProject } = useProject();
+  const projectId = currentProject?.id ?? null;
   // 可以 @ 的成员：项目成员里除了自己
   const mentionUsers = useMemo(
     () => members.map((m) => m.user).filter((user) => user.id !== currentUser.id),
     [members, currentUser.id],
   );
 
-  // 顶层状态
-  // 讨论还没接接口：只有演示项目有假数据，其他项目是空的
-  const { isDemoProject } = useAccess();
-  const [allDiscussions, setDiscussionList] = useState<DiscussionBrief[]>(
-    isDemoProject ? initialDiscussions : [],
-  );
-  const [allDetails, setDetailMap] = useState<Record<number, DiscussionDetail>>(
-    isDemoProject ? initialDiscussionDetails : {},
-  );
-  const [allActivities, setActivityList] = useState<Activity[]>(
-    isDemoProject ? initialActivities : [],
-  );
-  // 看过去的期时，只留那天以前的讨论、评论和动态
+  // 讨论和动态来自接口；看过去的期时讨论是那一期快照里的，动态按日期筛
   const { isPast, today } = useIssue();
   const {
-    discussions: discussionList,
-    detailMap,
-    activities: activityList,
-  } = useMemo(
+    details,
+    activities: allActivities,
+    ready,
+    error,
+    missing,
+    refresh,
+  } = useCollabData();
+  const discussionList = useMemo(() => details.map(toBrief), [details]);
+  const detailMap = useMemo(() => {
+    const map: Record<number, DiscussionDetail> = {};
+    for (const detail of details) map[detail.id] = detail;
+    return map;
+  }, [details]);
+  const activityList = useMemo(
     () =>
       isPast
-        ? getCollabAtDate(allDiscussions, allDetails, allActivities, taskMap, today)
-        : {
-            discussions: allDiscussions,
-            detailMap: allDetails,
-            activities: allActivities,
-          },
-    [isPast, allDiscussions, allDetails, allActivities, taskMap, today],
+        ? activitiesUpTo(allActivities, new Set(details.map((d) => d.id)), today)
+        : allActivities,
+    [isPast, allActivities, details, today],
   );
-  const [selectedId, setSelectedId] = useState<number>(
-    isDemoProject ? defaultDiscussionId : 0,
-  );
+
+  const [selectedId, setSelectedId] = useState<number>(0);
   const [draftDiscussion, setDraftDiscussion] =
     useState<DiscussionDetail | null>(null);
   // 草稿对话预先放进回复框的内容（文件动态会带上 @ 这份文件）
@@ -111,25 +107,35 @@ export default function CollabPage() {
     }
   }, [location.pathname, location.state, navigate]);
 
-  // 通知点进来：/collab?discussionId=&commentId=，选中那个讨论并定位到那条消息，和点击动态是同一套定位。
-  // 地址变了就在渲染时调整状态，随后把地址里的参数清掉，刷新或前进后退不会重复定位
+  // 通知、任务页点进来：/collab?discussionId=&commentId=，选中那个讨论并定位到那条消息，和点击动态是同一套定位。
+  // 地址变了先记下要去哪（数据可能还没取到），随后把地址里的参数清掉，刷新或前进后退不会重复定位
   const [seenSearch, setSeenSearch] = useState("");
   const [jumpCount, setJumpCount] = useState(0);
+  const [pendingJump, setPendingJump] = useState<PendingJump | null>(null);
   if (location.search !== seenSearch) {
     setSeenSearch(location.search);
     const params = new URLSearchParams(location.search);
     const discussionId = Number(params.get("discussionId"));
-    const commentId = Number(params.get("commentId"));
-    if (discussionId && detailMap[discussionId]) {
+    if (discussionId) {
+      setPendingJump({
+        discussionId,
+        commentId: Number(params.get("commentId")),
+      });
+    }
+  }
+  if (pendingJump && ready) {
+    setPendingJump(null);
+    const target = detailMap[pendingJump.discussionId];
+    if (target) {
       setJumpCount(jumpCount + 1);
       setDraftDiscussion(null);
       setDraftInitial(null);
       setActiveActivityId(null);
-      setSelectedId(discussionId);
+      setSelectedId(pendingJump.discussionId);
       setFlashComment(
-        commentId &&
-          detailMap[discussionId].comments.some((c) => c.id === commentId)
-          ? { commentId, triggerKey: jumpCount + 1 }
+        pendingJump.commentId &&
+          target.comments.some((c) => c.id === pendingJump.commentId)
+          ? { commentId: pendingJump.commentId, triggerKey: jumpCount + 1 }
           : null,
       );
     }
@@ -154,12 +160,7 @@ export default function CollabPage() {
 
   // 顶栏 kicker 统计
   const todayActivityCount = useMemo(() => {
-    return activityList.filter(
-      (act) =>
-        act.createdAt.startsWith(today) ||
-        act.createdAt === "刚刚" ||
-        act.createdAt.endsWith("刚刚"),
-    ).length;
+    return activityList.filter((act) => act.createdAt.startsWith(today)).length;
   }, [activityList, today]);
 
   const overdueCount = useMemo(() => {
@@ -206,11 +207,12 @@ export default function CollabPage() {
       } else {
         setFlashComment(null);
       }
-    } else {
+    } else if (!isPast) {
       const { draft, initialValue } = createDraftFromActivity(
         activity,
         currentUser,
         taskMap,
+        (documentId) => docs.find((d) => d.id === documentId)?.taskId ?? null,
       );
       setDraftDiscussion(draft);
       setDraftInitial(initialValue);
@@ -218,128 +220,61 @@ export default function CollabPage() {
     }
   };
 
-  const toComment = (value: MentionValue): Comment => ({
-    id: Date.now(),
-    user: currentUser,
-    content: value.text,
-    mentions: value.mentions,
-    documents: value.documents,
-    createdAt: `${collabTodayDate} 刚刚`,
-  });
+  // 写操作成功后：重新取讨论和动态，任务详情里带着的讨论也要刷新
+  const afterWrite = async () => {
+    await Promise.all([refresh(), reloadTasks()]);
+  };
 
-  // 新建讨论：加进列表、选中、追加一条“发起讨论”动态。草稿发出第一条消息和抽屉提交共用
-  const createDiscussion = (
+  // 新建讨论，对应 POST /projects/{projectId}/discussions，成功后选中新讨论。草稿发出第一条消息和抽屉提交共用
+  const createDiscussion = async (
     title: string,
-    task: DiscussionTask | null,
-    creator: DiscussionDetail["creator"],
-    comment: Comment,
+    taskId: number | null,
+    content: MentionValue,
   ) => {
-    const newId = Math.max(0, ...discussionList.map((d) => d.id)) + 1;
-
-    setDetailMap((prev) => ({
-      ...prev,
-      [newId]: {
-        id: newId,
-        title,
-        creator,
-        createdAt: comment.createdAt,
-        task,
-        comments: [comment],
-      },
-    }));
-
-    const newBrief: DiscussionBrief = {
-      id: newId,
+    if (projectId === null) throw new Error("还没有选中项目");
+    const created = await collabApi.createDiscussion(projectId, {
       title,
-      task: task
-        ? { id: task.id, taskNo: task.taskNo, title: task.title }
-        : null,
-      commentCount: 1,
-      lastCommentAt: "刚刚",
-    };
-    setDiscussionList((prev) => [newBrief, ...prev]);
+      taskId: taskId ?? undefined,
+      content: content.text,
+      mentionIds: content.mentions.map((u) => u.id),
+      documentIds: content.documents.map((d) => d.id),
+    });
+    await afterWrite();
     setDraftDiscussion(null);
     setDraftInitial(null);
     setActiveActivityId(null);
     setFlashComment(null);
-    setSelectedId(newId);
-
-    const newActivity: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "DISCUSSION",
-      targetId: newId,
-      action: "CREATE",
-      detail: `${currentUser.realName} 发起讨论 <b>${title}</b>`,
-      createdAt: "刚刚",
-    };
-    setActivityList((prev) => [newActivity, ...prev]);
+    setSelectedId(created.id);
   };
 
-  // 发送回复
-  const handleSendReply = (value: MentionValue) => {
+  // 发送回复：失败时抛错，由回复框显示原因
+  const handleSendReply = async (value: MentionValue) => {
     if (!currentDetail) return;
-
-    const newComment = toComment(value);
 
     // 1. 若当前处于草稿空对话，发送首条消息时正式转为真对话
     if (draftDiscussion !== null) {
-      createDiscussion(
+      await createDiscussion(
         draftDiscussion.title,
-        draftDiscussion.task,
-        draftDiscussion.creator,
-        newComment,
+        draftDiscussion.task?.id ?? null,
+        value,
       );
       return;
     }
 
-    // 2. 正常既有讨论追加评论
-    setDetailMap((prev) => {
-      const cur = prev[selectedId];
-      if (!cur) return prev;
-      return {
-        ...prev,
-        [selectedId]: {
-          ...cur,
-          comments: [...cur.comments, newComment],
-        },
-      };
+    // 2. 正常既有讨论追加评论，对应 POST /discussions/{discussionId}/comments
+    const created = await collabApi.createComment(currentDetail.id, {
+      content: value.text,
+      mentionIds: value.mentions.map((u) => u.id),
+      documentIds: value.documents.map((d) => d.id),
     });
-
-    setDiscussionList((prev) =>
-      prev.map((item) =>
-        item.id === selectedId
-          ? {
-              ...item,
-              commentCount: item.commentCount + 1,
-              lastCommentAt: "刚刚",
-            }
-          : item,
-      ),
-    );
-
-    const newActivity: Activity = {
-      id: Date.now(),
-      user: currentUser,
-      targetType: "DISCUSSION",
-      targetId: selectedId,
-      action: "COMMENT",
-      detail: `${currentUser.realName} 回复了 <b>${currentDetail.title}</b>`,
-      createdAt: "刚刚",
-    };
-
-    setActivityList((prev) => [newActivity, ...prev]);
+    await afterWrite();
+    setActiveActivityId(null);
+    setFlashComment({ commentId: created.id, triggerKey: Date.now() });
   };
 
-  // 抽屉提交：POST /projects/{projectId}/discussions
-  const handleCreateDiscussion = (values: DiscussionFormValues) => {
-    const task = values.taskId !== null ? taskMap[values.taskId] : undefined;
-    createDiscussion(
-      values.title,
-      task ? toDiscussionTask(task) : null,
-      currentUser,
-      toComment(values.content),
-    );
+  // 抽屉提交：成功后关闭，失败抛错由抽屉显示原因
+  const handleCreateDiscussion = async (values: DiscussionFormValues) => {
+    await createDiscussion(values.title, values.taskId, values.content);
     setDrawer(null);
   };
 
@@ -353,11 +288,24 @@ export default function CollabPage() {
     navigate(`/documents?id=${documentId}`);
   };
 
+  if (!ready && (error || missing)) {
+    return (
+      <section className="view" id="view-team" data-view="team">
+        <CollabHeader kicker="" />
+        <div className="msgs-empty">
+          {missing ? "这一期没有存档，看不到当时的讨论" : error}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="view" id="view-team" data-view="team">
       <CollabHeader
-        kicker={kicker}
-        onCreate={isPast ? undefined : () => setDrawer({ taskId: null, lockTask: false })}
+        kicker={ready ? kicker : "正在加载…"}
+        onCreate={
+          isPast ? undefined : () => setDrawer({ taskId: null, lockTask: false })
+        }
       />
       <div className="tg">
         <ThreadsPanel

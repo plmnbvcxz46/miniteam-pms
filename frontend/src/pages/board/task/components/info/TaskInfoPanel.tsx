@@ -5,7 +5,7 @@ import LinkRow from "./LinkRow";
 interface TaskInfoPanelProps {
   task: TaskDetail;
   onOpenDocument: (documentId: number) => void;
-  onOpenDiscussion: () => void;
+  onOpenDiscussion: (discussionId: number) => void;
   onCreateDiscussion: () => void;
   onUploadDocument: () => void;
 }
@@ -53,7 +53,7 @@ export default function TaskInfoPanel({
               tag="讨论"
               title={discussion.title}
               sub={`${discussion.commentCount} 条`}
-              onClick={onOpenDiscussion}
+              onClick={() => onOpenDiscussion(discussion.id)}
             />
           ))}
           {!hasLinks && <div className="dep-none">还没有关联的文档或讨论</div>}

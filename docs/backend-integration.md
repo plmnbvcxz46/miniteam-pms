@@ -20,7 +20,7 @@
 2. 项目和成员：`/projects`、`/projects/{id}`、归档、`/projects/{id}/members`、`/users/search`（已做）
 3. 用户和设置：`/users`（含状态、重置密码）、`GET /roles`、`/configs`、`/logs`（已做）
 4. 任务：`/projects/{id}/tasks`、`/tasks/{id}`、状态、位置、`/tasks/{id}/predecessors`、`/tasks/{id}/activities`、`DELETE /tasks/{id}`（只有项目经理和系统管理员能删，过去的期不能删，删除后其他任务的前置、后续里要去掉它）（已做，见第六节交接）
-5. 讨论、文档、通知：`/discussions`、评论、`/documents`、定稿、版本下载、`/notifications`、`/projects/{id}/activities`
+5. 讨论、文档、通知：`/discussions`、评论、`/documents`、定稿、版本下载、`/notifications`、`/projects/{id}/activities`（已做，见第八、九节交接）
 
 每个接口的字段以 openapi 为准，前端 `types/` 里的类型和它对齐。
 
@@ -36,7 +36,7 @@
 - 每天零点（`Asia/Shanghai`）给每个还没归档的项目存一份“昨天结束时”的原始数据，写进 `daily_issue`：`snapshot` 里是 `{tasks, dependencies, members}`，另外把头条、预测完工、延期天数存进各自的列。服务启动时会补一次昨天缺的（存的是启动那一刻的状态）。
 - 读往期（`GET /issues/{issueDate}`）时不直接返回存下来的结果，而是用同一套计算类，按存档数据和那一天的日期重新算出 `overview`、`gantt`、`criticalPath`、`reports`、`tasks`、`members`，并按调用人的权限过滤。好处是不会把“只有项目经理看得到的任务”固化进别人的视图，也不用维护两份计算逻辑。
 - 当前这一期（今天，已归档的项目是结束日期）不用存档，按实时数据算。服务没有跑过的日子没有存档，读它返回 404“这一期没有存档”，前端往期页面显示提示。
-- `discussions`、`documents` 两个键现在是空数组，文档、讨论模块接通后要把它们的原始数据加进 `StoredState` 并在 `IssueSnapshotService.pages` 里算出来。
+- 文档和讨论的原始数据也在 `StoredState` 里（`documents`、`discussions`，旧存档没有这两项按空算），读往期时分别用 `DocumentViews.asOf`、`DiscussionViews.asOf` 按那一天还原。
 
 ### 系统角色
 
@@ -48,7 +48,7 @@
 
 ## 五、暂不实现的接口
 
-`openapi.yaml` 里这类接口在方法名上一行写了 `# 暂不实现：前端没有对应功能，之后按需补充`，一共 37 个：
+`openapi.yaml` 里这类接口在方法名上一行写了 `# 暂不实现：前端没有对应功能，之后按需补充`，一共 35 个：
 
 - 里程碑全套
 - 缺陷全套，以及 `/reports/defect-density`
@@ -61,7 +61,6 @@
 - 成员的移除（修改角色岗位、改权限前端在用，已实现）
 - 删除讨论、删除评论
 - 文档的修改信息、删除（新建文档、上传新版本已实现）
-- 通知的全部已读、未读数
 - `GET /users/{userId}`
 
 这些之后会按需补，先不用做。用 `grep -n "暂不实现" docs/api/openapi.yaml` 可以列出来。
@@ -200,3 +199,37 @@
 - Python 的 `urllib` 要关代理，上传用手拼的 multipart（`filename` 里的中文要 UTF-8）；URL 里的中文要 `urllib.parse.quote`。
 - 缺少 `file` 部分、文件超过 20MB 原来会返回 500，现在 `GlobalExceptionHandler` 返回 400。
 - 测试往期快照里的文档：把 `document_version.created_at` 改到前几天，再重启后端让启动补生成给“昨天”存档（已归档的项目不会生成，测试项目别归档）。
+
+## 九、讨论和通知模块交接（做完了，给以后改它们的人）
+
+讨论、评论、通知（含未读数、全部已读）、往期快照里的讨论、任务详情里的讨论简要信息都做完了，前端协作页和铃铛读真实接口。到这里 openapi 里前端有页面的模块全部接通，剩下的“暂不实现”都是前端没有页面的功能。
+
+### 后端放在哪
+
+| 东西 | 位置 | 说明 |
+|---|---|---|
+| 讨论、评论 | `collab/service/DiscussionService`、`DiscussionController` | 项目成员都能看、发起、回复（没有单独的权限位）；归档的项目只读（409）；每次发起、回复记一条操作日志（`targetType=DISCUSSION`，动作 `CREATE`、`COMMENT`，文案里 `<b>标题</b>` 前端会加粗），协作页右边的动态栏读的就是它 |
+| 展示口径 | `collab/DiscussionViews` | 纯函数：列表项、详情、按日期还原（`asOf`，评论数和最后评论时间按留下的评论重算）、按任务分组。实时接口和往期快照共用 |
+| 通知 | `collab/service/NotificationService`、`NotificationController` | `send(...)` 给别的模块发通知（失败只打印，不影响业务）；读、标已读只能动自己的（别人的 404）；列表跨项目 |
+| 逾期通知 | `collab/service/OverdueNoticeJob` | 每天 9 点（`Asia/Shanghai`）给每个有逾期任务的负责人发一条汇总（一个项目一条，今天发过不重发），类型 `DELAY` |
+| 表 | `V3__comment_documents.sql` | `comment` 加了 `documents` JSON 列（@ 的文档 ID，和 `mentions` 并列），类型转换用 `common/mybatis/JsonLongListTypeHandler` |
+
+### 规则
+
+- **@**：`mentionIds` 必须是项目成员（最多 20 个，重复的去掉）；`documentIds` 必须属于讨论所属的任务，没有关联任务的讨论不能 @ 文档（都是 400）。被 @ 的人（不含自己）收到 `MENTION` 通知，`link` 是 `/collab?discussionId=&commentId=`。
+- **指派**：新建任务、改负责人时给新负责人发 `ASSIGN` 通知（自己指派给自己不发），`link` 是 `/board/task?id=`。生成点在 `TaskService.notifyAssign`。
+- **往期**：`snapshot.discussions` 是 `DiscussionDetail` 数组（含评论），只留那天以前发起的讨论和写下的评论；关联任务的状态、逾期天数按那一天的任务算。动态（`/activities`）只增不改，前端过去的期按日期筛，不放进快照。
+- **任务详情**：`TaskDetail.discussions` 是挂在任务上的讨论简要信息（最近有回复的在前）。`TaskService.Links` 把文档和讨论的简要信息一起带进 `detail(...)`，往期快照用同一个。
+- **通知跨项目**：铃铛显示所有项目的通知，点进别的项目的通知时前端先切项目再跳转。
+- 没有通知的缺陷类型（`DEFECT`）和系统类型（`SYSTEM`）的生成点：缺陷模块还没做，系统通知暂时没人发。
+
+### 前端
+
+`pages/collab/CollabPage.tsx` 读 `useCollabData`（讨论、动态），写完重新取；`layouts/useNotifications.ts` 每分钟取一次通知；`data/collab.ts`、`data/documents.ts` 和 `data/global.ts` 里的 `notifications` 假数据已删，`isDemoProject` 一并删掉（不再有只有演示项目才有内容的页面）。
+
+### 还可以做的（没人要求，没做）
+
+- 评论、讨论的删除（接口标了“暂不实现”）；讨论的“已读/未读”红点。
+- 通知现在靠每分钟轮询，没有推送；通知列表只取最近 30 条，更早的看不到（没有“更多”）。
+- 讨论列表和详情现在是“列表 + 逐个取详情”，讨论上百条时要加分页或懒加载详情。
+- 逾期通知按“项目内的逾期任务”汇总，没有区分刚逾期和一直逾期。

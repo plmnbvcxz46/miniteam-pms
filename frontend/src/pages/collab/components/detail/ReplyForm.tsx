@@ -13,7 +13,8 @@ interface ReplyFormProps {
   documents: DocumentRef[];
   /** 草稿对话预先放进输入框的内容 */
   initialValue?: MentionValue | null;
-  onSend: (value: MentionValue) => void;
+  /** 发送；失败时抛错，message 显示在输入框下面，输入的内容保留 */
+  onSend: (value: MentionValue) => Promise<void>;
   autoFocusTrigger?: number | string | null;
 }
 
@@ -25,17 +26,27 @@ export default function ReplyForm({
   autoFocusTrigger,
 }: ReplyFormProps) {
   const [value, setValue] = useState<MentionValue>(initialValue ?? EMPTY_VALUE);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
-  const submit = () => {
+  const submit = async () => {
     const final = finalizeMention(value);
-    if (!final.text) return;
-    onSend(final);
-    setValue(EMPTY_VALUE);
+    if (!final.text || sending) return;
+    setSending(true);
+    setError("");
+    try {
+      await onSend(final);
+      setValue(EMPTY_VALUE);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "发送失败，请稍后再试");
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submit();
+    void submit();
   };
 
   return (
@@ -52,16 +63,21 @@ export default function ReplyForm({
         onChange={setValue}
         users={users}
         documents={documents}
-        onSubmitShortcut={submit}
+        onSubmitShortcut={() => void submit()}
         placeholder={
           documents.length > 0
             ? "写回复，@ 可提及成员和任务下的文件"
             : "写回复，@ 可提及成员"
         }
       />
-      <button className="btn primary" type="submit">
-        发送
+      <button className="btn primary" type="submit" disabled={sending}>
+        {sending ? "发送中…" : "发送"}
       </button>
+      {error && (
+        <div className="err" role="alert">
+          {error}
+        </div>
+      )}
     </form>
   );
 }

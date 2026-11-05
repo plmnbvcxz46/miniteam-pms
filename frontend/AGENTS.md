@@ -50,19 +50,13 @@ src/
 
 ### 前端替身（接口接通时要换掉）
 
-页面读的数据大多来自 `src/data/`，但下面这些值不是接口字段，是前端按假数据现算的替身。接口接通后改读接口，对应的算法和假数据一起删：
-
-| 替身 | 位置 | 接口接通后 |
-|---|---|---|
-| 往期的讨论、动态、变更记录 | 按时间从现有假数据里筛出；任务、时间线、总览、报表、成员页、文档页的往期已读快照 | 讨论模块接通后，后端把讨论放进快照的 `discussions`，前端改读 `snapshot` |
-
-**演示项目**：讨论等页面还没接接口（任务已接通，所有项目都读真实任务），它们的假数据只属于 `id = currentProjectId`（`data/global.ts`，现在是 1）的那个项目，其他项目这些页面是空的（`useAccess().isDemoProject`，`App.tsx` 里按项目 id 做 key，切换项目时这些页面的数据整个重来）。接通哪个模块，就把它从“演示项目才有”改成读接口。
+目前页面读的数据都已经来自接口，没有剩下的替身。以后新增页面如果先用假数据（放 `src/data/`），要把算出来的替身值列在这里，接口接通时和假数据一起删。
 
 假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。系统角色已统一为系统管理员 `ADMIN` 和普通用户 `USER` 两种。
 
 ### 已接真实接口的部分
 
-请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载、甘特图和关键路径（`/gantt`、`/critical-path`）、总览（`/overview`）、统计报表（`/reports/*`，含 Excel 导出）、往期快照（`/issues/{issueDate}`）、文档（列表、详情、上传新文档、传新版本、定稿、下载，往期读快照里的 `documents`）。文档数据在 `pages/documents/DocumentProvider.tsx`：列表接口不带版本记录，所以逐份取详情，再由 `pages/documents/utils.ts` 的 `toDocumentItem` 转成页面用的格式（日期是 MM.DD）；上传走 `http.upload`（multipart，单个文件 ≤ 20MB，只收 doc、docx、pdf、md，提交前先校验，失败显示后端 `message`）。“文档没定稿不能完成任务”由后端检查（`PUT /tasks/{id}/status` 和 `/position` 返回 409），前端只显示它的提示；文档有写操作后任务表会跟着重新取。进度和报表的数据由后端算，页面用 `issue/useIssueData.ts` 取：看今天调实时接口（任务表每变一次重新取），看过去的期读 `IssueProvider` 里取回的快照（没有存档时页面提示“这一期没有存档”）。任务数据在 `pages/board/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
+请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载、甘特图和关键路径（`/gantt`、`/critical-path`）、总览（`/overview`）、统计报表（`/reports/*`，含 Excel 导出）、往期快照（`/issues/{issueDate}`）、文档（列表、详情、上传新文档、传新版本、定稿、下载，往期读快照里的 `documents`）、讨论和评论（发起、回复、@ 成员和任务下的文档，往期读快照里的 `discussions`）、项目动态、通知（铃铛）。文档数据在 `pages/documents/DocumentProvider.tsx`：列表接口不带版本记录，所以逐份取详情，再由 `pages/documents/utils.ts` 的 `toDocumentItem` 转成页面用的格式（日期是 MM.DD）；上传走 `http.upload`（multipart，单个文件 ≤ 20MB，只收 doc、docx、pdf、md，提交前先校验，失败显示后端 `message`）。“文档没定稿不能完成任务”由后端检查（`PUT /tasks/{id}/status` 和 `/position` 返回 409），前端只显示它的提示；文档有写操作后任务表会跟着重新取。讨论数据在 `pages/collab/useCollabData.ts`：列表接口不带评论，所以逐个取详情，动态一直取接口（过去的期按日期筛）；发起和回复成功后重新取讨论、动态和任务表（任务详情里带着讨论），失败时回复框和抽屉里显示后端 `message`。通知在 `layouts/useNotifications.ts`：登录后取一次、之后每分钟取一次，未读数用 `GET /notifications/unread-count`（列表只取最近 30 条），点通知标为已读并跳转（通知属于别的项目时先切过去），@ 通知带 `?discussionId=&commentId=`，协作页等数据取到后定位到那条消息。进度和报表的数据由后端算，页面用 `issue/useIssueData.ts` 取：看今天调实时接口（任务表每变一次重新取），看过去的期读 `IssueProvider` 里取回的快照（没有存档时页面提示“这一期没有存档”）。任务数据在 `pages/board/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
 
 ### 模块（`types/<模块>.ts`、`data/<模块>.ts`）
 

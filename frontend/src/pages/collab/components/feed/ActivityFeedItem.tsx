@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import type { Activity } from "../../../../types/global";
+import { useIssue } from "../../../../issue/useIssue";
 import { formatMessageTime, parseRichInline } from "../../utils";
 
 interface ActivityFeedItemProps {
@@ -15,6 +16,7 @@ export default function ActivityFeedItem({
   isActive = false,
   onSelectActivity,
 }: ActivityFeedItemProps) {
+  const { today } = useIssue();
   const segments = parseRichInline(activity.detail);
   const title =
     targetDiscussionId !== null ? "点击切换到对应讨论" : "点击发起相关讨论";
@@ -43,7 +45,7 @@ export default function ActivityFeedItem({
       onClick={handleSelect}
       onKeyDown={handleKeyDown}
     >
-      <time>{formatMessageTime(activity.createdAt)}</time>
+      <time>{formatMessageTime(activity.createdAt, today)}</time>
       <p>
         {segments.map((seg, idx) => {
           if (seg.type === "b") return <b key={idx}>{seg.content}</b>;

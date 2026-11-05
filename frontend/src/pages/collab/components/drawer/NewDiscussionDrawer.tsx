@@ -18,7 +18,8 @@ interface NewDiscussionDrawerProps {
   /** 可以 @ 的成员 */
   users: UserBrief[];
   onClose: () => void;
-  onSubmit: (values: DiscussionFormValues) => void;
+  /** 提交；失败时抛错，message 显示在表单底部，成功后由页面关闭抽屉 */
+  onSubmit: (values: DiscussionFormValues) => Promise<void>;
 }
 
 export default function NewDiscussionDrawer({
@@ -39,6 +40,8 @@ export default function NewDiscussionDrawer({
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
   const [notice, setNotice] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const taskOptions = Object.values(tasks)
     .filter((task) => task.status !== "DONE" || task.id === taskId)
@@ -73,14 +76,22 @@ export default function NewDiscussionDrawer({
     );
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     const final = finalizeMention(content);
     const trimmedTitle = title.trim();
     if (!trimmedTitle) setTitleError("填写标题后才能发起");
     if (!final.text) setContentError("填写第一条消息后才能发起");
     if (!trimmedTitle || !final.text) return;
-    onSubmit({ title: trimmedTitle, taskId, content: final });
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      await onSubmit({ title: trimmedTitle, taskId, content: final });
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "发起失败，请稍后再试");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -101,7 +112,7 @@ export default function NewDiscussionDrawer({
         id="discussion-form"
         className="fx-body"
         noValidate
-        onSubmit={handleSubmit}
+        onSubmit={(e) => void handleSubmit(e)}
       >
         <div className="fr">
           <span className="lb">
@@ -181,9 +192,14 @@ export default function NewDiscussionDrawer({
           {contentError && <div className="err">{contentError}</div>}
         </div>
 
+        {submitError && (
+          <div className="err" role="alert">
+            {submitError}
+          </div>
+        )}
         <div className="fx-acts">
-          <button className="btn primary" type="submit">
-            发起讨论
+          <button className="btn primary" type="submit" disabled={submitting}>
+            {submitting ? "发起中…" : "发起讨论"}
           </button>
           <button className="btn" type="button" onClick={onClose}>
             取消
