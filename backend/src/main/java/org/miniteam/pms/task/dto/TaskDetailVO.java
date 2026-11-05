@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.miniteam.pms.document.dto.DocumentBriefVO;
 import org.miniteam.pms.user.dto.UserBriefVO;
 
 /**
  * 接口里的 TaskDetail（TaskCard 的字段加详情字段，同一层）。
- * 文档和讨论要等对应模块，先返回空数组；milestone 固定为 null。
+ * 讨论要等对应模块，先返回空数组；milestone 固定为 null。
  */
 public record TaskDetailVO(
         Long id,
@@ -41,7 +42,7 @@ public record TaskDetailVO(
         List<DependencyTaskVO> predecessors,
         List<DependencyTaskVO> successors,
         List<TaskCardVO> subtasks,
-        List<Object> documents,
+        List<DocumentBriefVO> documents,
         List<Object> discussions,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createdAt,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime updatedAt) {}

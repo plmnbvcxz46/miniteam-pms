@@ -60,6 +60,7 @@
 | `SERVER_PORT` | 后端端口，默认 8080 |
 | `JWT_SECRET` | JWT 签名密钥。不配则每次启动随机生成（重启后所有人要重新登录），线上必须配；本地开发可以不配 |
 | `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 用户表为空时自动创建的初始管理员，默认 `admin` / `123456`；线上建议改掉密码 |
+| `OSS_ENDPOINT`、`OSS_BUCKET`、`OSS_ACCESS_KEY`、`OSS_SECRET_KEY`、`OSS_REGION`、`OSS_PATH_STYLE` | 文档文件的对象存储（S3 协议，线上是服务器本机的 MinIO），线上桶 `app`、开发桶 `app-dev`；密钥必须配，不配则上传下载报错，其他功能不受影响。详见 `docs/deploy-oss.md` |
 
 本地开发默认连服务器上的**开发库 `app_dev`**（全组共用，可以随便测），线上后端连**线上库 `app`**（开发账号碰不到）。开发库密码不进仓库，写在本机 `backend/application-local.yaml` 里（已被忽略，向组长要），详见 `backend/AGENTS.md`。
 

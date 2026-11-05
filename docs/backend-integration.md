@@ -48,7 +48,7 @@
 
 ## 五、暂不实现的接口
 
-`openapi.yaml` 里这类接口在方法名上一行写了 `# 暂不实现：前端没有对应功能，之后按需补充`，一共 39 个：
+`openapi.yaml` 里这类接口在方法名上一行写了 `# 暂不实现：前端没有对应功能，之后按需补充`，一共 37 个：
 
 - 里程碑全套
 - 缺陷全套，以及 `/reports/defect-density`
@@ -60,7 +60,7 @@
 - 单独改进度、改负责人
 - 成员的移除（修改角色岗位、改权限前端在用，已实现）
 - 删除讨论、删除评论
-- 文档的新建、修改、删除、上传新版本
+- 文档的修改信息、删除（新建文档、上传新版本已实现）
 - 通知的全部已读、未读数
 - `GET /users/{userId}`
 
@@ -143,8 +143,8 @@
 
 ### 还没做、后面的模块要接的
 
-1. **文档、讨论进快照**：`IssueSnapshotService.pages` 里 `discussions`、`documents` 现在是空数组；往期的文档页、协作页前端还在用 `getDocsAtDate` 等函数从现有假数据里按时间筛。做文档、讨论模块时把它们的原始数据加进 `StoredState`（存档格式向前兼容：读的时候忽略不认识的字段、缺的字段是空），前端改读 `snapshot`。
-2. **“文档没定稿不能完成任务”**：仍是前端 `TaskProvider` 的本地检查，要搬进 `PUT /tasks/{id}/status`、`/position`，并让 `TaskDetail.documents`、`discussions` 返回真实数据。
+1. **讨论进快照**：文档已经进了快照（`StoredState.documents`，读往期时 `DocumentViews.asOf` 按日期还原，前端读 `snapshot.documents`）。`IssueSnapshotService.pages` 里的 `discussions` 现在还是空数组，往期的协作页前端还在从假数据里按时间筛。做讨论模块时把讨论的原始数据也加进 `StoredState`（存档格式向前兼容：读的时候忽略不认识的字段、缺的字段是空），前端改读 `snapshot.discussions`。
+2. **任务详情里的讨论**：“文档没定稿不能完成任务”已经搬进后端（`TaskService.move` 返回 409），`TaskDetail.documents` 返回真实数据；`TaskDetail.discussions` 仍是空数组，要等讨论模块。
 3. **阻塞区间**：时间线任务条的阻塞段仍靠任务动态文案里有没有“阻塞”推算（`getBlockedSpans`），`TaskProvider` 因此一次取 100 条任务动态。要精确就加结构化的状态变更记录，再改前端并删掉这次取动态。
 4. **`ProjectSummaryVO.headline`**：项目列表里的 `headline` 仍是 null（避免列表接口给每个项目都读一遍任务）；顶栏的头条来自往期列表。
 5. **成员页的 `weeklyHours`**：仍和 `loadHours` 同一口径（未完成任务预估工时之和），要区分“本周”的工时要同时改 `WorkloadService`、`ReportCalculator.workload`、`MemberVO`。
