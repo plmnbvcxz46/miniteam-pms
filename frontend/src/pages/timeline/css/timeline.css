@@ -136,8 +136,8 @@
   background: var(--paper);
 }
 .gt-name b {
-  font-weight: var(--fw-black);
-  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-md);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -151,14 +151,12 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-/* 关键路径上的任务：名称前一小块黑 */
-.gt-name.crit b::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 6px;
-  background: var(--ink);
+/* 关键路径上的任务名加粗黑字，其他灰字；不加记号，名字左边缘对齐，也不和右边的任务条混在一起 */
+.gt-name.crit b {
+  font-weight: var(--fw-bold);
+}
+.gt-name:not(.crit) b {
+  color: var(--text-mute);
 }
 .gt-lane {
   position: relative;
