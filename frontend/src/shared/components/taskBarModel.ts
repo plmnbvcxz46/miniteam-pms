@@ -1,5 +1,5 @@
-import type { Activity } from "../../types/global";
-import type { TaskDetail } from "../../types/task";
+import type { Activity } from "../types/global";
+import type { TaskDetail } from "../types/task";
 import {
   dayEnd,
   getAxisRange,
@@ -7,7 +7,7 @@ import {
   toDay,
   type AxisRange,
   type DayTime,
-} from "../../utils/date";
+} from "../utils/date";
 
 /** 一段时间：[from, to) */
 export interface TimeSpan {

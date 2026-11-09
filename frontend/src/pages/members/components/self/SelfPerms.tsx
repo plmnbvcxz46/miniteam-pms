@@ -1,5 +1,5 @@
-import { permDefs } from "../../../../constants/permissions";
-import type { MemberPermissions } from "../../../../types/global";
+import { permDefs } from "../../../../shared/constants/permissions";
+import type { MemberPermissions } from "../../../../shared/types/global";
 
 interface SelfPermsProps {
   permissions: MemberPermissions;

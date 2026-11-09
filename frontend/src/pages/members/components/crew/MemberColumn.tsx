@@ -1,7 +1,7 @@
 import React from "react";
-import type { PermKey, ProjectRole } from "../../../../types/global";
-import type { Member, PermDef } from "../../../../types/members";
-import { roleLabel } from "../../../../constants/labels";
+import type { PermKey, ProjectRole } from "../../../../shared/types/global";
+import type { Member, PermDef } from "../../../../shared/types/members";
+import { roleLabel } from "../../../../shared/constants/labels";
 import MemberLoad from "./MemberLoad";
 import PermToggle from "./PermToggle";
 

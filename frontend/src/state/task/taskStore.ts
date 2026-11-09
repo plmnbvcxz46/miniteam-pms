@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import type { Activity, TaskStatus } from "../../types/global";
-import type { TaskDetail, TaskFormValues } from "../../types/task";
+import type { Activity, TaskStatus } from "../../shared/types/global";
+import type { TaskDetail, TaskFormValues } from "../../shared/types/task";
 
 /** 看板、任务详情、时间线等共用的任务数据，来自接口 */
 export interface TaskStore {

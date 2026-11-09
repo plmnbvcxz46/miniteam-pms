@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Drawer from "../../../../components/Drawer";
-import type { DocumentItem } from "../../../../types/documents";
+import Drawer from "../../../../shared/components/Drawer";
+import type { DocumentItem } from "../../../../shared/types/documents";
 
 interface UploadDocDrawerProps {
   /** 是否打开 */

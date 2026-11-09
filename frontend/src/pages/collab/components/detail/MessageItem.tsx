@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import type { Comment } from "../../../../types/collab";
+import type { Comment } from "../../../../shared/types/collab";
 import { useIssue } from "../../../../state/issue/useIssue";
 import { formatMessageTime, parseRichInline, splitMentions } from "../../utils";
 

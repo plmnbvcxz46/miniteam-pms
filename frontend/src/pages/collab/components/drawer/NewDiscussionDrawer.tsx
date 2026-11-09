@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from "react";
-import Drawer from "../../../../components/Drawer";
+import Drawer from "../../../../shared/components/Drawer";
 import type {
   DiscussionFormValues,
   MentionValue,
-} from "../../../../types/collab";
-import type { UserBrief } from "../../../../types/global";
-import type { TaskDetail } from "../../../../types/task";
+} from "../../../../shared/types/collab";
+import type { UserBrief } from "../../../../shared/types/global";
+import type { TaskDetail } from "../../../../shared/types/task";
 import { finalizeMention, getTaskDocumentRefs } from "../../utils";
 import MentionInput from "../input/MentionInput";
 

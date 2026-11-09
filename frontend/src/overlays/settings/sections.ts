@@ -1,4 +1,4 @@
-import type { SettingsSectionId } from "../../types/settings";
+import type { SettingsSectionId } from "../../shared/types/settings";
 
 /**
  * access：谁能看到这个分区

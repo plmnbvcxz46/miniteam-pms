@@ -1,6 +1,6 @@
-import { taskStatusLabel } from "../../../../../constants/task";
-import { taskStatusKey } from "../../../../../constants/task";
-import type { DependencyTask } from "../../../../../types/task";
+import { taskStatusLabel } from "../../../../../shared/constants/task";
+import { taskStatusKey } from "../../../../../shared/constants/task";
+import type { DependencyTask } from "../../../../../shared/types/task";
 
 interface DependencyRowProps {
   dep: DependencyTask;

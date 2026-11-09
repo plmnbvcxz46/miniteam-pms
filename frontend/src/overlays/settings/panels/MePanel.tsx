@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { authApi } from "../../../api/auth";
 import { useMe } from "../../../state/auth/useAuth";
-import type { ProfileUpdate } from "../../../types/settings";
+import type { ProfileUpdate } from "../../../shared/types/settings";
 
 /** 技能标签：每个最长 12 个字，最多 10 个 */
 const MAX_TAG_LENGTH = 12;

@@ -1,5 +1,5 @@
-import type { TaskDetail } from "../../../../types/task";
-import { dateToX, dayEnd, toDay, type AxisRange } from "../../../../utils/date";
+import type { TaskDetail } from "../../../../shared/types/task";
+import { dateToX, dayEnd, toDay, type AxisRange } from "../../../../shared/utils/date";
 import type { CpmResult } from "../../utils";
 
 interface GanttDepsProps {

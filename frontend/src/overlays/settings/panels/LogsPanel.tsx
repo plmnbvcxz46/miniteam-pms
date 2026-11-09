@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { logApi } from "../../../api/system";
-import { logActionLabel, logTargetLabel } from "../../../constants/labels";
-import type { LogItem } from "../../../types/settings";
+import { logActionLabel, logTargetLabel } from "../../../shared/constants/labels";
+import type { LogItem } from "../../../shared/types/settings";
 import { groupLogsByDay } from "../utils";
 
 const PAGE_SIZE = 50;

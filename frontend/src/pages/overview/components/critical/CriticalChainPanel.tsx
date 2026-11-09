@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-import type { CriticalNode } from "../../../../types/progress";
-import { formatDayLabel } from "../../../../utils/date";
+import type { CriticalNode } from "../../../../shared/types/progress";
+import { formatDayLabel } from "../../../../shared/utils/date";
 import type { TimelineForecast } from "../../../timeline/utils";
 import { isLate } from "../../utils";
 

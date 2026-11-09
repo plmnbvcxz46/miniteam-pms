@@ -1,4 +1,4 @@
-import type { Burndown } from "../../../../types/reports";
+import type { Burndown } from "../../../../shared/types/reports";
 import BurndownChart from "./BurndownChart";
 
 interface BurndownPanelProps {

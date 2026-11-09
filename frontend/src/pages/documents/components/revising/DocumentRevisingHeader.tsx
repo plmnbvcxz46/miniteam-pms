@@ -1,5 +1,5 @@
-import type { LegendItemConfig } from "../../../../constants/legends";
-import { DOC_REVISING_LEGENDS } from "../../../../constants/legends";
+import type { LegendItemConfig } from "../../../../shared/constants/legends";
+import { DOC_REVISING_LEGENDS } from "../../../../shared/constants/legends";
 
 interface DocumentRevisingHeaderProps {
   count: number;

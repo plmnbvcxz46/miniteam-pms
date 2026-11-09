@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useAccess } from "../../../state/access/useAccess";
 import { useIssue } from "../../../state/issue/useIssue";
-import type { TaskStatus } from "../../../types/global";
+import type { TaskStatus } from "../../../shared/types/global";
 import { useTaskStore } from "../../../state/task/taskStore";
 import NoAccess from "./components/NoAccess";
 import TaskFigures from "./components/figures/TaskFigures";

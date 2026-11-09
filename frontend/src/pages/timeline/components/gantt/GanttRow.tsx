@@ -1,7 +1,7 @@
-import TaskBar from "../../../../components/TaskBar/TaskBar";
-import type { Activity } from "../../../../types/global";
-import type { TaskDetail } from "../../../../types/task";
-import type { AxisRange } from "../../../../utils/date";
+import TaskBar from "../../../../shared/components/TaskBar";
+import type { Activity } from "../../../../shared/types/global";
+import type { TaskDetail } from "../../../../shared/types/task";
+import type { AxisRange } from "../../../../shared/utils/date";
 import type { CpmRow } from "../../utils";
 
 interface GanttRowProps {

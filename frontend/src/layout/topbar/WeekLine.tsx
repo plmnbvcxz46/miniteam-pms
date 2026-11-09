@@ -1,4 +1,4 @@
-import type { ProjectPeriod } from "../../types/global";
+import type { ProjectPeriod } from "../../shared/types/global";
 import { useIssue } from "../../state/issue/useIssue";
 import { getWeekProgress } from "../utils";
 

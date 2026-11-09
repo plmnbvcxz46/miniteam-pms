@@ -1,12 +1,12 @@
-import type { CriticalPath } from "../../types/progress";
-import type { TaskDetail } from "../../types/task";
+import type { CriticalPath } from "../../shared/types/progress";
+import type { TaskDetail } from "../../shared/types/task";
 import {
   dayEnd,
   toDateString,
   toDay,
   weekStartTime,
   type AxisRange,
-} from "../../utils/date";
+} from "../../shared/utils/date";
 
 /** 关键路径法（CPM）的一行，单位都是工作日，从项目第 0 天算起。由后端算，见 GET /critical-path */
 export interface CpmRow {

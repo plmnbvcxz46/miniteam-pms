@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import type { TaskStatus } from "../../types/global";
+import type { TaskStatus } from "../../shared/types/global";
 
 /** 移动超过这个距离才算拖动，否则按点击处理 */
 const DRAG_THRESHOLD = 5;

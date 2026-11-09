@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import type { Account } from "../../types/auth";
+import type { Account } from "../../shared/types/auth";
 import { AuthContext, type AuthState } from "./AuthContext";
 
 export function useAuth(): AuthState {

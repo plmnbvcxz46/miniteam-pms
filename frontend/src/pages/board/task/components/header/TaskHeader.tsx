@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { taskStatusLabel } from "../../../../../constants/task";
-import { taskStatusKey } from "../../../../../constants/task";
-import type { TaskStatus } from "../../../../../types/global";
-import type { TaskDetail } from "../../../../../types/task";
+import { taskStatusLabel } from "../../../../../shared/constants/task";
+import { taskStatusKey } from "../../../../../shared/constants/task";
+import type { TaskStatus } from "../../../../../shared/types/global";
+import type { TaskDetail } from "../../../../../shared/types/task";
 import StatusChips from "./StatusChips";
 
 interface TaskHeaderProps {

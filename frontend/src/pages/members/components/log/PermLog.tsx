@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Activity } from "../../../../types/global";
+import type { Activity } from "../../../../shared/types/global";
 import PermLogItem from "./PermLogItem";
 
 interface PermLogProps {

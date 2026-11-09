@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import type { Activity } from "../../../../types/global";
-import type { TaskDetail } from "../../../../types/task";
+import type { Activity } from "../../../../shared/types/global";
+import type { TaskDetail } from "../../../../shared/types/task";
 import {
   dateToX,
   dayEnd,
   formatDayLabel,
   toDay,
   type AxisRange,
-} from "../../../../utils/date";
+} from "../../../../shared/utils/date";
 import type { CpmResult, TimelineForecast } from "../../utils";
 import type { TimelineScale } from "../header/TimelineHeader";
 import GanttAxis from "./GanttAxis";

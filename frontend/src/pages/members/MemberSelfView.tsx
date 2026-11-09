@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAccess } from "../../state/access/useAccess";
 import { useMe } from "../../state/auth/useAuth";
-import { getProfile } from "../../constants/mock";
+import { getProfile } from "../../shared/constants/mock";
 import { useTaskStore } from "../../state/task/taskStore";
 import SelfHeader from "./components/self/SelfHeader";
 import SelfIdentity from "./components/self/SelfIdentity";

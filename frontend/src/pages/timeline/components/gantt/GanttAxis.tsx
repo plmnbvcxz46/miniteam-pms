@@ -5,7 +5,7 @@ import {
   addDays,
   isWeekend,
   type AxisRange,
-} from "../../../../utils/date";
+} from "../../../../shared/utils/date";
 import { getWeekStarts } from "../../utils";
 
 interface GanttAxisProps {

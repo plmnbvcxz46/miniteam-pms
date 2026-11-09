@@ -1,4 +1,4 @@
-import type { WeeklyCompleted } from "../../../../types/reports";
+import type { WeeklyCompleted } from "../../../../shared/types/reports";
 import { toMonthDay } from "../../utils";
 
 interface WeeklyAxisProps {

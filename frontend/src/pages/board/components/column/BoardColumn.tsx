@@ -1,7 +1,7 @@
 import { Fragment, type PointerEvent, type ReactNode } from "react";
-import { taskStatusLabel } from "../../../../constants/task";
-import type { TaskStatus } from "../../../../types/global";
-import type { TaskDetail } from "../../../../types/task";
+import { taskStatusLabel } from "../../../../shared/constants/task";
+import type { TaskStatus } from "../../../../shared/types/global";
+import type { TaskDetail } from "../../../../shared/types/task";
 import type { CardDrag, DropTarget } from "../../useCardDrag";
 import TaskCard from "./TaskCard";
 

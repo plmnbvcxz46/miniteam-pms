@@ -1,7 +1,7 @@
 import type {
   BoundDocument,
   DocumentVersionItem,
-} from "../../../../types/documents";
+} from "../../../../shared/types/documents";
 import { getDocStatus } from "../../utils";
 import DocumentDetailHero from "./DocumentDetailHero";
 import DocumentDetailFacts from "./DocumentDetailFacts";

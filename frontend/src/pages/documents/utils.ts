@@ -2,14 +2,14 @@ import type {
   BoundDocument,
   DocumentDetailApi,
   DocumentItem,
-} from "../../types/documents";
+} from "../../shared/types/documents";
 import {
   addDays,
   formatDayLabel,
   getProjectToday,
   pad2,
   toDay,
-} from "../../utils/date";
+} from "../../shared/utils/date";
 
 /**
  * 时间跨度（天数）

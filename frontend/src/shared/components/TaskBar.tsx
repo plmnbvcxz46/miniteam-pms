@@ -1,13 +1,13 @@
-import { taskStatusLabel } from "../../constants/task";
+import { taskStatusLabel } from "../constants/task";
 import { useIssue } from "../../state/issue/useIssue";
-import type { Activity } from "../../types/global";
+import type { Activity } from "../types/global";
 import {
   dateToX,
   formatDayLabel,
   getAxisDays,
   getAxisTicks,
   type AxisRange,
-} from "../../utils/date";
+} from "../utils/date";
 import {
   buildTaskBar,
   type TaskBarModel,

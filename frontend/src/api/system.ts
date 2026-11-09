@@ -5,8 +5,8 @@ import type {
   SystemUser,
   UserCreate,
   UserUpdate,
-} from "../types/settings";
-import type { PageResult, UserBrief } from "../types/global";
+} from "../shared/types/settings";
+import type { PageResult, UserBrief } from "../shared/types/global";
 import { http } from "./http";
 
 export const userApi = {

@@ -1,5 +1,5 @@
-import type { TaskDetail } from "../../../../types/task";
-import { formatMonthDay } from "../../../../utils/date";
+import type { TaskDetail } from "../../../../shared/types/task";
+import { formatMonthDay } from "../../../../shared/utils/date";
 
 interface BlockedByProps {
   tasks: TaskDetail[];

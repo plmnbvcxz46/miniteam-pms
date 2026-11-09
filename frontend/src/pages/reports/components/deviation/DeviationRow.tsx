@@ -1,4 +1,4 @@
-import type { DurationDeviation } from "../../../../types/reports";
+import type { DurationDeviation } from "../../../../shared/types/reports";
 
 interface DeviationRowProps {
   item: DurationDeviation;

@@ -1,4 +1,4 @@
-import type { BoundDocument } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../shared/types/documents";
 
 interface DocumentDetailFactsProps {
   doc: BoundDocument;

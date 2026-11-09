@@ -1,4 +1,4 @@
-import type { TaskDetail } from "../../../../../types/task";
+import type { TaskDetail } from "../../../../../shared/types/task";
 import { formatDocStatus } from "../../utils";
 import LinkRow from "./LinkRow";
 

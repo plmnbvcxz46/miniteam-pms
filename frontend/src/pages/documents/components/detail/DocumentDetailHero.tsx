@@ -1,5 +1,5 @@
-import type { DocumentItem } from "../../../../types/documents";
-import { pad2 } from "../../../../utils/date";
+import type { DocumentItem } from "../../../../shared/types/documents";
+import { pad2 } from "../../../../shared/utils/date";
 
 interface DocumentDetailHeroProps {
   doc: DocumentItem;

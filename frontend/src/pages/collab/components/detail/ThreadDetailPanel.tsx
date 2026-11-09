@@ -3,8 +3,8 @@ import type {
   Comment,
   DiscussionDetail,
   MentionValue,
-} from "../../../../types/collab";
-import type { DocumentRef, UserBrief } from "../../../../types/global";
+} from "../../../../shared/types/collab";
+import type { DocumentRef, UserBrief } from "../../../../shared/types/global";
 import MessageItem from "./MessageItem";
 import ReplyForm from "./ReplyForm";
 import ThreadTaskMeta from "./ThreadTaskMeta";

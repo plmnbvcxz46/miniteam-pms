@@ -1,5 +1,5 @@
-import type { WorkloadMember } from "../../../../types/reports";
-import { calculateLoadBar } from "../../../../utils/load";
+import type { WorkloadMember } from "../../../../shared/types/reports";
+import { calculateLoadBar } from "../../../../shared/utils/load";
 
 interface LoadRowProps {
   member: WorkloadMember;

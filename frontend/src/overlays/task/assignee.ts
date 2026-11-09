@@ -1,4 +1,4 @@
-import type { AssigneeCandidate } from "../../types/task";
+import type { AssigneeCandidate } from "../../shared/types/task";
 
 /** 浮层里最多直接显示的技能标签个数，其余折成 +N */
 export const MAX_VISIBLE_TAGS = 3;

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Drawer from "../../components/Drawer";
+import Drawer from "../../shared/components/Drawer";
 import { useAccess } from "../../state/access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
-import type { ProfileUpdate } from "../../types/settings";
+import type { ProfileUpdate } from "../../shared/types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectInfoPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";

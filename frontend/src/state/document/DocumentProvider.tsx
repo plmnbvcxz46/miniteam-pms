@@ -2,8 +2,8 @@ import { useMemo, useState, type ReactNode } from "react";
 import { documentApi } from "../../api/document";
 import { useIssueData } from "../issue/useIssueData";
 import { useProject } from "../project/useProject";
-import type { DocumentDetailApi } from "../../types/documents";
-import { downloadBlob } from "../../utils/download";
+import type { DocumentDetailApi } from "../../shared/types/documents";
+import { downloadBlob } from "../../shared/utils/download";
 import { DocumentStoreContext, type DocumentStore } from "./documentStore";
 import { toDocumentItem } from "../../pages/documents/utils";
 

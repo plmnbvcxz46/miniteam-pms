@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import type { ProjectPeriod } from "../types/global";
+import type { ProjectPeriod } from "../shared/types/global";
 
 /** Shell 通过 <Outlet context> 交给各页面的内容 */
 export interface ShellContext {

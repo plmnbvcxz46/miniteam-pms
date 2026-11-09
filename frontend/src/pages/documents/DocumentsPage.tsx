@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useIssue } from "../../state/issue/useIssue";
-import type { DocumentVersionItem } from "../../types/documents";
-import { formatDayLabel } from "../../utils/date";
+import type { DocumentVersionItem } from "../../shared/types/documents";
+import { formatDayLabel } from "../../shared/utils/date";
 import { useTaskStore } from "../../state/task/taskStore";
 import DocumentHeader from "./components/header/DocumentHeader";
 import DocumentRevising from "./components/revising/DocumentRevising";

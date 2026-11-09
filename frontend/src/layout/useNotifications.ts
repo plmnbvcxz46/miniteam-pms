@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { notificationApi } from "../api/collab";
-import type { Notification } from "../types/global";
+import type { Notification } from "../shared/types/global";
 
 /** 通知多久向服务器问一次新的 */
 const POLL_MS = 60_000;

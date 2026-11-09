@@ -1,5 +1,5 @@
-import type { Workload } from "../../../../types/reports";
-import { getLoadScale } from "../../../../utils/load";
+import type { Workload } from "../../../../shared/types/reports";
+import { getLoadScale } from "../../../../shared/utils/load";
 import LoadRow from "./LoadRow";
 import LoadAxis from "./LoadAxis";
 

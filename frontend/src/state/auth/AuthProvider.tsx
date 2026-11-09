@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { authApi } from "../../api/auth";
 import { ApiError, getToken, setToken, setUnauthorizedHandler } from "../../api/http";
-import type { ProfileUpdate } from "../../types/settings";
+import type { ProfileUpdate } from "../../shared/types/settings";
 import {
   toAccount,
   type Account,
@@ -9,7 +9,7 @@ import {
   type LoginResult,
   type RegisterRequest,
   type RegisterResult,
-} from "../../types/auth";
+} from "../../shared/types/auth";
 import { AuthContext, type AuthState } from "./AuthContext";
 
 /** 和后端的校验保持一致：账号 3~32 位，密码 6~64 位，姓名最长 32 */

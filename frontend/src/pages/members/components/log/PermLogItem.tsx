@@ -1,5 +1,5 @@
-import type { Activity } from "../../../../types/global";
-import { formatMonthDay } from "../../../../utils/date";
+import type { Activity } from "../../../../shared/types/global";
+import { formatMonthDay } from "../../../../shared/utils/date";
 
 interface PermLogItemProps {
   /** 权限变更动态对象 */

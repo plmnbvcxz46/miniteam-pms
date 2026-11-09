@@ -1,5 +1,5 @@
-import type { Headline } from "../../../../types/progress";
-import { pad2 } from "../../../../utils/date";
+import type { Headline } from "../../../../shared/types/progress";
+import { pad2 } from "../../../../shared/utils/date";
 import { formatForecastRange, isLate } from "../../utils";
 
 interface HeadlinePanelProps {

@@ -1,5 +1,5 @@
-import { roleLabel } from "../../../../constants/labels";
-import type { ProjectRole, UserBrief } from "../../../../types/global";
+import { roleLabel } from "../../../../shared/constants/labels";
+import type { ProjectRole, UserBrief } from "../../../../shared/types/global";
 
 interface SelfIdentityProps {
   user: UserBrief;

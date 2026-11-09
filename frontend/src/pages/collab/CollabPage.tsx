@@ -9,8 +9,8 @@ import type {
   DiscussionDetail,
   DiscussionFormValues,
   MentionValue,
-} from "../../types/collab";
-import type { Activity } from "../../types/global";
+} from "../../shared/types/collab";
+import type { Activity } from "../../shared/types/global";
 import { useDocumentStore } from "../../state/document/documentStore";
 import { useTaskStore } from "../../state/task/taskStore";
 import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";

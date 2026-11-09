@@ -1,9 +1,9 @@
 import type {
   DiscussionBrief,
   DiscussionDetail,
-} from "../../../../types/collab";
-import type { Activity } from "../../../../types/global";
-import { pad2 } from "../../../../utils/date";
+} from "../../../../shared/types/collab";
+import type { Activity } from "../../../../shared/types/global";
+import { pad2 } from "../../../../shared/utils/date";
 import { findDiscussionIdByActivity } from "../../utils";
 import ActivityFeedItem from "./ActivityFeedItem";
 

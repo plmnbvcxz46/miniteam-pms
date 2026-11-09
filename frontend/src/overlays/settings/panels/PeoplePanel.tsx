@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { roleApi, userApi } from "../../../api/system";
 import { useMe } from "../../../state/auth/useAuth";
-import type { Role, SystemUser, UserCreate } from "../../../types/settings";
-import Switch from "../components/Switch";
+import type { Role, SystemUser, UserCreate } from "../../../shared/types/settings";
+import Switch from "../Switch";
 
 /** 人员不多，一次取完，搜索在前端过滤；接口单页最多 100 条 */
 const LIST_SIZE = 100;

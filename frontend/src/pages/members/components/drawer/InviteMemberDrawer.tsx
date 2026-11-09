@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { userApi } from "../../../../api/system";
-import Drawer from "../../../../components/Drawer";
-import type { MemberPermissions, ProjectRole, UserBrief } from "../../../../types/global";
-import type { MemberAdd, PermDef } from "../../../../types/members";
+import Drawer from "../../../../shared/components/Drawer";
+import type { MemberPermissions, ProjectRole, UserBrief } from "../../../../shared/types/global";
+import type { MemberAdd, PermDef } from "../../../../shared/types/members";
 
 interface InviteMemberDrawerProps {
   /** 是否打开 */

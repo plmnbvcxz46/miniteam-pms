@@ -1,11 +1,11 @@
 import { createContext } from "react";
-import type { ProfileUpdate } from "../../types/settings";
+import type { ProfileUpdate } from "../../shared/types/settings";
 import type {
   Account,
   LoginResult,
   RegisterRequest,
   RegisterResult,
-} from "../../types/auth";
+} from "../../shared/types/auth";
 
 export interface AuthState {
   /** 当前登录的身份，没登录为 null */

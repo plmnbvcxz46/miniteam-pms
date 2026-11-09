@@ -1,6 +1,6 @@
-import TaskBar from "../../../../../components/TaskBar/TaskBar";
-import type { Activity } from "../../../../../types/global";
-import type { DependencyTask, TaskDetail } from "../../../../../types/task";
+import TaskBar from "../../../../../shared/components/TaskBar";
+import type { Activity } from "../../../../../shared/types/global";
+import type { DependencyTask, TaskDetail } from "../../../../../shared/types/task";
 import DependencyRow from "./DependencyRow";
 
 interface SchedulePanelProps {

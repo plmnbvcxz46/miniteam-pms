@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { roleLabel } from "../../constants/labels";
-import type { ProjectSummary } from "../../types/global";
-import { formatDayLabel } from "../../utils/date";
+import { roleLabel } from "../../shared/constants/labels";
+import type { ProjectSummary } from "../../shared/types/global";
+import { formatDayLabel } from "../../shared/utils/date";
 import { useDismiss } from "../useDismiss";
 
 interface ProjectSwitchProps {

@@ -7,8 +7,8 @@ import type {
   ProjectRole,
   ProjectSave,
   ProjectSummary,
-} from "../../types/global";
-import type { Member, MemberAdd } from "../../types/members";
+} from "../../shared/types/global";
+import type { Member, MemberAdd } from "../../shared/types/members";
 import { ProjectContext, type ProjectState } from "./ProjectContext";
 
 const SELECTED_KEY = "pms.project";

@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { taskStatusLabel, taskStatusOrder } from "../../../../constants/task";
-import { taskStatusKey } from "../../../../constants/task";
-import type { TaskStatus } from "../../../../types/global";
-import type { TaskDetail } from "../../../../types/task";
-import { formatMonthDay } from "../../../../utils/date";
+import { taskStatusLabel, taskStatusOrder } from "../../../../shared/constants/task";
+import { taskStatusKey } from "../../../../shared/constants/task";
+import type { TaskStatus } from "../../../../shared/types/global";
+import type { TaskDetail } from "../../../../shared/types/task";
+import { formatMonthDay } from "../../../../shared/utils/date";
 
 interface SelfTasksProps {
   /** 我负责的所有任务 */

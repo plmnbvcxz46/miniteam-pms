@@ -1,4 +1,4 @@
-import type { WeeklyCompleted } from "../../../../types/reports";
+import type { WeeklyCompleted } from "../../../../shared/types/reports";
 
 interface WeeklyBarProps {
   item: WeeklyCompleted;

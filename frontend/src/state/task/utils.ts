@@ -1,5 +1,5 @@
-import type { TaskStatus } from "../../types/global";
-import type { TaskDetail } from "../../types/task";
+import type { TaskStatus } from "../../shared/types/global";
+import type { TaskDetail } from "../../shared/types/task";
 import { applyTaskStatus } from "../../pages/board/task/utils";
 
 /** 某一列的任务，按列内顺序排列 */

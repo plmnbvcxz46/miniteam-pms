@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { reportApi } from "../../api/report";
-import { defaultRange, rangeOptions } from "../../constants/reports";
+import { defaultRange, rangeOptions } from "../../shared/constants/reports";
 import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";
 import { useProject } from "../../state/project/useProject";
-import type { BurndownRange } from "../../types/reports";
-import { downloadBlob } from "../../utils/download";
+import type { BurndownRange } from "../../shared/types/reports";
+import { downloadBlob } from "../../shared/utils/download";
 import { useTaskStore } from "../../state/task/taskStore";
 import ReportsHeader from "./components/header/ReportsHeader";
 import BurndownPanel from "./components/burndown/BurndownPanel";

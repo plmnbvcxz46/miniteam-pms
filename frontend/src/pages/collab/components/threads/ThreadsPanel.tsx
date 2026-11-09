@@ -1,8 +1,8 @@
 import type {
   DiscussionBrief,
   DiscussionDetail,
-} from "../../../../types/collab";
-import { pad2 } from "../../../../utils/date";
+} from "../../../../shared/types/collab";
+import { pad2 } from "../../../../shared/utils/date";
 import ThreadItem from "./ThreadItem";
 
 interface ThreadsPanelProps {

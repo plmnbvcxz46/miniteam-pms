@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { DocumentItem } from "../../types/documents";
+import type { DocumentItem } from "../../shared/types/documents";
 
 /** 文档页和任务模块共用的文档数据，来自接口 */
 export interface DocumentStore {

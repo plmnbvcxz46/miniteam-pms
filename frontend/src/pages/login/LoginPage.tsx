@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useAuth } from "../../state/auth/useAuth";
-import type { AuthField } from "../../types/auth";
+import type { AuthField } from "../../shared/types/auth";
 import "./css/login.css";
 
 const REMEMBER_KEY = "pms.rememberedUsername";

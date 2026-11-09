@@ -1,8 +1,8 @@
 /**
  * 统计报表模块纯函数：接口字段 → 展示文案与图表比例换算
  */
-import type { ReportSummary } from "../../types/reports";
-import { formatWeekNo } from "../../utils/date";
+import type { ReportSummary } from "../../shared/types/reports";
+import { formatWeekNo } from "../../shared/utils/date";
 
 /**
  * 将 yyyy-MM-dd 截取为 M.DD 或 M.D（如 "2026-11-27" → "11.27"，"2026-12-01" → "12.1"）

@@ -1,10 +1,10 @@
-import type { ProjectPeriod } from "../types/global";
+import type { ProjectPeriod } from "../shared/types/global";
 import {
   formatDayLabel,
   getTotalWeeks,
   getWeekIndex,
   toDay,
-} from "../utils/date";
+} from "../shared/utils/date";
 
 /** 顶栏周进度条需要的数据 */
 export interface WeekProgress {

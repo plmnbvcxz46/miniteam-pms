@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
-import type { ProjectSave, ProjectSummary } from "../../../types/global";
-import { daysBetween } from "../../../utils/date";
+import type { ProjectSave, ProjectSummary } from "../../../shared/types/global";
+import { daysBetween } from "../../../shared/utils/date";
 
 interface ProjectInfoPanelProps {
   project: ProjectSummary;

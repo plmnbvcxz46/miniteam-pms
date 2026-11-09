@@ -1,4 +1,4 @@
-import type { DocumentItem } from "../../../../types/documents";
+import type { DocumentItem } from "../../../../shared/types/documents";
 import { getDocStatus } from "../../utils";
 
 interface DocumentHeaderProps {

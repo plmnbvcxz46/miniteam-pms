@@ -1,4 +1,4 @@
-import type { BoundDocument } from "../../../../types/documents";
+import type { BoundDocument } from "../../../../shared/types/documents";
 import { getAxisDates, getDayOffset, getTimelinePercent } from "../../utils";
 import DocumentRevisingHeader from "./DocumentRevisingHeader";
 import DocumentRevisingItem from "./DocumentRevisingItem";

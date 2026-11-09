@@ -3,7 +3,7 @@ import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
 import { useAccess } from "../state/access/useAccess";
 import { useAuth, useMe } from "../state/auth/useAuth";
-import type { ProfileUpdate } from "../types/settings";
+import type { ProfileUpdate } from "../shared/types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";

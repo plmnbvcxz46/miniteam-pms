@@ -1,9 +1,9 @@
 import type { CSSProperties, PointerEvent } from "react";
-import TaskBar from "../../../../components/TaskBar/TaskBar";
+import TaskBar from "../../../../shared/components/TaskBar";
 import { useIssue } from "../../../../state/issue/useIssue";
-import type { TaskDetail } from "../../../../types/task";
+import type { TaskDetail } from "../../../../shared/types/task";
 import { useTaskStore } from "../../../../state/task/taskStore";
-import { formatMonthDay } from "../../../../utils/date";
+import { formatMonthDay } from "../../../../shared/utils/date";
 
 const SCORE_CLASS: Record<string, string> = {
   高: "p-h",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useConfigs } from "../../../state/config/useConfigs";
-import { configs } from "../../../constants/mock";
+import { configs } from "../../../shared/constants/mock";
 
 const weightConfigs = configs.filter((c) => c.key.startsWith("priority.weight."));
 

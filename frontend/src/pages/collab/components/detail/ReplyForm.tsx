@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { MentionValue } from "../../../../types/collab";
-import type { DocumentRef, UserBrief } from "../../../../types/global";
+import type { MentionValue } from "../../../../shared/types/collab";
+import type { DocumentRef, UserBrief } from "../../../../shared/types/global";
 import { finalizeMention } from "../../utils";
 import MentionInput from "../input/MentionInput";
 

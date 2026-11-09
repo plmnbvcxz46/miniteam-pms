@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { notificationTypeLabel } from "../../constants/labels";
-import type { Notification } from "../../types/global";
-import { getLocalToday } from "../../utils/date";
+import { notificationTypeLabel } from "../../shared/constants/labels";
+import type { Notification } from "../../shared/types/global";
+import { getLocalToday } from "../../shared/utils/date";
 import { useDismiss } from "../useDismiss";
 import { formatNotificationTime } from "../utils";
 

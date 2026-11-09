@@ -1,4 +1,4 @@
-import type { DocumentDetailApi, DocumentItemApi, DocumentVersionApi } from "../types/documents";
+import type { DocumentDetailApi, DocumentItemApi, DocumentVersionApi } from "../shared/types/documents";
 import { http } from "./http";
 
 export const documentApi = {

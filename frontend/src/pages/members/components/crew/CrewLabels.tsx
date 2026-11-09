@@ -1,5 +1,5 @@
 import React from "react";
-import type { PermDef } from "../../../../types/members";
+import type { PermDef } from "../../../../shared/types/members";
 
 interface CrewLabelsProps {
   /** 搜索关键字 */

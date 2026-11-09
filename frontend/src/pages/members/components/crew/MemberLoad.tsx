@@ -1,4 +1,4 @@
-import { calculateLoadBar } from "../../../../utils/load";
+import { calculateLoadBar } from "../../../../shared/utils/load";
 
 interface MemberLoadProps {
   /** 本周工时 */

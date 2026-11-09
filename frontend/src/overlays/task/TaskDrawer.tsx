@@ -1,14 +1,14 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
 import { useAccess } from "../../state/access/useAccess";
 import { workloadApi } from "../../api/task";
-import Drawer from "../../components/Drawer";
+import Drawer from "../../shared/components/Drawer";
 import { useIssue } from "../../state/issue/useIssue";
 import { getPredecessorOptions } from "../../state/task/utils";
 import type {
   AssigneeCandidate,
   TaskDetail,
   TaskFormValues,
-} from "../../types/task";
+} from "../../shared/types/task";
 import AssigneePicker from "./AssigneePicker";
 
 interface TaskDrawerProps {

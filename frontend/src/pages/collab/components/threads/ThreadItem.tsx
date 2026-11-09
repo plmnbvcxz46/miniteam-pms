@@ -1,4 +1,4 @@
-import type { DiscussionBrief } from "../../../../types/collab";
+import type { DiscussionBrief } from "../../../../shared/types/collab";
 import { useIssue } from "../../../../state/issue/useIssue";
 import { formatThreadShortTime } from "../../utils";
 

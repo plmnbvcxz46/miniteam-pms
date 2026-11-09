@@ -1,5 +1,5 @@
-import { weekdayOf } from "../../utils/date";
-import type { LogItem } from "../../types/settings";
+import { weekdayOf } from "../../shared/utils/date";
+import type { LogItem } from "../../shared/types/settings";
 
 const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
 

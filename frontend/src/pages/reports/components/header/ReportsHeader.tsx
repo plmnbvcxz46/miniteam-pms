@@ -2,7 +2,7 @@ import type {
   BurndownRange,
   RangeOption,
   ReportSummary,
-} from "../../../../types/reports";
+} from "../../../../shared/types/reports";
 import { formatKicker } from "../../utils";
 
 interface ReportsHeaderProps {

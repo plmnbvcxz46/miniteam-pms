@@ -1,6 +1,6 @@
 import { useId } from "react";
-import type { Burndown } from "../../../../types/reports";
-import { addDays, toDay } from "../../../../utils/date";
+import type { Burndown } from "../../../../shared/types/reports";
+import { addDays, toDay } from "../../../../shared/utils/date";
 import { toMonthDay } from "../../utils";
 
 interface BurndownChartProps {

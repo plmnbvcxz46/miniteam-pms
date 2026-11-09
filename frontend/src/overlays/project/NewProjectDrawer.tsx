@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import Drawer from "../../components/Drawer";
-import type { ProjectSave } from "../../types/global";
-import { addDays, daysBetween, getLocalToday } from "../../utils/date";
+import Drawer from "../../shared/components/Drawer";
+import type { ProjectSave } from "../../shared/types/global";
+import { addDays, daysBetween, getLocalToday } from "../../shared/utils/date";
 
 interface NewProjectDrawerProps {
   onClose: () => void;

@@ -1,4 +1,4 @@
-import { calculateLoadBar, getLoadScale } from "../../../../utils/load";
+import { calculateLoadBar, getLoadScale } from "../../../../shared/utils/load";
 
 interface SelfLoadProps {
   hours: number;

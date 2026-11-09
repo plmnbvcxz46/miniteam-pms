@@ -1,7 +1,7 @@
-import type { OverviewStats } from "../../../../types/progress";
-import type { TaskDetail } from "../../../../types/task";
-import { pad2 } from "../../../../utils/date";
-import { formatDayLabel } from "../../../../utils/date";
+import type { OverviewStats } from "../../../../shared/types/progress";
+import type { TaskDetail } from "../../../../shared/types/task";
+import { pad2 } from "../../../../shared/utils/date";
+import { formatDayLabel } from "../../../../shared/utils/date";
 import Figure from "./Figure";
 
 interface FigureStripProps {

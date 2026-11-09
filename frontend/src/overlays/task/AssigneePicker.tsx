@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { useDismiss } from "../../layout/useDismiss";
-import type { AssigneeCandidate } from "../../types/task";
+import type { AssigneeCandidate } from "../../shared/types/task";
 import {
   getRecommendedId,
   isOverloaded,

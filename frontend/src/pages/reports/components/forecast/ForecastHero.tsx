@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-import type { DurationDeviation, Forecast } from "../../../../types/reports";
-import { toDay } from "../../../../utils/date";
+import type { DurationDeviation, Forecast } from "../../../../shared/types/reports";
+import { toDay } from "../../../../shared/utils/date";
 import { formatDelayText, toMonthDay } from "../../utils";
 
 /** 进度条两段至少各留这么多百分比，免得斜纹段或虚线段细得看不见 */

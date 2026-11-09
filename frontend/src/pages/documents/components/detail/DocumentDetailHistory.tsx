@@ -1,7 +1,7 @@
 import type {
   DocumentItem,
   DocumentVersionItem,
-} from "../../../../types/documents";
+} from "../../../../shared/types/documents";
 
 interface DocumentDetailHistoryProps {
   doc: DocumentItem;
