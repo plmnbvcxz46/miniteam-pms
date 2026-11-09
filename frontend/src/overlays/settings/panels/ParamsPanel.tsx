@@ -74,7 +74,7 @@ function ParamsForm() {
   return (
     <section className="ss" id="ss-params">
       <div className="blk">
-        <h2>优先级权重</h2>
+        <h2>WEIGHTS</h2>
         <div className="rows">
           {weightConfigs.map((config) => (
             <NumberRow
@@ -105,7 +105,7 @@ function ParamsForm() {
         </div>
       </div>
       <div className="blk">
-        <h2>默认值</h2>
+        <h2>DEFAULTS</h2>
         <div className="rows">
           <NumberRow
             id="s-topn"
