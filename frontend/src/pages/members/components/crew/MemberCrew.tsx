@@ -75,15 +75,13 @@ export default function MemberCrew({
           ))
         ) : (
           <div
-            className="c-who"
+            className="c-who t-meta"
             style={{
               gridColumn: "2",
               gridRow: "1 / span 8",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "var(--mute)",
-              fontSize: "13px",
             }}
           >
             未找到匹配的成员

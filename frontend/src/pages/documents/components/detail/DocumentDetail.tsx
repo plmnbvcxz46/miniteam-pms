@@ -28,7 +28,7 @@ export default function DocumentDetail({
   if (!doc) {
     return (
       <section className="pnl dside">
-        <div style={{ padding: "20px", color: "var(--mute)" }}>
+        <div className="t-meta" style={{ padding: "20px" }}>
           请选择一个文档查看详情
         </div>
       </section>

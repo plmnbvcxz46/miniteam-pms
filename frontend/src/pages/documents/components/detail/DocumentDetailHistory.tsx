@@ -28,8 +28,7 @@ export default function DocumentDetailHistory({
       <div className="hhead">
         <b>版本记录</b>
         <span
-          className="u mono"
-          style={{ fontSize: "10px", color: "var(--mute)" }}
+          className="u t-hint"
           id="doc-hn"
         >
           共 {doc.hist.length} 版

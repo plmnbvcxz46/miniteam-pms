@@ -27,13 +27,7 @@ export default function PermLog({ logs }: PermLogProps) {
         {logs.length > 0 ? (
           logs.map((log) => <PermLogItem key={log.id} log={log} />)
         ) : (
-          <div
-            style={{
-              color: "var(--mute)",
-              fontSize: "12px",
-              padding: "8px 0",
-            }}
-          >
+          <div className="t-meta" style={{ padding: "8px 0" }}>
             暂无变更记录
           </div>
         )}
