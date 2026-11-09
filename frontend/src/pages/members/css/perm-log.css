@@ -17,17 +17,7 @@
   gap: 2px;
 }
 
-.plogw .k {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
-}
 
-.plogw b {
-  font-size: 13px;
-  font-weight: 900;
-}
 
 /* ---------- 内联滚动记录列表容器 ---------- */
 .plog {
@@ -66,14 +56,14 @@
 
 .plog .hv b {
   grid-row: auto;
-  font-size: 11px;
-  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
 }
 
 .plog .hv span {
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 1.4;
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -11,8 +11,8 @@
 .ev {
   padding: 10px 16px;
   border-bottom: 1px solid var(--hair);
-  font-size: 12px;
-  line-height: 1.55;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
   outline: none;
 }
 
@@ -40,9 +40,9 @@
 
 .ev time {
   display: block;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
   margin-bottom: 3px;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .ev b {
-  font-weight: 900;
+  font-weight: var(--fw-black);
 }
 
 .enter .ev,

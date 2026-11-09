@@ -34,22 +34,22 @@
   border-left: 1.5px solid var(--ink);
 }
 .gp .pred span {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
   text-align: right;
 }
 .gp .pred b {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 40px;
-  line-height: 0.85;
-  letter-spacing: -2px;
-  color: var(--signal);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tight);
+  color: var(--text-accent);
 }
 .gp .pred b.ok {
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* ---------- 横轴 ---------- */
@@ -63,7 +63,7 @@
   background: var(--paper);
   display: flex;
   border-bottom: 1px solid var(--ink);
-  font-family: var(--mono);
+  font-family: var(--font-mono);
 }
 .gt-gut {
   position: sticky;
@@ -84,22 +84,22 @@
 }
 .gt-wk {
   top: 0;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
   padding: 2px 0 2px 6px;
   border-left: 1.5px solid var(--ink);
   white-space: nowrap;
 }
 .gt-d {
   top: 20px;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
   padding: 3px 0 5px;
   text-align: center;
 }
 .gt-d.off {
-  color: var(--mute);
-  font-weight: 500;
+  color: var(--text-mute);
+  font-weight: var(--fw-medium);
 }
 .gt-d.today {
   box-shadow: inset 0 0 0 2px var(--signal);
@@ -136,16 +136,16 @@
   background: var(--paper);
 }
 .gt-name b {
-  font-weight: 900;
-  font-size: 14px;
+  font-weight: var(--fw-black);
+  font-size: var(--fs-lg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .gt-name small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 .gt-name:hover b {
   text-decoration: underline;
@@ -195,9 +195,9 @@
 .gt-flag {
   position: absolute;
   bottom: -20px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
   white-space: nowrap;
   transform: translateX(-50%);
 }
@@ -205,7 +205,7 @@
   transform: translateX(calc(-100% - 6px));
 }
 .gt-flag.late {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 
 /* ---------- 依赖线 ---------- */
@@ -237,21 +237,21 @@
 }
 .cpmp .phd {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
   padding: 10px 16px;
   border: 0;
 }
 .cpmp .phd .k {
-  color: #cfcfca;
+  color: var(--text-inverse-mute);
 }
 .cpmp .phd .u {
-  color: var(--paper);
-  font-weight: 700;
-  font-size: 11px;
+  color: var(--text-inverse);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xs);
 }
 .cpmp .phd .u em {
   font-style: normal;
-  color: var(--signal);
+  color: var(--text-accent);
 }
 .cpmp > div:last-child {
   padding: 0 16px 8px;
@@ -265,7 +265,7 @@
   background: var(--paper);
 }
 .cpm tr.crit td {
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 .cpm tr.crit td:first-child::before {
   content: "";

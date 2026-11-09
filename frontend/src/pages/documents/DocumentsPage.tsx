@@ -1,15 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useIssue } from "../../issue/useIssue";
-import type { DocumentVersionItem } from "../../types/documents";
-import { formatDayLabel } from "../../utils/date";
-import { useTaskStore } from "../board/taskStore";
-import DocumentHeader from "./components/header/DocumentHeader";
-import DocumentRevising from "./components/revising/DocumentRevising";
-import DocumentFinal from "./components/final/DocumentFinal";
-import DocumentDetail from "./components/detail/DocumentDetail";
-import UploadDocDrawer from "./components/drawer/UploadDocDrawer";
-import { useDocumentStore } from "./documentStore";
+import { useIssue } from "../../state/issue/useIssue";
+import type { DocumentVersionItem } from "../../shared/types/documents";
+import { useTaskStore } from "../../state/task/taskStore";
+import DocumentHeader from "./components/DocumentHeader";
+import DocumentRevising from "./components/DocumentRevising";
+import DocumentFinal from "./components/DocumentFinal";
+import DocumentDetail from "./components/DocumentDetail";
+import UploadDocDrawer from "./components/UploadDocDrawer";
+import { useDocumentStore } from "../../state/document/documentStore";
 import { withTaskTitle } from "./utils";
 import "./css/documents.css";
 
@@ -26,7 +25,6 @@ export default function DocumentsPage() {
     downloadVersion,
   } = useDocumentStore();
   const { isPast, today } = useIssue();
-  const currentDate = formatDayLabel(today);
   // 定稿、下载失败的原因
   const [actionError, setActionError] = useState("");
 
@@ -177,7 +175,7 @@ export default function DocumentsPage() {
     <section className="view" id="view-docs">
       <DocumentHeader
         docs={docList}
-        currentDate={currentDate}
+        today={today}
         searchKeyword={searchKeyword}
         onSearchChange={setSearchKeyword}
         onUploadClick={isPast ? undefined : handleOpenNewUpload}
@@ -194,7 +192,7 @@ export default function DocumentsPage() {
           <DocumentRevising
             docs={revisingDocs}
             selectedId={selectedId}
-            currentDate={currentDate}
+            today={today}
             onSelect={setSelectedId}
           />
           <DocumentFinal
@@ -206,7 +204,7 @@ export default function DocumentsPage() {
 
         <DocumentDetail
           doc={selectedDoc}
-          currentDate={currentDate}
+          today={today}
           onTaskClick={(taskId) => navigate(`/board/task?id=${taskId}`)}
           onUploadVersion={isPast ? undefined : handleOpenVersionUpload}
           onFinalize={isPast ? undefined : handleFinalize}

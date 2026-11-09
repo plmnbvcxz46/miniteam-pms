@@ -37,9 +37,9 @@
   display: flex;
   padding: 8px 0 6px;
   border-bottom: 1px solid var(--ink);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
 }
 .tl .days .gut {
   width: 96px;
@@ -52,10 +52,10 @@
   text-align: center;
 }
 .tl .days .cols span.we {
-  color: var(--mute);
+  color: var(--text-mute);
 }
 .tl .days .cols span.on {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 .tl .rows {
   position: relative;
@@ -91,8 +91,8 @@
 .tl .who {
   width: 96px;
   flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
 }
 .tl .lane {
   position: relative;
@@ -101,11 +101,11 @@
 }
 .bar.on {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 .bar.next {
   background: var(--paper);
-  font-weight: 400;
+  font-weight: var(--fw-regular);
 }
 .bar.stuck {
   background: var(--hatch);
@@ -133,14 +133,14 @@
   align-items: center;
   gap: 10px;
   border-bottom: 1px solid var(--ink);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   min-height: 0;
 }
 .todo-list .item:last-child {
   border-bottom: 0;
 }
 .todo-list .item b {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -151,9 +151,9 @@
   height: 14px;
 }
 .todo-list .item small {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
   border: 1.5px solid var(--ink);
   padding: 1px 5px;
   white-space: nowrap;
@@ -167,14 +167,14 @@
 .todo-list .item small.late {
   background: var(--signal);
   border-color: var(--signal);
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 .todo-list .item small.now {
   border-color: var(--signal);
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 .todo-list .item.more b {
-  color: var(--mute);
+  color: var(--text-mute);
 }
 .todo-list .item.more small {
   display: none;
@@ -185,16 +185,16 @@
   text-underline-offset: 4px;
 }
 .pg .big {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 56px;
-  line-height: 0.9;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
   margin-top: 10px;
 }
 .pg .big em {
   font-style: normal;
-  color: var(--signal);
+  color: var(--text-accent);
 }
 .pg .pbar {
   display: flex;
@@ -206,20 +206,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
 }
 .pg .pbar span:first-child {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 .pg .pbar span + span {
   flex: 1;
 }
 .pg .legend {
   margin-top: 8px;
-  font-size: 9px;
+  font-size: var(--fs-2xs);
 }
 .cp {
   gap: 8px;
@@ -228,9 +228,9 @@
   display: flex;
   align-items: center;
   gap: 6px 5px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   flex-wrap: wrap;
   margin-top: 10px;
 }
@@ -248,9 +248,9 @@
 }
 .cp .chain .hot b {
   background: var(--paper);
-  color: var(--ink);
+  color: var(--text);
   padding: 4px 7px;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 .cp .chain .hot i {
   width: 22px;
@@ -263,7 +263,7 @@
 }
 .cp .chain em {
   font-style: normal;
-  color: var(--signal);
+  color: var(--text-accent);
   border: 0;
   padding: 0;
 }
@@ -274,21 +274,21 @@
   margin-top: auto;
 }
 .cp .foot span {
-  font-family: var(--mono);
-  font-size: 10px;
-  line-height: 1.5;
-  color: #cfcfca;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-normal);
+  color: var(--text-inverse-mute);
 }
 .cp .foot b {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 44px;
-  line-height: 0.9;
-  letter-spacing: -2px;
-  color: var(--signal);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tight);
+  color: var(--text-accent);
 }
 .cp .foot b.ok {
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 
 /* 成员排期的任务条是按钮：去掉按钮默认的内边距和居中，文字太长时截断 */
@@ -308,10 +308,10 @@
     padding: 10px 14px;
   }
   .ov1 .hero .headline {
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   .ov1 .hero .big b {
-    font-size: 36px;
+    font-size: var(--fs-4xl);
   }
   .ov1 .hero .tags {
     display: none;

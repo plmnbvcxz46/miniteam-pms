@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
-import { useAuth } from "../../auth/useAuth";
-import type { AuthField } from "../../types/auth";
+import { useAuth } from "../../state/auth/useAuth";
+import type { AuthField } from "../../shared/types/auth";
 import "./css/login.css";
 
 const REMEMBER_KEY = "pms.rememberedUsername";
@@ -88,7 +88,7 @@ export default function LoginPage() {
       : {};
   const errorText = (field: AuthField) =>
     error?.field === field && (
-      <div className="err" id={`auth-err-${field}`} role="alert">
+      <div className="err t-error" id={`auth-err-${field}`} role="alert">
         {error.message}
       </div>
     );
@@ -107,7 +107,7 @@ export default function LoginPage() {
         <div className="vh">
           <div className="vl">
             <div className="k">{isRegister ? "SIGN UP" : "SIGN IN"}</div>
-            <h1 className="vt">{isRegister ? "注册" : "登录"}</h1>
+            <h1 className="vt t-page-title">{isRegister ? "注册" : "登录"}</h1>
             <span className="vd">小型软件团队项目管理系统</span>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
 
           {isRegister && (
             <div className="fr">
-              <label htmlFor="auth-name">姓名</label>
+              <label className="t-label" htmlFor="auth-name">姓名</label>
               <div>
                 <input
                   className="u"
@@ -142,7 +142,7 @@ export default function LoginPage() {
           )}
 
           <div className="fr">
-            <label htmlFor="auth-username">账号</label>
+            <label className="t-label" htmlFor="auth-username">账号</label>
             <div>
               <input
                 className="u mono"
@@ -164,7 +164,7 @@ export default function LoginPage() {
           </div>
 
           <div className="fr">
-            <label htmlFor="auth-password">密码</label>
+            <label className="t-label" htmlFor="auth-password">密码</label>
             <div>
               <input
                 className="u"

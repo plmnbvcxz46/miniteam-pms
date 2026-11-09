@@ -26,9 +26,9 @@
   bottom: 0;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
 }
 
 .dx-rows {
@@ -53,7 +53,7 @@
   padding: 0 16px;
   border-bottom: 1px dashed var(--ink);
   background: var(--paper);
-  color: var(--ink);
+  color: var(--text);
   flex-shrink: 0;
 }
 
@@ -87,17 +87,17 @@
 }
 
 .dn b {
-  font-weight: 900;
-  font-size: 15px;
+  font-weight: var(--fw-black);
+  font-size: var(--fs-lg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .dn small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -161,36 +161,36 @@
 .trk .duelb {
   top: 3px;
   padding-left: 5px;
-  font-family: var(--mono);
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
   line-height: 12px;
   white-space: nowrap;
 }
 
 .trk .duelb.late {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 
 .dv {
   text-align: right;
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 26px;
-  line-height: 1;
-  letter-spacing: -1px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-snug);
 }
 
 .ds {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
   justify-self: end;
 }
 
 .ds.late {
   background: var(--signal);
-  color: #0a0a0a;
+  color: var(--text);
   padding: 2px 6px;
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 

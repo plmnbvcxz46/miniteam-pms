@@ -27,20 +27,20 @@
   gap: 10px;
 }
 .card .tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 .card .tag.crit {
   background: var(--ink);
-  color: var(--paper);
-  font-weight: 800;
+  color: var(--text-inverse);
+  font-weight: var(--fw-heavy);
   padding: 2px 5px;
 }
 .card .title {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.35;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -52,14 +52,14 @@
   align-items: baseline;
   gap: 5px;
   flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-heavy);
   border: 1.5px solid var(--ink);
   padding: 1px 5px;
 }
 .card .score small {
-  font-size: 9px;
+  font-size: var(--fs-2xs);
 }
 .card .score small::before {
   content: "· ";
@@ -67,11 +67,11 @@
 .card .score.p-h {
   background: var(--signal);
   border-color: var(--signal);
-  color: var(--ink);
+  color: var(--text);
 }
 .card .score.p-l {
-  font-weight: 500;
-  color: var(--mute);
+  font-weight: var(--fw-medium);
+  color: var(--text-mute);
   border-width: 1px;
   border-color: var(--mute);
 }
@@ -79,19 +79,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
 }
 .card .meta .late {
   background: var(--signal);
   border: 1.5px solid var(--ink);
   padding: 0 4px;
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 .card .meta .now {
   border: 1.5px solid var(--signal);
   padding: 0 5px;
-  font-weight: 800;
+  font-weight: var(--fw-heavy);
 }
 .card.lifted {
   transform: translate(-3px, -3px);
@@ -158,14 +158,14 @@ body.dragging * {
 }
 .col.done .card .title {
   text-decoration: line-through;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 .col.done .card .tag,
 .col.done .card .score {
   display: none;
 }
 .col.done .card .meta {
-  color: var(--mute);
+  color: var(--text-mute);
 }
 .col.done .card .meta span:last-child::before {
   content: "✓ ";

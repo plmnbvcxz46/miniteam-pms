@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { authApi } from "../../../api/auth";
-import { useMe } from "../../../auth/useAuth";
-import type { ProfileUpdate } from "../../../types/settings";
+import { useMe } from "../../../state/auth/useAuth";
+import type { ProfileUpdate } from "../../../shared/types/settings";
 
 /** 技能标签：每个最长 12 个字，最多 10 个 */
 const MAX_TAG_LENGTH = 12;
@@ -85,7 +85,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
         <h2>身份</h2>
         <div className="rows">
           <div className="srow">
-            <label htmlFor="s-name">姓名</label>
+            <label className="t-label" htmlFor="s-name">姓名</label>
             <div className="inl">
               <input
                 className="in"
@@ -101,13 +101,13 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
             </div>
           </div>
           <div className="srow">
-            <span className="lb">账号</span>
+            <span className="lb t-label">账号</span>
             <div>
               <code>{currentUser.username}</code>
             </div>
           </div>
           <div className="srow">
-            <label htmlFor="s-mail">邮箱</label>
+            <label className="t-label" htmlFor="s-mail">邮箱</label>
             <div className="inl">
               <input
                 className="in"
@@ -125,7 +125,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
             </div>
           </div>
           <div className="srow top">
-            <span className="lb">技能标签</span>
+            <span className="lb t-label">技能标签</span>
             <div>
               <div className="roles">
                 {skillTags.map((tag) => (
@@ -181,7 +181,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
         <h2>安全</h2>
         <div className="rows">
           <div className="srow top">
-            <span className="lb">密码</span>
+            <span className="lb t-label">密码</span>
             <div>
               {changingPassword ? (
                 <PasswordForm

@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { useAccess } from "../../access/useAccess";
-import { useMe } from "../../auth/useAuth";
-import { taskStatusOrder } from "../../data/global";
-import type { TaskDetail } from "../../types/task";
-import BlockedBy from "./components/column/BlockedBy";
-import BoardColumn from "./components/column/BoardColumn";
-import TaskCard from "./components/column/TaskCard";
-import BoardHeader, { type BoardFilter } from "./components/header/BoardHeader";
-import { useTaskStore } from "./taskStore";
+import { useAccess } from "../../state/access/useAccess";
+import { useMe } from "../../state/auth/useAuth";
+import { taskStatusOrder } from "../../shared/constants/task";
+import type { TaskDetail } from "../../shared/types/task";
+import BlockedBy from "./components/BlockedBy";
+import BoardColumn from "./components/BoardColumn";
+import TaskCard from "./components/TaskCard";
+import BoardHeader, { type BoardFilter } from "./components/BoardHeader";
+import { useTaskStore } from "../../state/task/taskStore";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
-import { getBlockedTasks, getColumnTasks, toFullIndex } from "./utils";
+import { getBlockedTasks, getColumnTasks, toFullIndex } from "../../state/task/utils";
 import "./css/board.css";
 
 export default function BoardPage() {

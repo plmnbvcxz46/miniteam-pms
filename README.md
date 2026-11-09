@@ -40,7 +40,7 @@ pnpm dev
 
 ## 前端页面
 
-接口还没接通，页面都读 `frontend/src/data/` 的假数据，结构对齐 `docs/api/openapi.yaml`，接通后只换数据来源。写页面前先看 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
+页面都已接通真实接口（`docs/api/openapi.yaml`），没有假数据。写页面前先看 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
 
 | 页面 | 路由 | 说明 |
 |---|---|---|

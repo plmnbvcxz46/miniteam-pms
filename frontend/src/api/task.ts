@@ -1,12 +1,12 @@
-import type { Activity, TaskStatus } from "../types/global";
-import type { Workload } from "../types/reports";
+import type { Activity, TaskStatus } from "../shared/types/global";
+import type { Workload } from "../shared/types/reports";
 import type {
   DependencyTask,
   TaskCard,
   TaskCreate,
   TaskDetail,
   TaskUpdate,
-} from "../types/task";
+} from "../shared/types/task";
 import { http } from "./http";
 
 export const taskApi = {

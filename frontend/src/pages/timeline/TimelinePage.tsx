@@ -1,15 +1,15 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAccess } from "../../access/useAccess";
+import { useAccess } from "../../state/access/useAccess";
 import { progressApi } from "../../api/progress";
-import { useIssue } from "../../issue/useIssue";
-import { useIssueData } from "../../issue/useIssueData";
-import { useTaskStore } from "../board/taskStore";
-import CriticalPanel from "./components/critical/CriticalPanel";
-import GanttPanel from "./components/gantt/GanttPanel";
+import { useIssue } from "../../state/issue/useIssue";
+import { useIssueData } from "../../state/issue/useIssueData";
+import { useTaskStore } from "../../state/task/taskStore";
+import CriticalPanel from "./components/CriticalPanel";
+import GanttPanel from "./components/GanttPanel";
 import TimelineHeader, {
   type TimelineScale,
-} from "./components/header/TimelineHeader";
+} from "./components/TimelineHeader";
 import {
   getTimelineRange,
   getTimelineTasks,

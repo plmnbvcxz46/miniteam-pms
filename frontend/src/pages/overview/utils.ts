@@ -1,10 +1,10 @@
-import type { ProjectPeriod, TaskStatus, UserBrief } from "../../types/global";
+import type { ProjectPeriod, TaskStatus, UserBrief } from "../../shared/types/global";
 import type {
   OverviewStats,
   ScheduleRow,
   TodoItem,
-} from "../../types/progress";
-import type { TaskDetail } from "../../types/task";
+} from "../../shared/types/progress";
+import type { TaskDetail } from "../../shared/types/task";
 import {
   addDays,
   formatDayLabel,
@@ -13,8 +13,8 @@ import {
   getWeekIndex,
   toDay,
   weekStartOf,
-} from "../../utils/date";
-import { taskStatusKey } from "../../data/task";
+} from "../../shared/utils/date";
+import { taskStatusKey } from "../../shared/constants/task";
 import type { TimelineForecast } from "../timeline/utils";
 
 /** 一周的天数 */

@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { roleApi, userApi } from "../../../api/system";
-import { useMe } from "../../../auth/useAuth";
-import type { Role, SystemUser, UserCreate } from "../../../types/settings";
-import Switch from "../components/Switch";
+import { useMe } from "../../../state/auth/useAuth";
+import type { Role, SystemUser, UserCreate } from "../../../shared/types/settings";
+import Switch from "../Switch";
 
 /** 人员不多，一次取完，搜索在前端过滤；接口单页最多 100 条 */
 const LIST_SIZE = 100;
@@ -189,13 +189,13 @@ export default function PeoplePanel() {
               <h3 className="who-h">{selected.realName}</h3>
               <div className="rows">
                 <div className="srow">
-                  <span className="lb">账号</span>
+                  <span className="lb t-label">账号</span>
                   <div>
                     <code>{selected.username}</code>
                   </div>
                 </div>
                 <div className="srow top">
-                  <span className="lb">账号类型</span>
+                  <span className="lb t-label">账号类型</span>
                   <div className="roles">
                     {roles.map((role) => (
                       <label key={role.id}>
@@ -213,7 +213,7 @@ export default function PeoplePanel() {
                   </div>
                 </div>
                 <div className="srow">
-                  <span className="lb">状态</span>
+                  <span className="lb t-label">状态</span>
                   <div>
                     <Switch
                       label="账号状态"
@@ -241,7 +241,6 @@ export default function PeoplePanel() {
                   {confirmDelete ? "再点一次确认删除" : "删除账号"}
                 </button>
               </div>
-              {isSelf && <p className="msg">不能修改、停用或删除自己的账号</p>}
               {notice && <p className="msg">{notice}</p>}
             </>
           ) : (
@@ -311,7 +310,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
       <h3 className="who-h">新增人员</h3>
       <div className="rows">
         <div className="srow">
-          <label htmlFor="np-account">账号</label>
+          <label className="t-label" htmlFor="np-account">账号</label>
           <div>
             <input
               className="in"
@@ -323,7 +322,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow">
-          <label htmlFor="np-name">姓名</label>
+          <label className="t-label" htmlFor="np-name">姓名</label>
           <div>
             <input
               className="in"
@@ -334,7 +333,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow">
-          <label htmlFor="np-pass">初始密码</label>
+          <label className="t-label" htmlFor="np-pass">初始密码</label>
           <div>
             <input
               className="in"
@@ -347,7 +346,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow top">
-          <span className="lb">账号类型</span>
+          <span className="lb t-label">账号类型</span>
           <div className="roles">
             {roles.map((role) => (
               <label key={role.id}>

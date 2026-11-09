@@ -1,4 +1,4 @@
-import type { CriticalPath, Gantt, Overview, PriorityItem, TodoItem } from "../types/progress";
+import type { CriticalPath, Gantt, Overview, PriorityItem, TodoItem } from "../shared/types/progress";
 import { http } from "./http";
 
 export const progressApi = {

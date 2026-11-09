@@ -22,7 +22,7 @@
   padding: 8px 16px;
   border-bottom: 1px solid var(--ink);
   background: var(--paper);
-  color: var(--ink);
+  color: var(--text);
 }
 
 .df:nth-child(odd) {
@@ -55,20 +55,20 @@
 }
 
 .df .fv b {
-  font-family: var(--mono);
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 1;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-none);
 }
 
 .df .fv small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 
 .df .dn b {
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-lg);
 }
 

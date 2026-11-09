@@ -46,15 +46,15 @@
 }
 
 .c-lb b {
-  font-size: 13px;
-  font-weight: 900;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-black);
 }
 
 .c-lb small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
-  line-height: 1.45;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
+  line-height: var(--lh-normal);
 }
 
 .c-tools {
@@ -92,21 +92,21 @@
 }
 
 .c-who b {
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
+  font-weight: var(--fw-black);
+  font-size: var(--fs-2xl);
+  letter-spacing: var(--ls-slight);
+  line-height: var(--lh-snug);
 }
 
 .c-who span {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
 }
 
 .c-who em {
   font-style: normal;
-  color: var(--mute);
+  color: var(--text-mute);
 }
 
 .c-who.hot {
@@ -114,7 +114,7 @@
 }
 
 .c-who.hot em {
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* ---------- 第 2 行：本周工时 ---------- */
@@ -123,15 +123,15 @@
 }
 
 .c-load .big {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 52px;
-  line-height: 0.85;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
 }
 
 .c-load .big.late {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 
 .c-load .track {
@@ -145,22 +145,22 @@
   justify-content: flex-start;
   gap: 6px;
   padding-top: 10px;
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 22px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-2xl);
 }
 
 .c-n small {
-  font-size: 10px;
-  font-weight: 400;
-  color: var(--mute);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  color: var(--text-mute);
 }
 
 /* ---------- 第 4 行：项目角色，有权限的人用下拉改，其他人只看 ---------- */
 .c-role {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
 }
 
 .c-role select.in {
@@ -182,9 +182,9 @@
   height: 32px;
   padding: 0 8px;
   margin-left: -8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-mute);
 }
 
 .pm i {
@@ -196,8 +196,8 @@
 }
 
 .pm[aria-pressed="true"] {
-  color: var(--ink);
-  font-weight: 700;
+  color: var(--text);
+  font-weight: var(--fw-bold);
 }
 
 .pm[aria-pressed="true"] i {

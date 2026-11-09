@@ -1,15 +1,15 @@
 import { useState, useMemo } from "react";
-import type { PermKey, MemberPermissions, ProjectRole } from "../../types/global";
-import type { MemberAdd } from "../../types/members";
-import { useAccess } from "../../access/useAccess";
-import { useIssue } from "../../issue/useIssue";
-import { permDefs } from "../../data/members";
-import { getLoadScale } from "../../utils/load";
-import { getOverCapacityCount } from "./utils";
-import MembersHeader from "./components/header/MembersHeader";
-import MemberCrew from "./components/crew/MemberCrew";
-import PermLog from "./components/log/PermLog";
-import InviteMemberDrawer from "./components/drawer/InviteMemberDrawer";
+import type { PermKey, MemberPermissions, ProjectRole } from "../../shared/types/global";
+import type { MemberAdd } from "../../shared/types/members";
+import { useAccess } from "../../state/access/useAccess";
+import { useIssue } from "../../state/issue/useIssue";
+import { permDefs } from "../../shared/constants/permissions";
+import { getLoadScale } from "../../shared/utils/load";
+import { formatCapacity, getOverCapacityCount } from "./utils";
+import MembersHeader from "./components/MembersHeader";
+import MemberCrew from "./components/MemberCrew";
+import PermLog from "./components/PermLog";
+import InviteMemberDrawer from "./components/InviteMemberDrawer";
 import "./css/members.css";
 
 /** 项目经理和有“管理成员”权限的人看到的成员管理页：成员和变更记录来自接口，改了马上刷新 */
@@ -107,6 +107,7 @@ export default function MemberAdminView() {
 
       <MemberCrew
         members={filteredMembers}
+        capacityText={formatCapacity(memberList)}
         loadScale={loadScale}
         permDefs={permDefs}
         searchKeyword={searchKeyword}

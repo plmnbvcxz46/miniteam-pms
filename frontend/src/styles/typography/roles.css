@@ -1,0 +1,101 @@
+/* 组合文字样式：一个类就是一种文字角色（字体 + 字号 + 字重 + 行高 + 字距 + 颜色）。
+   同一种角色全站用同一个类，组件 CSS 只管位置、间距和特殊底色下的颜色，不再重复写字体。
+   标题类不设颜色，跟随所在面板（黑底、橙底面板里自动变色）；说明、错误这类颜色本身就是含义的才设。
+   变量定义见 ../tokens/typography.css。 */
+
+/* 页面标题：每页左上角的粗黑大字，橙色部分用 <em> */
+.t-page-title {
+  font-family: var(--font-disp);
+  font-size: var(--fs-7xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-tight);
+}
+
+/* 抽屉、弹层标题 */
+.t-overlay-title {
+  font-family: var(--font-disp);
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-tight);
+}
+
+/* 面板、分栏标题：// WORD 下面那行中文 */
+.t-section-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-black);
+}
+
+/* 面板标题上方的 // WORD 小标签 */
+.t-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-mute);
+}
+
+/* 表单、设置行左侧的字段名 */
+.t-label {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+}
+
+/* 正文 */
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+}
+
+/* 字段下面的说明、空状态 */
+.t-hint {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  color: var(--text-mute);
+}
+
+/* 表单和操作的错误提示 */
+.t-error {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-alert);
+}
+
+/* 等宽元信息：编号、日期、时间 */
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  color: var(--text-mute);
+}
+
+/* 大号统计数字 */
+.t-figure {
+  font-family: var(--font-mono);
+  font-size: var(--fs-6xl);
+  font-weight: var(--fw-heavy);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
+}
+
+/* 中号数字 */
+.t-figure-sm {
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-heavy);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-snug);
+}
+
+/* 窄屏 */
+@media (max-width: 900px) {
+  .t-page-title {
+    font-size: var(--fs-5xl);
+  }
+}

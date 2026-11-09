@@ -1,12 +1,28 @@
 import { useState } from "react";
-import { useConfigs } from "../../../config/useConfigs";
-import { configs } from "../../../data/settings";
+import { useConfigs } from "../../../state/config/useConfigs";
 
-const weightConfigs = configs.filter((c) => c.key.startsWith("priority.weight."));
-
+/** 系统参数：读取中、读取失败时只显示提示，读到了才显示表单 */
 export default function ParamsPanel() {
-  const { values: saved, save } = useConfigs();
+  const { status, error } = useConfigs();
+  if (status !== "ready") {
+    return (
+      <section className="ss" id="ss-params">
+        <p className={status === "error" ? "msg err" : "msg"}>
+          {status === "error" ? error : "加载中…"}
+        </p>
+      </section>
+    );
+  }
+  return <ParamsForm />;
+}
+
+function ParamsForm() {
+  const { items, values: saved, save } = useConfigs();
   const [values, setValues] = useState(saved);
+  // 参数名称和备注取自接口
+  const weightConfigs = items.filter((c) => c.key.startsWith("priority.weight."));
+  const nameOf = (key: string) => items.find((c) => c.key === key)?.name ?? key;
+  const valueOf = (key: string) => values[key] ?? "";
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -23,8 +39,8 @@ export default function ParamsPanel() {
   // PUT /configs/{key}：逐项校验后保存
   const handleSave = async () => {
     const badWeight = weightConfigs.find((c) => {
-      const n = Number(values[c.key]);
-      return values[c.key].trim() === "" || Number.isNaN(n) || n < 0 || n > 1;
+      const n = Number(valueOf(c.key));
+      return valueOf(c.key).trim() === "" || Number.isNaN(n) || n < 0 || n > 1;
     });
     if (badWeight) {
       setError(`${badWeight.remark}权重要填 0 到 1 之间的数`);
@@ -34,18 +50,17 @@ export default function ParamsPanel() {
       setError(`四个优先级权重之和须为 1，现在是 ${weightSum.toFixed(2)}`);
       return;
     }
-    const alpha = Number(values["priority.alpha"]);
-    if (values["priority.alpha"].trim() === "" || Number.isNaN(alpha) || alpha < 0) {
+    const alpha = Number(valueOf("priority.alpha"));
+    if (valueOf("priority.alpha").trim() === "" || Number.isNaN(alpha) || alpha < 0) {
       setError("关键路径加权系数要填不小于 0 的数");
       return;
     }
     const badInteger = ["priority.top_n", "member.weekly_capacity"].find((key) => {
-      const n = Number(values[key]);
+      const n = Number(valueOf(key));
       return !Number.isInteger(n) || n <= 0;
     });
     if (badInteger) {
-      const name = configs.find((c) => c.key === badInteger)!.name;
-      setError(`${name}要填大于 0 的整数`);
+      setError(`${nameOf(badInteger)}要填大于 0 的整数`);
       return;
     }
     try {
@@ -67,24 +82,24 @@ export default function ParamsPanel() {
               id={`s-${config.key}`}
               label={config.remark ?? config.name}
               unit=""
-              value={values[config.key]}
+              value={valueOf(config.key)}
               onChange={(v) => set(config.key, v)}
             />
           ))}
           <div className="srow">
-            <span className="lb">合计</span>
+            <span className="lb t-label">合计</span>
             <div className="inl">
               <span className={Math.abs(weightSum - 1) > 0.001 ? "bad" : undefined}>
                 {weightSum.toFixed(2)}
               </span>
-              <span>须为 1</span>
+              <span>(1)</span>
             </div>
           </div>
           <NumberRow
             id="s-alpha"
             label="关键路径加权系数"
             unit="α"
-            value={values["priority.alpha"]}
+            value={valueOf("priority.alpha")}
             onChange={(v) => set("priority.alpha", v)}
           />
         </div>
@@ -96,14 +111,14 @@ export default function ParamsPanel() {
             id="s-topn"
             label="今日待办条数"
             unit="条"
-            value={values["priority.top_n"]}
+            value={valueOf("priority.top_n")}
             onChange={(v) => set("priority.top_n", v)}
           />
           <NumberRow
             id="s-cap"
             label="每周工时上限"
             unit="小时"
-            value={values["member.weekly_capacity"]}
+            value={valueOf("member.weekly_capacity")}
             onChange={(v) => set("member.weekly_capacity", v)}
           />
         </div>
@@ -130,7 +145,7 @@ interface NumberRowProps {
 function NumberRow({ id, label, unit, value, onChange }: NumberRowProps) {
   return (
     <div className="srow">
-      <label htmlFor={id}>{label}</label>
+      <label className="t-label" htmlFor={id}>{label}</label>
       <div className="inl">
         <input
           className="in xs"

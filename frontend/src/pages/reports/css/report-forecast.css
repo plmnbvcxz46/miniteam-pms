@@ -9,7 +9,7 @@
 }
 #rp-hero.calm {
   background: var(--signal);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 #rp-hero .hk {
   align-items: flex-start;
@@ -20,20 +20,15 @@
   gap: 2px;
 }
 #rp-hero .hk .k {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
+  color: inherit;
 }
 #rp-hero .hk h2 {
   margin: 0;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 900;
 }
 #rp-hero .fstatus {
-  font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 900;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-black);
 }
 
 /* ---------- 进度条与日期刻度 ---------- */
@@ -76,25 +71,25 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
 }
 
 /* ---------- 大号日期与延期天数 ---------- */
 .hero .huge {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 58px;
-  line-height: 0.88;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
   margin-top: auto;
 }
 .fdelay {
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.2;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-snug);
 }
 
 /* ---------- 底部超期任务摘要栏 ---------- */
@@ -105,8 +100,8 @@
   gap: 8px;
   padding-top: 7px;
   border-top: 1px solid currentColor;
-  font-size: 11px;
-  line-height: 1.2;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug);
   min-width: 0;
 }
 .ffoot-list {
@@ -131,8 +126,8 @@
   white-space: nowrap;
 }
 .ftask b {
-  font-family: var(--mono);
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
   flex-shrink: 0;
 }
 .fsep {
@@ -141,9 +136,9 @@
   flex-shrink: 0;
 }
 .fmore {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   flex-shrink: 0;
 }
 .fnone {
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }

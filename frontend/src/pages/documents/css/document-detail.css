@@ -24,9 +24,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-heavy);
 }
 
 .dhero .hk h2 {
@@ -35,7 +35,7 @@
 }
 
 .dhero .hk .chip {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 
 .dhero .row {
@@ -45,18 +45,18 @@
 }
 
 .dhero .row b {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 56px;
-  line-height: 0.85;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
 }
 
 .dhero .row span {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-heavy);
+  line-height: var(--lh-normal);
 }
 
 .dhero.late {
@@ -75,23 +75,23 @@
   margin: 0;
   padding: 12px 16px;
   border-bottom: 1.5px solid var(--ink);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 
 .facts dt {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
   align-self: center;
 }
 
 .facts dd {
   margin: 0;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .facts dd.late {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 
 /* 版本记录区头部 */
@@ -105,8 +105,8 @@
 }
 
 .hhead b {
-  font-size: 13px;
-  font-weight: 900;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-black);
 }
 
 /* 版本记录滚动列表 */
@@ -128,20 +128,20 @@
   gap: 3px 10px;
   padding: 10px 16px;
   border-bottom: 1px dashed var(--ink);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 
 .hv b {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-heavy);
   grid-row: span 3;
   padding-top: 2px;
 }
 
 .hv .hv-note {
-  font-weight: 700;
-  line-height: 1.4;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
 }
 
 .hv .hv-file {
@@ -150,10 +150,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+  color: var(--text-mute);
 }
 
 .hv .hv-file-info {
@@ -167,24 +167,24 @@
 }
 
 .hv .hv-file-name {
-  color: var(--ink);
-  font-weight: 400;
+  color: var(--text);
+  font-weight: var(--fw-regular);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .hv .hv-file-size {
-  color: var(--mute);
+  color: var(--text-mute);
   flex-shrink: 0;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
 }
 
 .hv .hv-download-btn {
   all: unset;
   cursor: pointer;
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 11px;
+  color: var(--text);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xs);
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -193,15 +193,15 @@
 }
 
 .hv .hv-download-btn:hover {
-  color: var(--signal-text);
+  color: var(--text-alert);
   border-bottom-color: var(--signal-text);
 }
 
 .hv small {
   grid-column: 2;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 
 /* 底部上传按钮区 */

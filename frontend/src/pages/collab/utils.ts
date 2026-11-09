@@ -1,17 +1,17 @@
-import { taskStatusLabel } from "../../data/global";
+import { taskStatusLabel } from "../../shared/constants/task";
 import type {
   DiscussionBrief,
   DiscussionDetail,
   DiscussionTask,
   MentionValue,
-} from "../../types/collab";
+} from "../../shared/types/collab";
 import type {
   Activity,
   DocumentRef,
   UserBrief,
-} from "../../types/global";
-import type { TaskDetail } from "../../types/task";
-import { addDays } from "../../utils/date";
+} from "../../shared/types/global";
+import type { TaskDetail } from "../../shared/types/task";
+import { addDays } from "../../shared/utils/date";
 
 /**
  * 用于左侧讨论列表项底部时间

@@ -1,0 +1,189 @@
+/* ==========================================================================
+   任务条 (Task Bar)
+   实心黑 / 实线框 = 正常的时间；斜纹 = 异常的时间（橙 = 未完成，黑 = 已完成后的历史）；
+   淡灰细虚线 = 计划了但没用掉的时间
+   ========================================================================== */
+
+.tb {
+  --tb-bar: 16px;
+  --tb-trk: 52px;
+  --tb-border: 1.5px;
+  --tb-warn: repeating-linear-gradient(
+    135deg,
+    var(--signal) 0 3px,
+    var(--paper) 3px 6px
+  );
+  --tb-past: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 3px,
+    var(--paper) 3px 6px
+  );
+}
+
+.tb-axis {
+  position: relative;
+  height: 14px;
+}
+.tb-axis span {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+}
+
+/* 第一个刻度在范围最左端，文字从刻度线起向右排，免得左半截伸出面板 */
+.tb-axis span:first-child {
+  transform: none;
+}
+
+.tb-trk {
+  position: relative;
+  height: var(--tb-trk);
+  border-bottom: 1px solid var(--ink);
+}
+.tb-trk i {
+  position: absolute;
+  display: block;
+  font-style: normal;
+}
+
+/* 每日小刻度 */
+.tb-day {
+  bottom: 0;
+  width: 0;
+  height: 4px;
+  border-left: 1px solid var(--ink);
+}
+
+/* 任务条各层：填充在下，描边框在上 */
+.tb-fill,
+.tb-frame,
+.tb-unused {
+  top: 50%;
+  height: var(--tb-bar);
+  margin-top: calc(var(--tb-bar) / -2);
+  box-sizing: border-box;
+}
+.tb-fill {
+  z-index: 1;
+}
+.tb-ink {
+  background: var(--ink);
+}
+.tb-warn {
+  background: var(--tb-warn);
+}
+.tb-past {
+  background: var(--tb-past);
+}
+.tb-frame {
+  z-index: 2;
+  border: var(--tb-border) solid var(--ink);
+}
+.tb-frame.dashed {
+  border-style: dashed;
+}
+.tb-frame.tail {
+  border-left: 0;
+}
+/* 还没完成的逾期段：右端就是今天，不画黑边，让今天线盖在橙色上 */
+.tb-frame.tail:not(.dashed) {
+  border-right: 0;
+}
+.tb-unused {
+  z-index: 1;
+  height: calc(var(--tb-bar) - 8px);
+  margin-top: calc((var(--tb-bar) - 8px) / -2);
+  border: 1px dashed var(--soft);
+}
+
+/* 今天线 */
+.tb-now {
+  top: 0;
+  bottom: 0;
+  z-index: 4;
+  width: 1.5px;
+  margin-left: -0.75px;
+  background: var(--signal);
+}
+
+/* 完成标记：粗黑短竖线，上下略超出任务条 */
+.tb-done {
+  top: 50%;
+  z-index: 5;
+  width: 3px;
+  height: calc(var(--tb-bar) + 12px);
+  margin: calc((var(--tb-bar) + 12px) / -2) 0 0 -1.5px;
+  background: var(--ink);
+}
+
+/* 截止线：短虚线 */
+.tb-cap {
+  top: 50%;
+  z-index: 0;
+  width: 0;
+  height: 30px;
+  margin: -15px 0 0 -0.75px;
+  border-left: 1.5px dashed var(--ink);
+}
+
+/* 标注文字：截止在上，完成在下 */
+.tb-lb {
+  z-index: 4;
+  padding-left: 5px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: 12px;
+  white-space: nowrap;
+}
+.tb-lb-due {
+  top: 3px;
+}
+.tb-lb-due.late {
+  color: var(--text-alert);
+}
+.tb-lb-done {
+  bottom: 5px;
+  font-weight: var(--fw-bold);
+}
+.tb-lb.flip {
+  padding: 0 5px 0 0;
+  transform: translateX(-100%);
+}
+
+/* 看板里的小条：不留白，没有刻度和文字 */
+.tb-compact {
+  --tb-bar: 8px;
+  --tb-trk: 16px;
+  --tb-border: 1px;
+  --tb-warn: repeating-linear-gradient(
+    135deg,
+    var(--signal) 0 2px,
+    var(--paper) 2px 4px
+  );
+  --tb-past: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 2px,
+    var(--paper) 2px 4px
+  );
+  padding: 0 3px;
+}
+.tb-compact .tb-trk {
+  border-bottom: 0;
+}
+.tb-compact .tb-now {
+  width: 1px;
+  margin-left: -0.5px;
+}
+.tb-compact .tb-done {
+  width: 2px;
+  height: 14px;
+  margin: -7px 0 0 -1px;
+}
+.tb-compact .tb-unused {
+  height: 4px;
+  margin-top: -2px;
+}

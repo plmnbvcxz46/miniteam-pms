@@ -4,8 +4,8 @@ import type {
   DiscussionBrief,
   DiscussionCreate,
   DiscussionDetail,
-} from "../types/collab";
-import type { Activity, Notification } from "../types/global";
+} from "../shared/types/collab";
+import type { Activity, Notification } from "../shared/types/global";
 import { http } from "./http";
 
 export const collabApi = {

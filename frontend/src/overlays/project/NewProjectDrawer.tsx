@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import Drawer from "../../components/Drawer";
-import type { ProjectSave } from "../../types/global";
-import { addDays, daysBetween, getLocalToday } from "../../utils/date";
+import Drawer from "../../shared/components/Drawer";
+import type { ProjectSave } from "../../shared/types/global";
+import { addDays, daysBetween, getLocalToday } from "../../shared/utils/date";
 
 interface NewProjectDrawerProps {
   onClose: () => void;
@@ -61,7 +61,7 @@ export default function NewProjectDrawer({
   return (
     <Drawer className="ov fx" labelledBy="fx-title" onClose={onClose}>
       <div className="fx-head">
-        <h2 className="fx-title" id="fx-title">
+        <h2 className="fx-title t-overlay-title" id="fx-title">
           新建项目
         </h2>
         <button className="ov-close" type="button" onClick={onClose}>
@@ -74,7 +74,7 @@ export default function NewProjectDrawer({
       </div>
       <form className="fx-body" noValidate onSubmit={handleSubmit}>
         <div className="fr">
-          <span className="lb">
+          <span className="lb t-label">
             项目名称<b>*</b>
           </span>
           <div>
@@ -89,11 +89,11 @@ export default function NewProjectDrawer({
               }}
             />
           </div>
-          {nameError && <div className="err">{nameError}</div>}
+          {nameError && <div className="err t-error">{nameError}</div>}
         </div>
 
         <div className="fr top">
-          <span className="lb">项目说明</span>
+          <span className="lb t-label">项目说明</span>
           <div>
             <textarea
               className="u"
@@ -106,7 +106,7 @@ export default function NewProjectDrawer({
         </div>
 
         <div className="fr">
-          <span className="lb">
+          <span className="lb t-label">
             起止日期<b>*</b>
           </span>
           <div>
@@ -135,10 +135,10 @@ export default function NewProjectDrawer({
               />
             </div>
           </div>
-          {dateError && <div className="err">{dateError}</div>}
+          {dateError && <div className="err t-error">{dateError}</div>}
         </div>
 
-        {submitError && <div className="err">{submitError}</div>}
+        {submitError && <div className="err t-error">{submitError}</div>}
         <div className="fx-acts">
           <button className="btn primary" type="submit" disabled={submitting}>
             {submitting ? "新建中…" : "新建项目"}

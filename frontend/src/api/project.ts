@@ -6,9 +6,9 @@ import type {
   ProjectSave,
   ProjectStatus,
   ProjectSummary,
-} from "../types/global";
-import type { Member, MemberAdd, MemberUpdate } from "../types/members";
-import type { IssueSnapshot } from "../types/progress";
+} from "../shared/types/global";
+import type { Member, MemberAdd, MemberUpdate } from "../shared/types/members";
+import type { IssueSnapshot } from "../shared/types/progress";
 import { http } from "./http";
 
 export const projectApi = {

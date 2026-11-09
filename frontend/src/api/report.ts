@@ -6,7 +6,7 @@ import type {
   ReportSummary,
   Reports,
   WeeklyCompleted,
-} from "../types/reports";
+} from "../shared/types/reports";
 import { workloadApi } from "./task";
 import { http } from "./http";
 

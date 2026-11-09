@@ -21,9 +21,9 @@
   height: 100%;
   min-height: 0;
   gap: 2px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-heavy);
   text-align: center;
 }
 .wk .bar {
@@ -44,16 +44,16 @@
   height: 0;
 }
 .wk:has(.bar.now) > span:first-child {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 .wk-ax {
   flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
   text-align: center;
   padding-top: 4px;
 }

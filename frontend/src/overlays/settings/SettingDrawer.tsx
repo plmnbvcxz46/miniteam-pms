@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Drawer from "../../components/Drawer";
-import { useAccess } from "../../access/useAccess";
+import Drawer from "../../shared/components/Drawer";
+import { useAccess } from "../../state/access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
-import type { ProfileUpdate } from "../../types/settings";
+import type { ProfileUpdate } from "../../shared/types/settings";
 import MePanel from "./panels/MePanel";
 import ProjectInfoPanel from "./panels/ProjPanel";
 import PeoplePanel from "./panels/PeoplePanel";
@@ -63,7 +63,7 @@ export default function SettingsDrawer({
           <rect x="0" y="0" width="15" height="34" fill="currentColor" />
           <rect x="19" y="0" width="15" height="18" fill="#FF5A1F" />
         </svg>
-        <h1 className="ov-title">系统<em>设置</em></h1>
+        <h1 className="ov-title t-overlay-title">系统<em>设置</em></h1>
 
         {/* 顶部标签：分组变化处插一条分隔线 */}
         <nav className="ov-tabs" aria-label="设置分区">

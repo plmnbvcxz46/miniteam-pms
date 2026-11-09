@@ -3,8 +3,8 @@ import type {
   LoginRequest,
   LoginResponse,
   RegisterRequest,
-} from "../types/auth";
-import type { ProfileUpdate, SystemUser } from "../types/settings";
+} from "../shared/types/auth";
+import type { ProfileUpdate, SystemUser } from "../shared/types/settings";
 import { http } from "./http";
 
 export const authApi = {

@@ -22,8 +22,8 @@
   border-bottom: 1px dashed var(--ink);
 }
 .lrow b {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -37,26 +37,28 @@
 }
 .lrow .v {
   text-align: right;
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-heavy);
 }
 .lrow .v.late {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 .load .axisrow {
   flex-shrink: 0;
   display: grid;
   grid-template-columns: 78px minmax(0, 1fr) 30px;
   gap: 10px;
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-snug);
+  color: var(--text-mute);
   padding-top: 4px;
 }
 .load .axisrow span:nth-child(2) {
   position: relative;
-  height: 12px;
+  /* 比行高多留 2px：10px 等宽字的字形框约 12.8px，留不够会多出 1px，面板出滚动条 */
+  height: 14px;
 }
 .load .axisrow i {
   position: absolute;
