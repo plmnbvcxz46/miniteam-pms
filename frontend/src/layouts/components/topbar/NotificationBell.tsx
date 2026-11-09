@@ -97,7 +97,7 @@ export default function NotificationBell({
         <div className="issues notes">
           <h4>
             INBOX
-            <em>{hasUnread ? `${unreadCount} 未读` : "已读完"}</em>
+            <em>{hasUnread && `${unreadCount} 未读`}</em>
           </h4>
           <div className="list scroll-y">
             {notifications.length === 0 && <p className="pempty">暂无通知</p>}

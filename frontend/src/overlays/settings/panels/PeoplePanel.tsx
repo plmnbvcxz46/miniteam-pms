@@ -241,7 +241,6 @@ export default function PeoplePanel() {
                   {confirmDelete ? "再点一次确认删除" : "删除账号"}
                 </button>
               </div>
-              {isSelf && <p className="msg">不能修改、停用或删除自己的账号</p>}
               {notice && <p className="msg">{notice}</p>}
             </>
           ) : (

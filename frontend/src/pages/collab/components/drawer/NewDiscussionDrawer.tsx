@@ -123,7 +123,7 @@ export default function NewDiscussionDrawer({
               className="u"
               autoFocus
               value={title}
-              placeholder="例如 菜单接口要不要分页"
+              placeholder="请输入标题..."
               onChange={(e) => {
                 setTitle(e.target.value);
                 setTitleError("");
@@ -159,7 +159,6 @@ export default function NewDiscussionDrawer({
                 </button>
               ))}
           </div>
-          {lockTask && <div className="hint">从任务页发起，已关联这个任务</div>}
         </div>
 
         <div className="fr top">
@@ -185,7 +184,7 @@ export default function NewDiscussionDrawer({
                   ) as HTMLFormElement | null
                 )?.requestSubmit()
               }
-              placeholder="说一下想讨论什么"
+              placeholder="输入讨论内容..."
             />
           </div>
           {notice && <div className="hint">{notice}</div>}

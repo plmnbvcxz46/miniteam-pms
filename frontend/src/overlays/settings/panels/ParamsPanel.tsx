@@ -77,7 +77,7 @@ export default function ParamsPanel() {
               <span className={Math.abs(weightSum - 1) > 0.001 ? "bad" : undefined}>
                 {weightSum.toFixed(2)}
               </span>
-              <span>须为 1</span>
+              <span>(1)</span>
             </div>
           </div>
           <NumberRow
