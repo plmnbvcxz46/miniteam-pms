@@ -37,7 +37,7 @@ export default function ScheduleRow({ row, now, onOpen }: ScheduleRowProps) {
                   width: `${bar.width}%`,
                   top: bar.lane * (BAR_HEIGHT + BAR_GAP),
                   height: BAR_HEIGHT,
-                  "--fill": `${fill}%`,
+                  "--fill": fill / 100,
                 } as CSSProperties
               }
               onClick={() => onOpen(bar.taskId)}
