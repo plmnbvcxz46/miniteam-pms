@@ -99,7 +99,10 @@
   flex: 1;
   height: 26px;
 }
-/* 框是整个计划区间，填充（::before）只到今天线，宽度 --fill 由 ScheduleRow 按此刻算 */
+/*
+ * 框是整个计划区间，填充（::before）只到今天线，--fill 是占整条的比例（0~1），由 ScheduleRow 按此刻算。
+ * 比例按含边框的整条宽度算（今天线也是），伪元素从边框内侧起画，所以宽度 = (内宽 + 两侧边框) × 比例 − 左边框
+ */
 .tl .bar {
   isolation: isolate;
   background: var(--paper);
@@ -110,7 +113,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: var(--fill, 0%);
+  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 1.5px));
   z-index: -1;
 }
 .bar.on::before {
