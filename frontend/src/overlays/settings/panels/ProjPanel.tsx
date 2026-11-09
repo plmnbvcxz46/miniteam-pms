@@ -106,7 +106,7 @@ export default function ProjectInfoPanel({
   return (
     <section className="ss" id="ss-proj">
       <form className="blk" noValidate onSubmit={handleSave}>
-        <h2>基本信息</h2>
+        <h2>PROJECT</h2>
         <div className="rows">
           <div className="srow">
             <label className="t-label" htmlFor="s-pname">项目名称</label>
@@ -169,7 +169,7 @@ export default function ProjectInfoPanel({
         )}
       </form>
       <div className="blk">
-        <h2>存档</h2>
+        <h2>ARCHIVE</h2>
         <div className="rows">
           <div className="srow">
             <span className="lb t-label">项目状态</span>

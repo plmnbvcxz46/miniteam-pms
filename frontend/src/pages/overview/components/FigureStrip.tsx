@@ -13,14 +13,14 @@ interface FigureStripProps {
 export default function FigureStrip({ stats, worst }: FigureStripProps) {
   return (
     <div className="figures">
-      <Figure label="已完成" value={stats.done} sub={`共 ${stats.total} 项`} />
+      <Figure label="DONE" value={stats.done} sub={`共 ${stats.total} 项`} />
       <Figure
-        label="剩余任务"
+        label="REMAINING"
         value={stats.remaining}
         sub={`关键路径 ${stats.criticalRemaining} 项`}
       />
       <Figure
-        label="逾期"
+        label="OVERDUE"
         value={pad2(stats.overdue)}
         sub={
           worst
@@ -32,7 +32,7 @@ export default function FigureStrip({ stats, worst }: FigureStripProps) {
         alert={stats.overdue > 0}
       />
       <Figure
-        label="剩余天数"
+        label="DAYS LEFT"
         value={stats.remainingDays}
         sub={`截止 ${formatDayLabel(stats.planEnd)}`}
       />

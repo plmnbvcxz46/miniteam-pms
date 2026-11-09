@@ -202,8 +202,8 @@ export default function MentionInput({
       />
       {isOpen && (
         <ul className="mn-pop" id={listId} role="listbox">
-          {renderGroup("user", "成员")}
-          {renderGroup("doc", "文件")}
+          {renderGroup("user", "MEMBERS")}
+          {renderGroup("doc", "FILES")}
         </ul>
       )}
     </div>

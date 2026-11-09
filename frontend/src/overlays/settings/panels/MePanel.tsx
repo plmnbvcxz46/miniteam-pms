@@ -82,7 +82,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
   return (
     <section className="ss" id="ss-me">
       <form className="blk" noValidate onSubmit={handleSave}>
-        <h2>身份</h2>
+        <h2>IDENTITY</h2>
         <div className="rows">
           <div className="srow">
             <label className="t-label" htmlFor="s-name">姓名</label>
@@ -178,7 +178,7 @@ export default function MePanel({ profile, onSave }: MePanelProps) {
         </div>
       </form>
       <div className="blk">
-        <h2>安全</h2>
+        <h2>SECURITY</h2>
         <div className="rows">
           <div className="srow top">
             <span className="lb t-label">密码</span>

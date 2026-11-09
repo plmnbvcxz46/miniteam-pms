@@ -9,7 +9,7 @@ export interface NavItem {
   badge?: "risk";
 }
 
-/** 侧边栏导航分组，label 显示成分组上方的 “// 项目” */
+/** 侧边栏导航分组，label 显示成分组上方的 “// PROJECT” */
 export interface NavGroup {
   label: string;
   ariaLabel: string;
@@ -19,7 +19,7 @@ export interface NavGroup {
 /** 页面导航，“系统管理”不是页面而是打开抽屉，由 SidebarNav 单独渲染 */
 export const navGroups: NavGroup[] = [
   {
-    label: "// 项目",
+    label: "// PROJECT",
     ariaLabel: "项目",
     items: [
       { to: "/overview", label: "概览", icon: "overview" },
@@ -29,7 +29,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: "// 团队",
+    label: "// TEAM",
     ariaLabel: "团队",
     items: [
       { to: "/collab", label: "团队协作", icon: "collab" },
