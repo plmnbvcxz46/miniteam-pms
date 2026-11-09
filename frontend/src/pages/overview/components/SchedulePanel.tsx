@@ -64,7 +64,12 @@ export default function SchedulePanel({
             />
           )}
           {rows.map((row) => (
-            <ScheduleRow key={row.user.id} row={row} onOpen={onOpenTask} />
+            <ScheduleRow
+              key={row.user.id}
+              row={row}
+              now={todayIndex + dayProgress}
+              onOpen={onOpenTask}
+            />
           ))}
         </div>
       </div>
