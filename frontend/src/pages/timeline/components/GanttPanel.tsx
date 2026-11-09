@@ -5,7 +5,6 @@ import {
   dateToX,
   dayEnd,
   formatDayLabel,
-  toDay,
   type AxisRange,
 } from "../../../shared/utils/date";
 import type { CpmResult, TimelineForecast } from "../utils";
@@ -141,7 +140,7 @@ export default function GanttPanel({
               today={today}
             />
 
-            <div className="gt-line today" style={{ left: x(toDay(today)) }}>
+            <div className="gt-line today" style={{ left: x(dayEnd(today)) }}>
               <span className="gt-flag">今天</span>
             </div>
             <div

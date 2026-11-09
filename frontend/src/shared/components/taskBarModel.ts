@@ -31,7 +31,7 @@ export interface BarFrame extends TimeSpan {
 
 export interface TaskBarModel {
   range: AxisRange;
-  /** 今天 00:00 */
+  /** 今天 24:00：按天画的图都把今天算作已过完，今天线、填充、逾期段都到这里 */
   today: DayTime;
   frames: BarFrame[];
   fills: BarFill[];
@@ -110,7 +110,8 @@ export function buildTaskBar(
 
   const start = toDay(task.planStart);
   const due = dayEnd(task.dueDate);
-  const now = toDay(today);
+  // 按天画：今天算作已用掉，和逾期天数、已用天数（都含今天）对得上
+  const now = dayEnd(today);
   const range = sharedRange ?? getAxisRange(task, today, pad);
 
   const frames: BarFrame[] = [];
@@ -136,10 +137,9 @@ export function buildTaskBar(
     frames.push({ from: start, to: bodyEnd, dashed: true, tail: false });
     addBlocked({ from: start, to: bodyEnd }, "past");
     if (finished > due) {
-      // 逾期段最多画到今天 00:00，和未完成任务的逾期段一致；今天完成的，完成标记仍在今天 24:00
-      const tailEnd = Math.min(finished, Math.max(due, now));
-      frames.push({ from: due, to: tailEnd, dashed: true, tail: true });
-      fills.push({ from: due, to: tailEnd, kind: "past" });
+      // 逾期段画到完成日 24:00，和完成标记接上
+      frames.push({ from: due, to: finished, dashed: true, tail: true });
+      fills.push({ from: due, to: finished, kind: "past" });
     } else if (finished < due) {
       unused = { from: finished, to: due };
     }

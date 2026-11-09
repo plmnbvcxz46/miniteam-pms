@@ -20,7 +20,7 @@ const ELBOW = 8;
 /** 任务条实际画到哪：已完成取完成日，未完成取截止日和今天里更晚的（逾期、阻塞的部分接在截止日后面） */
 function barEnd(task: TaskDetail, today: string) {
   if (task.status === "DONE") return dayEnd(task.actualEnd ?? today);
-  return Math.max(dayEnd(task.dueDate!), toDay(today));
+  return Math.max(dayEnd(task.dueDate!), dayEnd(today));
 }
 
 /** 前置任务条右端 → 后续任务条左端的折线，两端都在关键路径上画实线，否则画虚线 */

@@ -21,8 +21,8 @@ export default function DocumentRevising({
   today,
   onSelect,
 }: DocumentRevisingProps) {
-  // 今天在时间轴上的位置
-  const todayOffset = getDayOffset(formatDayLabel(today), today);
+  // 今天在时间轴上的位置：按天画的图都把今天算作已过完，今天线在今天 24:00
+  const todayOffset = getDayOffset(formatDayLabel(today), today) + 1;
 
   // 时间轴刻度
   const axisDates = getAxisDates(today);

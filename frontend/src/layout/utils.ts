@@ -47,7 +47,7 @@ export function formatNotificationTime(
 export interface PeriodProgress {
   /** 距计划结束还有几天，已过期为 0 */
   daysLeft: number;
-  /** 时间进度 0-100，按今天 00:00 占整个周期的比例 */
+  /** 时间进度 0-100，按今天 24:00（今天算作已过完）占整个周期的比例 */
   percent: number;
 }
 
@@ -57,7 +57,7 @@ export function getPeriodProgress(
 ): PeriodProgress {
   const start = toDay(period.startDate);
   const end = toDay(period.planEnd) + 1;
-  const percent = ((toDay(today) - start) / (end - start)) * 100;
+  const percent = ((toDay(today) + 1 - start) / (end - start)) * 100;
   return {
     daysLeft: Math.max(0, Math.round(toDay(period.planEnd) - toDay(today))),
     percent: Math.round(Math.min(100, Math.max(0, percent))),
