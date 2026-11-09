@@ -12,6 +12,14 @@ export function getColumnTasks(
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
+/**
+ * 能不能从 from 移到 to：开始过的任务不能退回待开始。
+ * 待开始的任务到了计划开始日由后端自动移到进行中（前置没完成就阻塞），见 backend TaskAutoStart
+ */
+export function canMoveStatus(from: TaskStatus, to: TaskStatus): boolean {
+  return to !== "TODO" || from === "TODO";
+}
+
 /** 把任务移到目标列的第 index 位，返回新的任务表 */
 export function moveTaskTo(
   tasks: Record<number, TaskDetail>,
@@ -148,6 +156,8 @@ export function applyTaskStatus(
           status,
           // 移到已完成时记下完成日，任务条要用它画完成标记
           actualEnd: status === "DONE" ? (task.actualEnd ?? today) : null,
+          // 第一次开始时记下实际开始日，任务条从这天起涂黑
+          actualStart: task.actualStart ?? (status === "TODO" ? null : today),
           usedDays: getUsedDays(task, status, today),
           overdueDays: getOverdueDays(task, status, today),
         },

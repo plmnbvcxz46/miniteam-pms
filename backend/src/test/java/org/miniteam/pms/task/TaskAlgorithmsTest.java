@@ -109,4 +109,27 @@ class TaskAlgorithmsTest {
         assertEquals(0.5, c.alpha());
         assertEquals(0.3, c.importance());
     }
+
+    private static org.miniteam.pms.task.entity.Task task(TaskStatus status, LocalDate planStart) {
+        org.miniteam.pms.task.entity.Task t = new org.miniteam.pms.task.entity.Task();
+        t.setStatus(status.name());
+        t.setPlanStart(planStart);
+        return t;
+    }
+
+    @Test
+    void autoStartOnPlanStart() {
+        var todo = task(TaskStatus.TODO, MON);
+        // 还没到开始日、没排期、已经不是待开始的，都不动
+        assertEquals(null, TaskAutoStart.decide(todo, List.of(), MON.minusDays(1)));
+        assertEquals(null, TaskAutoStart.decide(task(TaskStatus.TODO, null), List.of(), MON));
+        assertEquals(null, TaskAutoStart.decide(task(TaskStatus.DOING, MON), List.of(), MON));
+        // 到了开始日（含已经过了的）：前置都完成了进行中，否则阻塞
+        assertEquals(TaskStatus.DOING, TaskAutoStart.decide(todo, List.of(), MON));
+        assertEquals(
+                TaskStatus.DOING, TaskAutoStart.decide(todo, List.of(task(TaskStatus.DONE, MON)), MON.plusDays(3)));
+        assertEquals(
+                TaskStatus.BLOCKED,
+                TaskAutoStart.decide(todo, List.of(task(TaskStatus.DONE, MON), task(TaskStatus.DOING, MON)), MON));
+    }
 }

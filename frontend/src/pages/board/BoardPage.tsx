@@ -11,7 +11,12 @@ import TaskCard from "./components/TaskCard";
 import BoardHeader, { type BoardFilter } from "./components/BoardHeader";
 import { useTaskStore } from "../../state/task/taskStore";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
-import { getBlockedTasks, getColumnTasks, toFullIndex } from "../../state/task/utils";
+import {
+  canMoveStatus,
+  getBlockedTasks,
+  getColumnTasks,
+  toFullIndex,
+} from "../../state/task/utils";
 import "./css/board.css";
 
 export default function BoardPage() {
@@ -29,7 +34,10 @@ export default function BoardPage() {
     const blocked = await moveTask(taskId, target.status, index);
     if (blocked) window.alert(blocked);
   };
-  const { drag, handlePress, wasDragged } = useCardDrag(handleDrop);
+  const { drag, handlePress, wasDragged } = useCardDrag(
+    handleDrop,
+    (taskId, status) => canMoveStatus(taskMap[taskId].status, status),
+  );
 
   // 顶栏 kicker 统计只算看得到的任务
   const allTasks = Object.values(taskMap).filter(isShown);

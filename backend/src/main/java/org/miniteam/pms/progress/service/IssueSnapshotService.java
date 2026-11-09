@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.DeserializationFeature;
@@ -148,8 +149,9 @@ public class IssueSnapshotService {
         }
     }
 
-    /** 启动时补一次：昨天那一期没有存档的补上（服务昨天零点没开着的兜底，存的是此刻的状态） */
+    /** 启动时补一次：昨天那一期没有存档的补上（服务昨天零点没开着的兜底，存的是此刻的状态）。排在任务自动开始之前 */
     @EventListener(ApplicationReadyEvent.class)
+    @Order(1)
     public void catchUp() {
         LocalDate yesterday = IssueCalendar.today().minusDays(1);
         try {

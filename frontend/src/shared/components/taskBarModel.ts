@@ -46,21 +46,30 @@ export interface TaskBarModel {
 /** 生成任务条需要的任务字段 */
 export type TaskBarTask = Pick<
   TaskDetail,
-  "status" | "planStart" | "dueDate" | "actualEnd"
+  "status" | "planStart" | "dueDate" | "actualStart" | "actualEnd"
 >;
 
 /**
  * 从操作记录推算阻塞区间：进入阻塞 → 离开阻塞，可能有多段。
  * 记录里只有展示文案（“把任务移到阻塞”），没有结构化的前后状态，接通接口后改读状态字段。
- * 还没离开的阻塞，to 为 Infinity，由调用方按今天截断
+ * 还没离开的阻塞，to 为 Infinity，由调用方按今天截断。
+ * 到了计划开始日被系统自动移到阻塞的（记录没有操作人），从实际开始日 00:00 算起：
+ * 系统补跑或新建时开始日已过的任务，记录时间晚于真正开始阻塞的时间
  */
-export function getBlockedSpans(activities: Activity[]): TimeSpan[] {
+export function getBlockedSpans(
+  activities: Activity[],
+  actualStart?: string | null,
+): TimeSpan[] {
   const events = activities
     .filter((item) => item.targetType === "TASK" && item.action === "STATUS")
-    .map((item) => ({
-      time: parseDateTime(item.createdAt),
-      toBlocked: item.detail.includes("阻塞"),
-    }))
+    .map((item) => {
+      const toBlocked = item.detail.includes("阻塞");
+      const auto = toBlocked && item.user === null && actualStart;
+      return {
+        time: auto ? toDay(actualStart) : parseDateTime(item.createdAt),
+        toBlocked,
+      };
+    })
     .sort((a, b) => a.time - b.time);
 
   const spans: TimeSpan[] = [];
@@ -109,7 +118,7 @@ export function buildTaskBar(
   let unused: TimeSpan | null = null;
   let done: TaskBarModel["done"] = null;
 
-  const blocked = getBlockedSpans(activities);
+  const blocked = getBlockedSpans(activities, task.actualStart);
   const addBlocked = (limit: TimeSpan, kind: BarFill["kind"]) => {
     for (const span of blocked) {
       const part = clip(span, limit);
@@ -137,7 +146,9 @@ export function buildTaskBar(
   } else {
     frames.push({ from: start, to: due, dashed: false, tail: false });
     if (task.status === "DOING" || task.status === "BLOCKED") {
-      const elapsed = { from: start, to: Math.min(now, due) };
+      // 从实际开始日涂黑，晚开工的前面留空；提前开工的不画到计划框外面
+      const begun = Math.max(start, toDay(task.actualStart ?? task.planStart));
+      const elapsed = { from: begun, to: Math.min(now, due) };
       if (elapsed.to > elapsed.from) {
         fills.push({ ...elapsed, kind: "ink" });
         addBlocked(elapsed, "warn");
