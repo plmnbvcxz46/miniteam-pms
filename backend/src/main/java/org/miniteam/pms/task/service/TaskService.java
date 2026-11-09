@@ -31,6 +31,7 @@ import org.miniteam.pms.system.service.OperationLogService;
 import org.miniteam.pms.task.DependencyGraph;
 import org.miniteam.pms.task.PriorityCalculator;
 import org.miniteam.pms.task.ProjectTaskSnapshot;
+import org.miniteam.pms.task.TaskAutoStart;
 import org.miniteam.pms.task.TaskStatus;
 import org.miniteam.pms.task.WorkdayCalendar;
 import org.miniteam.pms.task.dto.BoardVO;
@@ -257,6 +258,7 @@ public class TaskService {
                 "CREATE",
                 ctx.user().realName() + " 创建任务");
         notifyAssign(ctx, task);
+        autoStart(projectId, IssueCalendar.today());
         return reload(ctx, task.getId());
     }
 
@@ -342,6 +344,9 @@ public class TaskService {
             if (assigneeChanged) {
                 notifyAssign(ctx, task);
             }
+            if (planChanged) {
+                autoStart(task.getProjectId(), IssueCalendar.today());
+            }
         }
         return reload(ctx, taskId);
     }
@@ -387,6 +392,9 @@ public class TaskService {
         taskMapper.lockProject(task.getProjectId());
         task = load(taskId);
         TaskStatus old = TaskStatus.parse(task.getStatus());
+        if (status == TaskStatus.TODO && old != TaskStatus.TODO) {
+            throw new BusinessException(ResultCode.CONFLICT, "任务已经开始，不能退回待开始");
+        }
         if (status == TaskStatus.DONE && old != TaskStatus.DONE) {
             Document pending = documentMapper.firstUnfinalByTask(taskId);
             if (pending != null) {
@@ -425,6 +433,43 @@ public class TaskService {
         replacePredecessors(ctx, task, preTaskIds);
         ProjectTaskSnapshot snap = snapshot(ctx);
         return dependencies(snap, snap.preds.getOrDefault(taskId, List.of()), taskId, true);
+    }
+
+    /**
+     * 待开始且到了计划开始日的任务自动开始（{@link TaskAutoStart}），放到目标列末尾，实际开始日记为计划开始日，
+     * 以系统名义记一条动态。每天定时跑一次，新建任务和改计划开始时也跑。
+     *
+     * @return 自动开始了几个任务
+     */
+    @Transactional
+    public int autoStart(Long projectId, LocalDate today) {
+        taskMapper.lockProject(projectId);
+        List<Task> tasks = taskMapper.listByProject(projectId);
+        Map<Long, Task> byId = tasks.stream().collect(Collectors.toMap(Task::getId, t -> t));
+        Map<Long, List<Task>> preds = new HashMap<>();
+        for (TaskDependency d : dependencyMapper.listByProject(projectId)) {
+            preds.computeIfAbsent(d.getNextTaskId(), k -> new ArrayList<>()).add(byId.get(d.getPreTaskId()));
+        }
+        int started = 0;
+        for (Task task : tasks) {
+            TaskStatus status = TaskAutoStart.decide(task, preds.getOrDefault(task.getId(), List.of()), today);
+            if (status == null) {
+                continue;
+            }
+            applyStatus(task, status, task.getPlanStart());
+            place(task, status, Integer.MAX_VALUE);
+            taskMapper.updateStatus(task);
+            renumber(projectId, TaskStatus.TODO.name(), task.getId());
+            logService.record(
+                    null,
+                    projectId,
+                    TARGET_TASK,
+                    task.getId(),
+                    "STATUS",
+                    status == TaskStatus.DOING ? "到了计划开始日，任务自动移到进行中" : "到了计划开始日，前置任务还没完成，任务自动移到阻塞");
+            started++;
+        }
+        return started;
     }
 
     // ---------- 内部 ----------
