@@ -99,17 +99,36 @@
   flex: 1;
   height: 26px;
 }
-.bar.on {
+/* 框是整个计划区间，填充（::before）只到今天线，宽度 --fill 由 ScheduleRow 按此刻算 */
+.tl .bar {
+  isolation: isolate;
+  background: var(--paper);
+}
+.tl .bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--fill, 0%);
+  z-index: -1;
+}
+.bar.on::before {
   background: var(--ink);
+}
+/* 文字跨过填充边界时，黑底上是白字、空白处是黑字 */
+.bar.on span {
   color: var(--text-inverse);
+  mix-blend-mode: difference;
 }
 .bar.next {
-  background: var(--paper);
   font-weight: var(--fw-regular);
 }
 .bar.stuck {
-  background: var(--hatch);
   padding-left: 6px;
+}
+.bar.stuck::before {
+  background: var(--hatch);
 }
 .bar.stuck span {
   background: var(--paper);
