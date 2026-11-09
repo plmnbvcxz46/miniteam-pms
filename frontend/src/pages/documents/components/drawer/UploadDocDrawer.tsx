@@ -229,9 +229,9 @@ function UploadDocForm({
               文档名称<b>*</b>
             </span>
             <input
+              className="u"
               type="text"
-              placeholder="..."
-              required
+              placeholder="例如 需求规格说明书"
               value={docName}
               onChange={(e) => setDocName(e.target.value)}
               disabled={!isNewDoc}
@@ -244,9 +244,9 @@ function UploadDocForm({
               版本说明<b>*</b>
             </span>
             <input
+              className="u"
               type="text"
-              placeholder="..."
-              required
+              placeholder="这一版改了什么"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
@@ -257,6 +257,7 @@ function UploadDocForm({
             <label className="fr">
               <span className="lb t-label">关联任务</span>
               <select
+                className="u"
                 value={taskId}
                 onChange={(e) => setTaskId(Number(e.target.value))}
               >
@@ -272,28 +273,18 @@ function UploadDocForm({
 
           {/* 错误提示 */}
           {errorMsg && (
-            <div
-              style={{
-                color: "var(--signal)",
-                fontSize: "12px",
-                padding: "4px 0",
-              }}
-            >
+            <div className="err t-error" role="alert">
               {errorMsg}
             </div>
           )}
 
           {/* 底部按钮 */}
           <div className="fx-acts">
-            <button
-              className="btn"
-              type="button"
-              onClick={onClose}
-            >
-              取消
-            </button>
-            <button className="btn primary go" type="submit" disabled={submitting}>
+            <button className="btn primary" type="submit" disabled={submitting}>
               {submitting ? "上传中…" : "确认上传"}
+            </button>
+            <button className="btn" type="button" onClick={onClose}>
+              取消
             </button>
           </div>
         </form>

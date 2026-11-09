@@ -1491,7 +1491,7 @@ main {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 12px 6px 40px 0;
+  padding: 12px 0 40px;
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
@@ -1822,6 +1822,17 @@ select.in {
   font-family: var(--font-mono);
   font-weight: var(--fw-bold);
 }
+.fr select.u {
+  cursor: pointer;
+  padding-right: 22px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%230a0a0a'/%3E%3C/svg%3E")
+    right 4px center no-repeat;
+}
+.fr .u:disabled {
+  color: var(--text-mute);
+  border-bottom-style: dashed;
+  cursor: not-allowed;
+}
 .fr textarea.u {
   min-height: 84px;
   line-height: var(--lh-loose);
@@ -1834,9 +1845,6 @@ select.in {
 }
 .fr .inl .u {
   width: auto;
-}
-.fr .chips {
-  margin-left: -10px;
 }
 .fr .hint {
   grid-column: 2;

@@ -2,19 +2,15 @@
    邀请成员抽屉定制样式 (Invite Member Drawer)
    ========================================================================== */
 
-/* 消除项目角色 chips 的 -10px 负外边距，使角色按钮左边缘与上下输入框严格在同一垂线对齐 */
-.invite-drawer .fr .chips,
-.fx.invite-drawer .fr .chips {
-  margin-left: 0;
+/* 搜索框和搜索按钮一行，候选人下拉在下面 */
+.invite-search {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
 }
-
-/* 统一输入控件（select、input）的尺寸与边框对齐 */
-.invite-drawer .fr select,
-.invite-drawer .fr input[type="text"] {
-  box-sizing: border-box;
-  width: 100%;
-  height: 36px;
-  padding: 0 8px;
+.invite-search + select.u,
+.invite-search + .t-hint {
+  margin-top: 8px;
 }
 
 .member-perm-checklist {

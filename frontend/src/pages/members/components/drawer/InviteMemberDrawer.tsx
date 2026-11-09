@@ -147,8 +147,9 @@ function InviteMemberForm({
               选择用户<b>*</b>
             </span>
             <div>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div className="invite-search">
                 <input
+                  className="u"
                   type="text"
                   placeholder="输入姓名或账号搜索"
                   value={keyword}
@@ -171,9 +172,9 @@ function InviteMemberForm({
               </div>
               {candidates.length > 0 ? (
                 <select
+                  className="u"
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(Number(e.target.value))}
-                  style={{ width: "100%", height: "36px", padding: "0 8px", marginTop: 8 }}
                 >
                   {candidates.map((u) => (
                     <option key={u.id} value={u.id}>
@@ -183,7 +184,7 @@ function InviteMemberForm({
                 </select>
               ) : (
                 found !== null && (
-                  <div style={{ color: "var(--mute)", fontSize: "12px", paddingTop: "8px" }}>
+                  <div className="t-hint">
                     没有可邀请的用户（没搜到，或搜到的人已在项目中）
                   </div>
                 )
@@ -225,9 +226,10 @@ function InviteMemberForm({
           </div>
 
           {/* 岗位名称 */}
-          <div className="fr top">
+          <div className="fr">
             <span className="lb t-label">岗位名称</span>
             <input
+              className="u"
               type="text"
               placeholder="例如：后端开发、前端开发、测试"
               value={position}
@@ -259,28 +261,22 @@ function InviteMemberForm({
 
           {/* 错误提示 */}
           {errorMsg && (
-            <div
-              style={{
-                color: "var(--signal)",
-                fontSize: "12px",
-                padding: "4px 0",
-              }}
-            >
+            <div className="err t-error" role="alert">
               {errorMsg}
             </div>
           )}
 
           {/* 底部按钮 */}
           <div className="fx-acts">
-            <button className="btn" type="button" onClick={onClose}>
-              取消
-            </button>
             <button
-              className="btn primary go"
+              className="btn primary"
               type="submit"
               disabled={candidates.length === 0 || submitting}
             >
               {submitting ? "邀请中…" : "确认邀请"}
+            </button>
+            <button className="btn" type="button" onClick={onClose}>
+              取消
             </button>
           </div>
         </form>
