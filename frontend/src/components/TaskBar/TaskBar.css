@@ -29,9 +29,9 @@
   bottom: 0;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
 }
 
 /* 第一个刻度在范围最左端，文字从刻度线起向右排，免得左半截伸出面板 */
@@ -134,8 +134,8 @@
 .tb-lb {
   z-index: 4;
   padding-left: 5px;
-  font-family: var(--mono);
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
   line-height: 12px;
   white-space: nowrap;
 }
@@ -143,11 +143,11 @@
   top: 3px;
 }
 .tb-lb-due.late {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 .tb-lb-done {
   bottom: 5px;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 .tb-lb.flip {
   padding: 0 5px 0 0;

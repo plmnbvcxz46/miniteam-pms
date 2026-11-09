@@ -36,36 +36,36 @@
   gap: 2px;
 }
 .col header .k {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-mute);
 }
 .col header h3 {
   margin: 0;
-  font-size: 15px;
-  font-weight: 900;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-black);
 }
 .col header .count {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 56px;
-  line-height: 0.85;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
 }
 .col.doing header {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 .col.doing header .k {
-  color: #cfcfca;
+  color: var(--text-inverse-mute);
 }
 .col.blocked header {
   background: var(--signal);
 }
 .col.blocked header .k {
-  color: var(--ink);
-  font-weight: 800;
+  color: var(--text);
+  font-weight: var(--fw-heavy);
 }
 .col.done {
   border-width: 1px;
@@ -74,7 +74,7 @@
   border-bottom-width: 1px;
 }
 .col.done header .count {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
 }
 .drop {
   flex: 1;
