@@ -20,15 +20,10 @@
   gap: 2px;
 }
 #rp-hero .hk .k {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
+  color: inherit;
 }
 #rp-hero .hk h2 {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-black);
 }
 #rp-hero .fstatus {
   font-family: var(--font-sans);

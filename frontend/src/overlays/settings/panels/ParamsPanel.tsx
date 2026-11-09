@@ -72,7 +72,7 @@ export default function ParamsPanel() {
             />
           ))}
           <div className="srow">
-            <span className="lb">合计</span>
+            <span className="lb t-label">合计</span>
             <div className="inl">
               <span className={Math.abs(weightSum - 1) > 0.001 ? "bad" : undefined}>
                 {weightSum.toFixed(2)}
@@ -130,7 +130,7 @@ interface NumberRowProps {
 function NumberRow({ id, label, unit, value, onChange }: NumberRowProps) {
   return (
     <div className="srow">
-      <label htmlFor={id}>{label}</label>
+      <label className="t-label" htmlFor={id}>{label}</label>
       <div className="inl">
         <input
           className="in xs"

@@ -159,7 +159,7 @@ function UploadDocForm({
       onClose={onClose}
     >
       <header className="fx-head">
-        <h1 className="fx-title" id="fx-title">
+        <h1 className="fx-title t-overlay-title" id="fx-title">
           上传<em>文档</em>
         </h1>
         <button
@@ -197,7 +197,7 @@ function UploadDocForm({
 
           {/* 上传目标 */}
           <div className="fr top">
-            <span className="lb">
+            <span className="lb t-label">
               上传到<b>*</b>
             </span>
             <div className="chips" role="radiogroup" aria-label="上传目标">
@@ -225,7 +225,7 @@ function UploadDocForm({
 
           {/* 文档名称 */}
           <label className="fr">
-            <span className="lb">
+            <span className="lb t-label">
               文档名称<b>*</b>
             </span>
             <input
@@ -240,7 +240,7 @@ function UploadDocForm({
 
           {/* 版本说明 */}
           <label className="fr">
-            <span className="lb">
+            <span className="lb t-label">
               版本说明<b>*</b>
             </span>
             <input
@@ -255,7 +255,7 @@ function UploadDocForm({
           {/* 关联任务（新建文档时显示） */}
           {isNewDoc && (
             <label className="fr">
-              <span className="lb">关联任务</span>
+              <span className="lb t-label">关联任务</span>
               <select
                 value={taskId}
                 onChange={(e) => setTaskId(Number(e.target.value))}

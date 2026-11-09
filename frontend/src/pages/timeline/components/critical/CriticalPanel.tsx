@@ -13,8 +13,8 @@ export default function CriticalPanel({ tasks, cpm }: CriticalPanelProps) {
     <section className="pnl cpmp">
       <div className="phd">
         <div>
-          <span className="k">// CPM</span>
-          <h2>关键路径计算</h2>
+          <span className="k t-kicker">// CPM</span>
+          <h2 className="t-section-title">关键路径计算</h2>
         </div>
         <span className="u">
           总工期 <em>{cpm.total}</em> 个工作日

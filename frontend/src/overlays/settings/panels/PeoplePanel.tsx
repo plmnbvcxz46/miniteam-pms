@@ -189,13 +189,13 @@ export default function PeoplePanel() {
               <h3 className="who-h">{selected.realName}</h3>
               <div className="rows">
                 <div className="srow">
-                  <span className="lb">账号</span>
+                  <span className="lb t-label">账号</span>
                   <div>
                     <code>{selected.username}</code>
                   </div>
                 </div>
                 <div className="srow top">
-                  <span className="lb">账号类型</span>
+                  <span className="lb t-label">账号类型</span>
                   <div className="roles">
                     {roles.map((role) => (
                       <label key={role.id}>
@@ -213,7 +213,7 @@ export default function PeoplePanel() {
                   </div>
                 </div>
                 <div className="srow">
-                  <span className="lb">状态</span>
+                  <span className="lb t-label">状态</span>
                   <div>
                     <Switch
                       label="账号状态"
@@ -310,7 +310,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
       <h3 className="who-h">新增人员</h3>
       <div className="rows">
         <div className="srow">
-          <label htmlFor="np-account">账号</label>
+          <label className="t-label" htmlFor="np-account">账号</label>
           <div>
             <input
               className="in"
@@ -322,7 +322,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow">
-          <label htmlFor="np-name">姓名</label>
+          <label className="t-label" htmlFor="np-name">姓名</label>
           <div>
             <input
               className="in"
@@ -333,7 +333,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow">
-          <label htmlFor="np-pass">初始密码</label>
+          <label className="t-label" htmlFor="np-pass">初始密码</label>
           <div>
             <input
               className="in"
@@ -346,7 +346,7 @@ function NewPersonForm({ roles, existing, onCancel, onSubmit }: NewPersonFormPro
           </div>
         </div>
         <div className="srow top">
-          <span className="lb">账号类型</span>
+          <span className="lb t-label">账号类型</span>
           <div className="roles">
             {roles.map((role) => (
               <label key={role.id}>

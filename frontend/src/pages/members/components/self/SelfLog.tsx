@@ -11,8 +11,8 @@ export default function SelfLog({ logs }: SelfLogProps) {
     <section className="pnl me-log" aria-labelledby="me-log-h">
       <div className="phd">
         <div>
-          <span className="k">// LOGS</span>
-          <h2 id="me-log-h">变更记录</h2>
+          <span className="k t-kicker">// LOGS</span>
+          <h2 className="t-section-title" id="me-log-h">变更记录</h2>
         </div>
       </div>
       {logs.length > 0 ? (

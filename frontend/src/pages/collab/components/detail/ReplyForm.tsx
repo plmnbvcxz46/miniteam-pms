@@ -74,7 +74,7 @@ export default function ReplyForm({
         {sending ? "发送中…" : "发送"}
       </button>
       {error && (
-        <div className="err" role="alert">
+        <div className="err t-error" role="alert">
           {error}
         </div>
       )}

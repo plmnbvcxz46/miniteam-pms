@@ -20,8 +20,8 @@ export default function PermLog({ logs }: PermLogProps) {
   return (
     <section className="plogw">
       <div>
-        <span className="k">// Logs</span>
-        <b>变更记录</b>
+        <span className="k t-kicker">// Logs</span>
+        <b className="t-section-title">变更记录</b>
       </div>
       <div className="plog" id="perm-log" ref={listRef}>
         {logs.length > 0 ? (

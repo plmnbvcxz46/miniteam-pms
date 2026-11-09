@@ -10,8 +10,8 @@ export default function SelfPerms({ permissions }: SelfPermsProps) {
     <section className="pnl me-perm" aria-labelledby="me-perm-h">
       <div className="phd">
         <div>
-          <span className="k">// ACCESS</span>
-          <h2 id="me-perm-h">项目权限</h2>
+          <span className="k t-kicker">// ACCESS</span>
+          <h2 className="t-section-title" id="me-perm-h">项目权限</h2>
         </div>
       </div>
       <dl className="me-perm-list">

@@ -20,8 +20,8 @@ export default function CriticalChainPanel({
     <section className="pnl dark cp">
       <div className="phd">
         <div>
-          <span className="k">// CHAIN</span>
-          <h2>关键路径</h2>
+          <span className="k t-kicker">// CHAIN</span>
+          <h2 className="t-section-title">关键路径</h2>
         </div>
         <span
           className="chip"

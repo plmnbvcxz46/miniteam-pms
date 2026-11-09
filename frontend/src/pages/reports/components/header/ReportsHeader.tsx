@@ -27,7 +27,7 @@ export default function ReportsHeader({
         <div className="k" id="rp-kicker">
           {formatKicker(summary)}
         </div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           统计<em>报表</em>
         </h1>
       </div>

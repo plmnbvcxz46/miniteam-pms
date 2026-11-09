@@ -121,7 +121,7 @@ function InviteMemberForm({
   return (
     <Drawer className="ov fx opening invite-drawer" labelledBy="fx-title" onClose={onClose}>
       <header className="fx-head">
-        <h1 className="fx-title" id="fx-title">
+        <h1 className="fx-title t-overlay-title" id="fx-title">
           邀请<em>成员</em>
         </h1>
         <button
@@ -143,7 +143,7 @@ function InviteMemberForm({
         <form onSubmit={handleSubmit}>
           {/* 选择用户 */}
           <div className="fr top">
-            <span className="lb">
+            <span className="lb t-label">
               选择用户<b>*</b>
             </span>
             <div>
@@ -193,7 +193,7 @@ function InviteMemberForm({
 
           {/* 项目角色 */}
           <div className="fr top">
-            <span className="lb">
+            <span className="lb t-label">
               项目角色<b>*</b>
             </span>
             <div className="chips" role="radiogroup" aria-label="项目角色">
@@ -226,7 +226,7 @@ function InviteMemberForm({
 
           {/* 岗位名称 */}
           <div className="fr top">
-            <span className="lb">岗位名称</span>
+            <span className="lb t-label">岗位名称</span>
             <input
               type="text"
               placeholder="例如：后端开发、前端开发、测试"
@@ -237,7 +237,7 @@ function InviteMemberForm({
 
           {/* 初始权限分配 */}
           <div className="fr top">
-            <span className="lb">初始权限</span>
+            <span className="lb t-label">初始权限</span>
             <div className="member-perm-checklist">
               {permDefs.map((def) => {
                 const checked = perms[def.key];

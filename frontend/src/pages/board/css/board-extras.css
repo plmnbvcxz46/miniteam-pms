@@ -15,12 +15,6 @@
 .bby:empty {
   display: none;
 }
-.bby .k {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
-  color: var(--text-mute);
-}
 .bby .r {
   display: flex;
   justify-content: space-between;

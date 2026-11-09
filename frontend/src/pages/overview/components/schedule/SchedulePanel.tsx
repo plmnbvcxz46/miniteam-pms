@@ -23,8 +23,8 @@ export default function SchedulePanel({
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// WEEK</span>
-          <h2>成员排期</h2>
+          <span className="k t-kicker">// WEEK</span>
+          <h2 className="t-section-title">成员排期</h2>
         </div>
         <div className="legend">
           <span>

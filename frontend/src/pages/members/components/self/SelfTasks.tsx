@@ -35,8 +35,8 @@ export default function SelfTasks({ tasks }: SelfTasksProps) {
     <section className="pnl span2 me-tasks" aria-labelledby="me-task-h">
       <div className="phd">
         <div>
-          <span className="k">// TASKS</span>
-          <h2 id="me-task-h">负责任务</h2>
+          <span className="k t-kicker">// TASKS</span>
+          <h2 className="t-section-title" id="me-task-h">负责任务</h2>
         </div>
         <span className="n">{tasks.length}</span>
       </div>

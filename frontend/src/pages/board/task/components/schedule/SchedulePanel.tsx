@@ -31,8 +31,8 @@ export default function SchedulePanel({
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// SCHEDULE</span>
-          <h2>排期与依赖</h2>
+          <span className="k t-kicker">// SCHEDULE</span>
+          <h2 className="t-section-title">排期与依赖</h2>
         </div>
         <span className="u">单位（天）</span>
       </div>

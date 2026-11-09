@@ -22,8 +22,8 @@ export default function ThreadsPanel({
     <section className="pnl flat">
       <div className="phd">
         <div>
-          <span className="k">// TOPICS</span>
-          <h2>讨论话题</h2>
+          <span className="k t-kicker">// TOPICS</span>
+          <h2 className="t-section-title">讨论话题</h2>
         </div>
         <span className="n" id="th-count">
           {pad2(discussions.length)}

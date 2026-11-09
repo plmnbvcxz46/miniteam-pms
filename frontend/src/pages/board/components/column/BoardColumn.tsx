@@ -49,8 +49,8 @@ export default function BoardColumn({
     <div className={`col ${status.toLowerCase()}`}>
       <header>
         <div>
-          <span className="k">// {status}</span>
-          <h3>{taskStatusLabel[status]}</h3>
+          <span className="k t-kicker">// {status}</span>
+          <h3 className="t-section-title">{taskStatusLabel[status]}</h3>
         </div>
         <span className="count">{tasks.length}</span>
       </header>

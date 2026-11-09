@@ -24,7 +24,7 @@ export default function BoardHeader({
     <div className="vh">
       <div className="vl">
         <div className="k">{kicker}</div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           任务<em>看板</em>
         </h1>
       </div>

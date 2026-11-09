@@ -67,8 +67,8 @@ export default function GanttPanel({
     <section className="pnl gp">
       <div className="phd">
         <div>
-          <span className="k">// SCHEDULE</span>
-          <h2>依赖排期</h2>
+          <span className="k t-kicker">// SCHEDULE</span>
+          <h2 className="t-section-title">依赖排期</h2>
         </div>
         <div className="r">
           <div className="legend">

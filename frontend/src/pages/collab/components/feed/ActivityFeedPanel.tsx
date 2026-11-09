@@ -30,8 +30,8 @@ export default function ActivityFeedPanel({
     <section className="pnl flat dark">
       <div className="phd">
         <div>
-          <span className="k">// ACTIVITY</span>
-          <h2>动态</h2>
+          <span className="k t-kicker">// ACTIVITY</span>
+          <h2 className="t-section-title">动态</h2>
         </div>
         <span className="n" id="fd-count">
           {pad2(activities.length)}

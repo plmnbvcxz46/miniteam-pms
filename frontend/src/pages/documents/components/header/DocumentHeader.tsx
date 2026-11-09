@@ -35,7 +35,7 @@ export default function DocumentHeader({
         <div className="k" id="dc-kicker">
           {kickerText}
         </div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           项目<em>文档</em>
         </h1>
       </div>

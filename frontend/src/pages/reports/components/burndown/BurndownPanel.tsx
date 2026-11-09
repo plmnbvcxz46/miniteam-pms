@@ -10,8 +10,8 @@ export default function BurndownPanel({ burndown }: BurndownPanelProps) {
     <section className="pnl span2">
       <div className="phd">
         <div>
-          <span className="k">// BURNDOWN</span>
-          <h2>剩余任务</h2>
+          <span className="k t-kicker">// BURNDOWN</span>
+          <h2 className="t-section-title">剩余任务</h2>
         </div>
         <div className="legend">
           <span>

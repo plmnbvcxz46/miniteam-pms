@@ -61,8 +61,8 @@ export default function ThreadDetailPanel({
     <section className="pnl flat" id="thread">
       <div className="phd">
         <div>
-          <span className="k">// DISCUSSION</span>
-          <h2 id="th-title">{detail?.title ?? "暂无讨论"}</h2>
+          <span className="k t-kicker">// DISCUSSION</span>
+          <h2 className="t-section-title" id="th-title">{detail?.title ?? "暂无讨论"}</h2>
         </div>
       </div>
       {detail && (

@@ -15,8 +15,8 @@ export default function DeviationPanel({ items }: DeviationPanelProps) {
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// DEVIATION</span>
-          <h2>工期偏差</h2>
+          <span className="k t-kicker">// DEVIATION</span>
+          <h2 className="t-section-title">工期偏差</h2>
         </div>
         <div className="legend">
           <span>

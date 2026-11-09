@@ -9,7 +9,7 @@ export default function NoAccess({ onBack }: NoAccessProps) {
       <div className="vh">
         <div className="vl">
           <div className="k">[ 任务详情 ]</div>
-          <h1 className="vt">
+          <h1 className="vt t-page-title">
             无权<em>查看</em>
           </h1>
         </div>

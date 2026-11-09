@@ -12,7 +12,7 @@ export default function OverviewHeader({
     <div className="vh">
       <div className="vl">
         <div className="k">{kicker}</div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           项目<em>日报</em>
         </h1>
       </div>

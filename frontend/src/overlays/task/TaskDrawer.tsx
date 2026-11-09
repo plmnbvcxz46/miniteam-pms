@@ -113,7 +113,7 @@ export default function TaskDrawer({
   return (
     <Drawer className="ov fx" labelledBy="fx-title" onClose={onClose}>
       <div className="fx-head">
-        <h2 className="fx-title" id="fx-title">
+        <h2 className="fx-title t-overlay-title" id="fx-title">
           {task ? "编辑任务" : "新建任务"}
         </h2>
         <button className="ov-close" type="button" onClick={onClose}>
@@ -126,7 +126,7 @@ export default function TaskDrawer({
       </div>
       <form className="fx-body" noValidate onSubmit={handleSubmit}>
         <div className="fr">
-          <span className="lb">
+          <span className="lb t-label">
             任务名称<b>*</b>
           </span>
           <div>
@@ -141,11 +141,11 @@ export default function TaskDrawer({
               }}
             />
           </div>
-          {titleError && <div className="err">{titleError}</div>}
+          {titleError && <div className="err t-error">{titleError}</div>}
         </div>
 
         <div className="fr">
-          <span className="lb" id={assigneeLabelId}>
+          <span className="lb t-label" id={assigneeLabelId}>
             负责人
           </span>
           <AssigneePicker
@@ -157,7 +157,7 @@ export default function TaskDrawer({
         </div>
 
         <div className="fr">
-          <span className="lb">
+          <span className="lb t-label">
             排期<b>*</b>
           </span>
           <div>
@@ -183,7 +183,7 @@ export default function TaskDrawer({
         </div>
 
         <div className="fr top">
-          <span className="lb">前置任务</span>
+          <span className="lb t-label">前置任务</span>
           <div className="chips">
             {getPredecessorOptions(tasks, task).map((item) => (
               <button
@@ -199,7 +199,7 @@ export default function TaskDrawer({
         </div>
 
         <div className="fr top">
-          <span className="lb">说明</span>
+          <span className="lb t-label">说明</span>
           <div>
             <textarea
               className="u"
@@ -211,7 +211,7 @@ export default function TaskDrawer({
         </div>
 
         {submitError && (
-          <div className="err" role="alert">
+          <div className="err t-error" role="alert">
             {submitError}
           </div>
         )}

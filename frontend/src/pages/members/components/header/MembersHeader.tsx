@@ -21,7 +21,7 @@ export default function MembersHeader({
         <div className="k" id="mb-kicker">
           {memberCount} 名成员 · 本周 {overCapacityCount} 人超出工时上限
         </div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           成员<em>权限</em>
         </h1>
       </div>

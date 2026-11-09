@@ -97,7 +97,7 @@ export default function NewDiscussionDrawer({
   return (
     <Drawer className="ov fx" labelledBy="fx-title" onClose={onClose}>
       <div className="fx-head">
-        <h2 className="fx-title" id="fx-title">
+        <h2 className="fx-title t-overlay-title" id="fx-title">
           发起讨论
         </h2>
         <button className="ov-close" type="button" onClick={onClose}>
@@ -115,7 +115,7 @@ export default function NewDiscussionDrawer({
         onSubmit={(e) => void handleSubmit(e)}
       >
         <div className="fr">
-          <span className="lb">
+          <span className="lb t-label">
             标题<b>*</b>
           </span>
           <div>
@@ -130,11 +130,11 @@ export default function NewDiscussionDrawer({
               }}
             />
           </div>
-          {titleError && <div className="err">{titleError}</div>}
+          {titleError && <div className="err t-error">{titleError}</div>}
         </div>
 
         <div className="fr top">
-          <span className="lb">关联任务</span>
+          <span className="lb t-label">关联任务</span>
           <div className="chips">
             {!lockTask && (
               <button
@@ -162,7 +162,7 @@ export default function NewDiscussionDrawer({
         </div>
 
         <div className="fr top">
-          <span className="lb">
+          <span className="lb t-label">
             第一条消息<b>*</b>
           </span>
           <div>
@@ -187,12 +187,12 @@ export default function NewDiscussionDrawer({
               placeholder="输入讨论内容..."
             />
           </div>
-          {notice && <div className="hint">{notice}</div>}
-          {contentError && <div className="err">{contentError}</div>}
+          {notice && <div className="hint t-hint">{notice}</div>}
+          {contentError && <div className="err t-error">{contentError}</div>}
         </div>
 
         {submitError && (
-          <div className="err" role="alert">
+          <div className="err t-error" role="alert">
             {submitError}
           </div>
         )}

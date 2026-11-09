@@ -11,7 +11,7 @@ export default function CollabHeader({ kicker, onCreate }: CollabHeaderProps) {
         <div className="k" id="tm-kicker">
           {kicker}
         </div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           团队<em>协作</em>
         </h1>
       </div>

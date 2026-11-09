@@ -109,7 +109,7 @@ export default function ProjectInfoPanel({
         <h2>基本信息</h2>
         <div className="rows">
           <div className="srow">
-            <label htmlFor="s-pname">项目名称</label>
+            <label className="t-label" htmlFor="s-pname">项目名称</label>
             <div className="inl">
               <input
                 className="in"
@@ -122,7 +122,7 @@ export default function ProjectInfoPanel({
             </div>
           </div>
           <div className="srow">
-            <label htmlFor="s-pdesc">项目说明</label>
+            <label className="t-label" htmlFor="s-pdesc">项目说明</label>
             <div>
               <input
                 className="in"
@@ -135,7 +135,7 @@ export default function ProjectInfoPanel({
             </div>
           </div>
           <div className="srow">
-            <span className="lb">项目周期</span>
+            <span className="lb t-label">项目周期</span>
             <div className="inl">
               <input
                 className="in sm"
@@ -172,7 +172,7 @@ export default function ProjectInfoPanel({
         <h2>存档</h2>
         <div className="rows">
           <div className="srow">
-            <span className="lb">项目状态</span>
+            <span className="lb t-label">项目状态</span>
             <div className="inl">
               {archived ? (
                 <span className="v">已归档，项目现在是只读的</span>

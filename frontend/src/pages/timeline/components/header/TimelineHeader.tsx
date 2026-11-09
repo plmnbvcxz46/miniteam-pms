@@ -23,7 +23,7 @@ export default function TimelineHeader({
     <div className="vh">
       <div className="vl">
         <div className="k">{kicker}</div>
-        <h1 className="vt">
+        <h1 className="vt t-page-title">
           时间<em>线</em>
         </h1>
       </div>

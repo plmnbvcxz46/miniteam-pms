@@ -45,7 +45,7 @@ export default function TaskHeader({
             <span className="tk-code">{taskCode}</span>
           </span>
         </div>
-        <h1 className="vt">{task.title}</h1>
+        <h1 className="vt t-page-title">{task.title}</h1>
         <p className="tk-meta">
           <span className="st">
             <i className={`key ${taskStatusKey[task.status]}`} />

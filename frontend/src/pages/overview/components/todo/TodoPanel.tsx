@@ -21,8 +21,8 @@ export default function TodoPanel({ items, total, onOpenTask }: TodoPanelProps) 
     <section className="pnl todo-list">
       <div className="phd">
         <div>
-          <span className="k">// TODAY</span>
-          <h2>今日待办</h2>
+          <span className="k t-kicker">// TODAY</span>
+          <h2 className="t-section-title">今日待办</h2>
         </div>
         <span className="n">{pad2(total)}</span>
       </div>

@@ -49,8 +49,8 @@ export default function ForecastHero({
     <section className={`hero${forecast.risk ? "" : " calm"}`} id="rp-hero">
       <div className="hk">
         <div>
-          <span className="k">// FORECAST</span>
-          <h2>预测完工</h2>
+          <span className="k t-kicker">// FORECAST</span>
+          <h2 className="t-section-title">预测完工</h2>
         </div>
         {forecast.risk ? (
           <span className="chip">风险</span>

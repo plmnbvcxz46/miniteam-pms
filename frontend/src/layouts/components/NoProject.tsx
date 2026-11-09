@@ -9,7 +9,7 @@ export default function NoProject({ onCreate }: NoProjectProps) {
       <div className="vh">
         <div className="vl">
           <div className="k">[ 项目 ]</div>
-          <h1 className="vt">
+          <h1 className="vt t-page-title">
             还没有<em>项目</em>
           </h1>
         </div>

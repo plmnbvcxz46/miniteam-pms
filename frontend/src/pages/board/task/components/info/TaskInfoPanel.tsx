@@ -23,16 +23,16 @@ export default function TaskInfoPanel({
     <section className="pnl">
       <div className="phd">
         <div>
-          <span className="k">// NOTES</span>
-          <h2>任务说明</h2>
+          <span className="k t-kicker">// NOTES</span>
+          <h2 className="t-section-title">任务说明</h2>
         </div>
       </div>
       <div className="scroll-y">
         <p className="tk-desc">{task.description ?? "还没有说明。"}</p>
         <div className="phd" style={{ marginTop: "16px" }}>
           <div>
-            <span className="k">// LINKS</span>
-            <h2>文档与讨论</h2>
+            <span className="k t-kicker">// LINKS</span>
+            <h2 className="t-section-title">文档与讨论</h2>
           </div>
         </div>
         <div id="tk-links">

@@ -13,8 +13,8 @@ export default function DocumentRevisingHeader({
   return (
     <header className="dsec-h">
       <div>
-        <span className="k">// REVISING</span>
-        <h3>修订中</h3>
+        <span className="k t-kicker">// REVISING</span>
+        <h3 className="t-section-title">修订中</h3>
       </div>
       <div className="legend">
         {legends.map((item) => (

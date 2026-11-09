@@ -55,17 +55,9 @@
   margin-right: auto;
 }
 
-.dsec-h .k {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
-  color: var(--text-mute);
-}
 
 .dsec-h h3 {
   margin: 0;
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-black);
 }
 
 .dsec-h .count {

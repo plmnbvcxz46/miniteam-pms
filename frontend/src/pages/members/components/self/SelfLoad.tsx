@@ -20,8 +20,8 @@ export default function SelfLoad({ hours, capacity }: SelfLoadProps) {
     >
       <div className="phd">
         <div>
-          <span className="k">// HOURS</span>
-          <h2 id="me-load-h">本周工时</h2>
+          <span className="k t-kicker">// HOURS</span>
+          <h2 className="t-section-title" id="me-load-h">本周工时</h2>
         </div>
         {isOver && <span className="chip">超出 {hours - capacity}</span>}
       </div>
