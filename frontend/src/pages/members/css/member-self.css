@@ -31,11 +31,11 @@
 }
 
 .me-name {
-  font-family: var(--disp);
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -1px;
+  font-family: var(--font-disp);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-snug);
 }
 
 .me-kv {
@@ -44,17 +44,17 @@
   column-gap: 12px;
   row-gap: 2px;
   margin: 0;
-  font-family: var(--mono);
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
 }
 
 .me-kv dt {
-  color: var(--mute);
+  color: var(--text-mute);
 }
 
 .me-kv dd {
   margin: 0;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -74,9 +74,9 @@
   flex-shrink: 0;
   padding: 2px 6px;
   border: 1px solid var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
 }
 
 /* ---------- 本周工时 ---------- */
@@ -90,18 +90,18 @@
 }
 
 .me-big {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 56px;
-  line-height: 0.85;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
 }
 
 .me-big small {
   margin-left: 8px;
-  font-size: 14px;
+  font-size: var(--fs-lg);
   letter-spacing: 0;
-  color: var(--mute);
+  color: var(--text-mute);
 }
 
 .me-load .track {
@@ -109,12 +109,12 @@
 }
 
 .me-load.over .me-big {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 
 .me-load .chip {
   background: var(--signal);
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* ---------- 我的权限 ---------- */
@@ -137,8 +137,8 @@
 }
 
 .me-perm-list dt {
-  font-size: 13px;
-  color: var(--mute);
+  font-size: var(--fs-md);
+  color: var(--text-mute);
 }
 
 .me-perm-list dd {
@@ -146,15 +146,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-mute);
 }
 
 .me-perm-list .on dt,
 .me-perm-list .on dd {
-  color: var(--ink);
-  font-weight: 700;
+  color: var(--text);
+  font-weight: var(--fw-bold);
 }
 
 /* ---------- 我负责的任务 ---------- */
@@ -183,21 +183,21 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
 }
 
 .me-stat b {
-  font-family: var(--mono);
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -1px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-heavy);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-snug);
 }
 
 .me-stat .zero {
-  color: var(--mute);
+  color: var(--text-mute);
 }
 
 .me-stat .zero .key {
@@ -249,9 +249,9 @@
 .me-task .no,
 .me-task .st,
 .me-task .due {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
 }
 
 .me-task .st {
@@ -261,8 +261,8 @@
 }
 
 .me-task .tt {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -275,7 +275,7 @@
 }
 
 .me-task.late .due {
-  color: var(--signal-text);
+  color: var(--text-alert);
 }
 
 /* ---------- 我的变更：复用 .plog .hv 行样式，改为单列铺满 ---------- */
@@ -296,9 +296,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-mute);
 }
 
 /* ---------- 窄屏：单列，整页滚动 ---------- */
