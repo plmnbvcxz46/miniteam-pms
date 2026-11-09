@@ -142,7 +142,7 @@ export function parseDateTime(value: string): DayTime {
 
 /**
  * 时间轴范围：[min(开始日, 今天) − pad 天, 最后一个要画的时间点 + pad 天]。
- * 最后一个时间点取截止日 24:00、完成日 24:00、今天 00:00 中最晚的，
+ * 最后一个时间点取截止日 24:00、完成日 24:00、今天 24:00 中最晚的，
  * 这样今天线、完成标记、截止线一定落在范围内，不用裁切。pad 默认 2 天，概览小条传 0
  */
 export function getAxisRange(
@@ -152,11 +152,11 @@ export function getAxisRange(
 ): AxisRange {
   const first = Math.min(toDay(task.planStart ?? today), toDay(today));
   const last = Math.max(
-    task.dueDate ? dayEnd(task.dueDate) : toDay(today),
+    task.dueDate ? dayEnd(task.dueDate) : dayEnd(today),
     task.status === "DONE" && task.actualEnd
       ? dayEnd(task.actualEnd)
       : -Infinity,
-    toDay(today),
+    dayEnd(today),
   );
   return { start: first - pad, end: last + pad };
 }

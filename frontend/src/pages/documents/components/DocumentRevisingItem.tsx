@@ -50,16 +50,16 @@ export default function DocumentRevisingItem({
 }: DocumentRevisingItemProps) {
   const vd = doc.hist.map((h) => getDayOffset(h.date, today));
   const first = Math.max(0, Math.min(...vd));
-  // 没有截止日的文档当作今天截止，条形图不画逾期
-  const due = doc.due ? getDayOffset(doc.due, today) : todayOffset;
+  // 截止线在截止日 24:00（和任务条一致）；没有截止日的文档当作今天截止，条形图不画逾期
+  const due = doc.due ? getDayOffset(doc.due, today) + 1 : todayOffset;
 
   // 动态派生状态与逾期判定
   const { status, isLate } = getDocStatus(doc, today);
 
-  // 统一整点对齐：
-  // 正常进行阶段：截止于截止日（逾期时）或今天此时（进行中）
+  // 都按 24:00 对齐：
+  // 正常进行阶段：截止于截止日（逾期时）或今天（进行中）
   const onSegX1 = isLate ? due : todayOffset;
-  // 逾期阶段：从截止日整点严格延伸到今天整点线
+  // 逾期阶段：从截止日 24:00 延伸到今天 24:00 的今天线
   const overSegX0 = due;
   const overSegX1 = todayOffset;
 
