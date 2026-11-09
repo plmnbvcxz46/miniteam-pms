@@ -51,12 +51,14 @@
   gap: 10px;
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
+  line-height: var(--lh-snug);
   color: var(--text-mute);
   padding-top: 4px;
 }
 .load .axisrow span:nth-child(2) {
   position: relative;
-  height: 12px;
+  /* 比行高多留 2px：10px 等宽字的字形框约 12.8px，留不够会多出 1px，面板出滚动条 */
+  height: 14px;
 }
 .load .axisrow i {
   position: absolute;
