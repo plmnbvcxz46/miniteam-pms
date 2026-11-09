@@ -44,8 +44,12 @@ function findDropTarget(x: number, y: number): DropTarget | null {
   };
 }
 
+/**
+ * @param canDrop 能不能放进某一列；不能放的列上，占位留在原处，松手等于没拖
+ */
 export function useCardDrag(
   onDrop: (taskId: number, target: DropTarget) => void,
+  canDrop: (taskId: number, status: TaskStatus) => boolean = () => true,
 ) {
   const [drag, setDrag] = useState<CardDrag | null>(null);
   const pressRef = useRef<Press | null>(null);
@@ -66,16 +70,18 @@ export function useCardDrag(
       if (!dragRef.current && moved < DRAG_THRESHOLD) return;
 
       document.body.classList.add("dragging");
+      const found = findDropTarget(e.clientX, e.clientY);
       update({
         taskId: press.taskId,
         width: press.rect.width,
         height: press.rect.height,
         left: press.rect.left + e.clientX - press.startX,
         top: press.rect.top + e.clientY - press.startY,
-        target:
-          findDropTarget(e.clientX, e.clientY) ??
-          dragRef.current?.target ??
-          press.target,
+        target: !found
+          ? (dragRef.current?.target ?? press.target)
+          : canDrop(press.taskId, found.status)
+            ? found
+            : press.target,
       });
     };
 
@@ -105,7 +111,7 @@ export function useCardDrag(
       document.removeEventListener("pointercancel", handleCancel);
       document.removeEventListener("keydown", handleKey);
     };
-  }, [onDrop]);
+  }, [onDrop, canDrop]);
 
   // 离开页面时清掉拖动中的全局样式
   useEffect(() => () => document.body.classList.remove("dragging"), []);
