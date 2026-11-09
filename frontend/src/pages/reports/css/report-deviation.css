@@ -24,20 +24,20 @@
   border-bottom: 0;
 }
 .drow > span:first-child {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .drow .v {
   text-align: right;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-heavy);
 }
 .drow .v.late {
-  color: var(--signal);
+  color: var(--text-accent);
 }
 .dbars {
   position: relative;
