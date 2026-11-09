@@ -21,7 +21,7 @@ src/
 │   └── utils.ts             # 本模块的纯函数（可选）
 ├── shared/                  # 多处共用的东西
 │   ├── components/          # 通用组件（Drawer、TaskBar）
-│   ├── constants/           # 常量（task.ts 任务状态、labels.ts 中文名、permissions.ts、reports.ts、legends.ts）和替身 mock.ts
+│   ├── constants/           # 常量（task.ts 任务状态、labels.ts 中文名、permissions.ts、reports.ts、legends.ts）
 │   ├── types/               # 类型，global.ts 放全局共享，其余按模块
 │   └── utils/               # 通用函数（date、download、load）
 └── styles/                  # 全局样式
@@ -40,9 +40,9 @@ src/
 - **一屏展示与内联滚动**：主页面内容应尽量收敛在一屏视口内展示，避免被 SVG 固有宽高比或长列表反向撑高整页。SVG 图表外层容器使用相对/绝对定位贴合网格分配高度；多行列表区块超出高度时开启局部内联滚动（`overflow-y: auto` 配合细滚动条）。
 - **面板头部 `// 英文词` + 中文标题对照**：面板标题区（`.phd`、`.dsec-h`、`.hk`）统一采用上方 `<span className="k">// WORD</span>` + 下方中文标题的双层结构（如 `// BURNDOWN` + `剩余任务`、`// TASKS` + `完成任务`、`// REVISING` + `修订中`）。上方英文尽量用一个自然贴切的单词作视觉装饰，无需生硬直译。
 
-## 常量、类型与替身
+## 常量、类型与数据来源
 
-常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据都来自 `src/api/`，还没换成接口的替身放 `src/shared/constants/mock.ts`，换掉一处删一处。
+常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据一律来自 `src/api/`，不写假数据。
 
 ### 全局上下文（`shared/types/global.ts`、`state/`）
 
@@ -53,14 +53,12 @@ src/
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | `shared/types/global.ts`，对应 OpenAPI 公共 schema |
 | 当前登录身份（用户、系统角色） | `src/state/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`，已接真实接口，token 存在 `sessionStorage`（`src/api/http.ts`） |
 | 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/state/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。项目、成员、权限变更记录来自接口（`src/state/project/` 的 `ProjectProvider` 取 `GET /projects`、`/projects/{id}`、`/members`、`/activities`），`useAccess()` 在上面加“看过去的期和已归档项目只读”。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目；权限以接口的 `myPermissions` 为准 |
-| 正在看哪一期、各页面的“今天” | `src/state/issue/` 的 `useIssue()`。过去的期只读；期列表来自 `GET /projects/{projectId}/issues`（期号按项目开始日期每天一期），某期快照 `GET /projects/{projectId}/issues/{issueDate}` 还没接 |
+| 正在看哪一期、各页面的“今天” | `src/state/issue/` 的 `useIssue()`。过去的期只读；期列表来自 `GET /projects/{projectId}/issues`（期号按项目开始日期每天一期），某期快照 `GET /projects/{projectId}/issues/{issueDate}` 由 `IssueProvider` 取回 |
 | `roleLabel` 等枚举中文名 | `shared/constants/labels.ts` |
 
-### 前端替身（接口接通时要换掉）
+### 前端替身
 
-目前页面读的数据都已经来自接口，只剩 `shared/constants/mock.ts` 里给演示用的少量数据（`users`、`systemUsers`、`configs` 等）。以后新增页面如果先用假数据（放 `shared/constants/mock.ts`），要把算出来的替身值列在这里，接口接通时和假数据一起删。
-
-假数据只用来让页面跑起来，字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。系统角色已统一为系统管理员 `ADMIN` 和普通用户 `USER` 两种。
+目前没有替身，页面数据全部来自接口。以后新页面如果要先用假数据跑起来，假数据放在该页面目录里，并在这里列出来，接口接通时一起删；字段以 `docs/api/openapi.yaml` 为准，后端按接口文档实现，不要照着假数据反推。系统角色已统一为系统管理员 `ADMIN` 和普通用户 `USER` 两种。
 
 ### 已接真实接口的部分
 

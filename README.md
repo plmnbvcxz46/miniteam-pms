@@ -40,7 +40,7 @@ pnpm dev
 
 ## 前端页面
 
-页面都已接通真实接口（`docs/api/openapi.yaml`），只剩少量替身数据在 `frontend/src/shared/constants/mock.ts`，换掉一处删一处。写页面前先看 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
+页面都已接通真实接口（`docs/api/openapi.yaml`），没有假数据。写页面前先看 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
 
 | 页面 | 路由 | 说明 |
 |---|---|---|
