@@ -5,11 +5,11 @@ import { progressApi } from "../../api/progress";
 import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";
 import { useTaskStore } from "../../state/task/taskStore";
-import CriticalPanel from "./components/critical/CriticalPanel";
-import GanttPanel from "./components/gantt/GanttPanel";
+import CriticalPanel from "./components/CriticalPanel";
+import GanttPanel from "./components/GanttPanel";
 import TimelineHeader, {
   type TimelineScale,
-} from "./components/header/TimelineHeader";
+} from "./components/TimelineHeader";
 import {
   getTimelineRange,
   getTimelineTasks,

@@ -7,13 +7,13 @@ import { useIssueData } from "../../state/issue/useIssueData";
 import { useProjectPeriod } from "../../layout/useProjectPeriod";
 import { useTaskStore } from "../../state/task/taskStore";
 import { toForecast } from "../timeline/utils";
-import CriticalChainPanel from "./components/critical/CriticalChainPanel";
-import FigureStrip from "./components/figures/FigureStrip";
-import HeadlinePanel from "./components/headline/HeadlinePanel";
-import OverviewHeader from "./components/header/OverviewHeader";
-import ProgressPanel from "./components/progress/ProgressPanel";
-import SchedulePanel from "./components/schedule/SchedulePanel";
-import TodoPanel from "./components/todo/TodoPanel";
+import CriticalChainPanel from "./components/CriticalChainPanel";
+import FigureStrip from "./components/FigureStrip";
+import HeadlinePanel from "./components/HeadlinePanel";
+import OverviewHeader from "./components/OverviewHeader";
+import ProgressPanel from "./components/ProgressPanel";
+import SchedulePanel from "./components/SchedulePanel";
+import TodoPanel from "./components/TodoPanel";
 import {
   formatKicker,
   getDayProgress,

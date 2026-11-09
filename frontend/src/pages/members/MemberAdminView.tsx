@@ -6,10 +6,10 @@ import { useIssue } from "../../state/issue/useIssue";
 import { permDefs } from "../../shared/constants/permissions";
 import { getLoadScale } from "../../shared/utils/load";
 import { formatCapacity, getOverCapacityCount } from "./utils";
-import MembersHeader from "./components/header/MembersHeader";
-import MemberCrew from "./components/crew/MemberCrew";
-import PermLog from "./components/log/PermLog";
-import InviteMemberDrawer from "./components/drawer/InviteMemberDrawer";
+import MembersHeader from "./components/MembersHeader";
+import MemberCrew from "./components/MemberCrew";
+import PermLog from "./components/PermLog";
+import InviteMemberDrawer from "./components/InviteMemberDrawer";
 import "./css/members.css";
 
 /** 项目经理和有“管理成员”权限的人看到的成员管理页：成员和变更记录来自接口，改了马上刷新 */

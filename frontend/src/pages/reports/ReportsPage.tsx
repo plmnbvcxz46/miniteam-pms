@@ -7,12 +7,12 @@ import { useProject } from "../../state/project/useProject";
 import type { BurndownRange } from "../../shared/types/reports";
 import { downloadBlob } from "../../shared/utils/download";
 import { useTaskStore } from "../../state/task/taskStore";
-import ReportsHeader from "./components/header/ReportsHeader";
-import BurndownPanel from "./components/burndown/BurndownPanel";
-import LoadPanel from "./components/load/LoadPanel";
-import WeeklyPanel from "./components/weekly/WeeklyPanel";
-import DeviationPanel from "./components/deviation/DeviationPanel";
-import ForecastHero from "./components/forecast/ForecastHero";
+import ReportsHeader from "./components/ReportsHeader";
+import BurndownPanel from "./components/BurndownPanel";
+import LoadPanel from "./components/LoadPanel";
+import WeeklyPanel from "./components/WeeklyPanel";
+import DeviationPanel from "./components/DeviationPanel";
+import ForecastHero from "./components/ForecastHero";
 import "./css/reports.css";
 
 export default function ReportsPage() {

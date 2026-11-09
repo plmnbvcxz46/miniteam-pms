@@ -3,12 +3,12 @@ import { useAccess } from "../../state/access/useAccess";
 import { useMe } from "../../state/auth/useAuth";
 import { getProfile } from "../../shared/constants/mock";
 import { useTaskStore } from "../../state/task/taskStore";
-import SelfHeader from "./components/self/SelfHeader";
-import SelfIdentity from "./components/self/SelfIdentity";
-import SelfLoad from "./components/self/SelfLoad";
-import SelfLog from "./components/self/SelfLog";
-import SelfPerms from "./components/self/SelfPerms";
-import SelfTasks from "./components/self/SelfTasks";
+import SelfHeader from "./components/SelfHeader";
+import SelfIdentity from "./components/SelfIdentity";
+import SelfLoad from "./components/SelfLoad";
+import SelfLog from "./components/SelfLog";
+import SelfPerms from "./components/SelfPerms";
+import SelfTasks from "./components/SelfTasks";
 import "./css/members.css";
 
 /** 没有“管理成员”权限的人看到的“我的信息”：只有自己在当前项目里的信息 */

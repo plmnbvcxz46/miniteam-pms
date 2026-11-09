@@ -17,7 +17,7 @@ import DocumentsPage from "./pages/documents/DocumentsPage";
 import MembersPage from "./pages/members/MembersPage";
 import TimelinePage from "./pages/timeline/TimelinePage";
 import CollabPage from "./pages/collab/CollabPage";
-import TaskPage from "./pages/board/task/TaskPage";
+import TaskPage from "./pages/task/TaskPage";
 
 const router = createHashRouter([
   {

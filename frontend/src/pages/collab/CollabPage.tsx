@@ -13,11 +13,11 @@ import type {
 import type { Activity } from "../../shared/types/global";
 import { useDocumentStore } from "../../state/document/documentStore";
 import { useTaskStore } from "../../state/task/taskStore";
-import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
-import NewDiscussionDrawer from "./components/drawer/NewDiscussionDrawer";
-import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";
-import CollabHeader from "./components/header/CollabHeader";
-import ThreadsPanel from "./components/threads/ThreadsPanel";
+import ThreadDetailPanel from "./components/ThreadDetailPanel";
+import NewDiscussionDrawer from "./components/NewDiscussionDrawer";
+import ActivityFeedPanel from "./components/ActivityFeedPanel";
+import CollabHeader from "./components/CollabHeader";
+import ThreadsPanel from "./components/ThreadsPanel";
 import {
   activitiesUpTo,
   createDraftFromActivity,
