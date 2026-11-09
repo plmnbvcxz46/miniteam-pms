@@ -24,7 +24,7 @@ export default function LoadPanel({ workload }: LoadPanelProps) {
           <span className="k">// WORKLOAD</span>
           <h2>成员工时</h2>
         </div>
-        <span className="u">单位：小时（40）</span>
+        <span className="u">单位：小时（{sharedCapacity}）</span>
       </div>
       <div className="load" id="load">
         {members.map((member) => (

@@ -12,7 +12,7 @@ export default function LoadAxis({ capPercent, capacity }: LoadAxisProps) {
       <span>
         <i style={{ left: 0 }}>0</i>
         {capPercent !== null && capacity !== null && (
-          <i style={{ left: `${capPercent}%` }}>上限 {capacity}</i>
+          <i style={{ left: `${capPercent}%` }}>{capacity}</i>
         )}
       </span>
       <span />
