@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { useIssue } from "../../../state/issue/useIssue";
-import { formatDayLabel, formatFullDate } from "../../../utils/date";
-import { useDismiss } from "../../useDismiss";
+import { useIssue } from "../../state/issue/useIssue";
+import { formatDayLabel, formatFullDate } from "../../utils/date";
+import { useDismiss } from "../useDismiss";
 
 export default function IssueSwitch() {
   const [open, setOpen] = useState(false);

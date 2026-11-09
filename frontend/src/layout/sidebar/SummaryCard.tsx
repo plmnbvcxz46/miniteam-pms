@@ -1,7 +1,7 @@
-import { useIssue } from "../../../state/issue/useIssue";
-import { useTaskStore } from "../../../state/task/taskStore";
-import type { ProjectPeriod } from "../../../types/global";
-import { getPeriodProgress } from "../../utils";
+import { useIssue } from "../../state/issue/useIssue";
+import { useTaskStore } from "../../state/task/taskStore";
+import type { ProjectPeriod } from "../../types/global";
+import { getPeriodProgress } from "../utils";
 
 export default function SummaryCard({ period }: { period: ProjectPeriod }) {
   const { taskMap } = useTaskStore();

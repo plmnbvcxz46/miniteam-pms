@@ -4,7 +4,7 @@ import { useAccess } from "../../state/access/useAccess";
 import { progressApi } from "../../api/progress";
 import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";
-import { useProjectPeriod } from "../../layouts/useProjectPeriod";
+import { useProjectPeriod } from "../../layout/useProjectPeriod";
 import { useTaskStore } from "../../state/task/taskStore";
 import { toForecast } from "../timeline/utils";
 import CriticalChainPanel from "./components/critical/CriticalChainPanel";

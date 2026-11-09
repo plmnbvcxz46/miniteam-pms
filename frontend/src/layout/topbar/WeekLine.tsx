@@ -1,6 +1,6 @@
-import type { ProjectPeriod } from "../../../types/global";
-import { useIssue } from "../../../state/issue/useIssue";
-import { getWeekProgress } from "../../utils";
+import type { ProjectPeriod } from "../../types/global";
+import { useIssue } from "../../state/issue/useIssue";
+import { getWeekProgress } from "../utils";
 
 export default function WeekLine({ period }: { period: ProjectPeriod }) {
   const { today } = useIssue();

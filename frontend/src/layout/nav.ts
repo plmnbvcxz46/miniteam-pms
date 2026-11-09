@@ -1,4 +1,4 @@
-import type { NavIconName } from "./components/sidebar/NavIcon";
+import type { NavIconName } from "./sidebar/NavIcon";
 
 /** 侧边栏导航项 */
 export interface NavItem {

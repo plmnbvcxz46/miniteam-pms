@@ -7,7 +7,7 @@ import ConfigProvider from "./state/config/ConfigProvider";
 import IssueProvider from "./state/issue/IssueProvider";
 import ProjectProvider from "./state/project/ProjectProvider";
 import LoginPage from "./pages/login/LoginPage";
-import Shell from "./layouts/Shell";
+import Shell from "./layout/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./state/task/TaskProvider";

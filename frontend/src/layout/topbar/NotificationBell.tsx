@@ -1,10 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { notificationTypeLabel } from "../../../constants/labels";
-import type { Notification } from "../../../types/global";
-import { getLocalToday } from "../../../utils/date";
-import { useDismiss } from "../../useDismiss";
-import { formatNotificationTime } from "../../utils";
+import { notificationTypeLabel } from "../../constants/labels";
+import type { Notification } from "../../types/global";
+import { getLocalToday } from "../../utils/date";
+import { useDismiss } from "../useDismiss";
+import { formatNotificationTime } from "../utils";
 
 interface NotificationBellProps {
   notifications: Notification[];
