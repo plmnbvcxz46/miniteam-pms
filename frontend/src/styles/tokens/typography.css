@@ -1,0 +1,55 @@
+/* 字体基础定义：字体族、字号、字重、行高、字距、文字颜色。
+   页面和组件只引用这里的变量，不再写死 px、字体名和文字色；需要新档位先在这里加，不要就地造一个值。
+   组合好的文字样式（标题、标签、说明等）见 ../typography/roles.css。 */
+:root {
+  /* 字体族：正文中文优先；展示大字用 Archivo；编号、数字、英文小标签用等宽 */
+  --font-sans:
+    "Noto Sans SC", "Archivo", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-disp: "Archivo", "Noto Sans SC", "PingFang SC", sans-serif;
+  --font-mono: "JetBrains Mono", "Noto Sans SC", ui-monospace, monospace;
+
+  /* 字号：正文 5 档（10–15），展示 7 档（18–60） */
+  --fs-2xs: 10px; /* 等宽小标签、坐标轴、时间、提示 */
+  --fs-xs: 11px; /* 按钮、等宽元信息、次要数据 */
+  --fs-sm: 12px; /* 次要正文、列表项 */
+  --fs-md: 13px; /* 正文、表单标签、选项 */
+  --fs-lg: 15px; /* 卡片和面板标题、输入框文字 */
+  --fs-xl: 18px;
+  --fs-2xl: 22px; /* 小标题、人名 */
+  --fs-3xl: 28px; /* 中号数字、个人页姓名 */
+  --fs-4xl: 36px;
+  --fs-5xl: 44px; /* 抽屉标题、详情页标题 */
+  --fs-6xl: 56px; /* 大号统计数字 */
+  --fs-7xl: 60px; /* 页面标题 */
+
+  /* 字重 */
+  --fw-regular: 400;
+  --fw-medium: 500; /* 少量弱化文字 */
+  --fw-bold: 700;
+  --fw-heavy: 800; /* 等宽数字 */
+  --fw-black: 900; /* 标题 */
+
+  /* 行高：px 行高是控件高度，属于布局，不在这里 */
+  --lh-solid: 0.88; /* 大号数字，压紧上下留白 */
+  --lh-none: 1;
+  --lh-snug: 1.2;
+  --lh-normal: 1.45;
+  --lh-loose: 1.7; /* 长段落、消息正文 */
+
+  /* 字距：字越大收得越紧 */
+  --ls-tighter: -3px; /* 56px 以上数字 */
+  --ls-tight: -2px; /* 40px 档 */
+  --ls-snug: -1px; /* 22–36px 档 */
+  --ls-slight: -0.5px;
+  --ls-wide: 0.5px; /* 等宽小标签 */
+  --ls-wider: 1px;
+
+  /* 文字颜色，按层级 */
+  --text: var(--ink); /* 标题、正文 */
+  --text-mute: var(--mute); /* 说明、时间、次要信息 */
+  --text-faint: #8f8d86; /* 占位、不可用 */
+  --text-inverse: var(--paper); /* 黑底上的字 */
+  --text-inverse-mute: #cfcfca; /* 黑底上的次要字 */
+  --text-alert: var(--signal-text); /* 风险、错误，橙色可读版 */
+  --text-accent: var(--signal); /* 大号结论数字 */
+}

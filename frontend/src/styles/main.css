@@ -1,0 +1,6 @@
+/* 全局样式入口，按层引入，顺序不要调：
+   1. tokens/      设计变量（只有 :root 变量，不产生样式）
+   2. index.css    旧的全局样式，还没拆，逐步迁到 tokens/ 等各层
+   各页面自己的样式在 pages/<模块>/css/，由页面组件引入。 */
+@import "./tokens/typography.css";
+@import "./index.css";
