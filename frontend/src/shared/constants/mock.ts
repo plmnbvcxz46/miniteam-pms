@@ -19,7 +19,7 @@ export const users = {
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
 
-/** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 utils/date 的 getProjectToday() 读取 */
+/** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 shared/utils/date 的 getProjectToday() 读取 */
 export const projectTodayDate = "2026-10-22";
 
 const { pmA, devA, devB, qaC } = users;

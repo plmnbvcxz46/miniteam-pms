@@ -28,7 +28,7 @@ export interface LoginResponse {
 /**
  * 登录后的身份，由 GET /auth/me 得出。
  * 只管“你是谁、系统层面能做什么”；在某个项目里的角色和权限不放这里，
- * 由 src/access/ 按当前项目的成员关系算出
+ * 由 src/state/access/ 按当前项目的成员关系算出
  * - systemPermissions：系统权限编码，有 system:view 的是系统管理员
  */
 export interface Account {
