@@ -10,10 +10,7 @@
   --mute: #5e5e5e;
   --signal: #ff5a1f;
   --signal-text: #b83a00;
-  --sans:
-    "Noto Sans SC", "Archivo", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --disp: "Archivo", "Noto Sans SC", "PingFang SC", sans-serif;
-  --mono: "JetBrains Mono", "Noto Sans SC", ui-monospace, monospace;
+  /* 字体、字号、文字色见 tokens/typography.css */
   --hatch: repeating-linear-gradient(
     135deg,
     var(--signal) 0 3px,
