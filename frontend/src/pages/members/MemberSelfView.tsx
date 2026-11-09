@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useAccess } from "../../state/access/useAccess";
 import { useMe } from "../../state/auth/useAuth";
-import { getProfile } from "../../shared/constants/mock";
 import { useTaskStore } from "../../state/task/taskStore";
 import SelfHeader from "./components/SelfHeader";
 import SelfIdentity from "./components/SelfIdentity";
@@ -13,7 +12,7 @@ import "./css/members.css";
 
 /** 没有“管理成员”权限的人看到的“我的信息”：只有自己在当前项目里的信息 */
 export default function MemberSelfView() {
-  const { user } = useMe();
+  const { user, skillTags } = useMe();
   const { members, permissions, projectRole, permLogs } = useAccess();
   const { taskMap } = useTaskStore();
 
@@ -41,7 +40,7 @@ export default function MemberSelfView() {
           user={user}
           position={member?.position ?? null}
           projectRole={projectRole}
-          skillTags={getProfile(user.id).skillTags}
+          skillTags={skillTags}
         />
         <SelfLoad hours={hours} capacity={capacity} />
         <SelfPerms permissions={permissions} />
