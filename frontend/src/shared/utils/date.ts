@@ -1,5 +1,3 @@
-import { projectTodayDate } from "../constants/mock";
-
 export const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** 数字补成两位，例如 5 -> "05" */
@@ -34,11 +32,6 @@ interface AxisTask {
   dueDate: string | null;
   actualEnd: string | null;
   status: string;
-}
-
-/** 项目日期，即顶栏“第 N 期 YYYY 年 MM 月 DD 日”显示的日期，不用系统时间。yyyy-MM-dd */
-export function getProjectToday(): string {
-  return projectTodayDate;
 }
 
 /** 本机此刻在项目所在地（Asia/Shanghai）是哪一天，yyyy-MM-dd；新建项目的默认开始日期等用它 */

@@ -3,7 +3,6 @@ import type { ConfigItem, ProfileUpdate, SystemUser } from "../types/settings";
 
 /*
  * 还没换成接口的替身数据，换掉一处删一处，全删完就删掉本文件：
- * - projectTodayDate：文档页时间轴的“今天”，应改用 useIssue() 的当天
  * - getProfile / systemUsers：个人页的技能标签，应改用 GET /auth/me
  * - configs：系统参数接口没取到时的默认值
  */
@@ -19,8 +18,6 @@ export const users = {
   qaC: { id: 4, username: "qa_c", realName: "普通员工 C" },
 } satisfies Record<string, UserBrief>;
 
-/** 项目日期，与顶栏“2026 年 10 月 22 日”同一天。通过 shared/utils/date 的 getProjectToday() 读取 */
-export const projectTodayDate = "2026-10-22";
 
 const { pmA, devA, devB, qaC } = users;
 const guest: UserBrief = { id: 6, username: "guest", realName: "访客" };

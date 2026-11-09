@@ -4,8 +4,8 @@ import { getDocStatus } from "../utils";
 interface DocumentHeaderProps {
   /** 文档列表数据源 */
   docs: DocumentItem[];
-  /** 今日基准日期（从假数据快照注入） */
-  currentDate?: string;
+  /** 今天，yyyy-MM-dd */
+  today: string;
   /** 搜索关键词 */
   searchKeyword: string;
   /** 搜索关键词变更回调 */
@@ -16,14 +16,14 @@ interface DocumentHeaderProps {
 
 export default function DocumentHeader({
   docs,
-  currentDate,
+  today,
   searchKeyword,
   onSearchChange,
   onUploadClick,
 }: DocumentHeaderProps) {
   const revisingCount = docs.filter((d) => !d.final).length;
   const finalCount = docs.filter((d) => !!d.final).length;
-  const lateCount = docs.filter((d) => getDocStatus(d, currentDate).isLate).length;
+  const lateCount = docs.filter((d) => getDocStatus(d, today).isLate).length;
 
   const kickerText = `修订中 ${revisingCount} 份 · 定稿 ${finalCount} 份 · ${
     lateCount > 0 ? `${lateCount} 份逾期` : "没有逾期"

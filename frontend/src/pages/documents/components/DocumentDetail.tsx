@@ -9,8 +9,8 @@ import DocumentDetailHistory from "./DocumentDetailHistory";
 
 interface DocumentDetailProps {
   doc: BoundDocument | null;
-  /** 今日基准日期（从假数据快照注入） */
-  currentDate?: string;
+  /** 今天，yyyy-MM-dd */
+  today: string;
   onTaskClick?: (taskId: number) => void;
   onUploadVersion?: () => void;
   onFinalize?: () => void;
@@ -19,7 +19,7 @@ interface DocumentDetailProps {
 
 export default function DocumentDetail({
   doc,
-  currentDate,
+  today,
   onTaskClick,
   onUploadVersion,
   onFinalize,
@@ -35,7 +35,7 @@ export default function DocumentDetail({
     );
   }
 
-  const { status, isLate, lateDays } = getDocStatus(doc, currentDate);
+  const { status, isLate, lateDays } = getDocStatus(doc, today);
 
   return (
     <section className="pnl dside">
