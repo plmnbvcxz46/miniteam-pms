@@ -6,6 +6,8 @@ import MemberColumn from "./MemberColumn";
 interface MemberCrewProps {
   /** 成员列表（支持搜索过滤后传入） */
   members: Member[];
+  /** 每周工时上限的显示文字，如“上限 40” */
+  capacityText: string;
   /** 一组成员共用的工时坐标轴最大值（小时） */
   loadScale: number;
   /** 权限行列表配置 */
@@ -24,6 +26,7 @@ interface MemberCrewProps {
 
 export default function MemberCrew({
   members,
+  capacityText,
   loadScale,
   permDefs,
   searchKeyword,
@@ -48,6 +51,7 @@ export default function MemberCrew({
           searchKeyword={searchKeyword}
           onSearchChange={onSearchChange}
           permDefs={permDefs}
+          capacityText={capacityText}
         />
 
         {/* 成员列列表 */}

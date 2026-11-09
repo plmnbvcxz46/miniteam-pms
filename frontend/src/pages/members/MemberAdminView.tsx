@@ -5,7 +5,7 @@ import { useAccess } from "../../access/useAccess";
 import { useIssue } from "../../issue/useIssue";
 import { permDefs } from "../../data/members";
 import { getLoadScale } from "../../utils/load";
-import { getOverCapacityCount } from "./utils";
+import { formatCapacity, getOverCapacityCount } from "./utils";
 import MembersHeader from "./components/header/MembersHeader";
 import MemberCrew from "./components/crew/MemberCrew";
 import PermLog from "./components/log/PermLog";
@@ -107,6 +107,7 @@ export default function MemberAdminView() {
 
       <MemberCrew
         members={filteredMembers}
+        capacityText={formatCapacity(memberList)}
         loadScale={loadScale}
         permDefs={permDefs}
         searchKeyword={searchKeyword}
