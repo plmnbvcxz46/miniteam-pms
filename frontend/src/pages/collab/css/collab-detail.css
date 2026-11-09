@@ -3,7 +3,7 @@
    ========================================================================== */
 
 #thread .phd h2 {
-  font-size: 18px;
+  font-size: var(--fs-xl);
 }
 
 .th-meta {
@@ -12,9 +12,9 @@
   gap: 10px;
   padding: 9px 16px;
   border-bottom: 1.5px solid var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-heavy);
   flex-shrink: 0;
 }
 
@@ -24,12 +24,12 @@
 }
 
 .th-meta b {
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 
 .th-meta .late {
   background: var(--ink);
-  color: var(--signal);
+  color: var(--text-accent);
   padding: 1px 6px;
 }
 
@@ -49,10 +49,10 @@
   min-height: 200px;
   padding: 32px 20px;
   text-align: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--mute);
-  line-height: 1.8;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-mute);
+  line-height: var(--lh-loose);
   border: 1px dashed var(--soft);
   margin: 16px 0;
   background: rgba(0, 0, 0, 0.02);
@@ -93,28 +93,28 @@
 }
 
 .msg header b {
-  font-weight: 900;
-  font-size: 13px;
+  font-weight: var(--fw-black);
+  font-size: var(--fs-md);
 }
 
 .msg header time {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 
 .msg p {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--fs-md);
+  line-height: var(--lh-loose);
 }
 
 .msg p em {
   font-style: normal;
-  font-family: var(--mono);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
   padding: 0 4px;
 }
 
@@ -133,9 +133,9 @@
   border: 1.5px solid var(--ink);
   background: var(--paper);
   padding: 10px 12px;
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
 }
 
 .reply .btn {

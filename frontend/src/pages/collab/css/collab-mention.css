@@ -35,10 +35,10 @@
 
 .mn-h {
   padding: 6px 10px 2px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-mute);
 }
 
 .mn-h::before {
@@ -48,8 +48,8 @@
 .mn-o {
   padding: 6px 10px;
   cursor: pointer;
-  font-family: var(--mono);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -57,14 +57,14 @@
 
 .mn-o[aria-selected="true"] {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 
 /* 消息里的 @ 标签：成员是黑字加下划线，文件是可点的黑框标签 */
 .msg p .mn-tag {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -76,16 +76,16 @@
   display: inline;
   padding: 0 4px;
   border: 1.5px solid var(--ink);
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
   text-decoration: none;
 }
 
 .msg p .mn-tag.doc:hover {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 
 .msg p .mn-tag.doc:focus-visible {
@@ -96,11 +96,11 @@
 .msg p .mn-tag.doc.gone {
   cursor: default;
   border-style: dashed;
-  color: var(--mute);
+  color: var(--text-mute);
   text-decoration: line-through;
 }
 
 .msg p .mn-tag.doc.gone:hover {
   background: none;
-  color: var(--mute);
+  color: var(--text-mute);
 }

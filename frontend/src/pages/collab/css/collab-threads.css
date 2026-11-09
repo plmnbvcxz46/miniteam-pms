@@ -26,38 +26,38 @@
 }
 
 .thr b {
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.4;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-lg);
+  line-height: var(--lh-normal);
 }
 
 .thr-late {
   flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 800;
-  line-height: 1.4;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-heavy);
+  line-height: var(--lh-normal);
   padding: 2px 6px;
   background: var(--signal);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 
 .thr[aria-current="true"] .thr-late {
-  color: var(--ink);
+  color: var(--text);
 }
 
 .thr small {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-mute);
 }
 
 .thr.closed b {
-  font-weight: 500;
-  color: var(--mute);
+  font-weight: var(--fw-medium);
+  color: var(--text-mute);
 }
 
 .thr:not([aria-current="true"]):hover {
@@ -66,11 +66,11 @@
 
 .thr[aria-current="true"] {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--text-inverse);
 }
 
 .thr[aria-current="true"] small {
-  color: #cfcfca;
+  color: var(--text-inverse-mute);
 }
 
 .thr:focus-visible {
