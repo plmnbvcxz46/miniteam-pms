@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { taskStatusLabel, taskStatusOrder } from "../../../../data/global";
-import { taskStatusKey } from "../../../../data/task";
+import { taskStatusLabel, taskStatusOrder } from "../../../../constants/task";
+import { taskStatusKey } from "../../../../constants/task";
 import type { TaskStatus } from "../../../../types/global";
 import type { TaskDetail } from "../../../../types/task";
 import { formatMonthDay } from "../../../../utils/date";

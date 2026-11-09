@@ -1,5 +1,5 @@
 import type { DiscussionTask } from "../../../../types/collab";
-import { taskStatusKey } from "../../../../data/task";
+import { taskStatusKey } from "../../../../constants/task";
 import { getTaskStatusNote } from "../../utils";
 
 interface ThreadTaskMetaProps {

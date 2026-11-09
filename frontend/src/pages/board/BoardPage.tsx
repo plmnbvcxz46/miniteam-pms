@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useAccess } from "../../access/useAccess";
 import { useMe } from "../../auth/useAuth";
-import { taskStatusOrder } from "../../data/global";
+import { taskStatusOrder } from "../../constants/task";
 import type { TaskDetail } from "../../types/task";
 import BlockedBy from "./components/column/BlockedBy";
 import BoardColumn from "./components/column/BoardColumn";

@@ -1,5 +1,5 @@
-import { taskStatusLabel, taskStatusOrder } from "../../../../../data/global";
-import { taskStatusKey } from "../../../../../data/task";
+import { taskStatusLabel, taskStatusOrder } from "../../../../../constants/task";
+import { taskStatusKey } from "../../../../../constants/task";
 import type { TaskStatus } from "../../../../../types/global";
 
 interface StatusChipsProps {

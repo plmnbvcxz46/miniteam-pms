@@ -14,7 +14,7 @@ import {
   toDay,
   weekStartOf,
 } from "../../utils/date";
-import { taskStatusKey } from "../../data/task";
+import { taskStatusKey } from "../../constants/task";
 import type { TimelineForecast } from "../timeline/utils";
 
 /** 一周的天数 */

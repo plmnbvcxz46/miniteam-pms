@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { reportApi } from "../../api/report";
-import { defaultRange, rangeOptions } from "../../data/reports";
+import { defaultRange, rangeOptions } from "../../constants/reports";
 import { useIssue } from "../../issue/useIssue";
 import { useIssueData } from "../../issue/useIssueData";
 import { useProject } from "../../project/useProject";

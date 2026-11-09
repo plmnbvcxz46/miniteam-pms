@@ -1,4 +1,4 @@
-import { taskStatusLabel } from "../../data/global";
+import { taskStatusLabel } from "../../constants/task";
 import { useIssue } from "../../issue/useIssue";
 import type { Activity } from "../../types/global";
 import {

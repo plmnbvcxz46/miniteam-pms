@@ -1,5 +1,5 @@
 import { Fragment, type PointerEvent, type ReactNode } from "react";
-import { taskStatusLabel } from "../../../../data/global";
+import { taskStatusLabel } from "../../../../constants/task";
 import type { TaskStatus } from "../../../../types/global";
 import type { TaskDetail } from "../../../../types/task";
 import type { CardDrag, DropTarget } from "../../useCardDrag";

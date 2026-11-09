@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { taskStatusLabel } from "../../../../../data/global";
-import { taskStatusKey } from "../../../../../data/task";
+import { taskStatusLabel } from "../../../../../constants/task";
+import { taskStatusKey } from "../../../../../constants/task";
 import type { TaskStatus } from "../../../../../types/global";
 import type { TaskDetail } from "../../../../../types/task";
 import StatusChips from "./StatusChips";

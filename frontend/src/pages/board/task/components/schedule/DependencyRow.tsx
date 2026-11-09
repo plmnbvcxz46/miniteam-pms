@@ -1,5 +1,5 @@
-import { taskStatusLabel } from "../../../../../data/global";
-import { taskStatusKey } from "../../../../../data/task";
+import { taskStatusLabel } from "../../../../../constants/task";
+import { taskStatusKey } from "../../../../../constants/task";
 import type { DependencyTask } from "../../../../../types/task";
 
 interface DependencyRowProps {

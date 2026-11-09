@@ -1,4 +1,4 @@
-import { taskStatusKey } from "../../../../data/task";
+import { taskStatusKey } from "../../../../constants/task";
 import { pad2 } from "../../../../utils/date";
 import type { TodoRow } from "../../utils";
 

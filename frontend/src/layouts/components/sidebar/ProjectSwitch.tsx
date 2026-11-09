@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { roleLabel } from "../../../data/global";
+import { roleLabel } from "../../../constants/labels";
 import type { ProjectSummary } from "../../../types/global";
 import { formatDayLabel } from "../../../utils/date";
 import { useDismiss } from "../../useDismiss";

@@ -1,4 +1,4 @@
-import { taskStatusLabel } from "../../data/global";
+import { taskStatusLabel } from "../../constants/task";
 import type {
   DiscussionBrief,
   DiscussionDetail,

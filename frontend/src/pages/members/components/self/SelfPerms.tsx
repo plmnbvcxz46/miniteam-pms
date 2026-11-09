@@ -1,4 +1,4 @@
-import { permDefs } from "../../../../data/members";
+import { permDefs } from "../../../../constants/permissions";
 import type { MemberPermissions } from "../../../../types/global";
 
 interface SelfPermsProps {

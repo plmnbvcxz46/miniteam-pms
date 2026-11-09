@@ -3,7 +3,7 @@ import type { PermKey, MemberPermissions, ProjectRole } from "../../types/global
 import type { MemberAdd } from "../../types/members";
 import { useAccess } from "../../access/useAccess";
 import { useIssue } from "../../issue/useIssue";
-import { permDefs } from "../../data/members";
+import { permDefs } from "../../constants/permissions";
 import { getLoadScale } from "../../utils/load";
 import { formatCapacity, getOverCapacityCount } from "./utils";
 import MembersHeader from "./components/header/MembersHeader";
