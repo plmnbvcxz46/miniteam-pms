@@ -1,8 +1,8 @@
 import type { CSSProperties, PointerEvent } from "react";
 import TaskBar from "../../../../components/TaskBar/TaskBar";
-import { useIssue } from "../../../../issue/useIssue";
+import { useIssue } from "../../../../state/issue/useIssue";
 import type { TaskDetail } from "../../../../types/task";
-import { useTaskStore } from "../../taskStore";
+import { useTaskStore } from "../../../../state/task/taskStore";
 import { formatMonthDay } from "../../../../utils/date";
 
 const SCORE_CLASS: Record<string, string> = {

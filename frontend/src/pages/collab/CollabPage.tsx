@@ -1,18 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { collabApi } from "../../api/collab";
-import { useAccess } from "../../access/useAccess";
-import { useMe } from "../../auth/useAuth";
-import { useIssue } from "../../issue/useIssue";
-import { useProject } from "../../project/useProject";
+import { useAccess } from "../../state/access/useAccess";
+import { useMe } from "../../state/auth/useAuth";
+import { useIssue } from "../../state/issue/useIssue";
+import { useProject } from "../../state/project/useProject";
 import type {
   DiscussionDetail,
   DiscussionFormValues,
   MentionValue,
 } from "../../types/collab";
 import type { Activity } from "../../types/global";
-import { useDocumentStore } from "../documents/documentStore";
-import { useTaskStore } from "../board/taskStore";
+import { useDocumentStore } from "../../state/document/documentStore";
+import { useTaskStore } from "../../state/task/taskStore";
 import ThreadDetailPanel from "./components/detail/ThreadDetailPanel";
 import NewDiscussionDrawer from "./components/drawer/NewDiscussionDrawer";
 import ActivityFeedPanel from "./components/feed/ActivityFeedPanel";

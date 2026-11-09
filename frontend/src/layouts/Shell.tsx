@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
-import { useAccess } from "../access/useAccess";
-import { useAuth, useMe } from "../auth/useAuth";
+import { useAccess } from "../state/access/useAccess";
+import { useAuth, useMe } from "../state/auth/useAuth";
 import type { ProfileUpdate } from "../types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
 import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
-import { useTaskStore } from "../pages/board/taskStore";
-import { getColumnTasks } from "../pages/board/utils";
+import { useTaskStore } from "../state/task/taskStore";
+import { getColumnTasks } from "../state/task/utils";
 import NoProject from "./components/NoProject";
 import ProjectSwitch from "./components/sidebar/ProjectSwitch";
 import SidebarNav from "./components/sidebar/SidebarNav";

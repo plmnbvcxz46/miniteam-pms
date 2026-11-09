@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import type { Activity } from "../../../../types/global";
-import { useIssue } from "../../../../issue/useIssue";
+import { useIssue } from "../../../../state/issue/useIssue";
 import { formatMessageTime, parseRichInline } from "../../utils";
 
 interface ActivityFeedItemProps {

@@ -1,9 +1,9 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
-import { useAccess } from "../../access/useAccess";
+import { useAccess } from "../../state/access/useAccess";
 import { workloadApi } from "../../api/task";
 import Drawer from "../../components/Drawer";
-import { useIssue } from "../../issue/useIssue";
-import { getPredecessorOptions } from "../../pages/board/utils";
+import { useIssue } from "../../state/issue/useIssue";
+import { getPredecessorOptions } from "../../state/task/utils";
 import type {
   AssigneeCandidate,
   TaskDetail,

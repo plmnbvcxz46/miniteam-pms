@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
-import { useAuth } from "../../auth/useAuth";
+import { useAuth } from "../../state/auth/useAuth";
 import type { AuthField } from "../../types/auth";
 import "./css/login.css";
 

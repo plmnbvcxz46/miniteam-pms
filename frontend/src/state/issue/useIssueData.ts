@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProject } from "../project/useProject";
-import type { IssuePages } from "../types/progress";
+import type { IssuePages } from "../../types/progress";
 import { useIssue } from "./useIssue";
 
 interface Live<T> {

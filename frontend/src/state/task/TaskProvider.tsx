@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useAccess } from "../../access/useAccess";
+import { useAccess } from "../access/useAccess";
 import { activityApi } from "../../api/project";
 import { taskApi } from "../../api/task";
-import { useIssue } from "../../issue/useIssue";
+import { useIssue } from "../issue/useIssue";
 import type { Activity, TaskStatus } from "../../types/global";
 import type { TaskDetail, TaskFormValues } from "../../types/task";
 import { getLocalToday } from "../../utils/date";
-import { useDocumentStore } from "../documents/documentStore";
+import { useDocumentStore } from "../document/documentStore";
 import { TaskStoreContext, type TaskStore } from "./taskStore";
 import { moveTaskTo } from "./utils";
 

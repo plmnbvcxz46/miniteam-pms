@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { roleApi, userApi } from "../../../api/system";
-import { useMe } from "../../../auth/useAuth";
+import { useMe } from "../../../state/auth/useAuth";
 import type { Role, SystemUser, UserCreate } from "../../../types/settings";
 import Switch from "../components/Switch";
 

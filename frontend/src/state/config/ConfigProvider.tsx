@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { configApi } from "../api/system";
+import { configApi } from "../../api/system";
 import { useAuth } from "../auth/useAuth";
-import { configs } from "../constants/mock";
-import type { ConfigItem } from "../types/settings";
+import { configs } from "../../constants/mock";
+import type { ConfigItem } from "../../types/settings";
 import { ConfigContext } from "./ConfigContext";
 
 function toValues(items: ConfigItem[]): Record<string, string> {

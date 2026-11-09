@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { collabApi } from "../../api/collab";
-import { useIssue } from "../../issue/useIssue";
-import { useProject } from "../../project/useProject";
+import { useIssue } from "../../state/issue/useIssue";
+import { useProject } from "../../state/project/useProject";
 import type { DiscussionDetail } from "../../types/collab";
 import type { Activity } from "../../types/global";
 

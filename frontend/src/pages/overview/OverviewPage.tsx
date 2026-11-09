@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAccess } from "../../access/useAccess";
+import { useAccess } from "../../state/access/useAccess";
 import { progressApi } from "../../api/progress";
-import { useIssue } from "../../issue/useIssue";
-import { useIssueData } from "../../issue/useIssueData";
+import { useIssue } from "../../state/issue/useIssue";
+import { useIssueData } from "../../state/issue/useIssueData";
 import { useProjectPeriod } from "../../layouts/useProjectPeriod";
-import { useTaskStore } from "../board/taskStore";
+import { useTaskStore } from "../../state/task/taskStore";
 import { toForecast } from "../timeline/utils";
 import CriticalChainPanel from "./components/critical/CriticalChainPanel";
 import FigureStrip from "./components/figures/FigureStrip";

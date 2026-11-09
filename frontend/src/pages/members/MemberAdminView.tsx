@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import type { PermKey, MemberPermissions, ProjectRole } from "../../types/global";
 import type { MemberAdd } from "../../types/members";
-import { useAccess } from "../../access/useAccess";
-import { useIssue } from "../../issue/useIssue";
+import { useAccess } from "../../state/access/useAccess";
+import { useIssue } from "../../state/issue/useIssue";
 import { permDefs } from "../../constants/permissions";
 import { getLoadScale } from "../../utils/load";
 import { formatCapacity, getOverCapacityCount } from "./utils";

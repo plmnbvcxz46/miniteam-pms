@@ -2,7 +2,7 @@ import { useMemo, type ReactNode } from "react";
 import { useMe } from "../auth/useAuth";
 import { useIssue } from "../issue/useIssue";
 import { useProject } from "../project/useProject";
-import { isSystemAdmin } from "../types/auth";
+import { isSystemAdmin } from "../../types/auth";
 import { AccessContext, type AccessState } from "./AccessContext";
 import {
   allPermissions,

@@ -5,10 +5,10 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { useAccess } from "../../../access/useAccess";
-import { useIssue } from "../../../issue/useIssue";
+import { useAccess } from "../../../state/access/useAccess";
+import { useIssue } from "../../../state/issue/useIssue";
 import type { TaskStatus } from "../../../types/global";
-import { useTaskStore } from "../taskStore";
+import { useTaskStore } from "../../../state/task/taskStore";
 import NoAccess from "./components/NoAccess";
 import TaskFigures from "./components/figures/TaskFigures";
 import TaskHeader from "./components/header/TaskHeader";

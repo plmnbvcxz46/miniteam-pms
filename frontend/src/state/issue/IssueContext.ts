@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import type { IssueSummary } from "../types/global";
-import type { IssuePages } from "../types/progress";
+import type { IssueSummary } from "../../types/global";
+import type { IssuePages } from "../../types/progress";
 
 /**
  * 过去的期的快照取得怎么样了：idle 不是过去的期；loading 在取；ready 取到了；

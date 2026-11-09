@@ -1,5 +1,5 @@
 import type { DiscussionBrief } from "../../../../types/collab";
-import { useIssue } from "../../../../issue/useIssue";
+import { useIssue } from "../../../../state/issue/useIssue";
 import { formatThreadShortTime } from "../../utils";
 
 interface ThreadItemProps {

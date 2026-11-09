@@ -1,5 +1,5 @@
-import type { MemberPermissions } from "../types/global";
-import type { TaskDetail } from "../types/task";
+import type { MemberPermissions } from "../../types/global";
+import type { TaskDetail } from "../../types/task";
 
 /** 全部权限：系统管理员在所有项目里都是这样 */
 export const allPermissions: MemberPermissions = {

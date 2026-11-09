@@ -5,9 +5,9 @@ import type {
   ProjectRole,
   ProjectSave,
   ProjectSummary,
-} from "../types/global";
-import type { Member, MemberAdd } from "../types/members";
-import type { TaskDetail } from "../types/task";
+} from "../../types/global";
+import type { Member, MemberAdd } from "../../types/members";
+import type { TaskDetail } from "../../types/task";
 
 /**
  * 谁在哪个项目里能做什么，全站只在这里算一次，页面只问不算：

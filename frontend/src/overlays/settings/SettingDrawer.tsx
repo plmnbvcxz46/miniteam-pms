@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Drawer from "../../components/Drawer";
-import { useAccess } from "../../access/useAccess";
+import { useAccess } from "../../state/access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
 import type { ProfileUpdate } from "../../types/settings";
 import MePanel from "./panels/MePanel";

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { activityApi, memberApi, projectApi } from "../api/project";
+import { activityApi, memberApi, projectApi } from "../../api/project";
 import type {
   Activity,
   MemberPermissions,
@@ -7,8 +7,8 @@ import type {
   ProjectRole,
   ProjectSave,
   ProjectSummary,
-} from "../types/global";
-import type { Member, MemberAdd } from "../types/members";
+} from "../../types/global";
+import type { Member, MemberAdd } from "../../types/members";
 import { ProjectContext, type ProjectState } from "./ProjectContext";
 
 const SELECTED_KEY = "pms.project";

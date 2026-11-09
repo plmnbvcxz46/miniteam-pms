@@ -6,8 +6,8 @@ import type {
   ProjectRole,
   ProjectSave,
   ProjectSummary,
-} from "../types/global";
-import type { Member, MemberAdd } from "../types/members";
+} from "../../types/global";
+import type { Member, MemberAdd } from "../../types/members";
 
 /**
  * 项目、成员、权限变更记录的原始数据，都来自接口。

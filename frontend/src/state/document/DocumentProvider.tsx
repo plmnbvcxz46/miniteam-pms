@@ -1,11 +1,11 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { documentApi } from "../../api/document";
-import { useIssueData } from "../../issue/useIssueData";
-import { useProject } from "../../project/useProject";
+import { useIssueData } from "../issue/useIssueData";
+import { useProject } from "../project/useProject";
 import type { DocumentDetailApi } from "../../types/documents";
 import { downloadBlob } from "../../utils/download";
 import { DocumentStoreContext, type DocumentStore } from "./documentStore";
-import { toDocumentItem } from "./utils";
+import { toDocumentItem } from "../../pages/documents/utils";
 
 /** 取项目里的全部文档，每份带版本记录（列表接口不带版本，逐份取详情） */
 async function loadDocuments(projectId: number): Promise<DocumentDetailApi[]> {

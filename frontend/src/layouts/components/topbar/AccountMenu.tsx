@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAuth, useMe } from "../../../auth/useAuth";
+import { useAuth, useMe } from "../../../state/auth/useAuth";
 import { useDismiss } from "../../useDismiss";
 
 interface AccountMenuProps {

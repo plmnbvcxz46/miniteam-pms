@@ -1,5 +1,5 @@
-import { useIssue } from "../../../issue/useIssue";
-import { useTaskStore } from "../../../pages/board/taskStore";
+import { useIssue } from "../../../state/issue/useIssue";
+import { useTaskStore } from "../../../state/task/taskStore";
 import type { ProjectPeriod } from "../../../types/global";
 import { getPeriodProgress } from "../../utils";
 

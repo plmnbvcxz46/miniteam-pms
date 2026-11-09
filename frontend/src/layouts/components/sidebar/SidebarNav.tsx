@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useAccess } from "../../../access/useAccess";
+import { useAccess } from "../../../state/access/useAccess";
 import { navGroups } from "../../nav";
 import NavIcon from "./NavIcon";
 

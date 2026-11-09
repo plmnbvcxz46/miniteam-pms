@@ -1,5 +1,5 @@
 import type { ProjectPeriod } from "../../../types/global";
-import { useIssue } from "../../../issue/useIssue";
+import { useIssue } from "../../../state/issue/useIssue";
 import { getWeekProgress } from "../../utils";
 
 export default function WeekLine({ period }: { period: ProjectPeriod }) {

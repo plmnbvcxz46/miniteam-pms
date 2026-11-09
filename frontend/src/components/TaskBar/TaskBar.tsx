@@ -1,5 +1,5 @@
 import { taskStatusLabel } from "../../constants/task";
-import { useIssue } from "../../issue/useIssue";
+import { useIssue } from "../../state/issue/useIssue";
 import type { Activity } from "../../types/global";
 import {
   dateToX,

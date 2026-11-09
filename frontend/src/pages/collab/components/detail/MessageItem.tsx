@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import type { Comment } from "../../../../types/collab";
-import { useIssue } from "../../../../issue/useIssue";
+import { useIssue } from "../../../../state/issue/useIssue";
 import { formatMessageTime, parseRichInline, splitMentions } from "../../utils";
 
 interface MessageItemProps {
