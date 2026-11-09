@@ -13,7 +13,7 @@ import type { TaskDetail } from "../../shared/types/task";
  * 谁在哪个项目里能做什么，全站只在这里算一次，页面只问不算：
  * - 系统管理员：所有项目都能进，所有权限都有
  * - 其他人：只能进自己加入的项目，权限取自自己在这个项目里的成员记录
- * 项目、成员、权限都来自接口（见 project/ProjectProvider），这里再加上“正在看哪一期”：
+ * 项目、成员、权限都来自接口（见 state/project/ProjectProvider），这里再加上“正在看哪一期”：
  * 过去的期一律只读。后端同样会校验，这里只决定界面显示什么
  */
 export interface AccessState {

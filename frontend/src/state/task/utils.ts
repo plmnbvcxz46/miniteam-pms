@@ -1,6 +1,6 @@
 import type { TaskStatus } from "../../shared/types/global";
-import type { TaskDetail } from "../../shared/types/task";
-import { applyTaskStatus } from "../../pages/task/utils";
+import type { DependencyTask, TaskDetail } from "../../shared/types/task";
+import { DAY_MS, daysBetween } from "../../shared/utils/date";
 
 /** 某一列的任务，按列内顺序排列 */
 export function getColumnTasks(
@@ -84,5 +84,74 @@ export function getPredecessorOptions(
     (item) =>
       !excluded.has(item.id) &&
       (item.status !== "DONE" || selected.includes(item.id)),
+  );
+}
+
+/** 从开始日到今天（含）经过的工作日数 */
+function countWorkdays(start: string, today: string): number {
+  let count = 0;
+  for (
+    let time = Date.parse(start);
+    time <= Date.parse(today);
+    time += DAY_MS
+  ) {
+    const weekday = new Date(time).getUTCDay();
+    if (weekday !== 0 && weekday !== 6) count++;
+  }
+  return count;
+}
+
+function getUsedDays(
+  task: TaskDetail,
+  status: TaskStatus,
+  today: string,
+): number {
+  if (status === "DONE") return task.planDays;
+  if (status === "TODO" || !task.planStart) return 0;
+  return countWorkdays(task.planStart, today);
+}
+
+function getOverdueDays(
+  task: TaskDetail,
+  status: TaskStatus,
+  today: string,
+): number {
+  if (status === "DONE" || !task.dueDate) return 0;
+  return Math.max(0, daysBetween(task.dueDate, today));
+}
+
+/**
+ * 修改任务状态后的任务表：重算本任务的已用和逾期天数，
+ * 并同步其他任务前置 / 后续列表里的状态。接通接口后由后端返回，这里可删除
+ */
+export function applyTaskStatus(
+  tasks: Record<number, TaskDetail>,
+  taskId: number,
+  status: TaskStatus,
+  today: string,
+): Record<number, TaskDetail> {
+  const syncStatus = (deps: DependencyTask[]) =>
+    deps.map((dep) => (dep.task.id === taskId ? { ...dep, status } : dep));
+
+  return Object.fromEntries(
+    Object.values(tasks).map((task) => {
+      const synced = {
+        ...task,
+        predecessors: syncStatus(task.predecessors),
+        successors: syncStatus(task.successors),
+      };
+      if (task.id !== taskId) return [task.id, synced];
+      return [
+        task.id,
+        {
+          ...synced,
+          status,
+          // 移到已完成时记下完成日，任务条要用它画完成标记
+          actualEnd: status === "DONE" ? (task.actualEnd ?? today) : null,
+          usedDays: getUsedDays(task, status, today),
+          overdueDays: getOverdueDays(task, status, today),
+        },
+      ];
+    }),
   );
 }

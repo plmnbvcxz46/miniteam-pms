@@ -5,7 +5,7 @@ import { useProject } from "../project/useProject";
 import type { DocumentDetailApi } from "../../shared/types/documents";
 import { downloadBlob } from "../../shared/utils/download";
 import { DocumentStoreContext, type DocumentStore } from "./documentStore";
-import { toDocumentItem } from "../../pages/documents/utils";
+import { toDocumentItem } from "./utils";
 
 /** 取项目里的全部文档，每份带版本记录（列表接口不带版本，逐份取详情） */
 async function loadDocuments(projectId: number): Promise<DocumentDetailApi[]> {
