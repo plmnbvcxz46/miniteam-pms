@@ -56,29 +56,29 @@
 }
 
 .dsec-h .k {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-mute);
 }
 
 .dsec-h h3 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 900;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-black);
 }
 
 .dsec-h .count {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: 48px;
-  line-height: 0.85;
-  letter-spacing: -3px;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-heavy);
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-tighter);
 }
 
 .dsec.on .dsec-h {
   background: #0a0a0a;
-  color: #fafaf7;
+  color: var(--text-inverse);
 }
 
 .dsec.on .dsec-h > * {
@@ -92,7 +92,7 @@
 }
 
 .dsec.on .dsec-h .k {
-  color: #cfcfca;
+  color: var(--text-inverse-mute);
 }
 
 .dsec.fin .dsec-h {
@@ -100,6 +100,6 @@
 }
 
 .dsec.fin .dsec-h .count {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
 }
 
