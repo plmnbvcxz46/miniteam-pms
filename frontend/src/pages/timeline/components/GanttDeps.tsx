@@ -1,5 +1,10 @@
 import type { TaskDetail } from "../../../shared/types/task";
-import { dateToX, dayEnd, toDay, type AxisRange } from "../../../shared/utils/date";
+import {
+  dateToX,
+  dayEnd,
+  toDay,
+  type AxisRange,
+} from "../../../shared/utils/date";
 import type { CpmResult } from "../utils";
 
 interface GanttDepsProps {
@@ -12,6 +17,8 @@ interface GanttDepsProps {
   nameWidth: number;
   rowHeight: number;
   today: string;
+  /** 鼠标移到或聚焦到的任务：和它直接相连的线突出，其余变浅 */
+  hoverId: number | null;
 }
 
 /** 依赖线离开前置任务条后先走出的距离（px） */
@@ -23,7 +30,7 @@ function barEnd(task: TaskDetail, today: string) {
   return Math.max(dayEnd(task.dueDate!), dayEnd(today));
 }
 
-/** 前置任务条右端 → 后续任务条左端的折线，两端都在关键路径上画实线，否则画虚线 */
+/** 前置任务条右端 → 后续任务条左端的折线，两端都在关键路径上画深色加粗，否则画浅色 */
 export default function GanttDeps({
   tasks,
   cpm,
@@ -32,6 +39,7 @@ export default function GanttDeps({
   nameWidth,
   rowHeight,
   today,
+  hoverId,
 }: GanttDepsProps) {
   const rowOf = new Map(tasks.map((task, i) => [task.id, i]));
   const y = (id: number) => rowOf.get(id)! * rowHeight + rowHeight / 2;
@@ -55,6 +63,8 @@ export default function GanttDeps({
         return {
           key: dep.dependencyId,
           crit,
+          done: from.status === "DONE" && task.status === "DONE",
+          hot: hoverId !== null && (from.id === hoverId || task.id === hoverId),
           path: roomy
             ? `M${x1} ${y1}H${mid}V${y2}H${x2}`
             : `M${x1} ${y1}H${x1 + ELBOW}V${gap}H${x2 - ELBOW}V${y2}H${x2}`,
@@ -63,19 +73,43 @@ export default function GanttDeps({
       }),
   );
 
-  return (
+  const draw = (items: typeof lines, cls: string, hot: boolean) => (
     <svg
-      className="gt-deps"
+      className={cls}
       width={nameWidth + width}
       height={tasks.length * rowHeight}
       aria-hidden="true"
     >
-      {lines.map((line) => (
-        <g key={line.key}>
-          <path className={line.crit ? "" : "free"} d={line.path} />
+      {items.map((line) => (
+        <g
+          key={line.key}
+          className={
+            hot
+              ? "hot"
+              : `${line.crit ? "crit" : ""} ${line.done ? "done" : ""} ${hoverId !== null ? "dim" : ""}`
+          }
+        >
+          <path d={line.path} />
           <polygon className="head" points={line.head} />
         </g>
       ))}
     </svg>
+  );
+
+  // 底层画全部线（在任务条下面）；悬停时相连的几条另画在最上层
+  return (
+    <>
+      {draw(
+        lines.filter((line) => !line.hot),
+        "gt-deps",
+        false,
+      )}
+      {hoverId !== null &&
+        draw(
+          lines.filter((line) => line.hot),
+          "gt-deps top",
+          true,
+        )}
+    </>
   );
 }

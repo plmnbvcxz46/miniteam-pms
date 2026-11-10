@@ -13,6 +13,8 @@ interface GanttRowProps {
   cpm: CpmRow;
   last: boolean;
   onOpen: (taskId: number) => void;
+  /** 鼠标移入或键盘聚焦这一行 / 离开（null） */
+  onHover: (taskId: number | null) => void;
 }
 
 export default function GanttRow({
@@ -23,11 +25,18 @@ export default function GanttRow({
   cpm,
   last,
   onOpen,
+  onHover,
 }: GanttRowProps) {
   const critical = cpm.slack === 0;
 
   return (
-    <div className={`gt-row${last ? " last" : ""}`}>
+    <div
+      className={`gt-row${last ? " last" : ""}`}
+      onMouseEnter={() => onHover(task.id)}
+      onMouseLeave={() => onHover(null)}
+      onFocus={() => onHover(task.id)}
+      onBlur={() => onHover(null)}
+    >
       <button
         className={`gt-name${critical ? " crit" : ""}`}
         type="button"

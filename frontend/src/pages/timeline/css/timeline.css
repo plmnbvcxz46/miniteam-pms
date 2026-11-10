@@ -226,19 +226,47 @@
   top: 0;
   pointer-events: none;
   overflow: visible;
-  z-index: 2;
+  z-index: 0;
 }
 .gt-deps path {
   fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.gt-deps .head {
+  fill: var(--hair);
+  stroke: none;
+}
+/* 关键路径 */
+.gt-deps g.crit path {
   stroke: var(--ink);
   stroke-width: 1.5;
 }
-.gt-deps path.free {
-  stroke-dasharray: 4 4;
-}
-.gt-deps .head {
+.gt-deps g.crit .head {
   fill: var(--ink);
-  stroke: none;
+}
+/* 前置和后继都已完成的线再淡一档 */
+.gt-deps g.done {
+  opacity: 0.55;
+}
+/* 悬停时其余的线（包括关键路径）统一变浅 */
+.gt-deps g.dim path {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.gt-deps g.dim .head {
+  fill: var(--hair);
+}
+/* 悬停任务直接相连的线：深色，画在任务条上面 */
+.gt-deps.top {
+  z-index: 5;
+}
+.gt-deps g.hot path {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.gt-deps g.hot .head {
+  fill: var(--ink);
 }
 
 /* ---------- 关键路径计算 ---------- */
