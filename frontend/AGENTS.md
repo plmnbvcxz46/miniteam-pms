@@ -20,7 +20,7 @@ src/
 │   ├── css/                 # 本模块样式，<模块>.css 作为入口 import 其余文件
 │   └── utils.ts             # 本模块的纯函数（可选）
 ├── shared/                  # 多处共用的东西
-│   ├── components/          # 通用组件（Drawer、TaskBar）
+│   ├── components/          # 通用组件（Drawer、TaskBar、SearchDropdown）
 │   ├── constants/           # 常量（task.ts 任务状态、labels.ts 中文名、permissions.ts、reports.ts、legends.ts）
 │   ├── types/               # 类型，global.ts 放全局共享，其余按模块
 │   └── utils/               # 通用函数（date、download、load）
@@ -32,7 +32,7 @@ src/
 - 全局样式入口是 `styles/main.css`，按层引入：`styles/tokens/`（设计变量）→ `styles/index.css`（旧全局样式，逐步拆走，不要再往里加新东西）→ `styles/typography/roles.css`（组合文字样式）。
 - **文字一律用变量，不写死。** 字体族、字号、字重、行高、字距、文字色都在 `styles/tokens/typography.css`：字号用 `--fs-2xs`（10px）到 `--fs-7xl`（60px）共 12 档，文字色用 `--text`、`--text-mute`、`--text-alert` 等。现有档位不够时先在这里加一档，不要就地写一个新的 px 值。组件里也不要用 `style={{ fontSize }}`。
 - **同一种文字角色用同一个组合类**（`styles/typography/roles.css`）：页面标题 `t-page-title`、抽屉标题 `t-overlay-title`、面板标题上方的 `// WORD` 用 `t-kicker`、面板标题 `t-section-title`、字段名 `t-label`、说明 `t-hint`、错误 `t-error`、等宽元信息 `t-meta`、大数字 `t-figure`。组件 CSS 只写位置、间距和特殊底色下的颜色，不再重复写字体。
-- **表单抽屉**统一用 `.fr` 行：左边 `span.lb.t-label`，右边输入框加 `className="u"`（下划线样式，`select` 也一样），选项按钮用 `.chips`，左边缘和输入框对齐；错误放 `div.err.t-error`；底部按钮主操作在前、取消在后。参考 `overlays/task/TaskDrawer.tsx`。
+- **表单抽屉**统一用 `.fr` 行：左边 `span.lb.t-label`，右边输入框加 `className="u"`（下划线样式，`select` 也一样），选项按钮用 `.chips`，左边缘和输入框对齐；错误放 `div.err.t-error`；底部按钮主操作在前、取消在后。参考 `overlays/task/TaskDrawer.tsx`。带搜索的输入一律用 `shared/components/SearchDropdown`，不要各写各的下拉。
 - 从 `styles/index.css` 迁出某模块样式时，在原位置留一行注释说明迁到了哪里；多页面共用的基础类（如 `.span2`、`.track`）保留在 `styles/index.css`，模块局部尺寸调整用模块作用域选择器覆盖。
 
 ## 页面与视觉约定
