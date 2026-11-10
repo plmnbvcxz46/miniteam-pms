@@ -169,6 +169,18 @@
   --tb-trk: 40px;
   padding: 0;
 }
+/* 空心的条框垫上面板底色，下层的依赖线被条盖住；框降到填充下面，填充、斜纹、完成标记仍在上，
+   斜纹段的上下边补回原来框线的位置 */
+.gt-lane .tb-frame {
+  z-index: 0;
+  background: var(--paper);
+}
+.gt-lane .tb-warn,
+.gt-lane .tb-past {
+  box-shadow:
+    inset 0 var(--tb-border) 0 var(--ink),
+    inset 0 calc(var(--tb-border) * -1) 0 var(--ink);
+}
 .gt-lane .tb-compact .tb-now {
   display: none;
 }
