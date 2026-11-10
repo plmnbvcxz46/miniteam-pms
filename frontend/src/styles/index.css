@@ -1819,12 +1819,6 @@ select.in {
   font-family: var(--font-mono);
   font-weight: var(--fw-bold);
 }
-.fr select.u {
-  cursor: pointer;
-  padding-right: 22px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%230a0a0a'/%3E%3C/svg%3E")
-    right 4px center no-repeat;
-}
 .fr .u:disabled {
   color: var(--text-mute);
   border-bottom-style: dashed;
