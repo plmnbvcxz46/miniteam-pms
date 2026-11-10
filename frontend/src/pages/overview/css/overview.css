@@ -69,6 +69,13 @@
   scrollbar-width: thin;
   scrollbar-color: var(--ink) transparent;
 }
+/* 不滚动的内容层：今天线相对它定位，高度 = 全部行，滚下去也有线 */
+.tl .rows-in {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
 .tl .today {
   position: absolute;
   left: calc(96px + (100% - 96px) * var(--at, 3.5) / 7);
@@ -102,6 +109,7 @@
 /*
  * 框是整个计划区间，填充（::before）只到今天线，--fill 是占整条的比例（0~1），由 ScheduleRow 按此刻算。
  * 比例按含边框的整条宽度算（今天线也是），伪元素从边框内侧起画，所以宽度 = (内宽 + 两侧边框) × 比例 − 左边框
+ * 再多画 0.75px（线宽的一半）让右缘落在今天线中心，线在上层盖住取整误差；比例 1 时被 .bar 的 overflow 裁到整条，0 时为 0
  */
 .tl .bar {
   isolation: isolate;
@@ -113,7 +121,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 1.5px));
+  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 0.75px));
   z-index: -1;
 }
 .bar.on::before {
