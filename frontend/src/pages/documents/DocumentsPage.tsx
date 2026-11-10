@@ -178,6 +178,11 @@ export default function DocumentsPage() {
         today={today}
         searchKeyword={searchKeyword}
         onSearchChange={setSearchKeyword}
+        matches={filteredDocs}
+        onPickDoc={(doc) => {
+          setSearchKeyword(doc.n);
+          setSelectedId(doc.id);
+        }}
         onUploadClick={isPast ? undefined : handleOpenNewUpload}
       />
 

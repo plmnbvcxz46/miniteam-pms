@@ -50,6 +50,7 @@ export default function MemberCrew({
         <CrewLabels
           searchKeyword={searchKeyword}
           onSearchChange={onSearchChange}
+          matches={members}
           permDefs={permDefs}
           capacityText={capacityText}
         />

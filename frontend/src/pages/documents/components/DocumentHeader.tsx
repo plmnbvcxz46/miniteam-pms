@@ -1,4 +1,5 @@
 import type { DocumentItem } from "../../../shared/types/documents";
+import SearchDropdown from "../../../shared/components/SearchDropdown";
 import { getDocStatus } from "../utils";
 
 interface DocumentHeaderProps {
@@ -10,6 +11,10 @@ interface DocumentHeaderProps {
   searchKeyword: string;
   /** 搜索关键词变更回调 */
   onSearchChange: (keyword: string) => void;
+  /** 当前关键字匹配到的文档，作为下拉建议 */
+  matches: DocumentItem[];
+  /** 在建议里选中一份文档 */
+  onPickDoc: (doc: DocumentItem) => void;
   /** 点击上传文档回调 */
   onUploadClick?: () => void;
 }
@@ -19,6 +24,8 @@ export default function DocumentHeader({
   today,
   searchKeyword,
   onSearchChange,
+  matches,
+  onPickDoc,
   onUploadClick,
 }: DocumentHeaderProps) {
   const revisingCount = docs.filter((d) => !d.final).length;
@@ -41,16 +48,30 @@ export default function DocumentHeader({
       </div>
 
       <div className="va toolbar">
-        <label className="field" htmlFor="dq">
-          筛选
-          <input
-            id="dq"
-            type="search"
-            placeholder="搜索..."
-            value={searchKeyword}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
-        </label>
+        <SearchDropdown
+          variant="box"
+          boxLabel="筛选"
+          inputId="dq"
+          items={matches}
+          getKey={(d) => d.id}
+          onPick={onPickDoc}
+          value={searchKeyword}
+          onChange={onSearchChange}
+          placeholder="搜索..."
+          headWord="FILES"
+          emptyText="没有匹配的文档"
+          align="right"
+          minWidth={360}
+          itemClassName={() => "sd-row"}
+          renderItem={(d) => (
+            <>
+              <span className="sd-nm">{d.n}</span>
+              <span className="sd-end">
+                {d.v} · {d.final ? "定稿" : "修订中"}
+              </span>
+            </>
+          )}
+        />
         {onUploadClick && (
           <button
             className="btn primary go"

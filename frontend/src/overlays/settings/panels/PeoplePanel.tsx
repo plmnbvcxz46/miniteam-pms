@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { roleApi, userApi } from "../../../api/system";
 import { useMe } from "../../../state/auth/useAuth";
 import type { Role, SystemUser, UserCreate } from "../../../shared/types/settings";
+import SearchDropdown from "../../../shared/components/SearchDropdown";
 import Switch from "../Switch";
 
 /** 人员不多，一次取完，搜索在前端过滤；接口单页最多 100 条 */
@@ -131,16 +132,33 @@ export default function PeoplePanel() {
       <div className="g4">
         <div className="block span2">
           <div className="toolbar">
-            <label className="field" htmlFor="pq">
-              搜索
-              <input
-                id="pq"
-                type="search"
-                placeholder="姓名或账号"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-            </label>
+            <SearchDropdown
+              variant="box"
+              boxLabel="搜索"
+              inputId="pq"
+              items={visible}
+              getKey={(u) => u.id}
+              onPick={(u) => {
+                setQuery(u.realName);
+                select(u.id);
+              }}
+              value={query}
+              onChange={setQuery}
+              placeholder="姓名或账号"
+              headWord="PEOPLE"
+              emptyText="没有匹配的人员"
+              minWidth={300}
+              itemClassName={() => "sd-row"}
+              renderItem={(u) => (
+                <>
+                  <span>
+                    <span className="sd-nm">{u.realName}</span>
+                    <span className="sd-sub">{u.username}</span>
+                  </span>
+                  <span className="sd-end">{u.roleName}</span>
+                </>
+              )}
+            />
             <button
               className="btn primary"
               type="button"
