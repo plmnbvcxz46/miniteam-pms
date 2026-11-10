@@ -42,23 +42,28 @@ export default function GanttDeps({
   hoverId,
 }: GanttDepsProps) {
   const rowOf = new Map(tasks.map((task, i) => [task.id, i]));
-  const y = (id: number) => rowOf.get(id)! * rowHeight + rowHeight / 2;
+  // 线都对齐到半像素，1px 的线才不发虚
+  const snap = (v: number) => Math.round(v) + 0.5;
+  const y = (id: number) => snap(rowOf.get(id)! * rowHeight + rowHeight / 2);
 
   const lines = tasks.flatMap((task) =>
     task.predecessors
       .filter((dep) => rowOf.has(dep.task.id))
       .map((dep) => {
         const from = tasks[rowOf.get(dep.task.id)!];
-        const x1 = nameWidth + dateToX(barEnd(from, today), range, width);
-        const x2 = nameWidth + dateToX(toDay(task.planStart!), range, width);
+        const x1 = snap(nameWidth + dateToX(barEnd(from, today), range, width));
+        const x2 = snap(
+          nameWidth + dateToX(toDay(task.planStart!), range, width),
+        );
         const y1 = y(from.id);
         const y2 = y(task.id);
         const crit =
           cpm.rows[from.id].slack === 0 && cpm.rows[task.id].slack === 0;
+        // 同一个前置的所有后继共用这条竖直主干，位置只由前置任务条末端决定
+        const trunk = x1 + ELBOW;
         // 后续任务开始得比前置任务结束还早（或贴得太近）时，不能直接折过去，
         // 否则线会倒着穿过任务条：改从两行之间的缝里绕过去
-        const roomy = x2 >= x1 + ELBOW * 2;
-        const mid = (x1 + x2) / 2;
+        const roomy = x2 >= trunk + ELBOW;
         const gap = y1 + (y2 >= y1 ? rowHeight : -rowHeight) / 2;
         return {
           key: dep.dependencyId,
@@ -66,8 +71,8 @@ export default function GanttDeps({
           done: from.status === "DONE" && task.status === "DONE",
           hot: hoverId !== null && (from.id === hoverId || task.id === hoverId),
           path: roomy
-            ? `M${x1} ${y1}H${mid}V${y2}H${x2}`
-            : `M${x1} ${y1}H${x1 + ELBOW}V${gap}H${x2 - ELBOW}V${y2}H${x2}`,
+            ? `M${x1} ${y1}H${trunk}V${y2}H${x2}`
+            : `M${x1} ${y1}H${trunk}V${gap}H${x2 - ELBOW}V${y2}H${x2}`,
           head: `${x2},${y2} ${x2 - 5},${y2 - 3} ${x2 - 5},${y2 + 3}`,
         };
       }),
