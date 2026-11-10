@@ -25,6 +25,9 @@
   grid-template-rows: 84px 104px 46px 50px repeat(4, 50px);
   column-gap: 14px;
   min-width: 900px;
+  /* 成员列宽度范围：下限保证内容放得下，上限避免成员少时被拉得过宽；放不下时整体横向滚动 */
+  --crew-col-min: 150px;
+  --crew-col-max: 240px;
 }
 
 .crew > * {

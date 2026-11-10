@@ -43,7 +43,7 @@ export default function MemberCrew({
         className="crew"
         id="crew"
         style={{
-          gridTemplateColumns: `230px repeat(${columnCount}, minmax(150px, 1fr))`,
+          gridTemplateColumns: `230px repeat(${columnCount}, minmax(var(--crew-col-min), var(--crew-col-max)))`,
         }}
       >
         {/* 左侧固定表头行与搜索栏 */}
