@@ -2,17 +2,6 @@
    邀请成员抽屉定制样式 (Invite Member Drawer)
    ========================================================================== */
 
-/* 搜索框和搜索按钮一行，候选人下拉在下面 */
-.invite-search {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-.invite-search + select.u,
-.invite-search + .t-hint {
-  margin-top: 8px;
-}
-
 .member-perm-checklist {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

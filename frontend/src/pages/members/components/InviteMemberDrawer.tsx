@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { userApi } from "../../../api/system";
 import Drawer from "../../../shared/components/Drawer";
+import SearchDropdown from "../../../shared/components/SearchDropdown";
 import type { MemberPermissions, ProjectRole, UserBrief } from "../../../shared/types/global";
 import type { MemberAdd, PermDef } from "../../../shared/types/members";
 
@@ -28,7 +29,7 @@ function InviteMemberForm({
   permDefs,
   onSubmit,
 }: InviteMemberDrawerProps) {
-  // 候选人：按姓名或账号搜（GET /users/search），不在这里一次列出所有用户
+  // 候选人：按姓名或账号搜（GET /users/search），输入停顿后再请求，不在这里一次列出所有用户
   const [keyword, setKeyword] = useState("");
   const [found, setFound] = useState<UserBrief[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -73,24 +74,46 @@ function InviteMemberForm({
     }));
   };
 
-  const handleSearch = async () => {
+  // 输入停顿 300ms 后搜；已经选了人时输入框里是他的名字，不再搜。旧请求晚到的结果丢弃
+  useEffect(() => {
     const text = keyword.trim();
-    if (!text) {
-      setErrorMsg("请输入姓名或账号再搜索");
-      return;
-    }
-    setErrorMsg("");
-    setSearching(true);
-    try {
-      const list = await userApi.search(text);
-      setFound(list);
-      const first = list.find((u) => !memberIds.includes(u.id));
-      setSelectedUserId(first?.id ?? 0);
-    } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : "搜索失败，请稍后再试");
-    } finally {
+    if (!text || selectedUserId !== 0) return;
+    let stale = false;
+    const timer = setTimeout(async () => {
+      try {
+        const list = await userApi.search(text);
+        if (stale) return;
+        setFound(list);
+        setErrorMsg("");
+      } catch (e) {
+        if (stale) return;
+        setErrorMsg(e instanceof Error ? e.message : "搜索失败，请稍后再试");
+      } finally {
+        if (!stale) setSearching(false);
+      }
+    }, 300);
+    return () => {
+      stale = true;
+      clearTimeout(timer);
+    };
+  }, [keyword, selectedUserId]);
+
+  const handleKeywordChange = (text: string) => {
+    setKeyword(text);
+    // 选中后再改输入内容，就清掉已选
+    setSelectedUserId(0);
+    if (text.trim()) {
+      setSearching(true);
+    } else {
       setSearching(false);
+      setFound(null);
     }
+  };
+
+  const handlePickUser = (user: UserBrief) => {
+    setSelectedUserId(user.id);
+    setKeyword(`${user.realName} (${user.username})`);
+    setSearching(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,48 +170,26 @@ function InviteMemberForm({
               选择用户<b>*</b>
             </span>
             <div>
-              <div className="invite-search">
-                <input
-                  className="u"
-                  type="text"
-                  placeholder="输入姓名或账号搜索"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      void handleSearch();
-                    }
-                  }}
-                />
-                <button
-                  className="btn"
-                  type="button"
-                  disabled={searching}
-                  onClick={() => void handleSearch()}
-                >
-                  {searching ? "搜索中…" : "搜索"}
-                </button>
-              </div>
-              {candidates.length > 0 ? (
-                <select
-                  className="u"
-                  value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(Number(e.target.value))}
-                >
-                  {candidates.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.realName} ({u.username})
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                found !== null && (
-                  <div className="t-hint">
-                    没有可邀请的用户（没搜到，或搜到的人已在项目中）
-                  </div>
-                )
-              )}
+              <SearchDropdown
+                items={candidates}
+                getKey={(u) => u.id}
+                onPick={handlePickUser}
+                isSelected={(u) => u.id === selectedUserId}
+                value={keyword}
+                onChange={handleKeywordChange}
+                placeholder="输入姓名或账号搜索"
+                ariaLabel="选择用户"
+                headWord="USERS"
+                loading={searching}
+                emptyText="没有可邀请的用户"
+                renderItem={(u) => (
+                  <span>
+                    <span className="sd-nm">{u.realName}</span>
+                    <span className="sd-sub">{u.username}</span>
+                  </span>
+                )}
+                itemClassName={() => "sd-row"}
+              />
             </div>
           </div>
 
