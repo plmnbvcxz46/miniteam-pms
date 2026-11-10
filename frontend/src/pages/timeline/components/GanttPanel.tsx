@@ -10,7 +10,7 @@ import {
 import type { CpmResult, TimelineForecast } from "../utils";
 import type { TimelineScale } from "./TimelineHeader";
 import GanttAxis from "./GanttAxis";
-import GanttDeps from "./GanttDeps";
+import GanttDeps, { type DepHover } from "./GanttDeps";
 import GanttRow from "./GanttRow";
 
 /** 名称列宽（px） */
@@ -62,7 +62,7 @@ export default function GanttPanel({
 
   const late = forecast.delayDays > 0;
   // 悬停或聚焦的任务，依赖连线据此突出
-  const [hoverId, setHoverId] = useState<number | null>(null);
+  const [hover, setHover] = useState<DepHover>(null);
 
   // 竖线顶端的日期标签：放在表头下面不随行滚走的一条里。默认排在线右侧，
   // 右侧超出图的右边界或压到前一个标签就改排左侧；宽度按等宽字估算（中文一个字宽）
@@ -193,7 +193,9 @@ export default function GanttPanel({
                 cpm={cpm.rows[task.id]}
                 last={i === tasks.length - 1}
                 onOpen={onOpenTask}
-                onHover={setHoverId}
+                onHover={(id) =>
+                  setHover(id === null ? null : { kind: "task", id })
+                }
               />
             ))}
 
@@ -205,7 +207,8 @@ export default function GanttPanel({
               nameWidth={NAME_WIDTH}
               rowHeight={ROW_HEIGHT}
               today={today}
-              hoverId={hoverId}
+              hover={hover}
+              onHover={setHover}
             />
 
             <div className="gt-line today" style={{ left: x(dayEnd(today)) }} />

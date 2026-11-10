@@ -17,9 +17,15 @@ interface GanttDepsProps {
   nameWidth: number;
   rowHeight: number;
   today: string;
-  /** 鼠标移到或聚焦到的任务：和它直接相连的线突出，其余变浅 */
-  hoverId: number | null;
+  /** 当前悬停的对象：任务（突出它直接相连的线）、某个前置的主干（突出它发出的所有线）、某一条依赖 */
+  hover: DepHover;
+  onHover: (hover: DepHover) => void;
 }
+
+export type DepHover = {
+  kind: "task" | "from" | "dep";
+  id: number;
+} | null;
 
 /** 依赖线离开前置任务条后先走出的距离（px） */
 const ELBOW = 8;
@@ -39,7 +45,8 @@ export default function GanttDeps({
   nameWidth,
   rowHeight,
   today,
-  hoverId,
+  hover,
+  onHover,
 }: GanttDepsProps) {
   const rowOf = new Map(tasks.map((task, i) => [task.id, i]));
   // 线都对齐到半像素，1px 的线才不发虚
@@ -69,7 +76,20 @@ export default function GanttDeps({
           key: dep.dependencyId,
           crit,
           done: from.status === "DONE" && task.status === "DONE",
-          hot: hoverId !== null && (from.id === hoverId || task.id === hoverId),
+          fromId: from.id,
+          x1,
+          y1,
+          trunk,
+          yEnd: roomy ? y2 : gap,
+          hit: roomy
+            ? `M${trunk} ${y2}H${x2}`
+            : `M${trunk} ${gap}H${x2 - ELBOW}V${y2}H${x2}`,
+          hot:
+            hover !== null &&
+            ((hover.kind === "task" &&
+              (from.id === hover.id || task.id === hover.id)) ||
+              (hover.kind === "from" && from.id === hover.id) ||
+              (hover.kind === "dep" && dep.dependencyId === hover.id)),
           path: roomy
             ? `M${x1} ${y1}H${trunk}V${y2}H${x2}`
             : `M${x1} ${y1}H${trunk}V${gap}H${x2 - ELBOW}V${y2}H${x2}`,
@@ -91,12 +111,59 @@ export default function GanttDeps({
           className={
             hot
               ? "hot"
-              : `${line.crit ? "crit" : ""} ${line.done ? "done" : ""} ${hoverId !== null ? "dim" : ""}`
+              : `${line.crit ? "crit" : ""} ${line.done ? "done" : ""} ${hover !== null ? "dim" : ""}`
           }
         >
           <path d={line.path} />
           <polygon className="head" points={line.head} />
         </g>
+      ))}
+    </svg>
+  );
+
+  // 命中区域：透明的宽线专门接收鼠标。主干（同一个前置的所有后继共用）按前置分组，
+  // 其余水平段按每条依赖各一条；可见的线自己不接收事件
+  const trunks = new Map<
+    number,
+    { x1: number; y1: number; trunk: number; min: number; max: number }
+  >();
+  for (const line of lines) {
+    const t = trunks.get(line.fromId);
+    if (t) {
+      t.min = Math.min(t.min, line.yEnd);
+      t.max = Math.max(t.max, line.yEnd);
+    } else {
+      trunks.set(line.fromId, {
+        x1: line.x1,
+        y1: line.y1,
+        trunk: line.trunk,
+        min: Math.min(line.y1, line.yEnd),
+        max: Math.max(line.y1, line.yEnd),
+      });
+    }
+  }
+  const hitLayer = (
+    <svg
+      className="gt-deps hit"
+      width={nameWidth + width}
+      height={tasks.length * rowHeight}
+      aria-hidden="true"
+    >
+      {[...trunks.entries()].map(([id, t]) => (
+        <path
+          key={`t${id}`}
+          d={`M${t.x1} ${t.y1}H${t.trunk}M${t.trunk} ${t.min}V${t.max}`}
+          onMouseEnter={() => onHover({ kind: "from", id })}
+          onMouseLeave={() => onHover(null)}
+        />
+      ))}
+      {lines.map((line) => (
+        <path
+          key={`h${line.key}`}
+          d={line.hit}
+          onMouseEnter={() => onHover({ kind: "dep", id: line.key })}
+          onMouseLeave={() => onHover(null)}
+        />
       ))}
     </svg>
   );
@@ -109,7 +176,8 @@ export default function GanttDeps({
         "gt-deps",
         false,
       )}
-      {hoverId !== null &&
+      {hitLayer}
+      {hover !== null &&
         draw(
           lines.filter((line) => line.hot),
           "gt-deps top",

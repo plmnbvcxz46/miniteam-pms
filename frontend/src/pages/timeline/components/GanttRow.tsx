@@ -29,11 +29,15 @@ export default function GanttRow({
 }: GanttRowProps) {
   const critical = cpm.slack === 0;
 
+  // 只有任务名那两行字和任务条本身触发悬停，格子里的空白和行的空白都不触发
+  const hoverName = {
+    onMouseEnter: () => onHover(task.id),
+    onMouseLeave: () => onHover(null),
+  };
+
   return (
     <div
       className={`gt-row${last ? " last" : ""}`}
-      onMouseEnter={() => onHover(task.id)}
-      onMouseLeave={() => onHover(null)}
       onFocus={() => onHover(task.id)}
       onBlur={() => onHover(null)}
     >
@@ -42,12 +46,23 @@ export default function GanttRow({
         type="button"
         onClick={() => onOpen(task.id)}
       >
-        <b>{task.title}</b>
-        <small>
+        <b {...hoverName}>{task.title}</b>
+        <small {...hoverName}>
           {task.assignee?.realName ?? "未分配"} · {task.planDays} 天
         </small>
       </button>
-      <div className="gt-lane" style={{ width }}>
+      <div
+        className="gt-lane"
+        style={{ width }}
+        onMouseOver={(e) =>
+          onHover(
+            (e.target as Element).closest(".tb-fill, .tb-frame")
+              ? task.id
+              : null,
+          )
+        }
+        onMouseLeave={() => onHover(null)}
+      >
         <TaskBar task={task} activities={activities} range={range} compact />
       </div>
     </div>
