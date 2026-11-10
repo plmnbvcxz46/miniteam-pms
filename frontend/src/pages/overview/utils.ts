@@ -39,16 +39,6 @@ export function formatKicker(
   return `第 ${formatWeekNo(week, weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.remaining} 项 · 逾期 ${stats.overdue} 项`;
 }
 
-/** 逾期最久的未完成任务（四个数字里“逾期”下面那行字用），没有为空 */
-export function getWorstOverdue(tasks: TaskDetail[]): TaskDetail | null {
-  return (
-    tasks
-      .filter((task) => task.status !== "DONE" && task.overdueDays > 0)
-      .sort((a, b) => b.overdueDays - a.overdueDays || a.taskNo - b.taskNo)[0] ??
-    null
-  );
-}
-
 /* ---------- 今日待办 ---------- */
 
 export interface TodoRow {

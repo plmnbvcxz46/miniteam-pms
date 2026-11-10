@@ -18,7 +18,6 @@ import {
   formatKicker,
   getDayProgress,
   getWeek,
-  getWorstOverdue,
   toScheduleRows,
   toTodoRows,
 } from "./utils";
@@ -46,10 +45,6 @@ export default function OverviewPage() {
   const todos = useMemo(
     () => (overview ? toTodoRows(overview.todo, taskMap) : []),
     [overview, taskMap],
-  );
-  const worst = useMemo(
-    () => getWorstOverdue(Object.values(taskMap)),
-    [taskMap],
   );
 
   if (missing) {
@@ -84,7 +79,7 @@ export default function OverviewPage() {
         kicker={formatKicker(overview.stats, today, period)}
         onCreateTask={canEditTask ? () => openTaskForm() : undefined}
       />
-      <FigureStrip stats={overview.stats} worst={worst} />
+      <FigureStrip stats={overview.stats} />
 
       <div className="ov1">
         <SchedulePanel

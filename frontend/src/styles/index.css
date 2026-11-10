@@ -1077,17 +1077,13 @@ main {
   letter-spacing: var(--ls-tighter);
 }
 .figure .num small {
-  font-size: var(--fs-md);
+  font-size: var(--fs-3xl);
   letter-spacing: 0;
-  margin-left: 6px;
+  margin-left: 2px;
   font-weight: var(--fw-bold);
-}
-.figure .sub {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
   color: var(--text-mute);
 }
-.figure:first-child .sub {
+.figure:first-child .num small {
   color: var(--text-inverse-mute);
 }
 .figure.alert {
