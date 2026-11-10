@@ -1303,15 +1303,16 @@ main {
   padding: 0 10px;
   font-size: var(--fs-md);
   color: var(--text-mute);
-  border: 1.5px solid transparent;
+  border: 1.5px solid var(--hair);
 }
 .chips button[aria-pressed="true"] {
   background: var(--ink);
+  border-color: var(--ink);
   color: var(--text-inverse);
-  font-weight: var(--fw-bold);
 }
 .chips button:not([aria-pressed="true"]):hover {
   background: var(--wash);
+  border-color: var(--ink);
   color: var(--text);
 }
 .chips button[aria-pressed="true"] .key {
