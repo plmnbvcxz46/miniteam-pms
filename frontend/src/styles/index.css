@@ -1858,48 +1858,16 @@ select.in {
 .fr .pms .pm {
   margin-left: 0;
 }
-/* 负责人选择器（任务抽屉）：浮层沿用 .issues，不占文档流，抽屉高度不变 */
-.ap {
-  position: relative;
-}
-.ap-tg {
-  all: unset;
-  box-sizing: border-box;
-  cursor: pointer;
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 12px;
-  align-items: center;
-  gap: 12px;
-  font-size: var(--fs-lg);
-  line-height: 30px;
-  border-bottom: 1.5px solid var(--ink);
-}
-.ap-tg:hover {
-  background: var(--wash);
-}
-.ap-tg:focus-visible {
-  outline: none;
-  border-bottom-color: var(--signal);
-}
-.ap-tg .nm {
+/* 负责人选择器（任务抽屉）：输入框、面板、行外壳在 shared/components/SearchDropdown.css，这里只留成员行特有的 */
+.ap-val {
   font-weight: var(--fw-bold);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ap-tg .nm.none {
+.ap-val.none {
   font-weight: var(--fw-regular);
   color: var(--text-mute);
-}
-.ap .ap-pop {
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  width: auto;
-}
-.ap .list {
-  max-height: 252px;
 }
 .ap-opt {
   display: grid;
@@ -1908,19 +1876,6 @@ select.in {
   gap: 12px;
   height: 36px;
   padding: 0 14px;
-  border-bottom: 1px solid var(--hair);
-  font-size: var(--fs-md);
-  cursor: pointer;
-}
-.ap .list > .ap-opt:last-child {
-  border-bottom: 0;
-}
-.ap-opt.on {
-  background: var(--wash);
-}
-.ap-opt[aria-selected="true"] {
-  outline: 1.5px solid var(--signal);
-  outline-offset: -1.5px;
 }
 .ap-opt.hit:has(+ .ap-opt.miss) {
   border-bottom: 1.5px solid var(--ink);
@@ -2021,9 +1976,6 @@ select.in {
   display: none;
 }
 .ap-none {
-  grid-template-columns: minmax(0, 1fr);
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 0;
   color: var(--text-mute);
 }
 .ap-none[aria-selected="true"] {
@@ -2031,9 +1983,6 @@ select.in {
   font-weight: var(--fw-bold);
 }
 @media (max-width: 900px) {
-  .ap .list {
-    max-height: min(252px, 45vh);
-  }
   .ap-opt {
     grid-template-columns: minmax(0, 1fr) auto;
     height: auto;
