@@ -62,6 +62,43 @@ export default function GanttPanel({
 
   const late = forecast.delayDays > 0;
 
+  // 竖线顶端的日期标签：放在表头下面不随行滚走的一条里。默认排在线右侧，
+  // 右侧超出图的右边界或压到前一个标签就改排左侧；宽度按等宽字估算（中文一个字宽）
+  const totalWidth = NAME_WIDTH + width;
+  const flagWidth = (text: string) =>
+    [...text].reduce((w, ch) => w + (ch.charCodeAt(0) > 255 ? 10 : 6), 0) + 4;
+  const flagDefs = [
+    { key: "today", at: x(dayEnd(today)), text: "今天", late: false },
+    {
+      key: "plan",
+      at: x(dayEnd(forecast.planEnd)),
+      text: `计划 ${formatDayLabel(forecast.planEnd)}`,
+      late: false,
+    },
+    ...(late
+      ? [
+          {
+            key: "pred",
+            at: x(dayEnd(forecast.predictedEnd)),
+            text: `预测 ${formatDayLabel(forecast.predictedEnd)}`,
+            late: true,
+          },
+        ]
+      : []),
+  ].sort((a, b) => a.at - b.at);
+  const taken: [number, number][] = [];
+  const flags = flagDefs.map((f) => {
+    const w = flagWidth(f.text);
+    const clash = (l: number, r: number) =>
+      taken.some(([tl, tr]) => l < tr && r > tl);
+    let left = f.at + 3;
+    if (left + w > totalWidth || clash(left, left + w)) {
+      left = f.at - 3 - w;
+    }
+    taken.push([left, left + w]);
+    return { ...f, left, w };
+  });
+
   return (
     <section className="pnl gp">
       <div className="phd">
@@ -113,6 +150,18 @@ export default function GanttPanel({
             />
           </div>
 
+          <div className="gt-flags">
+            {flags.map((f) => (
+              <span
+                key={f.key}
+                className={`gt-flag${f.late ? " late" : ""}`}
+                style={{ left: f.left, width: f.w }}
+              >
+                {f.text}
+              </span>
+            ))}
+          </div>
+
           <div
             className="gt-body"
             style={{ "--name": `${NAME_WIDTH}px` } as CSSProperties}
@@ -140,26 +189,16 @@ export default function GanttPanel({
               today={today}
             />
 
-            <div className="gt-line today" style={{ left: x(dayEnd(today)) }}>
-              <span className="gt-flag">今天</span>
-            </div>
+            <div className="gt-line today" style={{ left: x(dayEnd(today)) }} />
             <div
               className="gt-line plan"
               style={{ left: x(dayEnd(forecast.planEnd)) }}
-            >
-              <span className="gt-flag left">
-                计划 {formatDayLabel(forecast.planEnd)}
-              </span>
-            </div>
+            />
             {late && (
               <div
                 className="gt-line pred"
                 style={{ left: x(dayEnd(forecast.predictedEnd)) }}
-              >
-                <span className="gt-flag left late">
-                  预测 {formatDayLabel(forecast.predictedEnd)}
-                </span>
-              </div>
+              />
             )}
           </div>
         </div>
