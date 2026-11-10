@@ -255,47 +255,62 @@
   gap: 8px;
 }
 .cp .chain {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 6px 5px;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  flex-wrap: wrap;
-  margin-top: 10px;
+  line-height: var(--lh-snug);
 }
-.cp .chain span {
+/* 一格一个节点：做完的填实，当前的橙色描边，后面的细描边；太多时等比变窄 */
+.cp .cells {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+.cp .cells span {
+  flex: 0 1 22px;
+  min-width: 0;
+  height: 10px;
   border: 1.5px solid var(--paper);
-  padding: 3px 6px;
-  white-space: nowrap;
 }
-.cp .chain .hot {
-  display: inline-flex;
-  align-items: stretch;
-  padding: 0;
-  border: 0;
-  gap: 0;
-}
-.cp .chain .hot b {
+.cp .cells .done {
   background: var(--paper);
-  color: var(--text);
-  padding: 4px 7px;
-  font-weight: var(--fw-bold);
 }
-.cp .chain .hot i {
-  width: 22px;
-  border: 1.5px solid var(--paper);
-  border-left: 0;
-  background: var(--over);
+.cp .cells .now {
+  border: 2.5px solid var(--signal);
 }
-.cp .chain .hot i[hidden] + em {
-  display: none;
+.cp .cells .hot {
+  background: var(--signal);
+  border-color: var(--signal);
 }
-.cp .chain em {
+.cp .step em {
+  flex-shrink: 0;
   font-style: normal;
   color: var(--text-accent);
-  border: 0;
-  padding: 0;
+}
+.cp .step {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  color: var(--text-inverse);
+}
+.cp .step.next {
+  color: var(--text-inverse-mute);
+}
+.cp .step b {
+  flex-shrink: 0;
+}
+.cp .step span {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cp .foot {
   display: flex;

@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import type { CriticalNode } from "../../../shared/types/progress";
 import { formatDayLabel } from "../../../shared/utils/date";
 import type { TimelineForecast } from "../../timeline/utils";
@@ -16,6 +15,17 @@ export default function CriticalChainPanel({
   forecast,
   totalDays,
 }: CriticalChainPanelProps) {
+  // 当前节点是第一个没完成的；全部完成时落在最后一个
+  const firstTodo = chain.findIndex((node) => node.status !== "DONE");
+  const current = firstTodo < 0 ? chain.length - 1 : firstTodo;
+  // 只显示当前节点和它的下一个节点
+  const shown = chain
+    .map((node, i) => ({ node, i }))
+    .slice(current, current + 2);
+  const isHot = (node: CriticalNode) =>
+    node.status !== "DONE" && node.overrunDays > 0;
+  const nodeNo = (i: number) => String(i + 1).padStart(2, "0");
+
   return (
     <section className="pnl dark cp">
       <div className="phd">
@@ -31,25 +41,31 @@ export default function CriticalChainPanel({
         </span>
       </div>
       <div className="chain">
-        {chain.map((node, i) => {
-          const hot = node.status !== "DONE" && node.overrunDays > 0;
-          return (
-            <Fragment key={node.taskId}>
-              {i > 0 && "→"}
-              {hot ? (
-                <>
-                  <span className="hot">
-                    <b>{node.title}</b>
-                    <i />
-                  </span>
-                  <em>+{node.overrunDays}</em>
-                </>
-              ) : (
-                <span>{node.title}</span>
-              )}
-            </Fragment>
-          );
-        })}
+        <div className="cells">
+          {chain.map((node, i) => (
+            <span
+              key={node.taskId}
+              className={[
+                i < current ? "done" : i === current ? "now" : "",
+                isHot(node) ? "hot" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              title={`${nodeNo(i)} ${node.title}${isHot(node) ? `（逾期 ${node.overrunDays} 天）` : ""}`}
+            />
+          ))}
+        </div>
+        {shown.map(({ node, i }, k) => (
+          <div
+            key={node.taskId}
+            className={k === 0 ? "step" : "step next"}
+            title={node.title}
+          >
+            <b>{nodeNo(i)}</b>
+            <span>{node.title}</span>
+            {isHot(node) && <em>+{node.overrunDays}</em>}
+          </div>
+        ))}
       </div>
       <div className="foot">
         <span>
