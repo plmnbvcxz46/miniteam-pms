@@ -25,6 +25,7 @@
 .chart .t.m {
   fill: var(--mute);
 }
+.chart .t .sig,
 .chart .t.sig {
   fill: var(--signal-text);
 }

@@ -42,7 +42,9 @@ export default function DocumentDetailHistory({
           return (
             <div key={ver.id} className="hv">
               <b>{ver.version}</b>
-              <div className="hv-note">{ver.comment}</div>
+              <div className="hv-note" title={ver.comment}>
+                {ver.comment}
+              </div>
 
               {/* 物理文件附件及下载交互 */}
               {ver.fileName && (

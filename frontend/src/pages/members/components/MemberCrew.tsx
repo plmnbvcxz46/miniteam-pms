@@ -6,7 +6,7 @@ import MemberColumn from "./MemberColumn";
 interface MemberCrewProps {
   /** 成员列表（支持搜索过滤后传入） */
   members: Member[];
-  /** 每周工时上限的显示文字，如“上限 40” */
+  /** 每周工时上限的显示文字，如“40”或“32–40” */
   capacityText: string;
   /** 一组成员共用的工时坐标轴最大值（小时） */
   loadScale: number;
@@ -43,7 +43,7 @@ export default function MemberCrew({
         className="crew"
         id="crew"
         style={{
-          gridTemplateColumns: `230px repeat(${columnCount}, minmax(150px, 1fr))`,
+          gridTemplateColumns: `230px repeat(${columnCount}, minmax(var(--crew-col-min), var(--crew-col-max)))`,
         }}
       >
         {/* 左侧固定表头行与搜索栏 */}

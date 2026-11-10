@@ -69,6 +69,13 @@
   scrollbar-width: thin;
   scrollbar-color: var(--ink) transparent;
 }
+/* 不滚动的内容层：今天线相对它定位，高度 = 全部行，滚下去也有线 */
+.tl .rows-in {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
 .tl .today {
   position: absolute;
   left: calc(96px + (100% - 96px) * var(--at, 3.5) / 7);
@@ -102,6 +109,7 @@
 /*
  * 框是整个计划区间，填充（::before）只到今天线，--fill 是占整条的比例（0~1），由 ScheduleRow 按此刻算。
  * 比例按含边框的整条宽度算（今天线也是），伪元素从边框内侧起画，所以宽度 = (内宽 + 两侧边框) × 比例 − 左边框
+ * 再多画 0.75px（线宽的一半）让右缘落在今天线中心，线在上层盖住取整误差；比例 1 时被 .bar 的 overflow 裁到整条，0 时为 0
  */
 .tl .bar {
   isolation: isolate;
@@ -113,7 +121,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 1.5px));
+  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 0.75px));
   z-index: -1;
 }
 .bar.on::before {
@@ -247,47 +255,62 @@
   gap: 8px;
 }
 .cp .chain {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 6px 5px;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  flex-wrap: wrap;
-  margin-top: 10px;
+  line-height: var(--lh-snug);
 }
-.cp .chain span {
+/* 一格一个节点：做完的填实，当前的橙色描边，后面的细描边；太多时等比变窄 */
+.cp .cells {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+.cp .cells span {
+  flex: 0 1 22px;
+  min-width: 0;
+  height: 10px;
   border: 1.5px solid var(--paper);
-  padding: 3px 6px;
-  white-space: nowrap;
 }
-.cp .chain .hot {
-  display: inline-flex;
-  align-items: stretch;
-  padding: 0;
-  border: 0;
-  gap: 0;
-}
-.cp .chain .hot b {
+.cp .cells .done {
   background: var(--paper);
-  color: var(--text);
-  padding: 4px 7px;
-  font-weight: var(--fw-bold);
 }
-.cp .chain .hot i {
-  width: 22px;
-  border: 1.5px solid var(--paper);
-  border-left: 0;
-  background: var(--over);
+.cp .cells .now {
+  border: 2.5px solid var(--signal);
 }
-.cp .chain .hot i[hidden] + em {
-  display: none;
+.cp .cells .hot {
+  background: var(--signal);
+  border-color: var(--signal);
 }
-.cp .chain em {
+.cp .step em {
+  flex-shrink: 0;
   font-style: normal;
   color: var(--text-accent);
-  border: 0;
-  padding: 0;
+}
+.cp .step {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  color: var(--text-inverse);
+}
+.cp .step.next {
+  color: var(--text-inverse-mute);
+}
+.cp .step b {
+  flex-shrink: 0;
+}
+.cp .step span {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cp .foot {
   display: flex;

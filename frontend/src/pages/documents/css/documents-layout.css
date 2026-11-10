@@ -76,6 +76,9 @@
 .dsec.on .dsec-h > * {
   --ink: #fafaf7;
   --paper: #0a0a0a;
+  /* 文字色在 :root 上已解析成黑色，反色后要重新声明才会跟着变 */
+  --text: var(--ink);
+  --text-mute: var(--mute);
 }
 
 .dsec-h .legend {
