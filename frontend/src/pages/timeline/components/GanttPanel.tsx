@@ -148,19 +148,34 @@ export default function GanttPanel({
               today={today}
               showDays={scale === "week"}
             />
+            {/* 按月没有日号行，标签直接放进那一行 */}
+            {scale !== "week" && (
+              <div className="gt-flags in-head">
+                {flags.map((f) => (
+                  <span
+                    key={f.key}
+                    className={`gt-flag${f.late ? " late" : ""}`}
+                    style={{ left: f.left, width: f.w }}
+                  >
+                    {f.text}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-
-          <div className="gt-flags">
-            {flags.map((f) => (
-              <span
-                key={f.key}
-                className={`gt-flag${f.late ? " late" : ""}`}
-                style={{ left: f.left, width: f.w }}
-              >
-                {f.text}
-              </span>
-            ))}
-          </div>
+          {scale === "week" && (
+            <div className="gt-flags">
+              {flags.map((f) => (
+                <span
+                  key={f.key}
+                  className={`gt-flag${f.late ? " late" : ""}`}
+                  style={{ left: f.left, width: f.w }}
+                >
+                  {f.text}
+                </span>
+              ))}
+            </div>
+          )}
 
           <div
             className="gt-body"

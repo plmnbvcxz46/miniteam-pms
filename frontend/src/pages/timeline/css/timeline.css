@@ -198,6 +198,15 @@
   height: 22px;
   background: var(--paper);
 }
+/* 按月时放在表头里原本空着的日号行，不多占高度 */
+.gt-flags.in-head {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: none;
+}
 .gt-flag {
   position: absolute;
   top: 4px;
