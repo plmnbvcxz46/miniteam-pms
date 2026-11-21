@@ -1,0 +1,317 @@
+/* 基础按钮组件：严格 0 圆角、暖纸黑白 + 单信号橙，变体与交互态全由 data-* 与标准伪类驱动 */
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-none);
+  border-width: var(--border-width-thin);
+  border-style: solid;
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  transition-property: background-color, color, border-color, transform, opacity;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.button[data-full-width="true"] {
+  display: flex;
+  width: 100%;
+}
+
+.button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  border-width: var(--border-width-thin);
+  border-style: solid;
+  border-color: currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-full);
+  animation-name: button-spin;
+  animation-duration: calc(var(--duration-normal) * 3);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- 尺寸档位（data-size） ---------- */
+.button[data-size="sm"] {
+  height: 30px;
+  padding: 0 var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+.button[data-size="md"] {
+  height: 34px;
+  padding: 0 var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+.button[data-size="lg"] {
+  height: 40px;
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.button[data-size="icon"] {
+  width: 40px;
+  height: 40px;
+  padding: var(--space-0);
+  font-size: var(--font-size-md);
+}
+
+/* ---------- 变体：default（暖纸黑框） ---------- */
+.button[data-variant="default"]:hover:not(:disabled) {
+  background-color: var(--color-bg-subtle);
+}
+
+.button[data-variant="default"]:active:not(:disabled) {
+  background-color: var(--color-border);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="default"][aria-pressed="true"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-strong);
+}
+
+.button[data-variant="default"][aria-pressed="true"]:hover:not(:disabled) {
+  background-color: var(--color-surface-inverse-hover);
+}
+
+.button[data-variant="default"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-surface);
+  color: var(--color-text-faint);
+  border-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：primary（墨黑反白） ---------- */
+.button[data-variant="primary"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-strong);
+}
+
+.button[data-variant="primary"]:hover:not(:disabled) {
+  background-color: var(--color-surface-inverse-hover);
+}
+
+.button[data-variant="primary"]:active:not(:disabled) {
+  background-color: var(--color-surface-inverse);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="primary"][aria-pressed="true"] {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.button[data-variant="primary"][aria-pressed="true"]:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.button[data-variant="primary"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse-muted);
+  border-color: var(--color-border);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：accent（单视图信号橙主强调） ---------- */
+.button[data-variant="accent"] {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  font-weight: var(--font-weight-heavy);
+}
+
+.button[data-variant="accent"]:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.button[data-variant="accent"]:active:not(:disabled) {
+  background-color: var(--color-accent);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="accent"][aria-pressed="true"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-strong);
+}
+
+.button[data-variant="accent"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：danger（高危/破坏性操作触发） ---------- */
+.button[data-variant="danger"] {
+  background-color: var(--color-surface);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.button[data-variant="danger"]:hover:not(:disabled) {
+  background-color: var(--color-danger-subtle);
+}
+
+.button[data-variant="danger"]:active:not(:disabled) {
+  background-color: var(--color-danger-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="danger"][aria-pressed="true"] {
+  background-color: var(--color-danger-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.button[data-variant="danger"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-surface);
+  color: var(--color-text-faint);
+  border-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：dashed（虚线新建/附加入口） ---------- */
+.button[data-variant="dashed"] {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  border-style: dashed;
+}
+
+.button[data-variant="dashed"]:hover:not(:disabled) {
+  background-color: var(--color-bg-subtle);
+}
+
+.button[data-variant="dashed"]:active:not(:disabled) {
+  background-color: var(--color-border);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="dashed"][aria-pressed="true"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-style: solid;
+}
+
+.button[data-variant="dashed"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-surface);
+  color: var(--color-text-faint);
+  border-color: var(--color-border);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：ghost（无框图标/辅助操作） ---------- */
+.button[data-variant="ghost"] {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.button[data-variant="ghost"]:hover:not(:disabled) {
+  background-color: var(--color-bg-subtle);
+}
+
+.button[data-variant="ghost"]:active:not(:disabled) {
+  background-color: var(--color-border);
+  transform: translate(1px, 1px);
+}
+
+.button[data-variant="ghost"][aria-pressed="true"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.button[data-variant="ghost"]:disabled:not([data-loading="true"]) {
+  background-color: transparent;
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+
+/* ---------- 变体：link（下划线行内操作） ---------- */
+.button[data-variant="link"] {
+  height: auto;
+  padding: var(--space-0);
+  background-color: transparent;
+  color: var(--color-text);
+  border-width: 0;
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: var(--border-width-thin);
+}
+
+.button[data-variant="link"]:hover:not(:disabled) {
+  color: var(--color-accent-text);
+}
+
+.button[data-variant="link"]:active:not(:disabled) {
+  color: var(--color-text);
+  opacity: 0.7;
+}
+
+.button[data-variant="link"][aria-pressed="true"] {
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-heavy);
+}
+
+.button[data-variant="link"]:disabled:not([data-loading="true"]) {
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+
+/* ---------- 加载态（保持原变体视觉、防连点、零宽高抖动） ---------- */
+.button[data-loading="true"] {
+  cursor: wait;
+}
+
+.button[data-loading="true"] .content {
+  visibility: hidden;
+}

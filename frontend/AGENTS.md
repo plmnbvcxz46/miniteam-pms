@@ -58,7 +58,8 @@ src/
 ### 基础组件（`src/components/ui/`）
 | 组件 | 底层原语 | 状态 | 备注 |
 |---|---|---|---|
-| `Button` / `Input` / `Textarea` / `Badge` / `Alert` | 原生语义元素 | 待阶段 3 实现 | 覆盖 9 态，支持 `data-variant` / `data-size` |
+| `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`ghost`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；支持 `loading`（防连点无抖动）、`leadingIcon`/`trailingIcon`、`fullWidth`、`aria-pressed` |
+| `Input` / `Textarea` / `Badge` / `Alert` | 原生语义元素 | 待阶段 3 实现 | 覆盖 9 态，支持 `data-variant` / `data-size` |
 | `Switch` / `Checkbox` / `ToggleGroup` / `Tabs` | `radix-ui` | 待阶段 3 实现 | 统一替代 `.sw2`/`.pm`/`.ck`/`.seg`/`.chips`/`.roles`/`.ov-tabs` |
 | `Select` / `Popover` / `DropdownMenu` | `radix-ui` | 待阶段 3 实现 | 替代手写 `useDismiss` + `.issues` 与原生 `<select>` |
 | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待阶段 3 实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
