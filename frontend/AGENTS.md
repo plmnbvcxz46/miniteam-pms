@@ -1,48 +1,113 @@
 # frontend 补充约定
 
-总约定见根目录 `AGENTS.md`，本文件只写前端补充，冲突时以根目录为准。
+总约定见根目录 `AGENTS.md`，本文件只写前端补充，冲突时以根目录为准。设计系统与组件详细规范见 [`DESIGN.md`](./DESIGN.md)，历史基线审计见 [`audit.md`](./audit.md)。
 
-## 目录结构
+---
 
-```
+## 重构目录结构与单向分层规则
+
+当前正处于设计系统与架构重构期（已完成阶段 0 审计、阶段 1 规范、阶段 2 基础设施），新旧目录并行过渡，**新代码一律按目标结构落位**，旧目录在阶段 3–4 逐步迁出并删除：
+
+```text
 src/
-├── App.tsx、main.tsx        # 入口、路由
-├── api/                     # 接口请求，按模块拆（http.ts 是封装）
-├── state/<名称>/            # 全局状态：Provider + Context + use 钩子
-│   ├── access、auth、config、issue、project   # 权限、登录、系统参数、期、项目
-│   ├── task/                # 任务表（TaskProvider、taskStore、utils）
-│   └── document/            # 文档表（DocumentProvider、documentStore）
-├── layout/                  # 外壳：Shell、sidebar/、topbar/、NoProject、useNotifications 等
-├── overlays/                # 全局抽屉：project/、settings/、task/
-├── pages/<模块>/
-│   ├── <模块>Page.tsx       # 页面入口：持有状态、组合组件，不写大段 JSX
-│   ├── components/          # 本页面的组件，平铺，不再分子目录
-│   ├── css/                 # 本模块样式，<模块>.css 作为入口 import 其余文件
-│   └── utils.ts             # 本模块的纯函数（可选）
-├── shared/                  # 多处共用的东西
-│   ├── components/          # 通用组件（Drawer、TaskBar）
-│   ├── constants/           # 常量（task.ts 任务状态、labels.ts 中文名、permissions.ts、reports.ts、legends.ts）
-│   ├── types/               # 类型，global.ts 放全局共享，其余按模块
-│   └── utils/               # 通用函数（date、download、load）
-└── styles/                  # 全局样式
+├── App.tsx、main.tsx              # 入口、路由
+├── styles/                        # 全局样式底座（阶段 2 已就位）
+│   ├── tokens/                    # 仅允许 CSS 自定义属性定义（primitives/semantic/components/layout/typography/motion）
+│   ├── base.css                   # Reset、color-scheme、body、:focus-visible、.sr-only、reduced-motion
+│   ├── main.css                   # 统一入口：tokens/*.css → base.css → 过渡旧样式
+│   ├── legacy.css                 # [过渡] 旧 CSS 变量兼容别名，阶段 4 迁完删除
+│   ├── index.css                  # [过渡] 遗留全局样式，禁止新增规则，阶段 4 迁完删除
+│   └── typography/roles.css       # [过渡] 旧 .t-* 排版角色类（非 Token），按 DESIGN.md 2.5 E 迁入组件后删除
+├── components/                    # 通用组件层（阶段 3 起落位）
+│   ├── ui/                        # 基于 radix-ui 单包的无业务基础组件（Button/Input/Drawer/AlertDialog/Toast 等）
+│   └── patterns/                  # 组合 ui/ 的业务范式组件（AppShell/PageHeader/Panel/FormDrawer/FileDropzone 等）
+├── features/<业务域>/              # 按业务域收敛的页面与领域 hooks（阶段 4 逐模块从 pages/layout/overlays 迁入）
+├── services/                      # 接口请求层（阶段 3 由 api/ 演进）
+├── stores/                        # 全局状态层（阶段 3 由 state/ 演进）
+├── shared/                        # 跨层通用纯函数、常量、类型（严禁反向依赖 state/stores/services）
+└── [过渡旧目录] api/、state/、layout/、overlays/、pages/
 ```
 
-- **放置规则**：只在一个页面里用的，放在该页面目录里；被两个以上页面、或外层（`layout/`、`overlays/`）用到的，放 `shared/`（组件、常量、类型、函数）或 `state/`（全局状态）。不要把东西留在某个页面目录里让别的页面或外层去引用。
-- 拆分参考 `pages/documents/`、`pages/members/`、`pages/reports/`：页面入口之下拆成容器面板（如 `*Panel`）与原子子组件（如 `*Row`、`*Item`、`*Bar`、`*Axis`、`*Chart`），都平铺在 `components/` 里，靠文件名区分。
-- 全局样式入口是 `styles/main.css`，按层引入：`styles/tokens/`（设计变量）→ `styles/index.css`（旧全局样式，逐步拆走，不要再往里加新东西）→ `styles/typography/roles.css`（组合文字样式）。
-- **文字一律用变量，不写死。** 字体族、字号、字重、行高、字距、文字色都在 `styles/tokens/typography.css`：字号用 `--fs-2xs`（10px）到 `--fs-7xl`（60px）共 12 档，文字色用 `--text`、`--text-mute`、`--text-alert` 等。现有档位不够时先在这里加一档，不要就地写一个新的 px 值。组件里也不要用 `style={{ fontSize }}`。
-- **同一种文字角色用同一个组合类**（`styles/typography/roles.css`）：页面标题 `t-page-title`、抽屉标题 `t-overlay-title`、面板标题上方的 `// WORD` 用 `t-kicker`、面板标题 `t-section-title`、字段名 `t-label`、说明 `t-hint`、错误 `t-error`、等宽元信息 `t-meta`、大数字 `t-figure`。组件 CSS 只写位置、间距和特殊底色下的颜色，不再重复写字体。
-- **表单抽屉**统一用 `.fr` 行：左边 `span.lb.t-label`，右边输入框加 `className="u"`（下划线样式，`select` 也一样），选项按钮用 `.chips`，左边缘和输入框对齐；错误放 `div.err.t-error`；底部按钮主操作在前、取消在后。参考 `overlays/task/TaskDrawer.tsx`。
-- 从 `styles/index.css` 迁出某模块样式时，在原位置留一行注释说明迁到了哪里；多页面共用的基础类（如 `.span2`、`.track`）保留在 `styles/index.css`，模块局部尺寸调整用模块作用域选择器覆盖。
+### 硬性依赖方向红线（`eslint.config.js` 强制拦截）
+- **单向依赖**：`features/*` → `components/patterns/*` → `components/ui/*` → `styles/tokens/*`。
+- **`components/ui/`**：禁止引用 `components/patterns/` 及任何业务/数据层（`features`/`services`/`stores`/`api`/`state`/`pages`/`layout`/`overlays`）。
+- **`components/patterns/`**：仅允许组合 `components/ui/` 与 `shared/` 纯工具，禁止依赖任何业务域或直接读取 `stores`/`state`（所有业务数据与 `today` 等状态一律由上层 props 传入）。
+- **`features/<域>/`**：各 feature 之间**严禁互引**（包括相对路径跨兄弟目录）；UI/页面组件（`*.tsx`）禁止直接导入 `services/*` 或 `api/*`，网络请求必须收口在 hooks / stores / services 层。
+- **Radix UI 引入规范**：统一从单包 `"radix-ui"` 按需具名导入（阶段 3 封装首个基础组件时安装），**禁止使用独立 `@radix-ui/*` 分包**。
+
+---
+
+## Design System 与样式红线（`stylelint.config.mjs` 强制校验）
+
+详细 Token 数值、组件状态矩阵与 Do/Don't 规范以 [`DESIGN.md`](./DESIGN.md) 为准：
+
+- **Token 文件纯净度**：`src/styles/tokens/*.css` **只允许 `:root`（及预留 `[data-theme="dark"]`）下的 `--*` 变量声明**，严禁写入普通选择器样式规则。
+- **三层色彩红线**：`原始色板（primitives.css） → 语义色（semantic.css） → 组件色（components.css）`。组件与业务样式**严禁直接引用 `--gray-*` / `--signal-*` 或写死 hex / `rgba()`**（SVG `<mask>` 逻辑黑白除外）。
+- **视觉基调与语义分离**：保持暖纸黑白 + 单信号橙（不引入新色相）；`--color-accent`、`--color-danger`、`--color-warning` 按用途分开命名与引用，`--color-success` / `--color-info` 使用墨色或中性灰；本次仅实现浅色值，预留 `[data-theme="dark"]` 仅覆写语义层扩展。
+- **样式标尺**：间距以 **4px 为基准**，仅允许 `--space-0-5`（`2px`）与 `--space-1-5`（`6px`）两个半步（原 `10px`/`14px` 迁入新样式时对齐 `8/12/16px`）；全站坚持 **`0` 圆角**（仅圆形元素用 `--radius-full`）；标准描边 `1.5px` / 粗描边 `2px`；保留 `--font-size-2xs: 10px` 与展示双档 `--font-size-display: 60px` / `--font-size-display-sm: 44px`（断点处切换 Token）。
+- **CSS Modules + `data-*` 驱动**：新组件与新页面样式统一使用 `*.module.css`，变体与交互态通过 `data-variant`、`data-size`、`data-state`、`data-loading`、`data-invalid` 与标准伪类（含补齐 `:active`、`:focus-visible`、`disabled` 弱化、`[aria-invalid="true"]`）驱动，**禁止拼接状态 class 名**。
+- **破坏性操作与反馈**：使用 Radix `AlertDialog`（`ConfirmDialog`）统一替代原生 `window.confirm` 与双击确认，使用 `Toast` 替代 `window.alert` 与短暂操作反馈，表单/页面校验错误使用行内提示。
+
+---
+
+## 组件清单登记表（当前：阶段 2 基础设施就绪）
+
+> 阶段 3 实现与阶段 4 迁移时，每落地或变更一个组件须同步更新本表与 `DESIGN.md`；禁止不经登记私自造重复控件。
+
+### 基础组件（`src/components/ui/`）
+| 组件 | 底层原语 | 状态 | 备注 |
+|---|---|---|---|
+| `Button` / `Input` / `Textarea` / `Badge` / `Alert` | 原生语义元素 | 待阶段 3 实现 | 覆盖 9 态，支持 `data-variant` / `data-size` |
+| `Switch` / `Checkbox` / `ToggleGroup` / `Tabs` | `radix-ui` | 待阶段 3 实现 | 统一替代 `.sw2`/`.pm`/`.ck`/`.seg`/`.chips`/`.roles`/`.ov-tabs` |
+| `Select` / `Popover` / `DropdownMenu` | `radix-ui` | 待阶段 3 实现 | 替代手写 `useDismiss` + `.issues` 与原生 `<select>` |
+| `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待阶段 3 实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
+| `Progress` / `Separator` | `radix-ui` | 待阶段 3 实现 | 支持双段进度与报纸双横线 |
+
+### 业务范式组件（`src/components/patterns/`）
+| 范式组件 | 状态 | 职责摘要 |
+|---|---|---|
+| `AppShell` / `PageHeader` / `Panel` / `Legend` | 待阶段 3 实现 | `PageHeader` 吸收 `.t-page-title`（`60px`/`44px` 断点切 Token） |
+| `FormDrawer` / `FormField` / `SearchInput` / `ConfirmDialog` | 待阶段 3 实现 | 统一 `.fr`/`.srow` 表单行与破坏性操作二次确认 |
+| `MetricStrip` / `HeroCard` / `LoadBar` / `TaskBar` | 待阶段 3 实现 | `TaskBar` 剥离 `useIssue()` 改为受控 `today` prop |
+| `ListRow` / `ActivityFeed` / `EmptyState` / `PageState` | 待阶段 3 实现 | 强制原生 `<button>`/`<Link>` 语义，消除非语义点击元素 |
+| `AssigneeCombobox` / `MentionTextarea` / `FileDropzone` | 待阶段 3 实现 | `FileDropzone` 内部自治拖拽上传，文案不变 |
+
+---
+
+## 工程门禁规定（提交前必跑，不配置 husky）
+
+- 本前端**不安装 `husky` / `lint-staged`**（不修改 Monorepo 根目录配置）。
+- **每次提交前必须在 `frontend/` 目录运行以下命令，全部退出码为 0 方可提交**：
+  ```bash
+  pnpm check   # 串联执行 pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip
+  pnpm build   # 验证 tsc -b && vite build 完整产物构建
+  ```
+- 各单项命令说明：
+  - `pnpm lint`：ESLint 10 代码检查 + 单向依赖/跨 feature/Radix 单包约束。
+  - `pnpm lint:css`：Stylelint + `stylelint-declaration-strict-value` Token 强制校验与原始色板禁令。
+  - `pnpm typecheck`：无状态全量检查 `tsconfig.app.json` 与 `tsconfig.node.json`。
+  - `pnpm knip`：死文件、死导出与未用依赖检测。
+
+---
+
+## 过渡期旧样式与遗留文件说明
+
+- **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。
+- **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，且仍登记于 `tsconfig.app.json:25`）。在阶段 4 文档模块把拖拽上传收归 `FileDropzone`（且队友确认不再参考）之前**保留作为参考实现**，已在 `knip.json` 中忽略 `prototype/**`。
+- **`knip.json` 遗留死导出豁免**：针对阶段 0 审出的 4 项旧代码零引用导出（`src/shared/utils/download.ts`、`src/pages/members/utils.ts`、`src/shared/types/reports.ts`、`src/shared/types/members.ts`）配置了精准 `ignoreIssues`，待阶段 4 迁移对应模块时删除并同步移除豁免，禁止放宽全局规则。
+
+---
 
 ## 页面与视觉约定
 
 - **一屏展示与内联滚动**：主页面内容应尽量收敛在一屏视口内展示，避免被 SVG 固有宽高比或长列表反向撑高整页。SVG 图表外层容器使用相对/绝对定位贴合网格分配高度；多行列表区块超出高度时开启局部内联滚动（`overflow-y: auto` 配合细滚动条）。
-- **面板头部 `// 英文词` + 中文标题对照**：面板标题区（`.phd`、`.dsec-h`、`.hk`）统一采用上方 `<span className="k">// WORD</span>` + 下方中文标题的双层结构（如 `// BURNDOWN` + `剩余任务`、`// TASKS` + `完成任务`、`// REVISING` + `修订中`）。上方英文尽量用一个自然贴切的单词作视觉装饰，无需生硬直译。
+- **面板头部 `// 英文词` + 中文标题对照**：面板标题区统一采用上方 `// WORD`（kicker）+ 下方中文标题的双层结构（如 `// BURNDOWN` + `剩余任务`、`// TASKS` + `完成任务`、`// REVISING` + `修订中`）。上方英文尽量用一个自然贴切的单词作视觉装饰，无需生硬直译。
+
+---
 
 ## 常量、类型与数据来源
 
-常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据一律来自 `src/api/`，不写假数据。
+常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据一律来自后端接口（现有 `src/api/`，阶段 3 演进为 `src/services/`），不写假数据。
 
 ### 全局上下文（`shared/types/global.ts`、`state/`）
 
