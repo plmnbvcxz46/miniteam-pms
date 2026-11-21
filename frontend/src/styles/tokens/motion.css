@@ -1,0 +1,6 @@
+/* 第二层：动效时长与缓动 Token（仅 CSS 变量定义） */
+:root {
+  --duration-fast: 120ms;
+  --duration-normal: 260ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}

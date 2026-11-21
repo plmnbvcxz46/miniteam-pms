@@ -1,0 +1,50 @@
+/* Level 2：语义色（Semantic Tokens，浅色默认）
+   组件与业务样式的唯一色彩入口；未来接入深色模式时，仅需在 [data-theme="dark"] 下覆写本文件。 */
+:root {
+  /* 背景与表面 */
+  --color-bg: var(--gray-100);
+  --color-bg-subtle: var(--gray-200);
+  --color-surface: var(--gray-50);
+  --color-surface-inverse: var(--gray-950);
+  --color-surface-inverse-hover: var(--gray-800);
+
+  /* 文字 */
+  --color-text: var(--gray-950);
+  --color-text-muted: var(--gray-600);
+  --color-text-faint: var(--gray-400);
+  --color-text-inverse: var(--gray-50);
+  --color-text-inverse-muted: var(--gray-300);
+
+  /* 描边 */
+  --color-border: var(--gray-300);
+  --color-border-strong: var(--gray-950);
+  --color-border-inverse: var(--gray-50);
+  --color-border-inverse-subtle: var(--gray-700);
+
+  /* 强调与状态（语义分开命名，维持暖纸黑白 + 单信号橙，无新色相） */
+  --color-accent: var(--signal-500);
+  --color-accent-hover: var(--signal-400);
+  --color-accent-text: var(--signal-700);
+  --color-accent-subtle: rgba(255, 90, 31, 0.12);
+
+  --color-danger: var(--signal-700);
+  --color-danger-bg: var(--signal-500);
+  --color-danger-subtle: rgba(255, 90, 31, 0.12);
+
+  --color-warning: var(--signal-500);
+  --color-warning-text: var(--signal-700);
+  --color-warning-subtle: rgba(255, 90, 31, 0.12);
+
+  --color-success: var(--gray-950);
+  --color-success-subtle: var(--gray-200);
+
+  --color-info: var(--gray-600);
+  --color-info-subtle: var(--gray-200);
+
+  /* 网格与交互叠加 */
+  --color-grid-line: rgba(10, 10, 10, 0.045);
+  --color-chart-grid: rgba(10, 10, 10, 0.14);
+  --color-empty-tint: rgba(10, 10, 10, 0.02);
+  --color-inverse-hover: rgba(250, 250, 247, 0.08);
+  --color-flash-peak: rgba(255, 90, 31, 0.38);
+}

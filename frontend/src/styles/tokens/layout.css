@@ -1,0 +1,49 @@
+/* 第二层：间距、圆角、描边、阴影、层级与焦点环 Token（仅 CSS 变量定义） */
+:root {
+  /* 间距：4px 基准，仅允许 --space-0-5 (2px) 与 --space-1-5 (6px) 两个半步 */
+  --space-0: 0;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* 圆角：全站 0 圆角，仅语义为圆形的元素使用 --radius-full */
+  --radius-none: 0px;
+  --radius-full: 9999px;
+
+  /* 描边宽度 */
+  --border-width-hair: 1px;
+  --border-width-thin: 1.5px;
+  --border-width-thick: 2px;
+
+  /* 阴影：零模糊硬边偏移投影 */
+  --shadow-sm: 2px 2px 0 var(--color-border-strong);
+  --shadow-md: 4px 4px 0 var(--color-border-strong);
+  --shadow-lg: 6px 6px 0 var(--color-border-strong);
+
+  /* 层级 */
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-chrome: 20;
+  --z-dropdown: 30;
+  --z-backdrop: 39;
+  --z-modal: 40;
+  --z-drag: 50;
+  --z-toast: 60;
+  --z-grain: 70;
+
+  /* 焦点环 */
+  --focus-ring-width: 2px;
+  --focus-ring-color: var(--color-accent);
+  --focus-ring: var(--focus-ring-width) solid var(--focus-ring-color);
+  --focus-ring-offset: 2px;
+  --focus-ring-offset-inset: -2px;
+}

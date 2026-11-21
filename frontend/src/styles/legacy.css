@@ -1,0 +1,61 @@
+/* [过渡兼容文件，阶段 4 全站页面迁移完成后删除]
+   将尚未迁移页面引用的旧 CSS 变量映射至新 Design Tokens，保证零视觉回归。
+   新编写的组件与业务样式严禁引用以下旧变量，须直接引用 src/styles/tokens/*.css 中的新规范 Token。 */
+:root {
+  /* 原 tokens/typography.css 旧变量别名 */
+  --font-disp: var(--font-display);
+
+  --fs-2xs: var(--font-size-2xs);
+  --fs-xs: var(--font-size-xs);
+  --fs-sm: var(--font-size-sm);
+  --fs-md: var(--font-size-md);
+  --fs-lg: var(--font-size-lg);
+  --fs-xl: 18px; /* 已废弃档位：过渡期保原值防未迁移页跳变 */
+  --fs-2xl: var(--font-size-xl);
+  --fs-3xl: var(--font-size-2xl);
+  --fs-4xl: 36px; /* 已废弃档位：过渡期保原值防未迁移页跳变 */
+  --fs-5xl: var(--font-size-display-sm);
+  --fs-6xl: 56px; /* 已并入 --font-size-display(60px)：过渡期保原值，阶段 4 迁组件时切换 */
+  --fs-7xl: var(--font-size-display);
+
+  --fw-regular: var(--font-weight-regular);
+  --fw-medium: var(--font-weight-medium);
+  --fw-bold: var(--font-weight-semibold);
+  --fw-heavy: var(--font-weight-heavy);
+  --fw-black: var(--font-weight-black);
+
+  --lh-solid: var(--line-height-solid);
+  --lh-none: var(--line-height-none);
+  --lh-snug: var(--line-height-tight);
+  --lh-normal: var(--line-height-normal);
+  --lh-loose: var(--line-height-relaxed);
+
+  --ls-tighter: var(--letter-spacing-tighter);
+  --ls-tight: var(--letter-spacing-tight);
+  --ls-snug: var(--letter-spacing-snug);
+  --ls-slight: -0.5px; /* 已收口档位：过渡期保原值 */
+  --ls-wide: var(--letter-spacing-wide);
+  --ls-wider: var(--letter-spacing-wider);
+
+  --text: var(--color-text);
+  --text-mute: var(--color-text-muted);
+  --text-faint: var(--color-text-faint);
+  --text-inverse: var(--color-text-inverse);
+  --text-inverse-mute: var(--color-text-inverse-muted);
+  --text-alert: var(--color-warning-text);
+  --text-accent: var(--color-accent);
+
+  /* 原 styles/index.css 旧变量别名 */
+  --ground: var(--color-bg);
+  --paper: var(--color-surface);
+  --ink: var(--color-border-strong);
+  --hair: var(--color-border);
+  --wash: var(--color-bg-subtle);
+  --soft: var(--gray-350);
+  --mute: var(--color-text-muted);
+  --signal: var(--color-accent);
+  --signal-text: var(--color-accent-text);
+  --hatch: var(--comp-pattern-warn);
+  --over: var(--comp-pattern-warn);
+  --nav-w: 232px;
+}
