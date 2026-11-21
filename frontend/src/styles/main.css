@@ -9,6 +9,7 @@
 @import "./tokens/typography.css";
 @import "./tokens/motion.css";
 
+/* 基础全局样式 */
 @import "./base.css";
 
 /* 过渡旧样式（阶段 4 全站迁移完毕后移除） */

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["prototype/**"],
+  "ignoreDependencies": ["prettier"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreIssues": {
+    "src/shared/utils/download.ts": ["exports"],
+    "src/pages/members/utils.ts": ["exports"],
+    "src/shared/types/reports.ts": ["types"],
+    "src/shared/types/members.ts": ["types"]
+  }
+}
