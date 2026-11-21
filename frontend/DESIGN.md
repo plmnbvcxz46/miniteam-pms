@@ -13,8 +13,8 @@
 4. **单向依赖红线**：严格遵守 `features/*` → `components/patterns/*` → `components/ui/*` → `styles/tokens/*`；各 `features/<业务域>` 之间禁止互引；`components/ui/` 与 `components/patterns/` 严禁直接调用 `services/*` 或读取业务 `stores/*`。
 5. **工程质量门禁**：**不配置 `husky` / Git hooks**（避免改动 Monorepo 根配置或干扰协作提交），统一在 `frontend/package.json` 提供 `check` 脚本串联执行 `eslint` + `stylelint` + `tsc` + `knip`，并由开发者与 CI 按需执行。
 6. **历史遗留处置约定**：
-   - `frontend/prototype/`（含 `tsconfig.app.json:25` 中的引用）**暂保留**，待队友确认不再参考后再统一清理；
-   - `src/styles/index.css` 中从未挂载的 `.enter` / `.first`（19 条规则）及 8 个死 `@keyframes`（`wipe`/`wipeup`/`linedown`/`wipedown`/`stroke`/`draw`/`rise`/`rule`）在阶段 2/3 **确认删除**，保留 `@media (prefers-reduced-motion: reduce)`；
+   - `frontend/prototype/`（含 `tsconfig.app.json:25` 中的引用）在文档模块完成将拖拽上传收归 `FileDropzone`（且队友确认不再参考）之前**保留作为参考实现**，暂不删除；
+   - `src/styles/index.css` 中从未挂载的 `.enter` / `.first`（19 条规则）及 8 个死 `@keyframes`（`wipe`/`wipeup`/`linedown`/`wipedown`/`stroke`/`draw`/`rise`/`rule`）在阶段 2 **确认删除**，保留 `@media (prefers-reduced-motion: reduce)`；
    - `UploadDocDrawer` 拖拽上传交互（原位于旧原型 `frontend/prototype/global.js:3291-3309` 外层容器委托）在迁移文档模块时**收归 `FileDropzone` 内部**，文案保持“把文件拖到这里，或点此选择”不变。
 
 ---
@@ -222,16 +222,19 @@
 | `--font-size-lg` | `15px` | 原 `--fs-lg`（15 次；**归并 `overview.css:333` 原 `18px`**） | 面板标题、表单输入框、侧栏导航 |
 | `--font-size-xl` | `22px` | 原 `--fs-2xl`（7 次；**归并 `collab-detail.css:6` 原 `18px`**） | 卡片副标题、人名、重点标题 |
 | `--font-size-2xl` | `28px` | 原 `--fs-3xl`（5 次；**归并 `overview.css:336` 原 `36px`**） | 中号统计数字、个人页姓名、面板计数 |
-| `--font-size-3xl` | `44px` | 原 `--fs-5xl`（7 次） | 抽屉标题、详情页标题、窄屏页面标题 |
-| `--font-size-4xl` | `56px` | 原 `--fs-6xl`（8 次） | 大号 KPI 统计数字、看板列计数、报表大数 |
-| `--font-size-display` *(候选，待拍板)* | `60px` | 原 `--fs-7xl`（2 处 CSS 规则，覆盖 12 处有效渲染） | **报纸报头式页面主标题（11 处）+ 总览头条延期大数字（1 处）**；若用户决定不单独设档则并入 `--font-size-4xl`（`56px`） |
+| `--font-size-display-sm` | `44px` | 原 `--fs-5xl`（7 次，**正式定稿响应式降档**） | 抽屉标题、详情页标题、窄屏（`≤900px`）页面主标题、紧凑大数字；断点处切换 Token，不写死数值 |
+| `--font-size-display` | `60px` | 原 `--fs-7xl`（12 处有效渲染）+ **合并原 `--fs-6xl: 56px`（7 处有效渲染）** | 报纸报头式页面主标题、总览头条大数、全站大号 KPI / 统计数字 |
 
-#### 附：全站 `60px` 字号（`--fs-7xl`）实证使用清单（供用户最终确认）
-经全站扫描，无硬编码 `font-size: 60px`，全部通过 `src/styles/tokens/typography.css:23` 的 `--fs-7xl: 60px` 引用：
+> **移除冗余档位说明**：
+> - 原 `--fs-xl: 18px` 与 `--fs-4xl: 36px` 彻底归并移除；
+> - 原 `--fs-6xl: 56px` 与 `--font-size-display: 60px` 仅差 4px（6.7%）且共用同一字距与行高，新 Token 体系**取消独立的 `56px` 档位**，统一并入 `--font-size-display: 60px`（窄容器如 `ForecastHero` 5 字符日期可在阶段 4 迁移时按需改用 `--font-size-display-sm: 44px`）。阶段 2 过渡期旧变量别名 `--fs-6xl` 暂保留 `56px` 以保障未迁移页面像素级零回归，阶段 4 逐组件迁移时切至 `--font-size-display`。
+
+#### 附 1：全站 `60px` 字号（`--fs-7xl`）实证使用清单（12 处有效 + 1 处覆写排除）
+经全站扫描，无硬编码 `font-size: 60px`，全部通过原 `--fs-7xl: 60px` 引用：
 
 | CSS 定义位置 | 选择器 | 使用组件（路径与行号） | 展示内容 | 响应式 / 局部覆写 |
 |---|---|---|---|---|
-| `src/styles/typography/roles.css:7-13` | `.t-page-title` | `src/pages/overview/components/OverviewHeader.tsx:15` | `项目日报`（页头 `<h1>`） | `≤900px` 降为 `44px`（`roles.css:98`） |
+| `src/styles/typography/roles.css:7-13` | `.t-page-title` | `src/pages/overview/components/OverviewHeader.tsx:15` | `项目日报`（页头 `<h1>`） | `≤900px` 切 `--font-size-display-sm`（`44px`） |
 | 同上 | `.t-page-title` | `src/pages/board/components/BoardHeader.tsx:27` | `任务看板` | 同上 |
 | 同上 | `.t-page-title` | `src/pages/timeline/components/TimelineHeader.tsx:26` | `时间线` | 同上 |
 | 同上 | `.t-page-title` | `src/pages/reports/components/ReportsHeader.tsx:30` | `统计报表` | 同上 |
@@ -239,11 +242,25 @@
 | 同上 | `.t-page-title` | `src/pages/documents/components/DocumentHeader.tsx:38` | `项目文档` | 同上 |
 | 同上 | `.t-page-title` | `src/pages/members/components/MembersHeader.tsx:24` | `成员权限` | 同上 |
 | 同上 | `.t-page-title` | `src/pages/members/components/SelfHeader.tsx:13` | `我的信息` | 同上 |
-| 同上 | `.t-page-title` | `src/pages/login/LoginPage.tsx:110` | `登录` / `注册` | 另在 `max-height: 700px` 降为 `44px`（`login.css:195`） |
-| 同上 | `.t-page-title` | `src/layout/NoProject.tsx:12` | `还没有项目` | `≤900px` 降为 `44px` |
-| 同上 | `.t-page-title` | `src/pages/task/components/NoAccess.tsx:12` | `无权查看` | `≤900px` 降为 `44px` |
-| *(覆写排除)* | `.t-page-title` | `src/pages/task/components/TaskHeader.tsx:48` | 任务详情标题 | 被 `src/pages/task/css/task-header.css:64-68` 覆写为 `44px` |
-| `src/styles/index.css:1161-1167` | `.hero .big b` | `src/pages/overview/components/HeadlinePanel.tsx:36` | 总览头条延期大数字（如 `+03`/`00`） | `max-height: 800px` 时 `overview.css:335-337` 降为 `36px`（迁移后归入 `28px`） |
+| 同上 | `.t-page-title` | `src/pages/login/LoginPage.tsx:110` | `登录` / `注册` | 另在 `max-height: 700px` 切 `--font-size-display-sm` |
+| 同上 | `.t-page-title` | `src/layout/NoProject.tsx:12` | `还没有项目` | `≤900px` 切 `--font-size-display-sm` |
+| 同上 | `.t-page-title` | `src/pages/task/components/NoAccess.tsx:12` | `无权查看` | `≤900px` 切 `--font-size-display-sm` |
+| *(覆写排除)* | `.t-page-title` | `src/pages/task/components/TaskHeader.tsx:48` | 任务详情标题 | 被 `task-header.css:64-68` 覆写为 `44px`（迁移后用 `PageHeader` `size="compact"`） |
+| `src/styles/index.css:1161-1167` | `.hero .big b` | `src/pages/overview/components/HeadlinePanel.tsx:36` | 总览头条延期大数字（如 `+03`/`00`） | `max-height: 800px` 降为 `--font-size-2xl`（`28px`） |
+
+#### 附 2：原 `56px` 字号（`--fs-6xl`）实证使用清单与迁移映射（8 处 CSS 规则：7 处有效 + 1 处死类）
+经全站扫描，无硬编码 `font-size: 56px`，全部通过原 `--fs-6xl: 56px` 引用；新体系统一并入 `--font-size-display`（`60px`）：
+
+| # | CSS 文件与行号 | 选择器 | 对应组件（路径与行号） | 展示内容与阶段 4 迁移目标 |
+|---:|---|---|---|---|
+| 1 | `pages/board/css/board-layout.css:44` | `.col header .count` | `pages/board/components/BoardColumn.tsx:55` | 看板 4 列顶部任务总数 → `--font-size-display` |
+| 2 | `pages/documents/css/document-detail.css:50` | `.dhero .row b` | `pages/documents/components/DocumentDetailHero.tsx:23` | 文档详情顶卡版本号/逾期天数 → `--font-size-display` |
+| 3 | `pages/members/css/member-crew.css:128` | `.c-load .big` | `pages/members/components/MemberLoad.tsx:29` | 成员卡片本周工时大数字 → `--font-size-display` |
+| 4 | `pages/members/css/member-self.css:95` | `.me-big` | `pages/members/components/SelfLoad.tsx:29` | 个人页本周工时大数字 → `--font-size-display` |
+| 5 | `pages/overview/css/overview.css:212` | `.pg .big` | `pages/overview/components/ProgressPanel.tsx:19` | 总览页项目进度百分比 → `--font-size-display` |
+| 6 | `pages/reports/css/report-forecast.css:84` | `.hero .huge` | `pages/reports/components/ForecastHero.tsx:84` | 报表页预测完工日期（如 `05.18`）→ `--font-size-display`（空间受限时用 `--font-size-display-sm`） |
+| 7 | `styles/index.css:1075` | `.figure .num` | `pages/overview/components/Figure.tsx:16` + `pages/task/components/FigureItem.tsx:17` | 总览页 & 任务详情页 4 联 KPI 大数字 → `--font-size-display` |
+| 8 | `styles/typography/roles.css:81` | `.t-figure` | **未使用（0 处引用）** | 死角色类，随 `roles.css` 淘汰删除 |
 
 ### C. 字重（Font Weight）
 > `index.html` 加载的字库不含 `600` 字重，为避免浏览器合成伪粗体，`--font-weight-semibold` 直接映射至实际加载的 `700`。
@@ -264,14 +281,31 @@
 | `--line-height-tight` | `1.2` | 原 `--lh-snug`（8 次）：多行标题、紧凑卡片 |
 | `--line-height-normal` | `1.45` | 原 `--lh-normal`（18 次）：常规正文、列表、消息 |
 | `--line-height-relaxed` | `1.7` | 原 `--lh-loose`（4 次）：任务说明、长评论、文本域 |
-| `--letter-spacing-tighter` | `-3px` | 56px+ 超大数字 |
-| `--letter-spacing-tight` | `-2px` | 44px–60px 展示大标题 |
-| `--letter-spacing-snug` | `-1px` | 22px–28px 小标题与中号数字 |
+| `--letter-spacing-tighter` | `-3px` | `--font-size-display`（`60px`）超大统计数字 |
+| `--letter-spacing-tight` | `-2px` | `44px`–`60px` 展示大标题 |
+| `--letter-spacing-snug` | `-1px` | `22px`–`28px` 小标题与中号数字 |
 | `--letter-spacing-normal` | `0` | 默认正文（收口原 2 次 `-0.5px`） |
 | `--letter-spacing-wide` | `0.5px` | 等宽小标签 |
 | `--letter-spacing-wider` | `1px` | 侧栏分组头、浮层标题 |
 
 - *规范要求*：原 8 处硬编码 px 行高（`30px`/`23px`/`20px`/`18px`/`12px`）改用 `height` / `min-height` + `display: flex; align-items: center`，禁止以 px 值写 `line-height`。
+
+### E. 全局排版角色 Class（`roles.css`）淘汰与组件迁移去向表
+> **硬性原则**：原 `src/styles/typography/roles.css` 中的 `.t-page-title` 等 11 个全局角色 class 属于排版组合类而非 Design Token，**不保留为全局样式**；随阶段 3/4 组件迁移逐步吸收进对应组件 CSS Module，全站迁移完毕后删除 `roles.css`。
+
+| 旧角色 Class | 原定义位置 | 原样式核心 | 全站引用次数 | 迁移去向（对应组件） |
+|---|---|---|---:|---|
+| `.t-page-title` | `roles.css:7-13, 97-100` | `disp / 60px (≤900px: 44px) / 900 / lh:1 / ls:-2px` | 12 处 | **`components/patterns/PageHeader`**（`<h1>` 默认 `--font-size-display`，`≤900px` 与详情页 `size="compact"` 切 `--font-size-display-sm`） |
+| `.t-overlay-title` | `roles.css:16-22` | `disp / 44px / 900 / lh:1 / ls:-2px` | 6 处 | **`components/ui/Drawer`**（`Drawer.Title`）与 **`components/patterns/FormDrawer`**（`--font-size-display-sm`） |
+| `.t-section-title` | `roles.css:25-29` | `sans / 15px / 900` | 27 处 | **`components/patterns/Panel`**（面板标题槽）及 `features/board` 看板列头 |
+| `.t-kicker` | `roles.css:32-37` | `mono / 10px / 700 / muted` | 28 处 | **`components/patterns/Panel`** / **`PageHeader`** / **`HeroCard`** / **`MetricCard`** 各自内置 `kicker` 槽位 |
+| `.t-label` | `roles.css:40-44` | `sans / 13px / 700` | 40 处 | **`components/patterns/FormField`**（`label` 槽位） |
+| `.t-body` | `roles.css:47-52` | `sans / 13px / 400 / lh:1.45` | **0 处** | **直接删除**（全局 `base.css` `body` 默认承载正文排版） |
+| `.t-hint` | `roles.css:55-60` | `mono / 10px / 400 / muted` | 3 处 | **`components/patterns/FormField`**（`hint` 槽位）与 **`components/patterns/EmptyState`** |
+| `.t-error` | `roles.css:63-68` | `mono / 11px / 700 / danger` | 12 处 | **`components/patterns/FormField`**（`error` 槽位）与 **`components/ui/Alert`**（`data-variant="inline" data-tone="danger"`） |
+| `.t-meta` | `roles.css:71-76` | `mono / 11px / 400 / muted` | 3 处 | **`components/patterns/EmptyState`** 与 **`components/patterns/ListRow`**（`meta` 槽位） |
+| `.t-figure` | `roles.css:79-85` | `mono / 56px / 800 / lh:0.88 / ls:-3px` | **0 处** | **直接删除**（大数字样式归入 **`MetricCard`** / **`HeroCard`** CSS Module，字号切 `--font-size-display`） |
+| `.t-figure-sm` | `roles.css:88-94` | `mono / 28px / 800 / lh:1 / ls:-1px` | **0 处** | **直接删除**（中号数字样式归入 **`Panel`** / 业务统计组件 CSS Module） |
 
 ## 2.6 动效、层级与焦点环（Motion, Z-Index & Focus）
 
@@ -340,7 +374,7 @@
 
 ## 3.3 基础组件 9 态强制覆盖规范（补齐审计缺口）
 
-阶段 2 实现基础组件时**必须**逐项验证下表状态（`✓` 必做，`—` 不适用）：
+阶段 3 实现基础组件时**必须**逐项验证下表状态（`✓` 必做，`—` 不适用）：
 
 | 组件 | `default` | `hover` | `active`（全站新增补齐） | `focus-visible` | `disabled` | `loading` | `invalid` | `selected` | `open` |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -370,7 +404,7 @@
 | 范式组件 | 组合的 `ui/` 基础组件 | 职责与核心 Props 契约 | 替换旧实现 |
 |---|---|---|---|
 | **`AppShell`** | `Separator` | 左侧栏（项目切换槽、导航槽、摘要槽）+ 顶栏（期号槽、周期槽、通知槽、账号槽）+ `<main>` 主视口骨架；移除 `#shell.dim` 命令式类切换 | `layout/Shell.tsx` 布局骨架 |
-| **`PageHeader`** | `Button`、`Separator(double)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`actions?`；`<h1>` 使用页面主标题字号（窄屏自动降档） | 12 处 `.vh`（9 页 Header + `NoProject` + `NoAccess` + `LoginPage`） |
+| **`PageHeader`** | `Button`、`Separator(double)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`<h1>` 默认使用 `--font-size-display`（`60px`），窄屏断点（`≤900px`）及详情页 `size="compact"` 切换至 `--font-size-display-sm`（`44px`）Token（不写死数值），吸收淘汰原 `.t-page-title` | 12 处 `.vh`（9 页 Header + `NoProject` + `NoAccess` + `LoginPage`） |
 | **`Panel`** | `Separator` | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
 | **`Legend`** | `Badge`（或图例色块） | 数据驱动图例条：`items: { key, label, kind: "solid" \| "outline" \| "dashed" \| "hatch" \| "accent" }[]`，消除手写 `<i>` 与内联 style | 6 处 `.legend`（Overview、Timeline、Documents、Reports） |
 | **`FormDrawer`** | `Drawer`、`Button`、`Separator(double)`、`Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
@@ -417,7 +451,7 @@
 ## 5.4 分层、样式与工程规范
 - **Do**：严格遵守单向依赖 `features → patterns → ui`，`features` 间不互引；组件内禁止直接调用 `services/*`，数据与写操作经由 `stores/` 或页面容器编排后通过 props 传入；本次仅定义浅色 Token 值，并确保结构上支持 `[data-theme="dark"]` 仅覆写语义层扩展。
 - **Don't**：禁止在 `components/ui/` 或 `components/patterns/` 中 import `useAccess`/`useIssue`/`useTaskStore` 或 `src/api/*`；禁止在样式中写入 `10px`/`14px` 等非基准间距（严格按 4px 基准与仅有的 `2px`/`6px` 两个半步对齐）或给非圆形元素加圆角。
-- **Do**：动效仅保留功能性反馈，统一使用 `--duration-fast`/`--duration-normal` + `--ease-standard` 与 `prefers-reduced-motion`；删除 `.enter`/`.first` 与 8 个死 `@keyframes`；通过 `package.json` 的 `check` 脚本统一执行 `eslint + stylelint + tsc + knip`（不配置 husky）；`frontend/prototype/` 暂保留待队友确认。
+- **Do**：动效仅保留功能性反馈，统一使用 `--duration-fast`/`--duration-normal` + `--ease-standard` 与 `prefers-reduced-motion`；删除 `.enter`/`.first` 与 8 个死 `@keyframes`；通过 `package.json` 的 `check` 脚本统一执行 `eslint + stylelint + tsc + knip`（不配置 husky）；`frontend/prototype/` 在文档模块将拖拽上传收归 `FileDropzone` 之前保留作为参考实现。
 - **Don't**：不要为尚未出现的业务需求提前抽象通用组件或多余变体。
 
 ---
@@ -425,20 +459,25 @@
 ## 附录：目标样式目录与工程检查约定
 
 ### A. 样式文件分层与加载顺序（阶段 2 落位）
+> **纯净度红线**：`src/styles/tokens/*.css` **只能包含 CSS 自定义属性定义**（`:root` 及预留 `[data-theme="dark"]`），禁止写入任何普通选择器或非 `--*` 声明（`color-scheme: light`、`prefers-reduced-motion` 等统一归入 `base.css`）。`roles.css` 不再作为长期全局样式层，仅在迁移期过渡保留，全站迁移完成后删除。
+
 ```text
 frontend/src/styles/
 ├── tokens/
-│   ├── primitives.css   # Level 1 原始色板（禁止组件/业务直接引用）
-│   ├── semantic.css     # Level 2 语义色（浅色默认；预留 [data-theme="dark"] 扩展点）
-│   ├── components.css   # Level 3 确有必要的组件色与斜纹/遮罩纹理
-│   ├── layout.css       # 间距、圆角、描边、阴影、层级、焦点环
-│   ├── typography.css   # 字体族、字号、字重、行高、字距
-│   └── motion.css       # 动效时长、缓动与 prefers-reduced-motion
-├── base.css             # Reset、body 基础排版、全局 :focus-visible、.sr-only
-└── main.css             # 按 tokens → base →（迁移期兼容旧样式）顺序引入
+│   ├── primitives.css   # Level 1 原始色板（仅 CSS 变量；禁止组件/业务直接引用）
+│   ├── semantic.css     # Level 2 语义色（仅 CSS 变量；浅色默认，预留 [data-theme="dark"]）
+│   ├── components.css   # Level 3 确有必要的组件色与斜纹/遮罩纹理（仅 CSS 变量，仅引语义色）
+│   ├── layout.css       # 间距、圆角、描边、阴影、层级、焦点环（仅 CSS 变量）
+│   ├── typography.css   # 字体族、字号、字重、行高、字距（仅 CSS 变量）
+│   └── motion.css       # 动效时长与缓动（仅 CSS 变量）
+├── base.css             # Reset、:root color-scheme、body 基础排版、:focus-visible、.sr-only、prefers-reduced-motion
+├── main.css             # 统一入口：严格按 tokens/*.css → base.css → 过渡旧样式顺序导入
+├── index.css            # [过渡旧样式，阶段 4 迁完删除] 含旧变量兼容别名映射与尚未迁出的旧全局类
+└── typography/roles.css # [过渡旧样式，阶段 4 迁完删除] 11 个 .t-* 角色类按 2.5 E 逐一迁入组件
 ```
 
 ### B. 阶段 2 `package.json` 质量门禁脚本约定（替代 husky）
-- 新增开发依赖：`stylelint`、`stylelint-config-standard`、`knip`（不引入 `husky` / `lint-staged`）；
-- 新增运行时依赖：`radix-ui`（单包按需具名导入）；
-- 在 `frontend/package.json` 补齐 `typecheck`、`lint:css`、`knip` 与聚合脚本 `check`（串联 `eslint` + `stylelint` + `tsc` + `knip`），使每次模块迁移均可一键校验代码规范、Token 红线、类型安全与死代码。
+- **开发依赖（阶段 2 安装）**：`stylelint`、`stylelint-config-standard`、`stylelint-declaration-strict-value`、`knip`（**不安装 `husky` / `lint-staged`**）；
+- **运行时依赖（阶段 3 安装）**：`radix-ui`（单包按需具名导入，留待阶段 3 封装首个基础组件时安装，避免阶段 2 触发 `knip` 未使用依赖报错）；
+- **门禁脚本**：在 `frontend/package.json` 配置 `lint`（`eslint .`）、`lint:css`（`stylelint "src/**/*.css"`）、`typecheck`（`tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit`）、`knip`（`knip`）与聚合脚本 `check`（`pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip`），使每次提交与模块迁移均可一键校验依赖方向、Token 红线、类型安全与死代码。
+- **遗留参考文件**：`frontend/prototype/`（及 `tsconfig.app.json:25` 引用）在文档模块完成 `FileDropzone` 拖拽上传收归之前保留作为参考实现，并在 `knip.json` 中忽略 `prototype/**`。
