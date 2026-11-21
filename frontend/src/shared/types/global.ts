@@ -76,15 +76,6 @@ export interface ProjectPeriod {
   planEnd: string;
 }
 
-/** 当前期号信息（顶栏“第 32 期 2026 年 10 月 22 日 周四”） */
-export interface IssueInfo {
-  issueNo: string;
-  /** "M.DD"，例如 "10.22"、"9.05" */
-  todayDate: string;
-  fullDate: string;
-}
-
-
 /** 项目状态（ProjectStatus）：ACTIVE 进行中 / ARCHIVED 已归档 */
 export type ProjectStatus = "ACTIVE" | "ARCHIVED";
 
