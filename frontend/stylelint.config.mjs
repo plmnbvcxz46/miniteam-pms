@@ -60,6 +60,7 @@ export default {
         "src/styles/base.css",
         "src/components/**/*.module.css",
         "src/features/**/*.module.css",
+        "src/dev/**/*.module.css",
       ],
       rules: {
         // 严禁直接引用 Level 1 原始色板 --gray-* / --signal-*
