@@ -1,7 +1,7 @@
 # miniteam-pms 前端设计规范（DESIGN.md）
 
 > **适用范围**：`frontend/` 全部设计 Token、基础组件（`components/ui/`）、业务范式组件（`components/patterns/`）与业务域模块（`features/*`）。
-> **定位**：阶段 2（Token 与基础组件）、阶段 3（数据与状态分层）、阶段 4（逐模块迁移）的唯一设计与工程落位标准；所有约定均基于阶段 0 审计（`frontend/audit.md`）与用户已拍板决策制定。
+> **定位**：阶段 2（基础设施与 Token）、阶段 3（`components/ui/` 基础组件与 `/dev/ui` 开发期样式手册）、阶段 4（逐模块迁移并按需建立 `components/patterns/`）的唯一设计与工程落位标准；所有约定均基于阶段 0 审计（`frontend/audit.md`）与用户已拍板决策制定。
 
 ---
 
@@ -223,11 +223,13 @@
 | `--font-size-xl` | `22px` | 原 `--fs-2xl`（7 次；**归并 `collab-detail.css:6` 原 `18px`**） | 卡片副标题、人名、重点标题 |
 | `--font-size-2xl` | `28px` | 原 `--fs-3xl`（5 次；**归并 `overview.css:336` 原 `36px`**） | 中号统计数字、个人页姓名、面板计数 |
 | `--font-size-display-sm` | `44px` | 原 `--fs-5xl`（7 次，**正式定稿响应式降档**） | 抽屉标题、详情页标题、窄屏（`≤900px`）页面主标题、紧凑大数字；断点处切换 Token，不写死数值 |
-| `--font-size-display` | `60px` | 原 `--fs-7xl`（12 处有效渲染）+ **合并原 `--fs-6xl: 56px`（7 处有效渲染）** | 报纸报头式页面主标题、总览头条大数、全站大号 KPI / 统计数字 |
+| `--font-size-display` | `60px` | 原 `--fs-7xl`（12 处有效渲染） | 报纸报头式页面主标题、总览头条大数 |
+| `--font-size-figure` | `var(--font-size-display)`（`60px`） | **新增统计大数字语义 Token**（承接原 `--fs-6xl: 56px` 7 处有效渲染） | 全站大号 KPI / 统计数字（与页面标题语义分离，未来可独立微调） |
 
-> **移除冗余档位说明**：
+> **移除冗余档位与窄容器迁移校验说明**：
 > - 原 `--fs-xl: 18px` 与 `--fs-4xl: 36px` 彻底归并移除；
-> - 原 `--fs-6xl: 56px` 与 `--font-size-display: 60px` 仅差 4px（6.7%）且共用同一字距与行高，新 Token 体系**取消独立的 `56px` 档位**，统一并入 `--font-size-display: 60px`（窄容器如 `ForecastHero` 5 字符日期可在阶段 4 迁移时按需改用 `--font-size-display-sm: 44px`）。阶段 2 过渡期旧变量别名 `--fs-6xl` 暂保留 `56px` 以保障未迁移页面像素级零回归，阶段 4 逐组件迁移时切至 `--font-size-display`。
+> - 原 `--fs-6xl: 56px` 与 `--font-size-display: 60px` 仅差 4px（6.7%）且共用同一字距与行高，新 Token 体系**取消独立的 `56px` 档位**，新增语义 Token `--font-size-figure: var(--font-size-display)`（当前为 `60px`）专门承接下方 7 处大数字迁移（页面标题引用 `--font-size-display`，大数字引用 `--font-size-figure`）；
+> - **窄容器迁移红线**：看板列头（`BoardColumn`）、成员卡片（`MemberLoad`）、报表预测日期（`ForecastHero` 5 字符日期）等窄容器在阶段 4 迁移时**必须截图对比，确认不溢出、不挤压**（空间受限时按需改用 `--font-size-display-sm: 44px`）。阶段 2 过渡期 `legacy.css` 中 `--fs-6xl` 暂保留 `56px` 保零回归，阶段 4 逐组件迁移时切至 `--font-size-figure`。
 
 #### 附 1：全站 `60px` 字号（`--fs-7xl`）实证使用清单（12 处有效 + 1 处覆写排除）
 经全站扫描，无硬编码 `font-size: 60px`，全部通过原 `--fs-7xl: 60px` 引用：
@@ -249,17 +251,17 @@
 | `src/styles/index.css:1161-1167` | `.hero .big b` | `src/pages/overview/components/HeadlinePanel.tsx:36` | 总览头条延期大数字（如 `+03`/`00`） | `max-height: 800px` 降为 `--font-size-2xl`（`28px`） |
 
 #### 附 2：原 `56px` 字号（`--fs-6xl`）实证使用清单与迁移映射（8 处 CSS 规则：7 处有效 + 1 处死类）
-经全站扫描，无硬编码 `font-size: 56px`，全部通过原 `--fs-6xl: 56px` 引用；新体系统一并入 `--font-size-display`（`60px`）：
+经全站扫描，无硬编码 `font-size: 56px`，全部通过原 `--fs-6xl: 56px` 引用；新体系统一迁移至 `--font-size-figure`（当前指向 `--font-size-display`，`60px`；看板列头、成员卡片等窄容器在阶段 4 迁移时需截图对比，确认不溢出、不挤压）：
 
 | # | CSS 文件与行号 | 选择器 | 对应组件（路径与行号） | 展示内容与阶段 4 迁移目标 |
 |---:|---|---|---|---|
-| 1 | `pages/board/css/board-layout.css:44` | `.col header .count` | `pages/board/components/BoardColumn.tsx:55` | 看板 4 列顶部任务总数 → `--font-size-display` |
-| 2 | `pages/documents/css/document-detail.css:50` | `.dhero .row b` | `pages/documents/components/DocumentDetailHero.tsx:23` | 文档详情顶卡版本号/逾期天数 → `--font-size-display` |
-| 3 | `pages/members/css/member-crew.css:128` | `.c-load .big` | `pages/members/components/MemberLoad.tsx:29` | 成员卡片本周工时大数字 → `--font-size-display` |
-| 4 | `pages/members/css/member-self.css:95` | `.me-big` | `pages/members/components/SelfLoad.tsx:29` | 个人页本周工时大数字 → `--font-size-display` |
-| 5 | `pages/overview/css/overview.css:212` | `.pg .big` | `pages/overview/components/ProgressPanel.tsx:19` | 总览页项目进度百分比 → `--font-size-display` |
-| 6 | `pages/reports/css/report-forecast.css:84` | `.hero .huge` | `pages/reports/components/ForecastHero.tsx:84` | 报表页预测完工日期（如 `05.18`）→ `--font-size-display`（空间受限时用 `--font-size-display-sm`） |
-| 7 | `styles/index.css:1075` | `.figure .num` | `pages/overview/components/Figure.tsx:16` + `pages/task/components/FigureItem.tsx:17` | 总览页 & 任务详情页 4 联 KPI 大数字 → `--font-size-display` |
+| 1 | `pages/board/css/board-layout.css:44` | `.col header .count` | `pages/board/components/BoardColumn.tsx:55` | 看板 4 列顶部任务总数 → `--font-size-figure`（窄容器须截图核对不溢出） |
+| 2 | `pages/documents/css/document-detail.css:50` | `.dhero .row b` | `pages/documents/components/DocumentDetailHero.tsx:23` | 文档详情顶卡版本号/逾期天数 → `--font-size-figure` |
+| 3 | `pages/members/css/member-crew.css:128` | `.c-load .big` | `pages/members/components/MemberLoad.tsx:29` | 成员卡片本周工时大数字 → `--font-size-figure`（窄容器须截图核对不挤压） |
+| 4 | `pages/members/css/member-self.css:95` | `.me-big` | `pages/members/components/SelfLoad.tsx:29` | 个人页本周工时大数字 → `--font-size-figure` |
+| 5 | `pages/overview/css/overview.css:212` | `.pg .big` | `pages/overview/components/ProgressPanel.tsx:19` | 总览页项目进度百分比 → `--font-size-figure` |
+| 6 | `pages/reports/css/report-forecast.css:84` | `.hero .huge` | `pages/reports/components/ForecastHero.tsx:84` | 报表页预测完工日期（如 `05.18`）→ `--font-size-figure`（窄容器按需切 `--font-size-display-sm`） |
+| 7 | `styles/index.css:1075` | `.figure .num` | `pages/overview/components/Figure.tsx:16` + `pages/task/components/FigureItem.tsx:17` | 总览页 & 任务详情页 4 联 KPI 大数字 → `--font-size-figure` |
 | 8 | `styles/typography/roles.css:81` | `.t-figure` | **未使用（0 处引用）** | 死角色类，随 `roles.css` 淘汰删除 |
 
 ### C. 字重（Font Weight）
@@ -304,7 +306,7 @@
 | `.t-hint` | `roles.css:55-60` | `mono / 10px / 400 / muted` | 3 处 | **`components/patterns/FormField`**（`hint` 槽位）与 **`components/patterns/EmptyState`** |
 | `.t-error` | `roles.css:63-68` | `mono / 11px / 700 / danger` | 12 处 | **`components/patterns/FormField`**（`error` 槽位）与 **`components/ui/Alert`**（`data-variant="inline" data-tone="danger"`） |
 | `.t-meta` | `roles.css:71-76` | `mono / 11px / 400 / muted` | 3 处 | **`components/patterns/EmptyState`** 与 **`components/patterns/ListRow`**（`meta` 槽位） |
-| `.t-figure` | `roles.css:79-85` | `mono / 56px / 800 / lh:0.88 / ls:-3px` | **0 处** | **直接删除**（大数字样式归入 **`MetricCard`** / **`HeroCard`** CSS Module，字号切 `--font-size-display`） |
+| `.t-figure` | `roles.css:79-85` | `mono / 56px / 800 / lh:0.88 / ls:-3px` | **0 处** | **直接删除**（大数字样式归入 **`MetricCard`** / **`HeroCard`** CSS Module，字号切 `--font-size-figure`） |
 | `.t-figure-sm` | `roles.css:88-94` | `mono / 28px / 800 / lh:1 / ls:-1px` | **0 处** | **直接删除**（中号数字样式归入 **`Panel`** / 业务统计组件 CSS Module） |
 
 ## 2.6 动效、层级与焦点环（Motion, Z-Index & Focus）
@@ -392,7 +394,8 @@
 
 # 第四层：业务范式组件规范（`src/components/patterns/`）
 
-## 4.1 与 `ui/` 及 `features/` 的分层边界
+## 4.1 与 `ui/` 及 `features/` 的分层边界与落位节奏
+- **落位节奏**：**阶段 3 仅封装 `components/ui/` 基础组件**（配合 `/dev/ui` 仅开发环境样式手册页验证风格与交互态）；**`components/patterns/` 在阶段 4 迁移到首个用到它的业务模块时再按需创建**，避免脱离真实页面空转抽象。
 - **单向依赖铁律**：`features/*` → `components/patterns/*` → `components/ui/*` → `styles/tokens/*`。
 - **范式层红线**：
   - `patterns/` 只组合 `ui/` 与布局/交互骨架，**严禁调用 `services/*`（原 `src/api/*`）发请求**，**严禁直接读取业务 `stores/*`**（如 `useAccess`、`useIssue`、`useTaskStore`、`useProject`、`useAuth`）。
@@ -476,8 +479,9 @@ frontend/src/styles/
 └── typography/roles.css # [过渡旧样式，阶段 4 迁完删除] 11 个 .t-* 角色类按 2.5 E 逐一迁入组件
 ```
 
-### B. 阶段 2 `package.json` 质量门禁脚本约定（替代 husky）
-- **开发依赖（阶段 2 安装）**：`stylelint`、`stylelint-config-standard`、`stylelint-declaration-strict-value`、`knip`（**不安装 `husky` / `lint-staged`**）；
-- **运行时依赖（阶段 3 安装）**：`radix-ui`（单包按需具名导入，留待阶段 3 封装首个基础组件时安装，避免阶段 2 触发 `knip` 未使用依赖报错）；
+### B. 阶段 2–3 质量门禁与开发环境样式手册约定（替代 husky）
+- **开发依赖（阶段 2 已安装）**：`stylelint`、`stylelint-config-standard`、`stylelint-declaration-strict-value`、`knip`（**不安装 `husky` / `lint-staged`**）；
+- **运行时依赖（阶段 3 按需安装）**：`radix-ui`（单包按需具名导入，留待阶段 3 封装首个 Radix 组件时安装，避免触发 `knip` 未使用依赖报错）；
 - **门禁脚本**：在 `frontend/package.json` 配置 `lint`（`eslint .`）、`lint:css`（`stylelint "src/**/*.css"`）、`typecheck`（`tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit`）、`knip`（`knip`）与聚合脚本 `check`（`pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip`），使每次提交与模块迁移均可一键校验依赖方向、Token 红线、类型安全与死代码。
+- **开发环境样式手册（`/dev/ui`）**：在 `src/dev/UiShowcasePage.tsx` 提供长期保留的组件样式手册，仅通过 `import.meta.env.DEV` + 懒加载挂在免登录路由 `/dev/ui`，生产构建（`pnpm build`）彻底 tree-shake 排除；其样式（`src/dev/**/*.module.css`）同样受 Stylelint 严格 Token 规则约束。
 - **遗留参考文件**：`frontend/prototype/`（及 `tsconfig.app.json:25` 引用）在文档模块完成 `FileDropzone` 拖拽上传收归之前保留作为参考实现，并在 `knip.json` 中忽略 `prototype/**`。

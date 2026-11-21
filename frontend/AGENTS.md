@@ -15,12 +15,13 @@ src/
 │   ├── tokens/                    # 仅允许 CSS 自定义属性定义（primitives/semantic/components/layout/typography/motion）
 │   ├── base.css                   # Reset、color-scheme、body、:focus-visible、.sr-only、reduced-motion
 │   ├── main.css                   # 统一入口：tokens/*.css → base.css → 过渡旧样式
-│   ├── legacy.css                 # [过渡] 旧 CSS 变量兼容别名，阶段 4 迁完删除
+│   ├── legacy.css                 # [过渡] 旧 CSS 变量兼容别名，阶段 4 全部模块迁移完成后必须为空并删除
 │   ├── index.css                  # [过渡] 遗留全局样式，禁止新增规则，阶段 4 迁完删除
 │   └── typography/roles.css       # [过渡] 旧 .t-* 排版角色类（非 Token），按 DESIGN.md 2.5 E 迁入组件后删除
-├── components/                    # 通用组件层（阶段 3 起落位）
-│   ├── ui/                        # 基于 radix-ui 单包的无业务基础组件（Button/Input/Drawer/AlertDialog/Toast 等）
-│   └── patterns/                  # 组合 ui/ 的业务范式组件（AppShell/PageHeader/Panel/FormDrawer/FileDropzone 等）
+├── components/                    # 通用组件层
+│   ├── ui/                        # 阶段 3 封装：基于原生语义元素与 radix-ui 单包的无业务基础组件
+│   └── patterns/                  # 阶段 4 按需建立：迁移到首个用到它的模块时再建
+├── dev/                           # 仅开发环境（import.meta.env.DEV）组件样式手册页 /dev/ui，生产构建彻底排除
 ├── features/<业务域>/              # 按业务域收敛的页面与领域 hooks（阶段 4 逐模块从 pages/layout/overlays 迁入）
 ├── services/                      # 接口请求层（阶段 3 由 api/ 演进）
 ├── stores/                        # 全局状态层（阶段 3 由 state/ 演进）
@@ -44,7 +45,7 @@ src/
 - **Token 文件纯净度**：`src/styles/tokens/*.css` **只允许 `:root`（及预留 `[data-theme="dark"]`）下的 `--*` 变量声明**，严禁写入普通选择器样式规则。
 - **三层色彩红线**：`原始色板（primitives.css） → 语义色（semantic.css） → 组件色（components.css）`。组件与业务样式**严禁直接引用 `--gray-*` / `--signal-*` 或写死 hex / `rgba()`**（SVG `<mask>` 逻辑黑白除外）。
 - **视觉基调与语义分离**：保持暖纸黑白 + 单信号橙（不引入新色相）；`--color-accent`、`--color-danger`、`--color-warning` 按用途分开命名与引用，`--color-success` / `--color-info` 使用墨色或中性灰；本次仅实现浅色值，预留 `[data-theme="dark"]` 仅覆写语义层扩展。
-- **样式标尺**：间距以 **4px 为基准**，仅允许 `--space-0-5`（`2px`）与 `--space-1-5`（`6px`）两个半步（原 `10px`/`14px` 迁入新样式时对齐 `8/12/16px`）；全站坚持 **`0` 圆角**（仅圆形元素用 `--radius-full`）；标准描边 `1.5px` / 粗描边 `2px`；保留 `--font-size-2xs: 10px` 与展示双档 `--font-size-display: 60px` / `--font-size-display-sm: 44px`（断点处切换 Token）。
+- **样式标尺**：间距以 **4px 为基准**，仅允许 `--space-0-5`（`2px`）与 `--space-1-5`（`6px`）两个半步（原 `10px`/`14px` 迁入新样式时对齐 `8/12/16px`）；全站坚持 **`0` 圆角**（仅圆形元素用 `--radius-full`）；标准描边 `1.5px` / 粗描边 `2px`；保留 `--font-size-2xs: 10px`、展示双档 `--font-size-display: 60px` / `--font-size-display-sm: 44px`（断点处切换 Token）以及大号统计数字语义 Token `--font-size-figure`（指向 `--font-size-display`）。
 - **CSS Modules + `data-*` 驱动**：新组件与新页面样式统一使用 `*.module.css`，变体与交互态通过 `data-variant`、`data-size`、`data-state`、`data-loading`、`data-invalid` 与标准伪类（含补齐 `:active`、`:focus-visible`、`disabled` 弱化、`[aria-invalid="true"]`）驱动，**禁止拼接状态 class 名**。
 - **破坏性操作与反馈**：使用 Radix `AlertDialog`（`ConfirmDialog`）统一替代原生 `window.confirm` 与双击确认，使用 `Toast` 替代 `window.alert` 与短暂操作反馈，表单/页面校验错误使用行内提示。
 
@@ -63,14 +64,14 @@ src/
 | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待阶段 3 实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
 | `Progress` / `Separator` | `radix-ui` | 待阶段 3 实现 | 支持双段进度与报纸双横线 |
 
-### 业务范式组件（`src/components/patterns/`）
+### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
 | 范式组件 | 状态 | 职责摘要 |
 |---|---|---|
-| `AppShell` / `PageHeader` / `Panel` / `Legend` | 待阶段 3 实现 | `PageHeader` 吸收 `.t-page-title`（`60px`/`44px` 断点切 Token） |
-| `FormDrawer` / `FormField` / `SearchInput` / `ConfirmDialog` | 待阶段 3 实现 | 统一 `.fr`/`.srow` 表单行与破坏性操作二次确认 |
-| `MetricStrip` / `HeroCard` / `LoadBar` / `TaskBar` | 待阶段 3 实现 | `TaskBar` 剥离 `useIssue()` 改为受控 `today` prop |
-| `ListRow` / `ActivityFeed` / `EmptyState` / `PageState` | 待阶段 3 实现 | 强制原生 `<button>`/`<Link>` 语义，消除非语义点击元素 |
-| `AssigneeCombobox` / `MentionTextarea` / `FileDropzone` | 待阶段 3 实现 | `FileDropzone` 内部自治拖拽上传，文案不变 |
+| `AppShell` / `PageHeader` / `Panel` / `Legend` | 阶段 4 按需建立 | `PageHeader` 吸收 `.t-page-title`（`60px`/`44px` 断点切 Token） |
+| `FormDrawer` / `FormField` / `SearchInput` / `ConfirmDialog` | 阶段 4 按需建立 | 统一 `.fr`/`.srow` 表单行与破坏性操作二次确认 |
+| `MetricStrip` / `HeroCard` / `LoadBar` / `TaskBar` | 阶段 4 按需建立 | `TaskBar` 剥离 `useIssue()` 改为受控 `today` prop |
+| `ListRow` / `ActivityFeed` / `EmptyState` / `PageState` | 阶段 4 按需建立 | 强制原生 `<button>`/`<Link>` 语义，消除非语义点击元素 |
+| `AssigneeCombobox` / `MentionTextarea` / `FileDropzone` | 阶段 4 按需建立 | `FileDropzone` 内部自治拖拽上传，文案不变 |
 
 ---
 
@@ -92,7 +93,8 @@ src/
 
 ## 过渡期旧样式与遗留文件说明
 
-- **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。
+- **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。**阶段 4 全部模块迁移完成后，`legacy.css` 必须为空并删除**。
+- **组件样式手册 `/dev/ui`**：位于 `src/dev/UiShowcasePage.tsx`，通过 `import.meta.env.DEV` + 懒加载挂载在免登录路由 `/dev/ui`，供本地 `pnpm dev` 验收基础组件视觉与交互态，生产构建自动排除。
 - **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，且仍登记于 `tsconfig.app.json:25`）。在阶段 4 文档模块把拖拽上传收归 `FileDropzone`（且队友确认不再参考）之前**保留作为参考实现**，已在 `knip.json` 中忽略 `prototype/**`。
 - **`knip.json` 遗留死导出豁免**：针对阶段 0 审出的 4 项旧代码零引用导出（`src/shared/utils/download.ts`、`src/pages/members/utils.ts`、`src/shared/types/reports.ts`、`src/shared/types/members.ts`）配置了精准 `ignoreIssues`，待阶段 4 迁移对应模块时删除并同步移除豁免，禁止放宽全局规则。
 

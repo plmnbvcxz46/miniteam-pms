@@ -16,6 +16,7 @@
   --font-size-2xl: 28px;
   --font-size-display-sm: 44px;
   --font-size-display: 60px;
+  --font-size-figure: var(--font-size-display);
 
   /* 字重（字库无 600，semibold 直接映射至 700 避免伪粗体） */
   --font-weight-regular: 400;
