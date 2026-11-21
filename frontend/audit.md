@@ -438,7 +438,7 @@
    - `overview.css:204-205` `.todo-list .item[data-t]:hover b` 与 `index.css:1027` `[data-t]{cursor:pointer}` — `TodoPanel.tsx:31` 未输出 `data-t`/`data-go`；
    - `index.css:1149-1150` `.hero .headline[data-t]:hover` — `HeadlinePanel.tsx` 未输出 `data-t`。
 4. **非语义可点击元素缺键盘访问与焦点环**：`TodoPanel.tsx:31`（`div.item`）、`BlockedBy.tsx:16`（`div.r`）、`TaskCard.tsx:45`（`article.card`）、`HeadlinePanel.tsx:46,52`（`span` 与无 `href` 的 `a.go`）、`DocumentDetailFacts.tsx:21`（`span.lnk`）、`ThreadTaskMeta.tsx:23`（`b.lnk`）均无 `tabIndex`/`role`/`onKeyDown`。
-5. **隐藏原生控件吞掉焦点环**：`.roles .perm`（`MePanel.tsx:133`、`PeoplePanel.tsx:202,353`）与 `.dz input[type="file"]`（`UploadDocDrawer.tsx:183`）被 1×1 透明隐藏，外层 `<label>` 无 `:focus-within`；且 `.dz` 文案写“把文件拖到这里”、CSS 有 `.dz.over`，但未实现拖放事件。
+5. **隐藏原生控件吞掉焦点环**：`.roles .perm`（`MePanel.tsx:133`、`PeoplePanel.tsx:202,353`）与 `.dz input[type="file"]`（`UploadDocDrawer.tsx:183`）被 1×1 透明隐藏，外层 `<label>` 无 `:focus-within`。另需注意：`.dz` 的拖拽上传逻辑原挂在旧原型外层共享表单容器 `frontend/prototype/global.js:3291-3309` 的事件委托上，迁移到 React `UploadDocDrawer.tsx` 时因归属错位而被漏迁（详见第 5.2 节），导致当前 React 运行时仅保留文案与 `.dz.over` 样式。
 6. **`loading` 零散且缺防连点兜底**：仅 6 处主表单按钮有提交中禁用+文案切换；`MePanel`、`ParamsPanel`、`PeoplePanel`（编辑/重置/删除）、`PermToggle`、`DocumentDetail`（定稿/下载）、`ReportsHeader`（导出）无 loading 态。
 
 ### 3.2 可交互组件 9 态覆盖矩阵
@@ -457,7 +457,7 @@
 | **设置区输入框 `.in`**（`Me`/`Proj`/`Params`/`People`） | ✓ | ✗ | ✗ | ✓ | ✗ | — | ✗ | — | — | `index.css:1556-1573` 无 `:hover`/`:disabled`/`:read-only`/`invalid`；仅全局 `:focus-visible` |
 | **搜索框 `.field input`**（`DocumentHeader`/`CrewLabels`/`PeoplePanel`） | ✓ | ✗ | ✗ | ◐ | — | ✗ | — | — | — | `index.css:856-876` 无 `:hover` 与 `:focus-within` 外框高亮 |
 | **原生下拉框 `select.u` / `select.in`** | ✓ | ✗ | ✗ | ◐ | ◐ | — | ✗ | — | — | `select.u` 继承 `.u:focus`/`:disabled`；`select.in`（`index.css:1574`）无 `:hover`/`:disabled`/`invalid` |
-| **文件选择/拖拽区 `.dz`**（`UploadDocDrawer.tsx:183`） | ✓ | ✓ | ✗ | ✗ | — | — | ✗ | ◐ | — | `:hover`（`index.css:2070`）；选中仅改文案；内部 `input[type=file]` 隐藏无 `:focus-within`；`.dz.over` 死代码 |
+| **文件选择/拖拽区 `.dz`**（`UploadDocDrawer.tsx:183`） | ✓ | ✓ | ✗ | ✗ | — | — | ✗ | ◐ | — | `:hover`（`index.css:2070`）；选中仅改文案；内部 `input[type=file]` 隐藏无 `:focus-within`；原拖拽事件与 `.dz.over` 切换位于旧原型外层容器 `frontend/prototype/global.js:3291-3309`，迁入 React 时漏迁（见第 5.2 节） |
 | **复选框 `.ck` / `.member-perm-check`**（`LoginPage`/`InviteMemberDrawer`） | ✓ | ✗ | ✗ | ✓ | ◐ | — | — | ✓ | — | 原生 `:checked` + `accent-color`；`InviteMemberDrawer` 禁用时外层 `<label>` 仍 `cursor: pointer`（`invite-drawer.css:28`） |
 | **两格开关 `Switch` `.sw2`**（`overlays/settings/Switch.tsx`） | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | — | ✓ | — | `[aria-pressed="true"]` 反白（`index.css:1609`）；`:not([aria-pressed]):hover`（L1613）；无 `disabled` |
 | **权限开关 `PermToggle` `.pm`**（`pages/members/components/PermToggle.tsx`） | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | — | ✓ | — | `[aria-pressed="true"]`（`member-crew.css:198`）；`:hover`（L209）；`:disabled` 仅改光标未视觉弱化（L213）；`:focus-visible`（L217） |
@@ -536,7 +536,7 @@
 | L1501–1783 | 283 | 系统设置抽屉全套（`.ss`/`.blk`/`.rows`/`.srow`/`.in`/`.sw2`/`.perm`/`.g4`/`.roster`/`.pp`/`#person`/`.roles`/`.logday`/`.lg`） | `overlays/settings/*` | 整体迁至 `features/settings` |
 | L1784–2100 | 317 | `.fr`/`.u`（L1784–1863）、`.ap*`（L1864–2054）、`.dz`（L2055–2082）、`.fx-acts`（L2083–2100） | 5 个表单抽屉、`AssigneePicker` | 拆为 `patterns/FormField`、`AssigneeCombobox`、`ui/Dropzone` |
 | L2101–2150 | 50 | `.lab` Demo 切换条 | **无（全死代码）** | 直接删除 |
-| L2151–2291 | 141 | `.enter` / `.first` 入场动效 + 8 个 `@keyframes` + `prefers-reduced-motion` | **除 reduced-motion 外全未生效** | 决策恢复或清理 |
+| L2151–2291 | 141 | `.enter` / `.first` 入场动效 + 8 个 `@keyframes` + `prefers-reduced-motion` | **除 reduced-motion 外全未生效** | 已确认删除 `.enter`/`.first` 与 8 个死 `@keyframes`（保留 `prefers-reduced-motion`） |
 | L2292–2415 | 124 | `@media (max-width: 900px)` 聚合响应式（含跨页 `.ov1/.ov2/.tg/.dg/.tl` 及空 `.vt{}`、死 `.lab`） | 全站窄屏 | 随模块样式下沉至对应组件/页面 CSS |
 
 ### 4.4 未使用的导出符号（TypeScript Compiler API 静态分析）
@@ -576,7 +576,7 @@
   - `src/pages/collab/useCollabData.ts:24` `CollabData`
 
 ### 4.5 孤立文件与 `package.json` 依赖检查
-- **`frontend/prototype/`（2 个遗留孤立文件，~180 KB）**：`prototype/global.html`（63,324 B，1,663 行）与 `prototype/global.js`（117,206 B，3,939 行）在 `src/` 运行时零引用，`frontend/README.md:94` 已注明页面完成后删除；注意 `tsconfig.app.json:25` 仍包含 `"prototype/global.js"`，清理时须同步移除。
+- **`frontend/prototype/`（2 个遗留孤立文件，~180 KB，暂保留待队友确认）**：`prototype/global.html`（63,324 B，1,663 行）与 `prototype/global.js`（117,206 B，3,939 行）在 `src/` 运行时零引用（`index.html:20` 仅加载 `/src/main.tsx`），`frontend/README.md:94` 已注明页面完成后删除；用户已拍板**暂保留待队友确认是否还需参考，不在此轮直接删除**（未来删除时需同步移出 `tsconfig.app.json:25` 的 `"prototype/global.js"`）。
 - **`public/` 与 `src/`（0 个孤立文件）**：`public/favicon.svg` 已被 `index.html:10` 引用；`src/` 全部 182 个 `.ts`/`.tsx` 与 40 个 `.css` 文件均可从 `src/main.tsx` 及 `@import` 链可达。
 - **`package.json` 依赖（0 个冗余依赖）**：3 项 `dependencies`（`react`、`react-dom`、`react-router-dom`）与 14 项 `devDependencies` 全部在构建/开发/规范链路中使用。缺口为待引入的 Radix UI 原语包以及 `stylelint`、`knip`、`husky`/`lint-staged` 与 `typecheck`/`format:check` 脚本（见第 7 节）。
 
@@ -612,6 +612,10 @@
    - `src/pages/documents/components/UploadDocDrawer.tsx:29-41`、`src/overlays/task/TaskDrawer.tsx:83-95`（扩展名/20MB、工期 1~365 等校验）。
 3. **视图层混用原生阻断弹窗**：`BoardPage.tsx:35`、`TaskPage.tsx:55,61` 用 `window.alert`；`DocumentsPage.tsx:113` 用 `window.confirm`。
 4. **聚合计算散落在渲染函数中**：`Shell.tsx:38`、`SummaryCard.tsx:10`、`BoardPage.tsx:43-50`、`TimelinePage.tsx:72-75` 在渲染函数里直接遍历 `taskMap` 统计。
+5. **交互逻辑归属错位：文档拖拽上传逻辑散落在旧外层容器**：
+   - **真实实现位置**：旧静态原型 `frontend/prototype/global.js:3291-3309`（对应模板 `L3035` 与 `change` 监听 `L3310-3313`）在外层共享表单容器 `fxForm` 上以事件委托监听 `dragover` / `dragleave` / `drop`，通过 `e.target.closest(".dz")` 切换 `.over` 类并读取 `e.dataTransfer.files[0]`。
+   - **分层问题与现存断链**：由于拖拽交互没有封装在上传区组件自身、而是挂在外层表单容器，后续迁入 React（`src/pages/documents/components/UploadDocDrawer.tsx:183-196`）时只搬入了 DOM、文案（“把文件拖到这里，或点此选择”）与 `src/styles/index.css:2070-2073` 的 `.dz.over` 样式，漏迁了外层拖放监听，导致 `src/` 运行时无任何 `dragover`/`dragleave`/`drop`/`dataTransfer` 事件响应。
+   - **迁移方案**：迁移文档模块时**保持文案不变**，将完整的 `onDragEnter`/`onDragOver`/`onDragLeave`/`onDrop`、文件读取校验及 `data-drag-over` 视觉态全部**收归到上传组件（`components/patterns/FileDropzone`）内部**。
 
 ### 5.3 跨模块 / 跨页面 / 外层之间的违规与交叉引用
 - **`shared/components` 反向依赖 `state/`（严重违规）**：`src/shared/components/TaskBar.tsx:2,40` 调用 `useIssue()`，迁移至 `components/patterns/` 时必须改为受控 prop `today: string`。
@@ -696,8 +700,8 @@
    - 全局纸张噪点层 `.shell::after`（`mix-blend-mode: multiply`）：深色模式下改用 `soft-light` / `overlay` 还是关闭纸纹？
 7. **语义状态色（Success / Warning / Info）策略**：现有界面严格遵守“暖纸黑白 + 单信号橙”克制语言（无绿/黄/蓝）。重构后是**保持纯黑白橙单强调色**，还是引入草案中预留的低饱和绿/琥珀/蓝辅助状态色？
 8. **原生 `window.alert` / `window.confirm` 与 3 种二次点击确认**：是否同意统一替换为 Radix `AlertDialog`（危险操作二次确认）与 `Toast`（状态拦截与操作反馈）？
-9. **遗留死代码与未生效特性的去留**：
-   - `frontend/prototype/`（180 KB）及 `tsconfig.app.json:25` 残留引用：是否在阶段 1 直接删除？
-   - `styles/index.css` 中 141 行从未触发的 `.enter`/`.first` 入场动效与 8 个死 `@keyframes`：直接删除还是按需重新接入？
-   - `UploadDocDrawer` 文件区（`.dz` 文案写“把文件拖到这里”、CSS 已有 `.dz.over` 但无拖拽事件）：阶段 2/4 补齐真正拖拽上传，还是改文案为“点击选择文件”？
+9. **遗留死代码与未生效特性的去留（已确认结论）**：
+   - `frontend/prototype/`（180 KB）及 `tsconfig.app.json:25` 引用：**暂保留，待队友确认是否还需参考后再决定删除**。
+   - `styles/index.css` 中 141 行从未触发的 `.enter`/`.first` 入场动效与 8 个死 `@keyframes`：**确认删除**（保留 `prefers-reduced-motion` 无障碍降级）。
+   - `UploadDocDrawer` 拖拽上传区（`.dz`）：经复查，原拖拽实现位于 `frontend/prototype/global.js:3291-3309` 外层容器 `fxForm` 事件委托中，属分层归属问题（已补充至第 5.2 节）；迁移文档模块时将完整拖拽逻辑收归上传组件内部，**文案“把文件拖到这里，或点此选择”保持不变**。
 10. **无障碍与状态补齐基线**：是否同意在组件重写时一并补齐全站缺失的 `:active` 按压态、表单 `aria-invalid` 红框视觉、禁用态统一弱化、以及 6 处非语义点击元素（`div`/`span`/`article`）的键盘可达性修复？
