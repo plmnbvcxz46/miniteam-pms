@@ -23,6 +23,11 @@
     var(--color-border-strong) 0 3px,
     var(--color-surface) 3px 6px
   );
+  --comp-pattern-time-inverse: repeating-linear-gradient(
+    -45deg,
+    var(--color-border-inverse) 0 1.5px,
+    transparent 1.5px 4px
+  );
 
   /* 抽屉与弹窗半色调点阵遮罩 */
   --comp-backdrop-dot: radial-gradient(

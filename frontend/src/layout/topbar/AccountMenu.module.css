@@ -1,0 +1,83 @@
+/* 顶栏右侧账号触发器与下拉摘要信息 */
+.trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: var(--space-0) var(--space-3) var(--space-0) var(--space-1);
+  border: 0;
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.trigger:focus-visible,
+.trigger[data-state="open"] {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.trigger:hover {
+  background-color: var(--color-surface-inverse-hover);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-lg);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: var(--line-height-tight);
+  font-style: normal;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.identity small {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-inverse-muted);
+}
+
+.accountSummary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-3) var(--space-2);
+}
+
+.accountName {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.accountUser {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+@media (width <= 900px) {
+  .identity {
+    display: none;
+  }
+}

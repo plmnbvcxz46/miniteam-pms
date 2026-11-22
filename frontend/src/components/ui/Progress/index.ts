@@ -3,6 +3,7 @@ export type {
   ProgressProps,
   ProgressSegment,
   ProgressSegmentState,
+  ProgressSurface,
   ProgressTone,
   ProgressVariant,
 } from "./Progress";

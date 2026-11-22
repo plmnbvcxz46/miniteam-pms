@@ -1,0 +1,75 @@
+/* 侧栏分组导航：分组标题与 1px 墨线分隔的导航项 */
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.group::before {
+  content: attr(data-label);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 38px;
+  padding: var(--space-0) var(--space-2);
+  background-color: transparent;
+  border: 0;
+  border-bottom: var(--border-width-hair) solid var(--color-border-strong);
+  font-family: inherit;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.item svg {
+  flex-shrink: 0;
+}
+
+.item:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.item[aria-current="page"] {
+  background-color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.item:not([aria-current="page"]):hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.badge {
+  margin-left: auto;
+}
+
+@media (width <= 900px) {
+  .group {
+    flex-direction: row;
+    flex-shrink: 0;
+  }
+
+  .group::before {
+    display: none;
+  }
+
+  .item {
+    width: auto;
+    border-bottom: 0;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,73 @@
+/* 侧栏底部项目周期与完成率反色摘要卡 */
+.card {
+  margin-top: auto;
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.headLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--comp-inverse-text-muted);
+}
+
+.days {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-none);
+}
+
+.days small {
+  margin-left: var(--space-0-5);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--comp-inverse-text-muted);
+}
+
+.legendItem::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-1);
+  border: var(--border-width-hair) solid var(--comp-inverse-border);
+}
+
+.legendItem[data-kind="time"]::before {
+  background-image: var(--comp-pattern-time-inverse);
+}
+
+.legendItem[data-kind="done"]::before {
+  background-color: var(--comp-inverse-border);
+}
+
+.legend b {
+  margin-left: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+  color: var(--comp-inverse-text);
+}
+
+@media (width <= 900px) {
+  .card {
+    flex-shrink: 0;
+  }
+}

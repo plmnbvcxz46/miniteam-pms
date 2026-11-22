@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from "react";
 import { Dialog as RadixDialog } from "radix-ui";
 import { Button } from "../Button";
+import { Separator } from "../Separator";
 import styles from "./Drawer.module.css";
 
 export type DrawerSize = "md" | "lg";
@@ -67,13 +68,16 @@ export function DrawerContent({
             </div>
             <RadixDialog.Close asChild>
               <Button variant="default" size="icon" aria-label="关闭">
-                ×
+                <span className={styles.closeGlyph} aria-hidden="true">
+                  ×
+                </span>
               </Button>
             </RadixDialog.Close>
           </div>
           {headerExtra != null && (
             <div className={styles.headerExtra}>{headerExtra}</div>
           )}
+          <Separator variant="masthead" />
         </header>
 
         <div className={styles.body}>{children}</div>

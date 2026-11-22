@@ -1,0 +1,43 @@
+/* 面板 / 列表通用空态提示：default / dashed / compact */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.empty[data-variant="default"] {
+  padding: var(--space-1) var(--space-0);
+}
+
+.empty[data-variant="dashed"] {
+  padding: var(--space-6);
+  border: var(--border-width-thin) dashed var(--color-border);
+  background-color: var(--color-empty-tint);
+}
+
+.empty[data-variant="compact"] {
+  padding: var(--space-2) var(--space-0);
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.description {
+  margin: var(--space-0);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.empty[data-variant="default"] .description {
+  color: var(--color-text);
+}
+
+.action {
+  margin-top: var(--space-1);
+}

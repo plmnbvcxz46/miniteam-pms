@@ -1,46 +1,86 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
+import { NotificationBell, useNotifications } from "../features/notifications";
+import { NewProjectDrawer } from "../features/projects";
 import SettingsDrawer from "../overlays/settings/SettingDrawer";
 import type { SectionId } from "../overlays/settings/sections";
+import TaskDrawer from "../overlays/task/TaskDrawer";
+import type { ProjectSave } from "../shared/types/global";
+import type { ProfileUpdate } from "../shared/types/settings";
 import { useAccess } from "../state/access/useAccess";
 import { useAuth, useMe } from "../state/auth/useAuth";
-import type { ProfileUpdate } from "../shared/types/settings";
-import TaskDrawer from "../overlays/task/TaskDrawer";
-import { useState } from "react";
-import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
 import { useTaskStore } from "../state/task/taskStore";
 import { getColumnTasks } from "../state/task/utils";
 import NoProject from "./NoProject";
+import styles from "./Shell.module.css";
 import ProjectSwitch from "./sidebar/ProjectSwitch";
 import SidebarNav from "./sidebar/SidebarNav";
 import SummaryCard from "./sidebar/SummaryCard";
-import IssueSwitch from "./topbar/IssueSwitch";
-import NotificationBell from "./topbar/NotificationBell";
 import AccountMenu from "./topbar/AccountMenu";
+import IssueSwitch from "./topbar/IssueSwitch";
 import WeekLine from "./topbar/WeekLine";
-import { useNotifications } from "./useNotifications";
 import type { ShellContext } from "./useProjectPeriod";
+
+function ShellDrawers(props: {
+  settingsSection: SectionId | null;
+  onCloseSettings: () => void;
+  profile: ProfileUpdate;
+  onSaveProfile: (values: ProfileUpdate) => Promise<void>;
+  projectFormOpen: boolean;
+  onProjectFormOpenChange: (open: boolean) => void;
+  onCreateProject: (values: ProjectSave) => Promise<unknown>;
+}) {
+  const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
+  return (
+    <>
+      {props.settingsSection && (
+        <SettingsDrawer
+          initialSection={props.settingsSection}
+          profile={props.profile}
+          onSaveProfile={props.onSaveProfile}
+          onClose={props.onCloseSettings}
+        />
+      )}
+      <NewProjectDrawer
+        open={props.projectFormOpen}
+        onOpenChange={props.onProjectFormOpenChange}
+        onSubmit={async (values) => {
+          await props.onCreateProject(values);
+          props.onProjectFormOpenChange(false);
+        }}
+      />
+      {taskForm && (
+        <TaskDrawer
+          taskId={taskForm.taskId}
+          tasks={taskMap}
+          onClose={closeTaskForm}
+          onSubmit={saveTaskForm}
+        />
+      )}
+    </>
+  );
+}
 
 export default function Shell() {
   const [settingsSection, setSettingsSection] = useState<SectionId | null>(null);
-  const settingsOpen = settingsSection !== null;
+  const [projectFormOpen, setProjectFormOpen] = useState(false);
   const me = useMe();
   const { updateProfile } = useAuth();
   const { projects, currentProject, selectProject, createProject } = useAccess();
-  // 个人资料取登录身份，保存走 PUT /auth/me
+  const notifications = useNotifications();
+  const { taskMap } = useTaskStore();
+
   const profile: ProfileUpdate = {
     realName: me.user.realName,
     email: me.email ?? "",
     skillTags: me.skillTags,
   };
-  const [projectFormOpen, setProjectFormOpen] = useState(false);
-  const notifications = useNotifications();
-  const { taskMap, taskForm, closeTaskForm, saveTaskForm } = useTaskStore();
   const riskCount = getColumnTasks(taskMap, "BLOCKED").length;
+  const shellClass = settingsSection !== null ? `${styles.shell} dim` : styles.shell;
 
   return (
-    <div className={settingsOpen ? "shell dim" : "shell"} id="shell">
-      {/* 左侧边栏 */}
-      <aside className="index" id="index">
+    <div className={shellClass} id="shell">
+      <aside className={styles.sidebar} id="index">
         <ProjectSwitch
           projects={projects}
           currentId={currentProject?.id ?? null}
@@ -54,10 +94,9 @@ export default function Shell() {
         {currentProject && <SummaryCard period={currentProject} />}
       </aside>
 
-      {/* 顶部栏 */}
-      <header className="masthead" id="masthead">
+      <header className={styles.masthead} id="masthead">
         <IssueSwitch />
-        <div className="slot">
+        <div className={styles.slot}>
           {currentProject && <WeekLine period={currentProject} />}
         </div>
         <NotificationBell
@@ -75,8 +114,7 @@ export default function Shell() {
         />
       </header>
 
-      {/* 主视图内容区域：没有能进的项目时没有页面可看 */}
-      <main>
+      <main className={styles.main}>
         {currentProject ? (
           <Outlet context={{ period: currentProject } satisfies ShellContext} />
         ) : (
@@ -84,36 +122,15 @@ export default function Shell() {
         )}
       </main>
 
-      {/* 设置抽屉 */}
-      {settingsSection && (
-        <SettingsDrawer
-          initialSection={settingsSection}
-          profile={profile}
-          onSaveProfile={updateProfile}
-          onClose={() => setSettingsSection(null)}
-        />
-      )}
-
-      {/* 新建项目抽屉 */}
-      {projectFormOpen && (
-        <NewProjectDrawer
-          onClose={() => setProjectFormOpen(false)}
-          onSubmit={async (values) => {
-            await createProject(values);
-            setProjectFormOpen(false);
-          }}
-        />
-      )}
-
-      {/* 任务表单抽屉 */}
-      {taskForm && (
-        <TaskDrawer
-          taskId={taskForm.taskId}
-          tasks={taskMap}
-          onClose={closeTaskForm}
-          onSubmit={saveTaskForm}
-        />
-      )}
+      <ShellDrawers
+        settingsSection={settingsSection}
+        onCloseSettings={() => setSettingsSection(null)}
+        profile={profile}
+        onSaveProfile={updateProfile}
+        projectFormOpen={projectFormOpen}
+        onProjectFormOpenChange={setProjectFormOpen}
+        onCreateProject={createProject}
+      />
     </div>
   );
 }

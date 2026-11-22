@@ -1,0 +1,8 @@
+/* 无项目占位页视图布局 */
+.view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

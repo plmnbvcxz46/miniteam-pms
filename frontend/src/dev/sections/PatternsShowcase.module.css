@@ -1,0 +1,57 @@
+/* 业务范式组件演示区布局样式（仅使用语义 Token） */
+.brandChip,
+.brandChipInverse {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.brandChip {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.brandChipInverse {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.headerDemoBox {
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border: var(--border-width-thin) dashed var(--color-border);
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.flatRow {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+}
+
+.darkCopy {
+  margin: var(--space-2) var(--space-0) var(--space-0);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-inverse-muted);
+}
+
+.stateStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.popItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+}

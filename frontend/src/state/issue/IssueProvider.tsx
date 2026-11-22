@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { projectApi } from "../../api/project";
+import { projectApi } from "../../services/projects";
 import { useProject } from "../project/useProject";
 import type { IssueSummary } from "../../shared/types/global";
 import { addDays, getLocalToday } from "../../shared/utils/date";

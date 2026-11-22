@@ -60,6 +60,7 @@ export default {
         "src/styles/base.css",
         "src/components/**/*.module.css",
         "src/features/**/*.module.css",
+        "src/layout/**/*.module.css",
         "src/dev/**/*.module.css",
       ],
       rules: {

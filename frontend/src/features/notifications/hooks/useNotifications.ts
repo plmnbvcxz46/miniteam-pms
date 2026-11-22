@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { notificationApi } from "../api/collab";
-import type { Notification } from "../shared/types/global";
+import { notificationApi } from "../../../services/notifications";
+import type { Notification } from "../../../shared/types/global";
 
 /** 通知多久向服务器问一次新的 */
 const POLL_MS = 60_000;
@@ -47,7 +47,9 @@ export function useNotifications(): Notifications {
   const markRead = useCallback(
     async (id: number) => {
       await notificationApi.markRead(id);
-      setList((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+      setList((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+      );
       await refresh().catch(() => undefined);
     },
     [refresh],

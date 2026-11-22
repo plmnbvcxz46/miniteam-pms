@@ -32,14 +32,19 @@ export function PopoverTrigger({
   );
 }
 
-export type PopoverContentProps = ComponentPropsWithRef<
-  typeof RadixPopover.Content
->;
+export type PopoverPadding = "default" | "none";
+
+export interface PopoverContentProps
+  extends ComponentPropsWithRef<typeof RadixPopover.Content> {
+  /** 内容内边距模式：default（默认 12px）| none（无内边距，供通栏头部/底部使用） */
+  padding?: PopoverPadding;
+}
 
 export function PopoverContent({
   sideOffset = 6,
   collisionPadding = 8,
   align = "start",
+  padding = "default",
   className,
   ref,
   ...rest
@@ -51,6 +56,7 @@ export function PopoverContent({
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
         align={align}
+        data-padding={padding}
         className={
           className ? `${styles.content} ${className}` : styles.content
         }
