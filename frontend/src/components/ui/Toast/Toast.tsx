@@ -4,6 +4,21 @@ import styles from "./Toast.module.css";
 
 export type ToastTone = "neutral" | "danger";
 
+export interface ToastItem {
+  /** 队列项唯一标识 */
+  id: string;
+  /** 语义语气：neutral（常规回执，墨黑）| danger（操作拦截/报错，信号橙） */
+  tone?: ToastTone;
+  /** 提示标题 */
+  title: ReactNode;
+  /** 可选补充说明 */
+  description?: ReactNode;
+  /** 可选行内操作槽 */
+  action?: ReactNode;
+  /** 独立自动关闭时长（毫秒，默认 4000） */
+  duration?: number;
+}
+
 export const ToastProvider = RadixToast.Provider;
 
 export type ToastViewportProps = ComponentPropsWithRef<

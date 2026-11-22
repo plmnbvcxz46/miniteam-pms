@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../../components/ui/Button";
 import {
   Popover,
@@ -40,6 +40,7 @@ import {
   Toast,
   ToastProvider,
   ToastViewport,
+  type ToastItem,
   type ToastProps,
   type ToastTone,
   type ToastViewportProps,
@@ -98,13 +99,25 @@ export function OverlayShowcase() {
   const [menuAction, setMenuAction] = useState("尚未触发");
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertLoading, setAlertLoading] = useState(false);
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastTone, setToastTone] = useState<ToastTone>("neutral");
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const toastSeqRef = useRef(0);
 
   const triggerToast = (tone: ToastTone) => {
-    setToastOpen(false);
-    setToastTone(tone);
-    window.setTimeout(() => setToastOpen(true), 20);
+    toastSeqRef.current += 1;
+    const seq = toastSeqRef.current;
+    const nextItem: ToastItem = {
+      id: `toast-${seq}`,
+      tone,
+      title:
+        tone === "danger"
+          ? `文档未定稿，无法标记完成 (#${seq})`
+          : `项目参数已保存 (#${seq})`,
+      description:
+        tone === "danger"
+          ? "请先在“项目文档”中完成关联文档定稿后再流转任务状态。"
+          : "多条 Toast 最新在上叠放、各自独立计时 4s，也可点 × 单独关闭。",
+    };
+    setToasts((prev) => [nextItem, ...prev]);
   };
 
   const handleConfirmArchive = () => {
@@ -240,21 +253,20 @@ export function OverlayShowcase() {
       <p className={styles.panelNote}>最近浮层动作：{menuAction}</p>
 
       <ToastProvider swipeDirection="right">
-        <DemoToast
-          open={toastOpen}
-          onOpenChange={setToastOpen}
-          tone={toastTone}
-          title={
-            toastTone === "danger"
-              ? "文档未定稿，无法标记完成"
-              : "项目参数已保存"
-          }
-          description={
-            toastTone === "danger"
-              ? "请先在“项目文档”中完成关联文档定稿后再流转任务状态。"
-              : "新权重将在下次看板刷新时生效，可手动点 × 立即关闭。"
-          }
-        />
+        {toasts.map((item) => (
+          <DemoToast
+            key={item.id}
+            tone={item.tone}
+            title={item.title}
+            description={item.description}
+            duration={item.duration}
+            onOpenChange={(open) => {
+              if (!open) {
+                setToasts((prev) => prev.filter((t) => t.id !== item.id));
+              }
+            }}
+          />
+        ))}
         <DemoToastViewport />
       </ToastProvider>
     </section>
