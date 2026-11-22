@@ -11,6 +11,7 @@ import {
   type SpinnerSize,
 } from "../components/ui/Spinner";
 import { FormShowcase } from "./sections/FormShowcase";
+import { OverlayShowcase } from "./sections/OverlayShowcase";
 import styles from "./UiShowcasePage.module.css";
 
 interface VariantRow {
@@ -74,7 +75,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Select", primitive: "radix-ui Select", note: "underline 下拉选择", ready: true },
   { name: "ToggleGroup", primitive: "radix-ui ToggleGroup", note: "segmented / chips 单多选", ready: true },
   { name: "Field", primitive: "原生语义容器", note: "useId 自动关联 label/hint/error", ready: true },
-  { name: "Popover", primitive: "radix-ui Popover", note: "硬阴影暖纸通用浮层" },
+  { name: "Popover", primitive: "radix-ui Popover", note: "硬阴影暖纸通用浮层", ready: true },
   { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单" },
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉" },
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认" },
@@ -338,7 +339,10 @@ export default function UiShowcasePage() {
         {/* 4. 第 1 批表单控件展示 */}
         <FormShowcase />
 
-        {/* 5. 后续阶段 3 待封装 UI 组件索引 */}
+        {/* 5. 第 2 批浮层组件展示 */}
+        <OverlayShowcase />
+
+        {/* 6. 后续阶段 3 待封装 UI 组件索引 */}
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div className={styles.panelHeading}>
