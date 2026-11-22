@@ -83,7 +83,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认", ready: true },
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示", ready: true },
   { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted", ready: true },
-  { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
+  { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）", ready: true },
   { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
   { name: "Progress", primitive: "radix-ui Progress", note: "solid / dual / segmented" },
   { name: "Separator", primitive: "radix-ui Separator", note: "single / double / dashed" },
