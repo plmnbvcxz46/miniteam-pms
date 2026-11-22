@@ -7,7 +7,7 @@ import { useAuth } from "./state/auth/useAuth";
 import ConfigProvider from "./state/config/ConfigProvider";
 import IssueProvider from "./state/issue/IssueProvider";
 import ProjectProvider from "./state/project/ProjectProvider";
-import LoginPage from "./pages/login/LoginPage";
+import { LoginPage } from "./features/auth";
 import Shell from "./layout/Shell";
 import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
