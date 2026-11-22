@@ -117,12 +117,24 @@ src/
 
 ---
 
+## Git 分支与阶段 4 协作规范
+
+阶段 4 重构采用**短分支、单模块交付、审完即合、合完即删**策略，避免分支堆积与重复开多工作目录产生漂移：
+
+1. **按模块切短分支**：阶段 4 每个模块开始前，先确保本地 `main` 已 `git pull` 到最新，再切出短分支 `refactor/migrate-<模块>`（例如 `refactor/migrate-auth`、`refactor/migrate-settings`；文档或小修同理走短分支）。
+2. **门禁验证与提 PR**：模块完成后，在 `frontend/` 运行 `pnpm check` 和 `pnpm build` 全部通过后推送该分支，并向 `main` 提交 PR。
+3. **审阅与 Merge Commit 合并**：经审阅确认后，采用 **merge commit** 方式合并回 `main`（不使用 squash，保留完整提交历史与标签对应关系）。
+4. **立即清理与同步**：合并后**立即删除该短分支（远程 + 本地）**，本地切回 `main` 并 `git pull origin main` 到最新。
+5. **本地分支上限**：**任何时候本地只保留 `main` 和当前正在做的 1 个短分支**，不保留已合并的历史分支。
+
+---
+
 ## 过渡期旧样式与遗留文件说明
 
 - **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css`、`src/shared/components/SearchDropdown.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。**阶段 4 全部模块迁移完成后，`legacy.css` 必须为空并删除**。
-- **过渡期公共下拉搜索组件（`SearchDropdown`）**：`src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 为队友在 `main` 上抽出的公共下拉搜索组件（当前被 `PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer`、`AssigneePicker` 使用）；未迁移的旧页面/表单若需带搜索的下拉输入，过渡期继续统一复用它，不要各写各的下拉；阶段 4 迁移时按 [`custom-components.md`](./custom-components.md) 收归至 `components/patterns/SearchDropdown`，全部调用方迁完后删除旧文件并移出 `ignoreFiles`。
+- **过渡期公共下拉搜索组件（`SearchDropdown`）**：`src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 为另一工作目录后续提交中抽出的公共下拉搜索组件（当前被 `PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer`、`AssigneePicker` 使用）；未迁移的旧页面/表单若需带搜索的下拉输入，过渡期继续统一复用它，不要各写各的下拉；阶段 4 迁移时按 [`custom-components.md`](./custom-components.md) 收归至 `components/patterns/SearchDropdown`，全部调用方迁完后删除旧文件并移出 `ignoreFiles`。
 - **组件样式手册 `/dev/ui`**：位于 `src/dev/UiShowcasePage.tsx`，通过 `import.meta.env.DEV` + 懒加载挂载在免登录路由 `/dev/ui`，供本地 `pnpm dev` 验收基础组件视觉与交互态，生产构建自动排除。
-- **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，且仍登记于 `tsconfig.app.json:25`）。在阶段 4 文档模块把拖拽上传收归 `FileDropzone`（且队友确认不再参考）之前**保留作为参考实现**，已在 `knip.json` 中忽略 `prototype/**`。
+- **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，且仍登记于 `tsconfig.app.json:25`）。在阶段 4 文档模块把拖拽上传收归 `FileDropzone` 且确认不再参考之前**保留作为参考实现**，已在 `knip.json` 中忽略 `prototype/**`。
 
 ---
 

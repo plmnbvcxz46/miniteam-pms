@@ -13,7 +13,7 @@
 
 | 归属层 | 数量 | 说明 |
 |---|---:|---|
-| **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已由队友抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
+| **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已在另一工作目录的后续提交中抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
 | **`components/patterns/`（待建）** | **14 项** | 严格满足 ≥ 2 个模块复用；按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
 | **`features/<模块>` / `layout` 内部保留** | **15 项** | 仅单一业务模块使用的图表、矩阵、拖拽看板、富文本 `@提及`、负责人选择器、文件拖放区与外壳部件，严禁提前抽象至 `patterns/`。 |
 | **合计盘点项** | **29 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
@@ -181,7 +181,7 @@
 
 ### 4.1 模糊搜索下拉（`SearchDropdown` / `AssigneePicker`）方案对比
 
-合并 `origin/main`（PR #37）后，队友已将原 `AssigneePicker` 的通用下拉搜索交互抽为 `shared/components/SearchDropdown.tsx`（371 行），被 `settings`（`PeoplePanel`）、`members`（`InviteMemberDrawer`）、`documents`（`DocumentHeader`、`UploadDocDrawer`）、`tasks`（`AssigneePicker`）共 **4 个模块 5 处**复用；而 `AssigneePicker` 保留任务专属业务语义（空格分词、`+必含`、`-排除`、姓名子串 `<mark>` 高亮、技能匹配排序、结合工时负载的推荐算法与迷你负载条）。
+合并 `origin/main`（PR #37，另一工作目录中的后续提交）后，原 `AssigneePicker` 的通用下拉搜索交互已抽为 `shared/components/SearchDropdown.tsx`（371 行），被 `settings`（`PeoplePanel`）、`members`（`InviteMemberDrawer`）、`documents`（`DocumentHeader`、`UploadDocDrawer`）、`tasks`（`AssigneePicker`）共 **4 个模块 5 处**复用；而 `AssigneePicker` 保留任务专属业务语义（空格分词、`+必含`、`-排除`、姓名子串 `<mark>` 高亮、技能匹配排序、结合工时负载的推荐算法与迷你负载条）。
 
 | 维度 | 方案 A：`radix-ui` `Popover` + 现有 `ui/Input` / `ui/Spinner` 组合为 `patterns/SearchDropdown`（**推荐**） | 方案 B：引入 `cmdk` | 方案 C：引入 `downshift` |
 |---|---|---|---|
@@ -232,3 +232,10 @@
    - **第 7 步（`features/timeline`）**：`GanttDeps` / `GanttPanel` / `GanttRow` 新增了同一前置共用竖线、默认淡化仅悬停高亮前后置依赖连线、空心任务条垫底色、月视图日期行复用与计划线顶端标签，迁移样式与交互时须完整保留。
    - **第 8 步（`features/overview`）**：`FigureStrip` / `Figure` 已去掉下方小字并将已完成并入分母（两位数字）、`CriticalChainPanel` 改为方格加两行、`SchedulePanel` 修复今天线滚动不中断，构建 `MetricStrip` 等组件时以最新 `main` 行为为准。
    - **第 9a 步（`features/tasks`）**：`AssigneePicker` 直接切换调用 `patterns/SearchDropdown`（无需重新手写 combobox 状态机），全部 5 处调用迁完后**删除旧 `src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 并移出 `stylelint.config.mjs` 的 `ignoreFiles`**。
+3. **26 个提交中新增/修改 CSS 的硬编码扫描结论（阶段 4 收敛清单）**：
+   - **硬编码颜色**：共改动 12 个旧 CSS 文件，**0 处新增硬编码 hex / `rgb()` / `rgba()` 颜色**（均沿用既有 CSS 变量）；全部 12 个文件均已在 `stylelint.config.mjs` 的 `ignoreFiles` 过渡豁免清单中（含新增的 `src/shared/components/SearchDropdown.css`）。
+   - **需在阶段 4 迁入 CSS Modules 时收敛为 Token 的硬编码间距 / 阴影 / 层级**：
+     - `src/shared/components/SearchDropdown.css`（第 3 步 `settings`）：非基准间距 `padding: 9px 14px`、`padding: 0 14px`、`margin-right: -4px`、`gap: 12px`/`8px`、`z-index: 30` 与硬阴影 → 收敛为 `--space-*`、`--shadow-md`、`--z-dropdown`；
+     - `src/pages/timeline/css/timeline.css`（第 7 步 `timeline`）：新增 `box-shadow` 与局部 `z-index: 0/1/2/5/6` → 迁移 `GanttChart` 时统一层叠上下文与阴影 Token；
+     - `src/pages/overview/css/overview.css`（第 8 步 `overview`）：新增 `gap: 3px`、`margin-bottom: 3px`、`margin-top: 8px`、`gap: 8px` → 迁移 `CriticalChainPanel` 时对齐 4px 栅格（`--space-0-5`/`--space-1`/`--space-2`）；
+     - `src/styles/index.css`（第 8 步 `overview`）：`.figure .num small` 新增 `margin-left: 2px` → 迁移 `MetricStrip` 时收敛为 `--space-0-5`。
