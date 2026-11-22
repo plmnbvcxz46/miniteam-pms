@@ -5,11 +5,25 @@ import {
   type InputSize,
   type InputVariant,
 } from "../../components/ui/Input";
+import {
+  Textarea,
+  type TextareaProps,
+  type TextareaVariant,
+} from "../../components/ui/Textarea";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoInput(props: InputProps) {
   return <Input {...props} />;
 }
+
+function DemoTextarea(props: TextareaProps) {
+  return <Textarea {...props} />;
+}
+
+const TEXTAREA_VARIANTS: { variant: TextareaVariant; label: string }[] = [
+  { variant: "underline", label: "underline（抽屉说明）" },
+  { variant: "boxed", label: "boxed（协作回复框）" },
+];
 
 const INPUT_VARIANTS: { variant: InputVariant; label: string }[] = [
   { variant: "underline", label: "underline（表单下划线）" },
@@ -118,6 +132,46 @@ export function FormShowcase() {
               size="sm"
               type="date"
               defaultValue="2026-11-22"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// TEXTAREA</span>
+            <h2 className={styles.panelTitle}>Textarea 多行文本域</h2>
+          </div>
+          <p className={styles.panelNote}>
+            underline / boxed · 含 hover / focus-visible / invalid / readOnly / disabled
+          </p>
+        </div>
+
+        <div className={styles.formGrid}>
+          {TEXTAREA_VARIANTS.map(({ variant, label }) => (
+            <div key={variant} className={styles.formCell}>
+              <span className={styles.code}>{label}</span>
+              <DemoTextarea
+                variant={variant}
+                placeholder="输入任务背景说明、验收标准或讨论回复…"
+              />
+            </div>
+          ))}
+          <div className={styles.formCell}>
+            <span className={styles.code}>invalid（boxed）</span>
+            <DemoTextarea
+              variant="boxed"
+              invalid
+              defaultValue="内容长度超出限制示例"
+            />
+          </div>
+          <div className={styles.formCell}>
+            <span className={styles.code}>disabled（underline）</span>
+            <DemoTextarea
+              variant="underline"
+              disabled
+              defaultValue="归档项目或往期快照下的只读/禁用说明文本。"
             />
           </div>
         </div>

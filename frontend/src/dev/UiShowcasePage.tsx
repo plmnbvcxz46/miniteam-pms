@@ -68,7 +68,7 @@ const PLANNED_UI_COMPONENTS: {
     ready: true,
   },
   { name: "Input", primitive: "原生 <input>", note: "underline / boxed + type=date", ready: true },
-  { name: "Textarea", primitive: "原生 <textarea>", note: "underline / boxed + invalid" },
+  { name: "Textarea", primitive: "原生 <textarea>", note: "underline / boxed + invalid", ready: true },
   { name: "Checkbox", primitive: "radix-ui Checkbox", note: "16×16 0 圆角勾选框" },
   { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态" },
   { name: "Select", primitive: "radix-ui Select", note: "underline 下拉选择" },
