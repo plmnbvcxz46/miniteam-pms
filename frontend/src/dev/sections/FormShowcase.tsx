@@ -35,6 +35,13 @@ import {
   type SelectSeparatorProps,
   type SelectTriggerProps,
 } from "../../components/ui/Select";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+  type ToggleGroupItemProps,
+  type ToggleGroupProps,
+  type ToggleGroupVariant,
+} from "../../components/ui/ToggleGroup";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoInput(props: InputProps) {
@@ -73,6 +80,19 @@ function DemoSelectSeparator(props: SelectSeparatorProps) {
   return <SelectSeparator {...props} />;
 }
 
+function DemoToggleGroup(props: ToggleGroupProps) {
+  return <ToggleGroup {...props} />;
+}
+
+function DemoToggleGroupItem(props: ToggleGroupItemProps) {
+  return <ToggleGroupItem {...props} />;
+}
+
+const TOGGLE_VARIANT_NOTE: Record<ToggleGroupVariant, string> = {
+  segmented: "segmented（连体分段单选）",
+  chips: "chips（流式单/多选芯片）",
+};
+
 const SWITCH_VARIANTS: { variant: SwitchVariant; title: string }[] = [
   { variant: "track", title: "track（单轨 · 成员权限）" },
   { variant: "segmented", title: "segmented（双格 · 账号启停）" },
@@ -96,6 +116,9 @@ export function FormShowcase() {
   const [permOn, setPermOn] = useState(true);
   const [acctActive, setAcctActive] = useState(true);
   const [roleVal, setRoleVal] = useState("DEV");
+  const [boardFilter, setBoardFilter] = useState("all");
+  const [taskStatus, setTaskStatus] = useState("doing");
+  const [deps, setDeps] = useState<string[]>(["T-01", "T-03"]);
 
   return (
     <>
@@ -362,6 +385,74 @@ export function FormShowcase() {
                 <DemoSelectItem value="PM">项目经理（PM）</DemoSelectItem>
               </DemoSelectContent>
             </Select>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// TOGGLE GROUP · RADIX UI</span>
+            <h2 className={styles.panelTitle}>ToggleGroup 分段与芯片切换组</h2>
+          </div>
+          <p className={styles.panelNote}>
+            承接全站原 aria-pressed 按钮 · 支持 segmented / chips 与 single / multiple
+          </p>
+        </div>
+
+        <div className={styles.formGrid}>
+          <div className={styles.formCell}>
+            <span className={styles.code}>{TOGGLE_VARIANT_NOTE.segmented}</span>
+            <DemoToggleGroup
+              type="single"
+              variant="segmented"
+              value={boardFilter}
+              onValueChange={(v) => {
+                if (v) setBoardFilter(v);
+              }}
+              aria-label="看板筛选"
+            >
+              <DemoToggleGroupItem value="all">全部</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="mine">我的</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="critical">关键路径</DemoToggleGroupItem>
+            </DemoToggleGroup>
+          </div>
+
+          <div className={styles.formCell}>
+            <span className={styles.code}>
+              {TOGGLE_VARIANT_NOTE.chips}（单选 + 单项禁用）
+            </span>
+            <DemoToggleGroup
+              type="single"
+              variant="chips"
+              value={taskStatus}
+              onValueChange={(v) => {
+                if (v) setTaskStatus(v);
+              }}
+              aria-label="任务状态"
+            >
+              <DemoToggleGroupItem value="todo" disabled>
+                待开始（不可回退）
+              </DemoToggleGroupItem>
+              <DemoToggleGroupItem value="doing">进行中</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="blocked">阻塞</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="done">已完成</DemoToggleGroupItem>
+            </DemoToggleGroup>
+          </div>
+
+          <div className={styles.formCell}>
+            <span className={styles.code}>chips（多选 · 前置任务依赖）</span>
+            <DemoToggleGroup
+              type="multiple"
+              variant="chips"
+              value={deps}
+              onValueChange={setDeps}
+              aria-label="前置依赖"
+            >
+              <DemoToggleGroupItem value="T-01">T-01 需求评审</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="T-02">T-02 接口联调</DemoToggleGroupItem>
+              <DemoToggleGroupItem value="T-03">T-03 权限验收</DemoToggleGroupItem>
+            </DemoToggleGroup>
           </div>
         </div>
       </section>

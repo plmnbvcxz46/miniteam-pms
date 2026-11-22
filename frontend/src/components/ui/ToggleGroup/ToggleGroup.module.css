@@ -1,0 +1,113 @@
+/* 单/多选切换组：segmented（连体分段）与 chips（流式芯片），承接全站原 aria-pressed 切换按钮 */
+.root {
+  display: inline-flex;
+  align-items: center;
+}
+
+.root[data-variant="segmented"] {
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.root[data-variant="chips"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  margin: var(--space-0);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-none);
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  transition-property: background-color, border-color, color, transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---------- 通用状态 ---------- */
+.item:focus-visible {
+  z-index: var(--z-sticky);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.item[data-state="on"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.item[data-disabled] {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+
+.item:hover:not([data-disabled]) {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.item[data-state="on"]:hover:not([data-disabled]) {
+  background-color: var(--color-surface-inverse-hover);
+  color: var(--color-text-inverse);
+}
+
+.item:active:not([data-disabled]) {
+  transform: translate(1px, 1px);
+}
+
+/* ---------- 变体：segmented / chips ---------- */
+.root[data-variant="segmented"] .item {
+  height: 32px;
+  padding: var(--space-0) var(--space-3);
+  border-width: 0;
+}
+
+.root[data-variant="chips"] .item {
+  height: 30px;
+  padding: var(--space-0) var(--space-2);
+  color: var(--color-text-muted);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.root[data-variant="segmented"] .item + .item {
+  border-left: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.root[data-variant="chips"] .item[data-state="on"] {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-inverse);
+}
+
+.root[data-variant="chips"] .item[data-disabled] {
+  border-style: dashed;
+  border-color: var(--color-border);
+  color: var(--color-text-faint);
+}
+
+.root[data-variant="chips"] .item:hover:not([data-disabled]) {
+  color: var(--color-text);
+}
+
+.root[data-variant="chips"] .item[data-state="on"]:hover:not([data-disabled]) {
+  color: var(--color-text-inverse);
+}
