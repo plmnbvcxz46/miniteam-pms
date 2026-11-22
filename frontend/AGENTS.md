@@ -85,7 +85,7 @@ src/
 | 范式组件 | 状态与建立时机 | 职责摘要 |
 |---|---|---|
 | `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **待建** · 阶段 4 第 2 步（`layout` / `projects`） | 双线页头（`60px`/`44px` 切 Token）、三变体面板、表单抽屉壳、空态/页态、`.issues` 浮层壳 |
-| `SearchInput` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 搜索框（即时/提交双模式）与破坏性操作二次确认 |
+| `SearchDropdown` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 公共下拉搜索组合（`Popover` + `Input` + `Spinner`，跨 4 模块 5 处）与破坏性操作二次确认 |
 | `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |
 | `ListRow` / `ActivityFeed` | **待建** · 阶段 4 第 5 步（`members`） | 原生语义跳转列表行、浅/深面时间线动态流（`LogsPanel` 4 列按日表保持独立） |
 | `TaskBar` | **待建** · 阶段 4 第 7 步（`timeline`） | 任务生命周期时间条（剥离 `useIssue()`，改为受控 `today` prop） |

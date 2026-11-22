@@ -13,8 +13,8 @@
 
 | 归属层 | 数量 | 说明 |
 |---|---:|---|
-| **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉仅 1 处且含定制业务语法，不抽象通用 `ui/Combobox`。 |
-| **`components/patterns/`（待建）** | **14 项** | 严格满足 ≥ 2 个模块复用；按阶段 4 迁移到首个使用模块时按需建立（较原 `DESIGN.md` 移出了仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`，新增经实测跨模块复用的 `ActionPopover`）。 |
+| **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已由队友抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
+| **`components/patterns/`（待建）** | **14 项** | 严格满足 ≥ 2 个模块复用；按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
 | **`features/<模块>` / `layout` 内部保留** | **15 项** | 仅单一业务模块使用的图表、矩阵、拖拽看板、富文本 `@提及`、负责人选择器、文件拖放区与外壳部件，严禁提前抽象至 `patterns/`。 |
 | **合计盘点项** | **29 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
 
@@ -32,8 +32,8 @@
 | 2 | **`Panel`** | 20+ 处 `.pnl`/`.phd`（`NoProject.tsx:23`、`TodoPanel.tsx:21`、`ProgressPanel.tsx:11`、`GanttPanel.tsx:66`、`BurndownPanel.tsx:13`、`TaskInfoPanel.tsx:20`、`TaskLogPanel.tsx:11`、`ActivityFeedPanel.tsx:30`、`SelfLoad.tsx:17`、`DocumentRevising.tsx:39`、`DocumentFinal.tsx:21`） | `layout`、`overview`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（8 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Separator` + CSS Modules 容器） | 阶段 4 第 2 步（`layout`） |
 | 3 | **`FormDrawer`** | `NewProjectDrawer.tsx:60-149`、`TaskDrawer.tsx:112-225`、`UploadDocDrawer.tsx:156-291`、`InviteMemberDrawer.tsx:121-283`、`NewDiscussionDrawer.tsx:95-207` | `projects`、`tasks`、`documents`、`members`、`collab`（5 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Drawer(md)`、`Button`、`Alert`、`Separator`） | 阶段 4 第 2 步（`projects`） |
 | 4 | **`EmptyState` / `PageState`** | `NoProject.tsx:9-26`、`NoAccess.tsx:9-26`、`OverviewPage.tsx:71-86`、`TimelinePage.tsx:70-85`、`DocumentsPage.tsx:172-186`、`ReportsPage.tsx:50-65`、`DocumentDetail.tsx:31`、`PermLog.tsx:30`、`LogsPanel.tsx:52,75` | `layout`、`overview`、`task`、`timeline`、`documents`、`reports`、`members`、`settings`、`collab`（9 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Alert`、`Button`、`Spinner`） | 阶段 4 第 2 步（`layout`） |
-| 5 | **`ActionPopover`** | `ProjectSwitch.tsx:53-99`、`IssueSwitch.tsx:54-89`、`NotificationBell.tsx:96-128`、`AssigneePicker.tsx:198-272`（共用 `.issues` 刊头 `h4` + 滚动列表 `.list.scroll-y` + 底部 `.pfoot`） | `layout`、`notifications`、`tasks`（3 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Popover`、`Button`、`Badge`） | 阶段 4 第 2 步（`layout`） |
-| 6 | **`SearchInput`** | `PeoplePanel.tsx:134-147`、`CrewLabels.tsx:25-39`、`InviteMemberDrawer.tsx:150-169`、`DocumentHeader.tsx:44-53` | `settings`、`members`、`documents`（3 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Input(boxed)`、`Button`） | 阶段 4 第 3 步（`settings`） |
+| 5 | **`ActionPopover`** | `ProjectSwitch.tsx:53-99`、`IssueSwitch.tsx:54-89`、`NotificationBell.tsx:96-128`（共用 `.issues` 刊头 `h4` + 滚动列表 `.list.scroll-y` + 底部 `.pfoot`；`AssigneePicker` 已改走 `SearchDropdown`） | `layout`、`notifications`（2 模块 3 处） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Popover`、`Button`、`Badge`） | 阶段 4 第 2 步（`layout`） |
+| 6 | **`SearchDropdown`** | `shared/components/SearchDropdown.tsx:1-371` + `SearchDropdown.css`（被 `PeoplePanel.tsx:135`、`InviteMemberDrawer.tsx:173`、`DocumentHeader.tsx:51`、`UploadDocDrawer.tsx:282`、`AssigneePicker.tsx:60` 复用） | `settings`、`members`、`documents`、`tasks`（4 模块 5 处） | 高 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Popover` + `Input` + `Spinner` + 完整 WAI-ARIA `combobox`/`listbox` 键盘状态机，按行数门禁拆分子文件，0 新增依赖） | 阶段 4 第 3 步（`settings`） |
 | 7 | **`ConfirmDialog`** | `PeoplePanel.tsx:24,235`、`ProjPanel.tsx:33,183`、`DocumentsPage.tsx:113`、`TaskHeader.tsx:27,77` | `settings`、`documents`、`tasks`（3 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`AlertDialog`、`Button(danger)`） | 阶段 4 第 3 步（`settings`） |
 | 8 | **`Legend`** | `BurndownPanel.tsx:18-37`、`DeviationPanel.tsx:18-31`、`DocumentRevisingHeader.tsx:18-30`、`GanttPanel.tsx:73-90`、`SchedulePanel.tsx:25-44`、`ProgressPanel.tsx:27-36`（6 处） | `reports`、`documents`、`timeline`、`overview`（4 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（数据驱动纯展示组件，与 `Badge` 对齐） | 阶段 4 第 4 步（`reports`） |
 | 9 | **`HeroCard`** | `ForecastHero.tsx:49-115`、`DocumentDetailHero.tsx:18-47`、`HeadlinePanel.tsx:26-59` | `reports`、`documents`、`overview`（3 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Badge` + 共享外框/顶栏/风险态外壳，主体 slot 由各模块组合） | 阶段 4 第 4 步（`reports`） |
@@ -53,14 +53,14 @@
 | 18 | **`BurndownChart`** | `BurndownPanel.tsx:1-47`、`BurndownChart.tsx:1-234` | `reports`（仅 1 模块） | 高 | `features/reports` | C. 保留现有手写 SVG 实现（含 `<mask>` 绘制动画，严禁替换蒙版逻辑黑白） | 阶段 4 第 4 步（`reports`） |
 | 19 | **`WeeklyBarChart`** | `WeeklyPanel.tsx:1-34`、`WeeklyBar.tsx:1-33`、`WeeklyAxis.tsx:1-16` | `reports`（仅 1 模块） | 低 | `features/reports` | C. 保留现有手写实现（CSS Grid 柱图 + 入场动画，切语义 Token） | 阶段 4 第 4 步（`reports`） |
 | 20 | **`DeviationChart`** | `DeviationPanel.tsx:1-39`、`DeviationRow.tsx:1-76` | `reports`（仅 1 模块） | 中 | `features/reports` | C. 保留现有手写实现（计划虚线 vs 实际/超期双层条，切语义 Token） | 阶段 4 第 4 步（`reports`） |
-| 21 | **`MemberCrewMatrix`** | `MemberCrew.tsx:1-93`、`CrewLabels.tsx:1-61`、`MemberColumn.tsx:1-99` | `members`（仅 1 模块） | 中 | `features/members` | A. 现有 `ui` 组合（横向滚动矩阵 + `Select` + `Switch(track)` + `patterns/LoadBar` + `patterns/SearchInput`） | 阶段 4 第 5 步（`members`） |
+| 21 | **`MemberCrewMatrix`** | `MemberCrew.tsx:1-93`、`CrewLabels.tsx:1-61`、`MemberColumn.tsx:1-99` | `members`（仅 1 模块） | 中 | `features/members` | A. 现有 `ui` 组合（横向滚动矩阵 + `Select` + `Switch(track)` + `patterns/LoadBar` + `ui/Input(boxed)` 本地过滤框） | 阶段 4 第 5 步（`members`） |
 | 22 | **`FileDropzone`** | `UploadDocDrawer.tsx:182-196` + 参考原型 `prototype/global.js:3291-3309` | `documents`（仅 1 模块） | 中 | `features/documents` | C. 保留/补齐原生 HTML5 Drag&Drop 实现（内部自治 `onDragEnter`/`Over`/`Leave`/`Drop` + 20MB/扩展名校验，**文案不变**；`Alert(inline)` 报校验错） | 阶段 4 第 6 步（`documents`） |
 | 23 | **`DocumentRevisingTimeline`** | `DocumentRevising.tsx:1-71`、`DocumentRevisingItem.tsx:18-113`（含内部 `TimelineBar`） | `documents`（仅 1 模块） | 中 | `features/documents` | C. 保留现有手写实现（按文档历史版本与截止日绘制双段进度条，外层复用 `Panel` + `Legend` + `Badge`） | 阶段 4 第 6 步（`documents`） |
 | 24 | **`GanttChart`**（`GanttPanel`/`GanttAxis`/`GanttDeps`/`GanttRow`） | `GanttPanel.tsx:1-169`、`GanttAxis.tsx:1-52`、`GanttDeps.tsx:1-81`、`GanttRow.tsx:1-45` | `timeline`（仅 1 模块） | 高 | `features/timeline` | C. 保留现有手写实现（`ResizeObserver` 动态日宽 + SVG 依赖折线箭头；行内进度条复用 `patterns/TaskBar`） | 阶段 4 第 7 步（`timeline`） |
 | 25 | **`CriticalPathTable`** | `CriticalPanel.tsx:1-46`、`CriticalRow.tsx:1-21` | `timeline`（仅 1 模块） | 低 | `features/timeline` | C. 保留现有语义 `<table>` 实现（外层复用 `Panel` + `Badge`） | 阶段 4 第 7 步（`timeline`） |
 | 26 | **`MemberScheduleBoard`**（`SchedulePanel`/`ScheduleRow`） | `overview/components/SchedulePanel.tsx:1-75`、`ScheduleRow.tsx:1-52` | `overview`（仅 1 模块） | 中 | `features/overview` | C. 保留现有手写实现（多泳道排期 + 精确到此刻的今天线；外层复用 `Panel` + `Legend`） | 阶段 4 第 8 步（`overview`） |
 | 27 | **`CriticalChainPanel`** | `overview/components/CriticalChainPanel.tsx:1-65` | `overview`（仅 1 模块） | 低 | `features/overview` | A. 现有 `ui` / `patterns` 组合（`Panel(dark)` + `Badge`） | 阶段 4 第 8 步（`overview`） |
-| 28 | **`AssigneePicker`** | `overlays/task/AssigneePicker.tsx:1-275` + `overlays/task/assignee.ts` | `tasks`（仅 `TaskDrawer`，1 模块） | 高 | `features/tasks` | A. `radix-ui` / 现有 `ui` 组合（`Popover` + `Input` + `Badge` + `patterns/LoadBar` + 保留 `assignee.ts` 检索与推荐算法） | 阶段 4 第 9a 步（`tasks`） |
+| 28 | **`AssigneePicker`** | `overlays/task/AssigneePicker.tsx` + `overlays/task/assignee.ts`（已瘦身为 `SearchDropdown` 之上的业务封装） | `tasks`（仅 `TaskDrawer`，1 模块） | 中 | `features/tasks` | A. 组合 `patterns/SearchDropdown` + `patterns/LoadBar` + `ui/Badge` + 保留 `assignee.ts` 检索与推荐算法 | 阶段 4 第 9a 步（`tasks`） |
 | 29 | **`DraggableBoard`（`TaskCard` + `useCardDrag`）** | `BoardPage.tsx:32-123`、`BoardColumn.tsx:1-79`、`TaskCard.tsx:1-82`、`useCardDrag.ts:1-139` | `tasks`（仅看板，1 模块） | 高 | `features/tasks` | C. 保留现有手写指针拖拽实现（只迁位置并改 `data-*` 选择器；内部条复用 `patterns/TaskBar(compact)`，详见第五节 Bug 清单） | 阶段 4 第 9b 步（`tasks-board`） |
 | *(附)* | **`MentionInput` & `MessageItem`** | `MentionInput.tsx:1-211`、`MessageItem.tsx:1-80` | `collab`（`ReplyForm` 与 `NewDiscussionDrawer` 同属 1 模块） | 高 | `features/collab` | C. 保留现有手写 `@` 光标触发与键盘导航逻辑（外框复用 `ui/Textarea` 与 `Popover` 浮层视觉 Token） | 阶段 4 第 10 步（`collab`） |
 
@@ -169,28 +169,28 @@
   - `AccountMenu.tsx` 实际是纯操作菜单（个人资料 / 退出登录），无滚动列表和底部操作栏，属于标准 `ui/DropdownMenu`。
   - **归类**：前 4 处外壳为**无意漂移**（手写定位），抽成 `patterns/ActionPopover`（基于 `ui/Popover` 提供统一刊头、滚动体、空态与底部槽）；`AccountMenu` 直接用 `ui/DropdownMenu`。
   - **视觉变化影响**：浮层出现位置由硬编码坐标改为 Radix 自动贴边与防溢出，视觉外观（暖纸底、黑框、硬阴影）保持一致。
-- **差异点 B（搜索框）**：
-  - `DocumentHeader.tsx:44`、`CrewLabels.tsx:25`、`PeoplePanel.tsx:134` 用 `.field`（带右侧小标签/图标），`InviteMemberDrawer.tsx:150` 用 `.invite-search`（下划线输入 + 右侧“搜索”提交按钮）。
-  - **归类**：**有意的小差别**。
-  - **建议**：统一为 `patterns/SearchInput`（提供 `mode="instant" | "submit"`，组合 `ui/Input(boxed)` + `ui/Button`，统一 `:focus-within` 框态）。
-  - **视觉变化影响**：`InviteMemberDrawer` 搜索输入由下划线框统一为标准 `SearchInput`（或在提交模式下保留清晰外框），视觉与全站其余 3 处搜索框一致。
+- **差异点 B（搜索下拉与普通搜索框，合并 `origin/main` 后更新）**：
+  - 合并 `origin/main`（PR #37）后，`PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer` 与 `AssigneePicker` 共 5 处（跨 4 模块）已统一使用 `shared/components/SearchDropdown`（支持 `variant="line" | "box"`、`toggle` 切换钮、`openOn="focus" | "input"`、`loading` 异步搜索、`footer` 固定行与 `align="left" | "right"`）；原普通搜索框仅剩 `members/CrewLabels.tsx` 1 处（边输边滤）。
+  - **归类**：`SearchDropdown` 为跨 4 模块高频复用的核心交互范式；`CrewLabels` 仅单处本地输入，不再构成跨模块范式。
+  - **建议**：在 `components/patterns/` 建立 **`SearchDropdown`**（替代原 `SearchInput` 登记），底层采用方案 A（`ui/Popover` + `ui/Input` + `ui/Spinner`），消除现有手写 `useDismiss` 与 `placement="fixed"` 的 `DOMRect` 坐标计算；`CrewLabels` 直接在 `features/members/` 内使用 `ui/Input(boxed)`。
+  - **视觉变化影响**：`SearchDropdown` 浮层改为 Radix Portal 自动避让定位，外观（暖纸底、黑框、硬阴影、`// KICKER` 刊头、下划线/带框两种触发器）与现有 `main` 保持一致。
 
 ---
 
 ## 四、第三方依赖评估对比（当前结论：建议 0 新增第三方依赖）
 
-### 4.1 模糊搜索下拉（`AssigneePicker`）方案对比
+### 4.1 模糊搜索下拉（`SearchDropdown` / `AssigneePicker`）方案对比
 
-全站仅 `overlays/task/AssigneePicker.tsx`（1 个模块：`features/tasks`）存在本地模糊搜索下拉，且具备**项目专属定制语法**（空格分词、`+必含`、`-排除`、姓名子串命中 `<mark>` 高亮、技能标签优先级排序、结合工时负载的“推荐”人选算法、选项内嵌工时条）。
+合并 `origin/main`（PR #37）后，队友已将原 `AssigneePicker` 的通用下拉搜索交互抽为 `shared/components/SearchDropdown.tsx`（371 行），被 `settings`（`PeoplePanel`）、`members`（`InviteMemberDrawer`）、`documents`（`DocumentHeader`、`UploadDocDrawer`）、`tasks`（`AssigneePicker`）共 **4 个模块 5 处**复用；而 `AssigneePicker` 保留任务专属业务语义（空格分词、`+必含`、`-排除`、姓名子串 `<mark>` 高亮、技能匹配排序、结合工时负载的推荐算法与迷你负载条）。
 
-| 维度 | 方案 A：`radix-ui` `Popover` + 现有 `ui/Input` + 保留 `assignee.ts`（**推荐**） | 方案 B：引入 `cmdk` | 方案 C：引入 `downshift` |
+| 维度 | 方案 A：`radix-ui` `Popover` + 现有 `ui/Input` / `ui/Spinner` 组合为 `patterns/SearchDropdown`（**推荐**） | 方案 B：引入 `cmdk` | 方案 C：引入 `downshift` |
 |---|---|---|---|
 | **新增体积（gzip）** | **0 KB**（零新依赖） | ~4–5 KB（依赖 `@radix-ui/react-dialog`，且与本项目单包 `radix-ui` 存在依赖版本重装风险） | ~7–8 KB（仅提供 hook，仍需手写全部 UI 与定位） |
-| **可访问性（WAI-ARIA）** | 现有 `AssigneePicker.tsx:155-161` 已完整实现 `role="combobox"`、`aria-expanded`、`aria-controls`、`aria-activedescendant`、`role="listbox"`/`option`、键盘 `↑/↓/Enter/Esc/Tab` 与焦点返回；接入 `ui/Popover` 即可补齐 Portal 与碰撞翻转 | 开箱即用 `cmdk` 列表键盘导航，但**默认内置模糊评分器会与 `+必含/-排除` 自定义语法冲突**（需 `shouldFilter={false}` 关掉核心过滤功能，失去主要价值） | 极佳的 ARIA 合规性，但需重写全部状态机，且仍需搭配 Floating UI / Radix Popover 解决 Portal 定位 |
+| **可访问性（WAI-ARIA）** | 现有 `SearchDropdown.tsx` 已完整实现 `role="combobox"`、`aria-expanded`、`aria-controls`、`aria-activedescendant`、`role="listbox"`/`option`、键盘 `↑/↓/Enter/Esc/Tab` 与焦点返回；接入 `ui/Popover` 即可补齐 Portal 与碰撞翻转，移除 `useDismiss` 与手算 `DOMRect` | 开箱即用 `cmdk` 列表键盘导航，但**默认内置模糊评分器会与 `AssigneePicker` 的 `+必含/-排除` 自定义语法及 `InviteMemberDrawer` 远程异步搜索冲突**（需 `shouldFilter={false}` 关掉核心过滤功能） | 极佳的 ARIA 合规性，但需重写全部状态机，且仍需搭配 Floating UI / Radix Popover 解决 Portal 定位 |
 | **与 `radix-ui` 单包配合** | **完美兼容**（零依赖冲突，遵守 `AGENTS.md` 单包约束） | 需显式引入 `cmdk`（内部可能拉取旧独立 `@radix-ui/react-dialog` 造成多份 Radix 实例） | 无冲突，但属于第二套交互状态抽象 |
-| **维护情况与团队成本** | 仅维护 1 个 150 行以内组件 + 纯函数 `assignee.ts`（已有完整逻辑） | 社区活跃（pacocoursey），但偏向 Cmd+K 命令面板，定制表单触发器体验生硬 | 维护稳定但低频更新，学习与迁移成本高于收益 |
+| **维护情况与团队成本** | 1 份 `patterns/SearchDropdown`（按行数门禁拆为容器 + 键盘 hook + 选项列表，每文件 ≤ 150–250 行）同时服务全部 5 处；`AssigneePicker` 仅留薄业务封装 + 纯函数 `assignee.ts` | 偏向 Cmd+K 命令面板，定制下划线触发器、`toggle` 切换钮与 `footer` 固定行体验生硬 | 维护稳定但低频更新，学习与迁移成本高于收益 |
 
-- **建议**：采用 **方案 A（0 新增依赖）**，保留 `assignee.ts` 纯函数算法，用 `ui/Popover` + `ui/Input` + `ui/Badge` + `patterns/LoadBar` 重组 `features/tasks/components/AssigneePicker`。
+- **建议（`SearchDropdown` 与 `AssigneePicker` 方案 A 合二为一）**：**建议合并为同一套方案 A 底座，但保持分层解耦**——将通用下拉搜索交互壳统一建设为 `components/patterns/SearchDropdown`（0 新增依赖，基于 `ui/Popover` + `ui/Input` + `ui/Spinner`），而 `features/tasks/components/AssigneePicker` 保留在任务模块内部作为业务薄封装调用 `patterns/SearchDropdown` + `patterns/LoadBar` + `ui/Badge` + `assignee.ts`。这样既消除重复造 combobox 的成本，又严守 `patterns/` 不沾染任务业务算法的红线。
 
 ### 4.2 拖拽（`useCardDrag`）与图表（`BurndownChart` / `GanttPanel`）
 - **拖拽**：不引入 `@dnd-kit` / `react-beautiful-dnd`，按要求保留现有手写 `useCardDrag`（仅 139 行、0 依赖、完美支持自定义列间权限拦截 `canDrop` 与 Portal 浮卡）。
@@ -215,3 +215,20 @@
 3. **阶段进度条外层包装（定稿）**：经实测核查，`WeekLine`、`SummaryCard`、`ProgressPanel`、`ForecastHero` 4 处外层无任何两处重复，**维持各自直接复用 `ui/Progress`**，不新增 `patterns`。
 4. **阶段 4 最终迁移顺序（11 步定稿）**：
    - `1. features/auth` → `2. layout + features/projects + features/notifications` → `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → **`9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）** → **`9b. features/tasks-board`（`BoardPage` + `BoardColumn` + `TaskCard` + `useCardDrag` 4 处独立修复）** → `10. features/collab`。
+
+---
+
+## 七、合并 `origin/main`（PR #37）后的阶段 3.5 增量复核
+
+在合并 `origin/main`（`pre-refactor..origin/main` 共 26 个提交、38 个前端文件）后，核查所有新增/改动前端代码对阶段 3.5 盘点及阶段 4 迁移的影响如下：
+
+1. **唯一新增的跨模块自定义组件**：`src/shared/components/SearchDropdown.tsx`（371 行）+ `SearchDropdown.css`（142 行），已被 4 个模块 5 处使用（`settings/PeoplePanel`、`members/InviteMemberDrawer`、`documents/DocumentHeader`、`documents/UploadDocDrawer`、`tasks/AssigneePicker`）。
+   - **归属调整**：新增登记 `components/patterns/SearchDropdown`；由于原 4 处普通搜索框中 3 处已改用 `SearchDropdown`、仅剩 `members/CrewLabels` 1 处，原 `patterns/SearchInput` 移出 `patterns/`，由 `features/members/` 直接使用 `ui/Input(boxed)`。
+   - **与 `AssigneePicker` 方案 A 合并建议**：底座合二为一进入 `patterns/SearchDropdown`（方案 A：`ui/Popover` + `ui/Input` + `ui/Spinner`，0 新增依赖，拆分满足 ≤ 250 行 / ≤ 80 行门禁），`AssigneePicker` 留在 `features/tasks/` 内作为业务薄封装调用 `patterns/SearchDropdown` + `patterns/LoadBar` + `ui/Badge` + `assignee.ts`。
+2. **对阶段 4 各步骤的具体影响**：
+   - **第 3 步（`features/settings`）**：原建 `SearchInput` 改为**首次建立 `patterns/SearchDropdown`**（供 `PeoplePanel` 使用，并以 `ui/Popover` 取代旧组件对 `layout/useDismiss` 的耦合）。
+   - **第 5 步（`features/members`）**：`InviteMemberDrawer` 复用 `patterns/SearchDropdown`（异步搜索模式）；`CrewLabels` 直接用 `ui/Input(boxed)`，不再建设 `patterns/SearchInput`。
+   - **第 6 步（`features/documents`）**：`DocumentHeader`（`variant="box"` 右对齐）与 `UploadDocDrawer`（`variant="line"` + `toggle` + `footer`）复用 `patterns/SearchDropdown`；旧 `shared/components/SearchDropdown.*` 暂留至第 9a 步全部迁移完毕后删除。
+   - **第 7 步（`features/timeline`）**：`GanttDeps` / `GanttPanel` / `GanttRow` 新增了同一前置共用竖线、默认淡化仅悬停高亮前后置依赖连线、空心任务条垫底色、月视图日期行复用与计划线顶端标签，迁移样式与交互时须完整保留。
+   - **第 8 步（`features/overview`）**：`FigureStrip` / `Figure` 已去掉下方小字并将已完成并入分母（两位数字）、`CriticalChainPanel` 改为方格加两行、`SchedulePanel` 修复今天线滚动不中断，构建 `MetricStrip` 等组件时以最新 `main` 行为为准。
+   - **第 9a 步（`features/tasks`）**：`AssigneePicker` 直接切换调用 `patterns/SearchDropdown`（无需重新手写 combobox 状态机），全部 5 处调用迁完后**删除旧 `src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 并移出 `stylelint.config.mjs` 的 `ignoreFiles`**。

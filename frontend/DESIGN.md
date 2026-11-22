@@ -364,7 +364,7 @@
 > - **`Tooltip`**：全站 0 处自定义 Tooltip，仅 13 处原生 `title` 截断/提示，**不封装**，沿用原生 `title`；
 > - **`DatePicker`**：全站仅 5 处单日 `<input type="date">`，**不封装**独立日期选择器和日期库，直接复用 `ui/Input[type="date"]` 并确保其高度、描边、字号、字体、`focus`、`invalid`、`disabled` 与其他文本输入框完全一致；
 > - **`Avatar`**：全站仅 `AccountMenu.tsx:37` 1 处首字母方块，**不封装**，保留在 `AccountMenu` 局部样式；
-> - **`Combobox`**：经阶段 3.5 盘点（详见 [`custom-components.md`](./custom-components.md)），全站仅 `AssigneePicker` 1 处存在本地模糊搜索下拉且含 `+必含`/`-排除` 专属业务语法，**不抽象通用 `ui/Combobox`，不引入 `cmdk` 等新依赖**，保留在 `features/tasks/` 内基于 `ui/Popover` + `ui/Input` 组合；
+> - **`Combobox`**：经阶段 3.5 盘点及 `origin/main` 合并复核（详见 [`custom-components.md`](./custom-components.md)），通用下拉搜索壳已跨 4 模块 5 处复用，归入业务范式层 **`components/patterns/SearchDropdown`**（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，**不抽象 `ui/Combobox`，不引入 `cmdk`/`downshift` 等新依赖**）；`AssigneePicker` 保留在 `features/tasks/` 内作为业务薄封装调用 `patterns/SearchDropdown`；
 > - **骨架屏**：**不做**，页面与按钮加载态复用极简 `ui/Spinner` 或文字提示。
 > - **阶段 3.5 结论**：`components/ui/` **新增待建项为 0 项**，现有 19 项已完整覆盖全站无业务通用原语。
 
@@ -458,8 +458,8 @@
 | **`Panel`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Separator` + CSS Modules | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
 | **`FormDrawer`** | **待建** · 阶段 4 第 2 步（`projects`） | `ui/Drawer(md)`、`ui/Button`、`ui/Separator(double)`、`ui/Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
 | **`EmptyState` / `PageState`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Alert`、`ui/Button`、`ui/Spinner` | `EmptyState` 统一面板/列表空态；`PageState` 统一页面级 `loading` / `missing`（往期无存档）/ `error`（可带重试按钮） | `NoProject`、`NoAccess`、6 种零散空态类、4 页重复 `missing`/`error` 分支 |
-| **`ActionPopover`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Popover`、`ui/Button`、`ui/Badge` | 统一带刊头计数、可滚动列表、空态与底部操作槽的 `.issues` 浮层壳 | `ProjectSwitch`、`IssueSwitch`、`NotificationBell`、`AssigneePicker` 4 处 `.issues` 外壳 |
-| **`SearchInput`** | **待建** · 阶段 4 第 3 步（`settings`） | `ui/Input(boxed)`、`ui/Button` | 带标签/图标或提交动作的搜索框：`mode="instant" \| "submit"`，统一 `:focus-within` 框态与清空动作 | 3 处 `.field`（`DocumentHeader`、`CrewLabels`、`PeoplePanel`）+ `.invite-search` |
+| **`ActionPopover`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Popover`、`ui/Button`、`ui/Badge` | 统一带刊头计数、可滚动列表、空态与底部操作槽的 `.issues` 浮层壳 | `ProjectSwitch`、`IssueSwitch`、`NotificationBell` 3 处 `.issues` 外壳 |
+| **`SearchDropdown`** | **待建** · 阶段 4 第 3 步（`settings`） | `ui/Popover`、`ui/Input`、`ui/Spinner` | 公共下拉搜索组合：`variant="line" \| "box"`、`toggle?`、`openOn`、`loading`、`footer?`、完整 WAI-ARIA `combobox`/`listbox` 键盘导航（0 新增依赖） | `shared/components/SearchDropdown`（`PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer`、`AssigneePicker` 5 处；原 `SearchInput` 仅剩 `CrewLabels` 1 处，改直接用 `ui/Input(boxed)`） |
 | **`ConfirmDialog`** | **待建** · 阶段 4 第 3 步（`settings`） | `ui/AlertDialog`、`ui/Button(danger)` | 破坏性操作二次确认范式：`title`、`description`、`confirmLabel`（明确动词）、`loading`、`onConfirm`；默认焦点在“取消” | `window.confirm` 与 3 处双击确认逻辑 |
 | **`Legend`** | **待建** · 阶段 4 第 4 步（`reports`） | 纯展示组件（对齐 `ui/Badge` 风格） | 数据驱动图例条：`items: { key, label, kind: "solid" \| "outline" \| "dashed" \| "hatch" \| "accent" }[]`，消除手写 `<i>` 与内联 style | 6 处 `.legend`（`Overview`、`Timeline`、`Documents`、`Reports`） |
 | **`HeroCard`** | **待建** · 阶段 4 第 4 步（`reports`） | `ui/Badge`（仅共享外壳与顶栏） | 强调卡外壳：`tone="alert" \| "calm"`、`kicker?`、`title?`、`badge?`、`children`、`footer?`；主体业务内容由各模块自行组合 | `HeadlinePanel`、`ForecastHero`、`DocumentDetailHero` 3 处外框与 `.hk` 顶栏 |
@@ -480,7 +480,7 @@
 - `features/documents`：`FileDropzone`（内部自治拖拽上传，文案不变）、`DocumentRevisingTimeline`
 - `features/timeline`：`GanttChart`、`CriticalPathTable`
 - `features/overview`：`MemberScheduleBoard`（精确到此刻今天线）、`CriticalChainPanel`
-- `features/tasks`：`AssigneePicker`（`ui/Popover` + `ui/Input` + `assignee.ts`）、`DraggableBoard`（`TaskCard` + 保留手写 `useCardDrag`）
+- `features/tasks`：`AssigneePicker`（`patterns/SearchDropdown` + `patterns/LoadBar` + `ui/Badge` + `assignee.ts`）、`DraggableBoard`（`TaskCard` + 保留手写 `useCardDrag`）
 - `features/collab`：`MentionInput`、`MessageItem`
 
 ---
