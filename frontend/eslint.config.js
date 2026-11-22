@@ -68,6 +68,7 @@ export default defineConfig([
       "src/components/**/*.{ts,tsx}",
       "src/dev/**/*.{ts,tsx}",
       "src/features/**/*.{ts,tsx}",
+      "src/layout/**/*.{ts,tsx}",
       "src/services/**/*.{ts,tsx}",
       "src/stores/**/*.{ts,tsx}",
     ],

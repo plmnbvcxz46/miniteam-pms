@@ -1,0 +1,150 @@
+/* 顶栏期号切换触发器、快照状态提示与往期列表项 */
+.wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.trigger {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: var(--space-0) var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: background-color, border-color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.trigger b {
+  font-weight: var(--font-weight-heavy);
+}
+
+.trigger:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.trigger:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.trigger[data-past="true"] {
+  border: var(--border-width-thick) solid var(--color-accent);
+  color: var(--color-warning-text);
+}
+
+.note {
+  position: absolute;
+  top: calc(100% + var(--space-1-5));
+  left: 0;
+  z-index: var(--z-chrome);
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-heavy);
+  color: var(--color-warning-text);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-0-5) var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background-color: transparent;
+  border: 0;
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.no {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text);
+}
+
+.headline {
+  grid-column: 2;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.headline[data-empty="true"] {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}
+
+.date {
+  grid-column: 2 / 4;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-muted);
+}
+
+.late {
+  color: var(--color-warning-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.item:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.item:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.item:hover .headline {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: var(--border-width-thin);
+}
+
+.item[aria-current="true"] {
+  background-color: var(--color-surface);
+  outline: var(--border-width-thin) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.item[aria-current="true"] .no {
+  grid-row: 1 / span 2;
+  color: var(--color-accent-text);
+}
+
+.item[aria-current="true"] .no::after {
+  content: "当前";
+  display: block;
+  width: max-content;
+  margin-top: var(--space-1);
+  padding: var(--space-0-5) var(--space-1);
+  font-size: var(--font-size-2xs);
+  background-color: var(--color-accent);
+  color: var(--color-text);
+}

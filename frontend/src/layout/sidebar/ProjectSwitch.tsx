@@ -1,9 +1,13 @@
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
+import {
+  ActionPopover,
+  ActionPopoverFooterButton,
+} from "../../components/patterns/ActionPopover";
 import { BrandMark } from "../../components/patterns/BrandMark";
 import { roleLabel } from "../../shared/constants/labels";
 import type { ProjectSummary } from "../../shared/types/global";
 import { formatDayLabel } from "../../shared/utils/date";
-import { useDismiss } from "../useDismiss";
+import styles from "./ProjectSwitch.module.css";
 
 interface ProjectSwitchProps {
   projects: ProjectSummary[];
@@ -20,79 +24,72 @@ export default function ProjectSwitch({
   onCreate,
 }: ProjectSwitchProps) {
   const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const close = useCallback(() => setOpen(false), []);
-  useDismiss(open, rootRef, close);
   const current = projects.find((p) => p.id === currentId) ?? null;
 
   return (
-    <div className="pop-root" ref={rootRef}>
-      <button
-        className="project"
-        type="button"
-        aria-haspopup="true"
-        aria-expanded={open}
-        aria-label="切换项目"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <BrandMark size="sm" tone="inverse" />
-        <span id="proj-name">{current?.name ?? "没有项目"}</span>
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          aria-hidden="true"
+    <ActionPopover
+      open={open}
+      onOpenChange={setOpen}
+      title="PROJECTS"
+      meta={projects.length}
+      width="sm"
+      align="start"
+      trigger={
+        <button
+          className={styles.trigger}
+          type="button"
+          aria-label="切换项目"
         >
-          <path d="M2 4l4 4 4-4" />
-        </svg>
-      </button>
-      {open && (
-        <div className="issues projs">
-          <h4>
-            PROJECTS
-            <em>{projects.length}</em>
-          </h4>
-          <div className="list scroll-y">
-            {projects.map((project) => (
-              <button
-                key={project.id}
-                type="button"
-                className={project.status === "ARCHIVED" ? "arch" : undefined}
-                aria-current={project.id === currentId ? "true" : undefined}
-                onClick={() => {
-                  onSelect(project.id);
-                  close();
-                }}
-              >
-                <span className="no">
-                  {project.status === "ARCHIVED" ? "已归档" : "进行中"}
-                </span>
-                <span className="hd">{project.name}</span>
-                <span className="dt">
-                  {formatDayLabel(project.startDate)} –{" "}
-                  {formatDayLabel(project.planEnd)}
-                  {project.myProjectRole &&
-                    ` · ${roleLabel[project.myProjectRole]}`}
-                  {` · 第 ${project.issueNo} 期`}
-                </span>
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="pnew"
-            onClick={() => {
-              close();
-              onCreate();
-            }}
+          <BrandMark size="sm" tone="inverse" />
+          <span className={styles.projectName}>{current?.name ?? "没有项目"}</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            aria-hidden="true"
           >
-            新建项目
-          </button>
-        </div>
-      )}
-    </div>
+            <path d="M2 4l4 4 4-4" />
+          </svg>
+        </button>
+      }
+      footer={
+        <ActionPopoverFooterButton
+          onClick={() => {
+            setOpen(false);
+            onCreate();
+          }}
+        >
+          新建项目
+        </ActionPopoverFooterButton>
+      }
+    >
+      {projects.map((project) => (
+        <button
+          key={project.id}
+          type="button"
+          className={styles.item}
+          data-archived={project.status === "ARCHIVED" ? "true" : undefined}
+          aria-current={project.id === currentId ? "true" : undefined}
+          onClick={() => {
+            onSelect(project.id);
+            setOpen(false);
+          }}
+        >
+          <span className={styles.status}>
+            {project.status === "ARCHIVED" ? "已归档" : "进行中"}
+          </span>
+          <span className={styles.name}>{project.name}</span>
+          <span className={styles.meta}>
+            {formatDayLabel(project.startDate)} –{" "}
+            {formatDayLabel(project.planEnd)}
+            {project.myProjectRole && ` · ${roleLabel[project.myProjectRole]}`}
+            {` · 第 ${project.issueNo} 期`}
+          </span>
+        </button>
+      ))}
+    </ActionPopover>
   );
 }

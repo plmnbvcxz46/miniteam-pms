@@ -29,6 +29,7 @@ const targetFiles = [
   ...walkCssFiles("src/components", ".module.css"),
   ...walkCssFiles("src/dev", ".module.css"),
   ...walkCssFiles("src/features", ".module.css"),
+  ...walkCssFiles("src/layout", ".module.css"),
   ...walkCssFiles("src/styles/tokens", ".css"),
   ...(fs.existsSync("src/styles/base.css") ? ["src/styles/base.css"] : []),
 ];
