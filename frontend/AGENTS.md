@@ -1,12 +1,12 @@
 # frontend 补充约定
 
-总约定见根目录 `AGENTS.md`，本文件只写前端补充，冲突时以根目录为准。设计系统与组件详细规范见 [`DESIGN.md`](./DESIGN.md)，历史基线审计见 [`audit.md`](./audit.md)。
+总约定见根目录 `AGENTS.md`，本文件只写前端补充，冲突时以根目录为准。设计系统与组件详细规范见 [`DESIGN.md`](./DESIGN.md)，历史基线审计见 [`audit.md`](./audit.md)，阶段 3.5 自定义组件盘点与差异分析见 [`custom-components.md`](./custom-components.md)。
 
 ---
 
 ## 重构目录结构与单向分层规则
 
-当前正处于设计系统与架构重构期（已完成阶段 0 审计、阶段 1 规范、阶段 2 基础设施），新旧目录并行过渡，**新代码一律按目标结构落位**，旧目录在阶段 3–4 逐步迁出并删除：
+当前正处于设计系统与架构重构期（已完成阶段 0 审计、阶段 1 规范、阶段 2 基础设施、阶段 3 基础组件、阶段 3.5 自定义组件盘点），新旧目录并行过渡，**新代码一律按目标结构落位**，旧目录在阶段 4 逐步迁出并删除：
 
 ```text
 src/
@@ -34,7 +34,8 @@ src/
 - **`components/ui/`**：禁止引用 `components/patterns/` 及任何业务/数据层（`features`/`services`/`stores`/`api`/`state`/`pages`/`layout`/`overlays`）。
 - **`components/patterns/`**：仅允许组合 `components/ui/` 与 `shared/` 纯工具，禁止依赖任何业务域或直接读取 `stores`/`state`（所有业务数据与 `today` 等状态一律由上层 props 传入）。
 - **`features/<域>/`**：各 feature 之间**严禁互引**（包括相对路径跨兄弟目录）；UI/页面组件（`*.tsx`）禁止直接导入 `services/*` 或 `api/*`，网络请求必须收口在 hooks / stores / services 层。
-- **Radix UI 引入规范**：统一从单包 `"radix-ui"` 按需具名导入（阶段 3 封装首个基础组件时安装），**禁止使用独立 `@radix-ui/*` 分包**。
+- **Radix UI 引入规范**：统一从单包 `"radix-ui"` 按需具名导入，**禁止使用独立 `@radix-ui/*` 分包**。
+- **跨模块复用检索铁律**：迁移任何模块前，先查 [`DESIGN.md`](./DESIGN.md) 的 `patterns` 登记表，并在整个 `src/` 中搜索其他模块是否有相同或相似实现；跨模块复用的组件必须进 `components/patterns/`，禁止在各模块内重复实现；需要新依赖时停下来询问。
 
 ---
 
@@ -78,14 +79,17 @@ src/
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（双层对比）/`segmented`（按周格子），完整 ARIA |
 | 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（报刊上粗下细双线）/`dashed`（虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
-| 范式组件 | 状态 | 职责摘要 |
+### 业务范式组件（`src/components/patterns/`，共 14 项待建，阶段 4 迁移到首个用到它的模块时按需建立）
+> 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
+
+| 范式组件 | 状态与建立时机 | 职责摘要 |
 |---|---|---|
-| `AppShell` / `PageHeader` / `Panel` / `Legend` | 阶段 4 按需建立 | `PageHeader` 吸收 `.t-page-title`（`60px`/`44px` 断点切 Token） |
-| `FormDrawer` / `SearchInput` / `ConfirmDialog` | 阶段 4 按需建立 | 表单抽屉壳、搜索框与破坏性操作二次确认（表单行已升格至 `ui/Field`） |
-| `MetricStrip` / `HeroCard` / `LoadBar` / `TaskBar` | 阶段 4 按需建立 | `TaskBar` 剥离 `useIssue()` 改为受控 `today` prop |
-| `ListRow` / `ActivityFeed` / `EmptyState` / `PageState` | 阶段 4 按需建立 | 强制原生 `<button>`/`<Link>` 语义，消除非语义点击元素 |
-| `AssigneeCombobox` / `MentionTextarea` / `FileDropzone` | 阶段 4 按需建立 | `FileDropzone` 内部自治拖拽上传，文案不变 |
+| `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **待建** · 阶段 4 第 2 步（`layout` / `projects`） | 双线页头（`60px`/`44px` 切 Token）、三变体面板、表单抽屉壳、空态/页态、`.issues` 浮层壳 |
+| `SearchInput` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 搜索框（即时/提交双模式）与破坏性操作二次确认 |
+| `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |
+| `ListRow` / `ActivityFeed` | **待建** · 阶段 4 第 5 步（`members`） | 原生语义跳转列表行、浅/深面时间线动态流（`LogsPanel` 4 列按日表保持独立） |
+| `TaskBar` | **待建** · 阶段 4 第 7 步（`timeline`） | 任务生命周期时间条（剥离 `useIssue()`，改为受控 `today` prop） |
+| `MetricStrip` | **待建** · 阶段 4 第 8 步（`overview`） | 4 格 KPI 指标条（`--font-size-figure`，支持 `unit`/`sub`/`alert`） |
 
 ---
 

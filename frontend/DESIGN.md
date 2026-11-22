@@ -1,7 +1,7 @@
 # miniteam-pms 前端设计规范（DESIGN.md）
 
 > **适用范围**：`frontend/` 全部设计 Token、基础组件（`components/ui/`）、业务范式组件（`components/patterns/`）与业务域模块（`features/*`）。
-> **定位**：阶段 2（基础设施与 Token）、阶段 3（`components/ui/` 基础组件与 `/dev/ui` 开发期样式手册）、阶段 4（逐模块迁移并按需建立 `components/patterns/`）的唯一设计与工程落位标准；所有约定均基于阶段 0 审计（`frontend/audit.md`）与用户已拍板决策制定。
+> **定位**：阶段 2（基础设施与 Token）、阶段 3（`components/ui/` 基础组件与 `/dev/ui` 开发期样式手册）、阶段 4（逐模块迁移并按需建立 `components/patterns/`）的唯一设计与工程落位标准；所有约定均基于阶段 0 审计（[`audit.md`](./audit.md)）、阶段 3.5 自定义组件盘点（[`custom-components.md`](./custom-components.md)）与用户已拍板决策制定。
 
 ---
 
@@ -360,11 +360,13 @@
 > - **第 2 批 · 浮层（5 项，不含 `Tooltip`）**：`Popover`、`DropdownMenu`、`Drawer`、`AlertDialog`、`Toast`；
 > - **第 3 批 · 展示类（5 项）**：`Badge`、`Alert`、`Tabs`、`Progress`、`Separator`。
 >
-> **明确不封装的控件决策（按实证核查拍板）**：
+> **明确不封装的控件决策（按阶段 3 核查与阶段 3.5 全量盘点拍板）**：
 > - **`Tooltip`**：全站 0 处自定义 Tooltip，仅 13 处原生 `title` 截断/提示，**不封装**，沿用原生 `title`；
 > - **`DatePicker`**：全站仅 5 处单日 `<input type="date">`，**不封装**独立日期选择器和日期库，直接复用 `ui/Input[type="date"]` 并确保其高度、描边、字号、字体、`focus`、`invalid`、`disabled` 与其他文本输入框完全一致；
 > - **`Avatar`**：全站仅 `AccountMenu.tsx:37` 1 处首字母方块，**不封装**，保留在 `AccountMenu` 局部样式；
+> - **`Combobox`**：经阶段 3.5 盘点（详见 [`custom-components.md`](./custom-components.md)），全站仅 `AssigneePicker` 1 处存在本地模糊搜索下拉且含 `+必含`/`-排除` 专属业务语法，**不抽象通用 `ui/Combobox`，不引入 `cmdk` 等新依赖**，保留在 `features/tasks/` 内基于 `ui/Popover` + `ui/Input` 组合；
 > - **骨架屏**：**不做**，页面与按钮加载态复用极简 `ui/Spinner` 或文字提示。
+> - **阶段 3.5 结论**：`components/ui/` **新增待建项为 0 项**，现有 19 项已完整覆盖全站无业务通用原语。
 
 | 组件 | 批次 / 底层原语 | 尺寸 / 变体（`data-size` / `data-variant`） | `data-*` 与 ARIA 属性 | 核心语义 Token | 替换旧实现 |
 |---|---|---|---|---|---|
@@ -443,27 +445,40 @@
   - 所有业务数据（含 `today`、权限布尔值、选项列表）和异步回调一律由上层 `features/*` 通过 props 传入。
   - 各 `features/<域>` 之间禁止互引；跨领域复用界面结构一律上收至 `patterns/`。
 
-## 4.2 `components/patterns/` 组件登记表
+## 4.2 `components/patterns/` 组件登记表（共 14 项，全部待建）
 
-| 范式组件 | 组合的 `ui/` 基础组件 | 职责与核心 Props 契约 | 替换旧实现 |
-|---|---|---|---|
-| **`AppShell`** | `Separator` | 左侧栏（项目切换槽、导航槽、摘要槽）+ 顶栏（期号槽、周期槽、通知槽、账号槽）+ `<main>` 主视口骨架；移除 `#shell.dim` 命令式类切换 | `layout/Shell.tsx` 布局骨架 |
-| **`PageHeader`** | `Button`、`Separator(double)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`<h1>` 默认使用 `--font-size-display`（`60px`），窄屏断点（`≤900px`）及详情页 `size="compact"` 切换至 `--font-size-display-sm`（`44px`）Token（不写死数值），吸收淘汰原 `.t-page-title` | 12 处 `.vh`（9 页 Header + `NoProject` + `NoAccess` + `LoginPage`） |
-| **`Panel`** | `Separator` | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
-| **`Legend`** | `Badge`（或图例色块） | 数据驱动图例条：`items: { key, label, kind: "solid" \| "outline" \| "dashed" \| "hatch" \| "accent" }[]`，消除手写 `<i>` 与内联 style | 6 处 `.legend`（Overview、Timeline、Documents、Reports） |
-| **`FormDrawer`** | `Drawer`、`Button`、`Separator(double)`、`Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
-| **`SearchInput`** | `Input(boxed)`、`Button(default)` | 带标签/图标与清空动作的搜索框（可选提交按钮），统一 `:focus-within` 外框态 | 3 处 `.field`（`DocumentHeader`、`CrewLabels`、`PeoplePanel`）+ `.invite-search` |
-| **`ConfirmDialog`** | `AlertDialog`、`Button` | 破坏性操作二次确认范式：`title`、`description`、`confirmLabel`（明确动词）、`loading`、`onConfirm`；默认焦点在“取消” | `window.confirm` 与 3 处双击确认逻辑 |
-| **`MetricStrip` / `MetricCard`** | `Badge` | 4 格 KPI 指标条：首格反白、`label`（`// WORD`）、`value`、`unit?`、`sub?`、`alert?`（信号橙顶条+风险徽标） | `overview/{FigureStrip,Figure}` + `task/{TaskFigures,FigureItem}` |
-| **`HeroCard`** | `Badge` | 强调头条/预测/文档详情顶卡：`tone="alert" \| "calm"`、`kicker`、`title?`、`badge?`、`figure`、`figureSub`、`footer?` | `HeadlinePanel`、`ForecastHero`、`DocumentDetailHero` |
-| **`LoadBar`** | `Progress` | 工时负载轨道：`hours`、`capacity`、`scale`、`size="sm" \| "md"`；内置 `role="meter"` + 上限虚线 + 超载斜纹 | `MemberLoad`、`SelfLoad`、`LoadRow`、`AssigneePicker.LoadMeter` |
-| **`TaskBar`** | —（纯可视化轨道） | 任务计划/实际/阻塞/逾期/完成时间条；**必传 `today: string` props，剥离原内部 `useIssue()` 耦合**，支持 `compact` 与共享 `range` | `shared/components/TaskBar.tsx` |
-| **`ListRow`** | `Badge` | 统一可点击跳转/选中列表行（强制渲染原生 `<button type="button">` 或 `<Link>`）：`leading?`、`title`、`meta?`、`trailing?`、`selected?`、`tone?` | `DependencyRow`、`LinkRow`、`TodoPanel` 项、`BlockedBy` 项、`SelfTasks` 项、`GanttRow` 名称钮、`ThreadItem` |
-| **`ActivityFeed`** | — | 统一时间线/日志列表：`items`、`surface="light" \| "dark"`、`interactive?`、`activeId?`、`onSelect?`；消除 `task-panels.css` 与 `collab-feed.css` 的 `.feed`/`.ev` 重复定义 | `TaskLogPanel`、`ActivityFeedPanel/Item`、`PermLog`/`SelfLog`/`PermLogItem`、`LogsPanel` |
-| **`EmptyState` / `PageState`** | `Alert`、`Button` | `EmptyState` 统一面板/列表空态；`PageState` 统一页面级 `loading` / `missing`（往期无存档）/ `error`（可带重试按钮） | `NoProject`、`NoAccess`、6 种零散空态类、4 页重复 `missing`/`error` 分支 |
-| **`AssigneeCombobox`** | `Popover`、`Input`、`Badge`、`LoadBar` | 负责人搜索选择器：技能标签匹配高亮、推荐标记、工时负载、键盘 `↑/↓/Enter/Esc`；补齐 `loading` 与 `disabled` 态 | `overlays/task/AssigneePicker.tsx` |
-| **`MentionTextarea`** | `Textarea`、`Popover`（或附着式 listbox） | `@` 提及多行输入框：成员/文档分组候选、光标同步、键盘选择与 `Ctrl/Cmd+Enter` 快捷提交；补齐 `disabled` 与 `invalid` 态 | `pages/collab/components/MentionInput.tsx` |
-| **`FileDropzone`** | `Alert(inline)` | 文件上传区：文案保持“把文件拖到这里，或点此选择”，**内部自治实现 `onDragEnter`/`onDragOver`/`onDragLeave`/`onDrop` 与 `data-drag-over`**、`:focus-within` 焦点环、扩展名与 20MB 校验回调 | `UploadDocDrawer` `.dz` + 原 `prototype/global.js:3291-3309` 外层委托 |
+> 依据阶段 3.5 自定义组件盘点（详见 [`custom-components.md`](./custom-components.md)），**仅被 ≥ 2 个模块复用的组合才进入 `components/patterns/`**；原草案中仅单模块使用的 `AppShell`（`layout`）、`AssigneePicker`（`tasks`）、`MentionInput`（`collab`）、`FileDropzone`（`documents`）已移出 `patterns/`，保留在对应模块内部。完整差异分析与视觉统一待决项见 [`custom-components.md`](./custom-components.md)。
+
+| 范式组件 | 状态与建立时机 | 组合/底层方案 | 职责与核心 Props 契约 | 替换旧实现 |
+|---|---|---|---|---|
+| **`PageHeader`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Button`、`ui/Separator(double)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`default` 用 `--font-size-display`（60px），窄屏（`≤900px`）及详情页 `compact` 切 `--font-size-display-sm`（44px） | 11 处 `.vh`（8 页标准 Header + `TaskHeader` + `NoProject` + `NoAccess`；`LoginPage` 保持独立轻页头） |
+| **`Panel`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Separator` + CSS Modules | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
+| **`FormDrawer`** | **待建** · 阶段 4 第 2 步（`projects`） | `ui/Drawer(md)`、`ui/Button`、`ui/Separator(double)`、`ui/Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
+| **`EmptyState` / `PageState`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Alert`、`ui/Button`、`ui/Spinner` | `EmptyState` 统一面板/列表空态；`PageState` 统一页面级 `loading` / `missing`（往期无存档）/ `error`（可带重试按钮） | `NoProject`、`NoAccess`、6 种零散空态类、4 页重复 `missing`/`error` 分支 |
+| **`ActionPopover`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Popover`、`ui/Button`、`ui/Badge` | 统一带刊头计数、可滚动列表、空态与底部操作槽的 `.issues` 浮层壳 | `ProjectSwitch`、`IssueSwitch`、`NotificationBell`、`AssigneePicker` 4 处 `.issues` 外壳 |
+| **`SearchInput`** | **待建** · 阶段 4 第 3 步（`settings`） | `ui/Input(boxed)`、`ui/Button` | 带标签/图标或提交动作的搜索框：`mode="instant" \| "submit"`，统一 `:focus-within` 框态与清空动作 | 3 处 `.field`（`DocumentHeader`、`CrewLabels`、`PeoplePanel`）+ `.invite-search` |
+| **`ConfirmDialog`** | **待建** · 阶段 4 第 3 步（`settings`） | `ui/AlertDialog`、`ui/Button(danger)` | 破坏性操作二次确认范式：`title`、`description`、`confirmLabel`（明确动词）、`loading`、`onConfirm`；默认焦点在“取消” | `window.confirm` 与 3 处双击确认逻辑 |
+| **`Legend`** | **待建** · 阶段 4 第 4 步（`reports`） | 纯展示组件（对齐 `ui/Badge` 风格） | 数据驱动图例条：`items: { key, label, kind: "solid" \| "outline" \| "dashed" \| "hatch" \| "accent" }[]`，消除手写 `<i>` 与内联 style | 6 处 `.legend`（`Overview`、`Timeline`、`Documents`、`Reports`） |
+| **`HeroCard`** | **待建** · 阶段 4 第 4 步（`reports`） | `ui/Badge`（仅共享外壳与顶栏） | 强调卡外壳：`tone="alert" \| "calm"`、`kicker?`、`title?`、`badge?`、`children`、`footer?`；主体业务内容由各模块自行组合 | `HeadlinePanel`、`ForecastHero`、`DocumentDetailHero` 3 处外框与 `.hk` 顶栏 |
+| **`LoadBar`** | **待建** · 阶段 4 第 4 步（`reports`） | `ui/Progress(solid, striped, thresholdPercent)` | 工时负载轨道：`variant="detailed" \| "compact"`、`hours`、`capacity`、`scale`；内置 `role="meter"` + 上限虚线 + 超载斜纹 | `MemberLoad`、`SelfLoad`、`LoadRow`、`AssigneePicker.LoadMeter`（4 处） |
+| **`ListRow`** | **待建** · 阶段 4 第 5 步（`members`） | 原生 `<button>`/`<Link>` + `ui/Badge` | 统一可点击跳转/选中列表行：`density="compact" \| "comfortable"`、`leading?`、`title`、`meta?`、`trailing?`、`selected?`、`tone?` | `DependencyRow`、`LinkRow`、`TodoPanel` 项、`BlockedBy` 项、`SelfTasks` 项、`ThreadItem` |
+| **`ActivityFeed`** | **待建** · 阶段 4 第 5 步（`members`） | `Panel` + 时间线列表 | 统一时间线/日志列表：`items`、`surface="light" \| "dark"`、`activeId?`、`onSelect?`；消除 `.feed`/`.ev` 冲突（`LogsPanel` 4 列按日表保持独立） | `TaskLogPanel`、`ActivityFeedPanel/Item`、`PermLog`/`SelfLog`/`PermLogItem` |
+| **`TaskBar`** | **待建** · 阶段 4 第 7 步（`timeline`） | 保留现有手写实现（剥离 `useIssue()`） | 任务计划/实际/阻塞/逾期/完成时间条：**必传 `today: string`**，`variant="full" \| "compact"`，支持共享 `range` | `shared/components/TaskBar.tsx`（供 `timeline` 与 `tasks` 复用） |
+| **`MetricStrip`** | **待建** · 阶段 4 第 8 步（`overview`） | `ui/Badge` + 4 格 KPI 网格 | 4 格 KPI 指标条（`MetricCard`）：首格反白、`label`、`value`（`--font-size-figure`）、`unit?`、`sub?`、`tone="default" \| "alert"`、`badge?` | `overview/{FigureStrip,Figure}` + `task/{TaskFigures,FigureItem}` |
+
+## 4.3 单模块内部自定义组件归属（不进入 `patterns/`）
+
+仅单一模块使用的自定义组件保留在各自 `features/<域>/` 或 `layout/` 内，详见 [`custom-components.md`](./custom-components.md) 第二节 B 表：
+- `layout`：`AppShell`、`NavIcon`、`SidebarNav`、`SummaryCard`、`WeekLine`、`AccountMenu`
+- `features/auth`：`LoginHeader`
+- `features/settings`：`SettingsPanelShell`、`LogsPanel`（4 列按日表）及各配置面板
+- `features/reports`：`BurndownChart`、`WeeklyBarChart`、`DeviationChart`
+- `features/members`：`MemberCrewMatrix`
+- `features/documents`：`FileDropzone`（内部自治拖拽上传，文案不变）、`DocumentRevisingTimeline`
+- `features/timeline`：`GanttChart`、`CriticalPathTable`
+- `features/overview`：`MemberScheduleBoard`（精确到此刻今天线）、`CriticalChainPanel`
+- `features/tasks`：`AssigneePicker`（`ui/Popover` + `ui/Input` + `assignee.ts`）、`DraggableBoard`（`TaskCard` + 保留手写 `useCardDrag`）
+- `features/collab`：`MentionInput`、`MessageItem`
 
 ---
 
