@@ -63,7 +63,8 @@ src/
 | 第 1 批（表单） | `Input` | 原生 `<input>` | **已实现**（`src/components/ui/Input/`） | `underline`/`boxed`、`sm`/`md`、`mono`、`invalid`、`readOnly`、`disabled`、完整对齐 `type="date"` 外观 |
 | 第 1 批（表单） | `Textarea` | 原生 `<textarea>` | **已实现**（`src/components/ui/Textarea/`） | `underline`/`boxed`、`invalid`、`readOnly`、`disabled` 全态 |
 | 第 1 批（表单） | `Checkbox` | `radix-ui` `Checkbox` | **已实现**（`src/components/ui/Checkbox/`） | 16×16 0 圆角方框、`checked`/`invalid`/关联 `label` 同步禁用弱化 |
-| 第 1 批（表单） | `Switch` / `Select` / `ToggleGroup` | `radix-ui` | 待实现 | 统一替代 `.sw2`/`.pm`/`select.u`/`.seg`/`.chips`/`.roles` |
+| 第 1 批（表单） | `Switch` | `radix-ui` `Switch` | **已实现**（`src/components/ui/Switch/`） | `track`（有/无）& `segmented`（启用/停用）双变体、复用 `Spinner` `loading` 与统一禁用态 |
+| 第 1 批（表单） | `Select` / `ToggleGroup` | `radix-ui` | 待实现 | 统一替代 `select.u`/`.seg`/`.chips`/`.roles` |
 | 第 1 批（表单） | `Field` | 原生语义容器 | 待实现 | `useId()` 自动关联 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
 | 第 2 批（浮层） | `Popover` / `DropdownMenu` | `radix-ui` | 待实现 | 硬阴影暖纸浮层；不含 `Tooltip` |
 | 第 2 批（浮层） | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |

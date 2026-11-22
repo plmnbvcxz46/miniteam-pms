@@ -70,7 +70,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Input", primitive: "原生 <input>", note: "underline / boxed + type=date", ready: true },
   { name: "Textarea", primitive: "原生 <textarea>", note: "underline / boxed + invalid", ready: true },
   { name: "Checkbox", primitive: "radix-ui Checkbox", note: "16×16 0 圆角勾选框", ready: true },
-  { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态" },
+  { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态", ready: true },
   { name: "Select", primitive: "radix-ui Select", note: "underline 下拉选择" },
   { name: "ToggleGroup", primitive: "radix-ui ToggleGroup", note: "segmented / chips 单多选" },
   { name: "Field", primitive: "原生语义容器", note: "useId 自动关联 label/hint/error" },

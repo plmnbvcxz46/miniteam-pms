@@ -1,0 +1,182 @@
+/* 开关组件：track（单轨有/无）与 segmented（双格启用/停用），基于 radix-ui Switch */
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-0);
+  margin: var(--space-0);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-none);
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  transition-property: background-color, border-color, color, transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.root:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ---------- 变体 1：track（单轨“有/无”） ---------- */
+.root[data-variant="track"] {
+  height: 30px;
+  padding: var(--space-0) var(--space-2);
+  border: var(--border-width-thin) solid transparent;
+  background-color: transparent;
+}
+
+.trackContent {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bar {
+  display: inline-block;
+  width: 34px;
+  height: 7px;
+  border: var(--border-width-thin) dashed var(--color-border-strong);
+  background-color: transparent;
+  transition-property: background-color, border-color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.thumb {
+  display: none;
+}
+
+.stateText {
+  display: inline-grid;
+  min-width: 16px;
+  text-align: left;
+}
+
+.onText,
+.offText {
+  grid-area: 1 / 1;
+}
+
+.root[data-state="checked"] .bar {
+  border-style: solid;
+  background-color: var(--color-surface-inverse);
+}
+
+.root[data-state="checked"] .offText,
+.root[data-state="unchecked"] .onText {
+  visibility: hidden;
+}
+
+.root[data-state="unchecked"] .offText {
+  color: var(--color-text-muted);
+}
+
+/* ---------- 变体 2：segmented（双格“启用/停用”） ---------- */
+.root[data-variant="segmented"] {
+  height: 30px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.segContent {
+  display: inline-flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.segOn,
+.segOff {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-0) var(--space-3);
+  color: var(--color-text-muted);
+  transition-property: background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.segOff {
+  border-left: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.root[data-variant="segmented"][data-state="checked"] .segOn,
+.root[data-variant="segmented"][data-state="unchecked"] .segOff {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+/* ---------- 悬浮与按压 ---------- */
+.root[data-variant="track"]:hover:not([data-disabled]) {
+  background-color: var(--color-bg-subtle);
+}
+
+.root[data-variant="segmented"]:hover:not([data-disabled]) {
+  background-color: var(--color-bg-subtle);
+}
+
+.root:active:not([data-disabled]) {
+  transform: translate(1px, 1px);
+}
+
+/* ---------- 禁用态（统一中性灰，加载态除外） ---------- */
+.root[data-disabled]:not([data-loading="true"]) {
+  cursor: not-allowed;
+  color: var(--color-text-faint);
+}
+
+.root[data-variant="track"][data-disabled]:not([data-loading="true"]) {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-border);
+}
+
+.root[data-variant="track"][data-disabled]:not([data-loading="true"]) .bar {
+  border-color: var(--color-border);
+  background-color: var(--color-border);
+}
+
+.root[data-variant="track"][data-disabled]:not([data-loading="true"]) .offText,
+.root[data-variant="track"][data-disabled]:not([data-loading="true"]) .onText {
+  color: var(--color-text-faint);
+}
+
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) {
+  border-color: var(--color-border);
+  background-color: var(--color-bg-subtle);
+}
+
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOff {
+  border-left-color: var(--color-border);
+}
+
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOn,
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOff {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+}
+
+/* ---------- 加载态（复用 Spinner，零宽高抖动） ---------- */
+.root[data-loading="true"] {
+  cursor: wait;
+}
+
+.root[data-loading="true"] .trackContent,
+.root[data-loading="true"] .segContent {
+  visibility: hidden;
+}
+
+.spinnerSlot {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

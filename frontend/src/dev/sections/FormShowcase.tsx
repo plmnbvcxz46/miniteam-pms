@@ -15,6 +15,11 @@ import {
   type CheckboxCheckedState,
   type CheckboxProps,
 } from "../../components/ui/Checkbox";
+import {
+  Switch,
+  type SwitchProps,
+  type SwitchVariant,
+} from "../../components/ui/Switch";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoInput(props: InputProps) {
@@ -28,6 +33,15 @@ function DemoTextarea(props: TextareaProps) {
 function DemoCheckbox(props: CheckboxProps) {
   return <Checkbox {...props} />;
 }
+
+function DemoSwitch(props: SwitchProps) {
+  return <Switch {...props} />;
+}
+
+const SWITCH_VARIANTS: { variant: SwitchVariant; title: string }[] = [
+  { variant: "track", title: "track（单轨 · 成员权限）" },
+  { variant: "segmented", title: "segmented（双格 · 账号启停）" },
+];
 
 const TEXTAREA_VARIANTS: { variant: TextareaVariant; label: string }[] = [
   { variant: "underline", label: "underline（抽屉说明）" },
@@ -44,6 +58,8 @@ const INPUT_SIZES: InputSize[] = ["sm", "md"];
 export function FormShowcase() {
   const [dateVal, setDateVal] = useState("2026-11-22");
   const [rememberMe, setRememberMe] = useState<CheckboxCheckedState>(true);
+  const [permOn, setPermOn] = useState(true);
+  const [acctActive, setAcctActive] = useState(true);
 
   return (
     <>
@@ -208,6 +224,48 @@ export function FormShowcase() {
           <DemoCheckbox label="校验失败态（invalid）" invalid />
           <DemoCheckbox label="禁用未勾选（label 同步弱化）" disabled />
           <DemoCheckbox label="禁用已勾选" disabled defaultChecked />
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// SWITCH · RADIX UI</span>
+            <h2 className={styles.panelTitle}>Switch 开关</h2>
+          </div>
+          <p className={styles.panelNote}>
+            track（有/无）&amp; segmented（启用/停用）· 含 checked / loading / disabled
+          </p>
+        </div>
+
+        <div className={styles.formGrid}>
+          {SWITCH_VARIANTS.map(({ variant, title }) => (
+            <div key={variant} className={styles.formCell}>
+              <span className={styles.code}>{title}</span>
+              <div className={styles.row}>
+                <DemoSwitch
+                  variant={variant}
+                  aria-label={`${title} 交互示例`}
+                  checked={variant === "track" ? permOn : acctActive}
+                  onCheckedChange={
+                    variant === "track" ? setPermOn : setAcctActive
+                  }
+                />
+                <DemoSwitch
+                  variant={variant}
+                  aria-label={`${title} 加载态`}
+                  defaultChecked
+                  loading
+                />
+                <DemoSwitch
+                  variant={variant}
+                  aria-label={`${title} 禁用态`}
+                  defaultChecked
+                  disabled
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </>
