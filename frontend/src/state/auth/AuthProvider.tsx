@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { authApi } from "../../api/auth";
+import { authApi } from "../../services/auth";
 import { ApiError, getToken, setToken, setUnauthorizedHandler } from "../../api/http";
 import type { ProfileUpdate } from "../../shared/types/settings";
 import {

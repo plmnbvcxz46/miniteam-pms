@@ -5,7 +5,7 @@ import type {
   RegisterRequest,
 } from "../shared/types/auth";
 import type { ProfileUpdate, SystemUser } from "../shared/types/settings";
-import { http } from "./http";
+import { http } from "../api/http";
 
 export const authApi = {
   login: (body: LoginRequest) => http.post<LoginResponse>("/auth/login", body),
