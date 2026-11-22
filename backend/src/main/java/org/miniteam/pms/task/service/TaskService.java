@@ -2,6 +2,7 @@ package org.miniteam.pms.task.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -417,6 +418,12 @@ public class TaskService {
                         taskId,
                         "STATUS",
                         ctx.user().realName() + " 把任务移到" + STATUS_LABEL.get(status));
+                if (status == TaskStatus.DONE || old == TaskStatus.DONE) {
+                    List<Long> succs = snap.succs.getOrDefault(taskId, List.of());
+                    if (!succs.isEmpty()) {
+                        syncDependencyStatus(task.getProjectId(), succs, snap.today);
+                    }
+                }
             }
         }
         ProjectTaskSnapshot snap = snapshot(ctx);
@@ -431,6 +438,7 @@ public class TaskService {
         ctx.requireWritable();
         taskMapper.lockProject(task.getProjectId());
         replacePredecessors(ctx, task, preTaskIds);
+        syncDependencyStatus(task.getProjectId(), List.of(taskId), IssueCalendar.today());
         ProjectTaskSnapshot snap = snapshot(ctx);
         return dependencies(snap, snap.preds.getOrDefault(taskId, List.of()), taskId, true);
     }
@@ -466,10 +474,70 @@ public class TaskService {
                     TARGET_TASK,
                     task.getId(),
                     "STATUS",
-                    status == TaskStatus.DOING ? "到了计划开始日，任务自动移到进行中" : "到了计划开始日，前置任务还没完成，任务自动移到阻塞");
+                    status == TaskStatus.DOING ? TaskAutoStart.DETAIL_AUTO_DOING : TaskAutoStart.DETAIL_AUTO_BLOCKED);
             started++;
         }
         return started;
+    }
+
+    /**
+     * 依赖变化（前置完成/重新打开或修改前置任务）后，重新评估指定任务的状态：
+     * - TODO 已到计划开始日：按前置是否全部完成自动移入 DOING 或 BLOCKED；
+     * - BLOCKED 且为系统自动阻塞：前置全部完成时自动解阻为 DOING；
+     * - DOING 但尚未实际开工：前置未完成且已到计划开始日时重新移入 BLOCKED。
+     * 调用方必须已持有项目锁（lockProject）。
+     */
+    private void syncDependencyStatus(Long projectId, Collection<Long> taskIds, LocalDate today) {
+        List<Task> tasks = taskMapper.listByProject(projectId);
+        Map<Long, Task> byId = tasks.stream().collect(Collectors.toMap(Task::getId, t -> t));
+        Map<Long, List<Task>> preds = new HashMap<>();
+        for (TaskDependency d : dependencyMapper.listByProject(projectId)) {
+            Task pre = byId.get(d.getPreTaskId());
+            if (pre != null) {
+                preds.computeIfAbsent(d.getNextTaskId(), k -> new ArrayList<>()).add(pre);
+            }
+        }
+        for (Long id : taskIds) {
+            Task target = byId.get(id);
+            if (target == null) {
+                continue;
+            }
+            TaskStatus current = TaskStatus.parse(target.getStatus());
+            List<Task> taskPreds = preds.getOrDefault(id, List.of());
+            TaskStatus next = null;
+            LocalDate startDate = today;
+            String detail = null;
+
+            if (current == TaskStatus.TODO) {
+                next = TaskAutoStart.decide(target, taskPreds, today);
+                if (next != null) {
+                    startDate = target.getPlanStart();
+                    detail = next == TaskStatus.DOING
+                            ? TaskAutoStart.DETAIL_AUTO_DOING
+                            : TaskAutoStart.DETAIL_AUTO_BLOCKED;
+                }
+            } else if (current == TaskStatus.BLOCKED) {
+                var logs = logService.listByProject(projectId, TARGET_TASK, id, null, 50);
+                next = TaskAutoStart.decideUnblock(target, taskPreds, TaskAutoStart.isAutoBlocked(logs));
+                if (next != null) {
+                    detail = TaskAutoStart.DETAIL_AUTO_UNBLOCKED;
+                }
+            } else if (current == TaskStatus.DOING) {
+                var logs = logService.listByProject(projectId, TARGET_TASK, id, null, 50);
+                next = TaskAutoStart.decideReblock(target, taskPreds, today, TaskAutoStart.isUnstartedAutoDoing(logs));
+                if (next != null) {
+                    detail = TaskAutoStart.DETAIL_AUTO_REBLOCKED;
+                }
+            }
+
+            if (next != null && next != current) {
+                applyStatus(target, next, startDate);
+                place(target, next, Integer.MAX_VALUE);
+                taskMapper.updateStatus(target);
+                renumber(projectId, current.name(), target.getId());
+                logService.record(null, projectId, TARGET_TASK, target.getId(), "STATUS", detail);
+            }
+        }
     }
 
     // ---------- 内部 ----------
