@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef } from "react";
 import { Switch as RadixSwitch } from "radix-ui";
+import { useFieldControl } from "../Field";
 import { Spinner } from "../Spinner";
 import styles from "./Switch.module.css";
 
@@ -23,10 +24,12 @@ export function Switch({
   loading = false,
   disabled = false,
   labels,
+  id,
   className,
   ref,
   ...rest
 }: SwitchProps) {
+  const field = useFieldControl();
   const [onLabel, offLabel] =
     labels ?? (variant === "segmented" ? ["启用", "停用"] : ["有", "无"]);
   const isDisabled = disabled || loading;
@@ -34,8 +37,10 @@ export function Switch({
   return (
     <RadixSwitch.Root
       ref={ref}
+      id={id ?? field?.id}
       disabled={isDisabled}
       aria-busy={loading || undefined}
+      aria-describedby={rest["aria-describedby"] ?? field?.describedBy}
       data-variant={variant}
       data-loading={loading ? "true" : undefined}
       className={className ? `${styles.root} ${className}` : styles.root}

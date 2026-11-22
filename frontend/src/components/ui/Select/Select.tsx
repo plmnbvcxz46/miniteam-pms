@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef } from "react";
 import { Select as RadixSelect } from "radix-ui";
+import { useFieldControl } from "../Field";
 import styles from "./Select.module.css";
 
 export const Select = RadixSelect.Root;
@@ -14,19 +15,27 @@ export interface SelectTriggerProps
 
 export function SelectTrigger({
   invalid,
+  id,
   className,
   children,
   ref,
   ...rest
 }: SelectTriggerProps) {
+  const field = useFieldControl();
   const isInvalid = Boolean(
-    invalid ?? (rest["aria-invalid"] === true || rest["aria-invalid"] === "true"),
+    invalid ??
+      (rest["aria-invalid"] === true ||
+        rest["aria-invalid"] === "true" ||
+        field?.invalid),
   );
+  const describedBy = rest["aria-describedby"] ?? field?.describedBy;
 
   return (
     <RadixSelect.Trigger
       ref={ref}
+      id={id ?? field?.id}
       aria-invalid={isInvalid || undefined}
+      aria-describedby={describedBy}
       data-variant="underline"
       data-invalid={isInvalid ? "true" : undefined}
       className={className ? `${styles.trigger} ${className}` : styles.trigger}

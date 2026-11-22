@@ -66,7 +66,7 @@ src/
 | 第 1 批（表单） | `Switch` | `radix-ui` `Switch` | **已实现**（`src/components/ui/Switch/`） | `track`（有/无）& `segmented`（启用/停用）双变体、复用 `Spinner` `loading` 与统一禁用态 |
 | 第 1 批（表单） | `Select` | `radix-ui` `Select` | **已实现**（`src/components/ui/Select/`） | `underline` 触发器（34px）、展开箭头翻转、硬阴影暖纸面板、含 `invalid`/`disabled` |
 | 第 1 批（表单） | `ToggleGroup` | `radix-ui` `ToggleGroup` | **已实现**（`src/components/ui/ToggleGroup/`） | `segmented`/`chips`、`single`/`multiple`、统一中性灰禁用态，承接全站切换态 |
-| 第 1 批（表单） | `Field` | 原生语义容器 | 待实现 | `useId()` 自动关联 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
+| 第 1 批（表单） | `Field` | 原生语义容器 | **已实现**（`src/components/ui/Field/`） | `horizontal`/`vertical`、`useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
 | 第 2 批（浮层） | `Popover` / `DropdownMenu` | `radix-ui` | 待实现 | 硬阴影暖纸浮层；不含 `Tooltip` |
 | 第 2 批（浮层） | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
 | 第 3 批（展示） | `Badge` / `Alert` / `Tabs` / `Progress` / `Separator` | 原生 + `radix-ui` | 待第 3 批实现 | 留待第 1、2 批验收后封装 |

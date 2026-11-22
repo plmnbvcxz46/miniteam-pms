@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from "react";
 import { Checkbox as RadixCheckbox } from "radix-ui";
+import { useFieldControl } from "../Field";
 import styles from "./Checkbox.module.css";
 
 export type CheckboxCheckedState = boolean | "indeterminate";
@@ -18,20 +19,28 @@ export interface CheckboxProps
 export function Checkbox({
   label,
   invalid,
+  id,
   disabled = false,
   className,
   ref,
   ...rest
 }: CheckboxProps) {
+  const field = useFieldControl();
   const isInvalid = Boolean(
-    invalid ?? (rest["aria-invalid"] === true || rest["aria-invalid"] === "true"),
+    invalid ??
+      (rest["aria-invalid"] === true ||
+        rest["aria-invalid"] === "true" ||
+        field?.invalid),
   );
+  const describedBy = rest["aria-describedby"] ?? field?.describedBy;
 
   const control = (
     <RadixCheckbox.Root
       ref={ref}
+      id={id ?? field?.id}
       disabled={disabled}
       aria-invalid={isInvalid || undefined}
+      aria-describedby={describedBy}
       data-invalid={isInvalid ? "true" : undefined}
       className={
         label

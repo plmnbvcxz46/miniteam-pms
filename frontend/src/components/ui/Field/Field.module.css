@@ -1,0 +1,74 @@
+/* 表单字段容器：统一原 .fr / .srow 表单行，自动关联 htmlFor / aria-invalid / aria-describedby */
+.field {
+  display: grid;
+  gap: var(--space-1-5);
+}
+
+.field[data-layout="horizontal"] {
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+}
+
+.field[data-layout="horizontal"][data-align="baseline"] {
+  align-items: baseline;
+}
+
+.field[data-layout="horizontal"][data-align="top"] {
+  align-items: start;
+}
+
+.field[data-layout="vertical"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.field[data-layout="horizontal"][data-align="top"] .label {
+  padding-top: var(--space-1-5);
+}
+
+.required {
+  color: var(--color-danger);
+  font-family: var(--font-mono);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.hint {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.error {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-danger);
+}
+
+@media (width <= 640px) {
+  .field[data-layout="horizontal"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .field[data-layout="horizontal"][data-align="top"] .label {
+    padding-top: var(--space-0);
+  }
+}

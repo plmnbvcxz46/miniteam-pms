@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef } from "react";
+import { useFieldControl } from "../Field";
 import styles from "./Input.module.css";
 
 export type InputVariant = "underline" | "boxed";
@@ -21,18 +22,26 @@ export function Input({
   size = "md",
   invalid,
   mono = false,
+  id,
   className,
   ref,
   ...rest
 }: InputProps) {
+  const field = useFieldControl();
   const isInvalid = Boolean(
-    invalid ?? (rest["aria-invalid"] === true || rest["aria-invalid"] === "true"),
+    invalid ??
+      (rest["aria-invalid"] === true ||
+        rest["aria-invalid"] === "true" ||
+        field?.invalid),
   );
+  const describedBy = rest["aria-describedby"] ?? field?.describedBy;
 
   return (
     <input
       ref={ref}
+      id={id ?? field?.id}
       aria-invalid={isInvalid || undefined}
+      aria-describedby={describedBy}
       data-variant={variant}
       data-size={size}
       data-invalid={isInvalid ? "true" : undefined}
