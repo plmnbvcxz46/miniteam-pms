@@ -118,6 +118,10 @@
   letter-spacing: var(--letter-spacing-tight);
 }
 
+.content[data-size="lg"] .title {
+  font-size: var(--font-size-display);
+}
+
 .description {
   margin: var(--space-1) var(--space-0) var(--space-0);
   font-size: var(--font-size-sm);
@@ -158,5 +162,9 @@
   .header::after {
     left: var(--space-4);
     right: var(--space-4);
+  }
+
+  .content[data-size="lg"] .title {
+    font-size: var(--font-size-display-sm);
   }
 }
