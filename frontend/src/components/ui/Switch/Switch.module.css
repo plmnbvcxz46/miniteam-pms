@@ -28,8 +28,8 @@
 /* ---------- 变体 1：track（单轨“有/无”） ---------- */
 .root[data-variant="track"] {
   height: 30px;
-  padding: var(--space-0) var(--space-2);
-  border: var(--border-width-thin) solid transparent;
+  padding: var(--space-0);
+  border-width: 0;
   background-color: transparent;
 }
 
@@ -151,8 +151,7 @@
 }
 
 .root[data-variant="track"][data-disabled]:not([data-loading="true"]) {
-  background-color: var(--color-bg-subtle);
-  border-color: var(--color-border);
+  background-color: transparent;
 }
 
 .root[data-variant="track"][data-disabled]:not([data-loading="true"]) .bar {

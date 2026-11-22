@@ -1,6 +1,7 @@
 /* 表单字段容器：统一原 .fr / .srow 表单行，自动关联 htmlFor / aria-invalid / aria-describedby */
 .field {
   display: grid;
+  justify-items: start;
   gap: var(--space-1-5);
 }
 
@@ -44,7 +45,9 @@
 .body {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-1);
+  width: 100%;
   min-width: 0;
 }
 
