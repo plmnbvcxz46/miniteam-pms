@@ -76,7 +76,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "ToggleGroup", primitive: "radix-ui ToggleGroup", note: "segmented / chips 单多选", ready: true },
   { name: "Field", primitive: "原生语义容器", note: "useId 自动关联 label/hint/error", ready: true },
   { name: "Popover", primitive: "radix-ui Popover", note: "硬阴影暖纸通用浮层", ready: true },
-  { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单" },
+  { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单", ready: true },
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉" },
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认" },
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示" },

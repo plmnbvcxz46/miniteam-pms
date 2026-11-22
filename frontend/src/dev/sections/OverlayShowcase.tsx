@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "../../components/ui/Button";
 import {
   Popover,
@@ -8,6 +9,19 @@ import {
   type PopoverContentProps,
   type PopoverTriggerProps,
 } from "../../components/ui/Popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  type DropdownMenuContentProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuItemTone,
+  type DropdownMenuLabelProps,
+  type DropdownMenuSeparatorProps,
+} from "../../components/ui/DropdownMenu";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoPopoverTrigger(props: PopoverTriggerProps) {
@@ -18,7 +32,26 @@ function DemoPopoverContent(props: PopoverContentProps) {
   return <PopoverContent {...props} />;
 }
 
+function DemoMenuContent(props: DropdownMenuContentProps) {
+  return <DropdownMenuContent {...props} />;
+}
+
+function DemoMenuItem(props: DropdownMenuItemProps) {
+  return <DropdownMenuItem {...props} />;
+}
+
+function DemoMenuLabel(props: DropdownMenuLabelProps) {
+  return <DropdownMenuLabel {...props} />;
+}
+
+function DemoMenuSeparator(props: DropdownMenuSeparatorProps) {
+  return <DropdownMenuSeparator {...props} />;
+}
+
+const DANGER_TONE: DropdownMenuItemTone = "danger";
+
 export function OverlayShowcase() {
+  const [menuAction, setMenuAction] = useState("尚未触发");
   return (
     <section className={styles.panel}>
       <div className={styles.panelHead}>
@@ -58,7 +91,32 @@ export function OverlayShowcase() {
             </div>
           </DemoPopoverContent>
         </Popover>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="default">账号操作 DropdownMenu ▾</Button>
+          </DropdownMenuTrigger>
+          <DemoMenuContent>
+            <DemoMenuLabel>当前账号 · ADMIN</DemoMenuLabel>
+            <DemoMenuItem onSelect={() => setMenuAction("打开个人资料")}>
+              个人资料与密码
+            </DemoMenuItem>
+            <DemoMenuItem onSelect={() => setMenuAction("打开系统设置")}>
+              系统参数与日志
+            </DemoMenuItem>
+            <DemoMenuItem disabled>切换演示账号（已禁用）</DemoMenuItem>
+            <DemoMenuSeparator />
+            <DemoMenuItem
+              tone={DANGER_TONE}
+              onSelect={() => setMenuAction("退出当前登录")}
+            >
+              退出登录
+            </DemoMenuItem>
+          </DemoMenuContent>
+        </DropdownMenu>
       </div>
+
+      <p className={styles.panelNote}>最近菜单动作：{menuAction}</p>
     </section>
   );
 }
