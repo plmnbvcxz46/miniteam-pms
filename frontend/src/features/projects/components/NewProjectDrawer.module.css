@@ -1,0 +1,16 @@
+/* 新建项目抽屉起止日期行布局 */
+.dateRange {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dateSeparator {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+}
+
+.dateInput {
+  width: 150px;
+}

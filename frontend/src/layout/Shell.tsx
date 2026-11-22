@@ -6,7 +6,7 @@ import { useAuth, useMe } from "../state/auth/useAuth";
 import type { ProfileUpdate } from "../shared/types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
 import { useState } from "react";
-import NewProjectDrawer from "../overlays/project/NewProjectDrawer";
+import { NewProjectDrawer } from "../features/projects";
 import { useTaskStore } from "../state/task/taskStore";
 import { getColumnTasks } from "../state/task/utils";
 import NoProject from "./NoProject";
@@ -95,15 +95,14 @@ export default function Shell() {
       )}
 
       {/* 新建项目抽屉 */}
-      {projectFormOpen && (
-        <NewProjectDrawer
-          onClose={() => setProjectFormOpen(false)}
-          onSubmit={async (values) => {
-            await createProject(values);
-            setProjectFormOpen(false);
-          }}
-        />
-      )}
+      <NewProjectDrawer
+        open={projectFormOpen}
+        onOpenChange={setProjectFormOpen}
+        onSubmit={async (values) => {
+          await createProject(values);
+          setProjectFormOpen(false);
+        }}
+      />
 
       {/* 任务表单抽屉 */}
       {taskForm && (
