@@ -1,0 +1,110 @@
+/* 样式手册各分区专用辅助样式：矩阵表、Spinner 示例、浮层内边距与组件索引网格 */
+.matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix th,
+.matrix td {
+  padding: var(--space-3) var(--space-2);
+  border-bottom: var(--border-width-hair) dashed var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.matrix th {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-muted);
+  border-bottom: var(--border-width-thick) solid var(--color-border-strong);
+}
+
+.variantCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.fullWidthBox {
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.counter {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.counterValue {
+  font-weight: var(--font-weight-heavy);
+  color: var(--color-accent-text);
+}
+
+.spinnerDemoItem,
+.spinnerDemoAccent,
+.spinnerDemoInverse {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.spinnerDemoAccent {
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+.spinnerDemoInverse {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-strong);
+}
+
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.roadmapCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  padding: var(--space-3);
+  background-color: var(--color-bg);
+  border: var(--border-width-thin) dashed var(--color-border);
+}
+
+.roadmapCard[data-ready="true"] {
+  background-color: var(--color-surface);
+  border-style: solid;
+  border-color: var(--color-border-strong);
+}
+
+.roadmapTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.popoverBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 240px;
+}
+
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

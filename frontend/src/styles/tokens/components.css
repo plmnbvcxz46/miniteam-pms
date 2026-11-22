@@ -1,0 +1,33 @@
+/* Level 3：组件色与纹理（仅确有必要；只允许引用 Level 2 语义色，严禁直引原始色板） */
+:root {
+  /* 局部反色面板与选中块 */
+  --comp-inverse-bg: var(--color-surface-inverse);
+  --comp-inverse-text: var(--color-text-inverse);
+  --comp-inverse-text-muted: var(--color-text-inverse-muted);
+  --comp-inverse-border: var(--color-border-inverse);
+  --comp-inverse-border-subtle: var(--color-border-inverse-subtle);
+
+  /* 斜纹状态纹理 */
+  --comp-pattern-warn: repeating-linear-gradient(
+    135deg,
+    var(--color-warning) 0 3px,
+    var(--color-surface) 3px 6px
+  );
+  --comp-pattern-warn-inverse: repeating-linear-gradient(
+    135deg,
+    var(--color-warning) 0 3px,
+    var(--color-surface-inverse) 3px 6px
+  );
+  --comp-pattern-past: repeating-linear-gradient(
+    135deg,
+    var(--color-border-strong) 0 3px,
+    var(--color-surface) 3px 6px
+  );
+
+  /* 抽屉与弹窗半色调点阵遮罩 */
+  --comp-backdrop-dot: radial-gradient(
+    circle,
+    var(--color-text-muted) 0 0.8px,
+    transparent 1.1px
+  );
+}

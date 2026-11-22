@@ -2,7 +2,7 @@
  * 统计报表模块类型定义（对齐 docs/api/openapi.yaml 的“统计报表”标签）
  * 共享结构（UserBrief、TaskRef、IssueInfo 等）见 ./global
  */
-import type { IssueInfo, TaskRef, UserBrief } from "./global";
+import type { TaskRef, UserBrief } from "./global";
 
 /** 燃尽图范围：week 本周 / all 全周期（GET .../reports/burndown?range=） */
 export type BurndownRange = "week" | "all";
@@ -85,14 +85,6 @@ export interface Forecast {
   basis: string;
 }
 
-/** 缺陷密度（DefectDensity），GET /projects/{projectId}/reports/defect-density 的数组元素 */
-export interface DefectDensity {
-  module: string;
-  defectCount: number;
-  taskCount: number;
-  density: number;
-}
-
 /** 成员负载（WorkloadMember） */
 export interface WorkloadMember {
   /** 技能标签，指派负责人的选择器用。接口里总有，报表页自己算的行没有 */
@@ -130,16 +122,5 @@ export interface Reports {
 export interface RangeOption {
   value: BurndownRange;
   label: string;
-}
-
-/** 报表页快照（预留往期切换使用） */
-export interface ReportSnapshot extends IssueInfo {
-  summary: ReportSummary;
-  burndown: Record<BurndownRange, Burndown>;
-  weeklyCompleted: WeeklyCompleted[];
-  durationDeviation: DurationDeviation[];
-  forecast: Forecast;
-  defectDensity: DefectDensity[];
-  workload: Workload;
 }
 

@@ -3,12 +3,10 @@
  * 共享结构（UserBrief、ProjectRole、MemberPermissions、Activity 等）见 ./global
  */
 import type {
-  IssueInfo,
   MemberPermissions,
   PermKey,
   ProjectRole,
   UserBrief,
-  Activity,
 } from "./global";
 
 /** 项目成员（Member），GET /projects/{projectId}/members 的数组元素 */
@@ -47,10 +45,4 @@ export interface PermDef {
   key: PermKey;
   label: string;
   desc: string;
-}
-
-/** 成员页快照（预留往期切换使用） */
-export interface MemberSnapshot extends IssueInfo {
-  members: Member[];
-  permLogs: Activity[];
 }

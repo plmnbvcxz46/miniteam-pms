@@ -1,0 +1,167 @@
+/* 开发环境组件样式手册页公共布局与面板骨架：100% 语义 Token、0 圆角暖纸黑墨 + 单信号橙 */
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--color-text);
+  padding: var(--space-8) var(--space-7) var(--space-12);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-width-thick) solid var(--color-border-strong);
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--space-1-5) * -1);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.headerMeta,
+.panelHeading,
+.formCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-none);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.titleAccent {
+  font-style: normal;
+  color: var(--color-accent);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.panel {
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panelHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.panelTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+}
+
+.panelNote {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.row,
+.sandboxControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sandboxControls {
+  padding: var(--space-3);
+  background-color: var(--color-bg);
+  border: var(--border-width-thin) dashed var(--color-border);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.subHead {
+  padding-top: var(--space-2);
+  border-top: var(--border-width-hair) dashed var(--color-border);
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 640px;
+}
+
+@media (width <= 900px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: var(--font-size-display-sm);
+  }
+}

@@ -1,0 +1,139 @@
+/* 全局轻提示：基于 radix-ui Toast，支持 neutral / danger 语气、手动关闭与硬阴影 */
+.viewport {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 380px;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow-y: auto;
+  margin: var(--space-0);
+  padding: var(--space-4);
+  list-style: none;
+  outline: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-left: var(--border-width-thick) solid var(--color-surface-inverse);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-lg);
+}
+
+.toast[data-tone="danger"] {
+  border-color: var(--color-danger);
+  border-left: var(--border-width-thick) solid var(--color-danger-bg);
+}
+
+.toast[data-state="open"] {
+  animation-name: ui-toast-in;
+  animation-duration: var(--duration-normal);
+  animation-timing-function: var(--ease-standard);
+}
+
+.toast[data-state="closed"] {
+  animation-name: ui-toast-out;
+  animation-duration: var(--duration-fast);
+  animation-timing-function: var(--ease-standard);
+}
+
+@keyframes ui-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ui-toast-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.toast[data-tone="danger"] .title {
+  color: var(--color-danger);
+}
+
+.description {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: var(--space-0);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-none);
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-none);
+  cursor: pointer;
+  transition-property: background-color, border-color, color, transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.close:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.close:hover {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.close:active {
+  transform: translate(1px, 1px);
+}

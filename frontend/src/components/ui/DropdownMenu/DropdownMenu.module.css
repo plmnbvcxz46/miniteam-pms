@@ -1,0 +1,82 @@
+/* 操作下拉菜单：基于 radix-ui DropdownMenu，支持键盘漫游与 danger 语气项 */
+.content {
+  z-index: var(--z-dropdown);
+  min-width: 196px;
+  padding: var(--space-1) var(--space-0);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-md);
+  outline: none;
+}
+
+.content[data-state="open"] {
+  animation-name: ui-menu-in;
+  animation-duration: var(--duration-fast);
+  animation-timing-function: var(--ease-standard);
+}
+
+@keyframes ui-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.label {
+  padding: var(--space-1-5) var(--space-3) var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.separator {
+  height: var(--border-width-hair);
+  margin: var(--space-1) var(--space-0);
+  background-color: var(--color-border);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 34px;
+  padding: var(--space-0) var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition-property: background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.item[data-highlighted] {
+  background-color: var(--color-bg-subtle);
+}
+
+.item[data-tone="danger"] {
+  color: var(--color-danger);
+}
+
+.item[data-tone="danger"][data-highlighted] {
+  background-color: var(--color-danger-subtle);
+}
+
+.item[data-disabled] {
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}

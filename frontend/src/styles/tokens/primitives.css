@@ -1,0 +1,21 @@
+/* Level 1：原始色板（Primitives）
+   仅允许被 semantic.css 引用；严禁组件或业务样式直接引用 --gray-* / --signal-*。 */
+:root {
+  /* 暖纸中性色阶 */
+  --gray-0: #ffffff;
+  --gray-50: #fafaf7;
+  --gray-100: #f2f1ec;
+  --gray-200: #e4e3dc;
+  --gray-300: #cfcec8;
+  --gray-350: #c4c2bb;
+  --gray-400: #8f8d86;
+  --gray-600: #5e5e5e;
+  --gray-700: #3a3a3a;
+  --gray-800: #2a2a2a;
+  --gray-950: #0a0a0a;
+
+  /* 信号橙色阶（全站唯一强调色相） */
+  --signal-400: #ff7442;
+  --signal-500: #ff5a1f;
+  --signal-700: #b83a00;
+}

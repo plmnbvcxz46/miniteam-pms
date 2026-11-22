@@ -1,0 +1,51 @@
+/* 报刊风分割线：基于 radix-ui Separator，支持 single（单实线）/ double（报刊双线）/ dashed（虚线） */
+.separator {
+  flex-shrink: 0;
+  margin: var(--space-0);
+}
+
+/* ---------- 水平方向（horizontal） ---------- */
+.separator[data-orientation="horizontal"][data-variant="single"] {
+  width: 100%;
+  height: 0;
+  border-top: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.separator[data-orientation="horizontal"][data-variant="double"] {
+  width: 100%;
+  height: var(--space-1-5);
+  border-top: var(--border-width-thick) solid var(--color-border-strong);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.separator[data-orientation="horizontal"][data-variant="dashed"] {
+  width: 100%;
+  height: 0;
+  border-top: var(--border-width-hair) dashed var(--color-border);
+}
+
+/* ---------- 垂直方向（vertical） ---------- */
+.separator[data-orientation="vertical"][data-variant="single"] {
+  display: inline-block;
+  align-self: stretch;
+  width: 0;
+  min-height: 16px;
+  border-left: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.separator[data-orientation="vertical"][data-variant="double"] {
+  display: inline-block;
+  align-self: stretch;
+  width: var(--space-1-5);
+  min-height: 16px;
+  border-left: var(--border-width-thick) solid var(--color-border-strong);
+  border-right: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.separator[data-orientation="vertical"][data-variant="dashed"] {
+  display: inline-block;
+  align-self: stretch;
+  width: 0;
+  min-height: 16px;
+  border-left: var(--border-width-hair) dashed var(--color-border);
+}

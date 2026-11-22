@@ -1,0 +1,126 @@
+/* 基础输入框：underline / boxed 双变体，完整对齐 type="date" 与文本输入外观 */
+.input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  appearance: none;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  border-radius: var(--radius-none);
+  transition-property: border-color, background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.input[data-mono="true"],
+.input[type="date"] {
+  font-family: var(--font-mono);
+}
+
+/* ---------- 尺寸档位 ---------- */
+.input[data-size="sm"] {
+  height: 30px;
+  font-size: var(--font-size-sm);
+}
+
+.input[data-size="md"] {
+  height: 34px;
+  font-size: var(--font-size-md);
+}
+
+/* ---------- 变体基础：underline / boxed ---------- */
+.input[data-variant="underline"] {
+  padding: var(--space-0) var(--space-0-5);
+  background-color: transparent;
+  border-width: 0;
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.input[data-variant="boxed"] {
+  padding: var(--space-0) var(--space-3);
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+/* ---------- 禁用态（boxed 浅灰底，underline 透明底 + 弱化点线） ---------- */
+.input:disabled {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+  border-color: var(--color-border);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.input[data-variant="underline"]:disabled {
+  background-color: transparent;
+  border-width: 0;
+  border-bottom: var(--border-width-thin) dotted var(--color-text-faint);
+}
+
+/* ---------- 只读态 ---------- */
+.input:read-only:not(:disabled) {
+  color: var(--color-text-muted);
+  border-bottom-style: dashed;
+}
+
+.input[data-variant="boxed"]:read-only:not(:disabled) {
+  background-color: var(--color-bg);
+  border-style: dashed;
+}
+
+/* ---------- 悬浮与焦点态 ---------- */
+.input[data-variant="underline"]:hover:not(:disabled, :read-only) {
+  border-bottom-color: var(--color-border-strong);
+}
+
+.input[data-variant="boxed"]:hover:not(:disabled, :read-only) {
+  border-color: var(--color-border-strong);
+}
+
+.input[data-variant="underline"]:focus-visible:not(:disabled) {
+  outline: none;
+  border-bottom: var(--border-width-thick) solid var(--color-accent);
+}
+
+.input[data-variant="boxed"]:focus-visible:not(:disabled) {
+  border-color: var(--color-border-strong);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+/* ---------- 校验错误态（invalid / aria-invalid） ---------- */
+.input[data-invalid="true"],
+.input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.input[data-variant="underline"][data-invalid="true"],
+.input[data-variant="underline"][aria-invalid="true"] {
+  border-bottom-color: var(--color-danger);
+}
+
+/* ---------- type="date" 浏览器内核外观对齐 ---------- */
+.input[type="date"]::-webkit-datetime-edit {
+  padding: var(--space-0);
+  line-height: var(--line-height-normal);
+}
+
+.input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.input[type="date"]:disabled::-webkit-calendar-picker-indicator {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

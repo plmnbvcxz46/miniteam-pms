@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
 import AccessProvider from "./state/access/AccessProvider";
 import { useAccess } from "./state/access/useAccess";
@@ -69,12 +70,55 @@ function AuthGate() {
   );
 }
 
-export default function App() {
+const DevUiShowcasePage = import.meta.env.DEV
+  ? lazy(() => import("./dev/UiShowcasePage"))
+  : null;
+
+function isDevUiPath(): boolean {
+  const { pathname, hash } = window.location;
   return (
+    pathname === "/dev/ui" ||
+    pathname === "/dev/ui/" ||
+    hash === "#/dev/ui" ||
+    hash === "#/dev/ui/"
+  );
+}
+
+/** 仅开发环境生效的免登录样式手册路由拦截（生产构建时被 import.meta.env.DEV 彻底排除） */
+function DevUiGate({ children }: { children: React.ReactNode }) {
+  const [showDevUi, setShowDevUi] = useState(isDevUiPath);
+
+  useEffect(() => {
+    const sync = () => setShowDevUi(isDevUiPath());
+    window.addEventListener("hashchange", sync);
+    window.addEventListener("popstate", sync);
+    return () => {
+      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("popstate", sync);
+    };
+  }, []);
+
+  if (showDevUi && DevUiShowcasePage) {
+    return (
+      <Suspense fallback={null}>
+        <DevUiShowcasePage />
+      </Suspense>
+    );
+  }
+  return <>{children}</>;
+}
+
+export default function App() {
+  const app = (
     <AuthProvider>
       <ConfigProvider>
         <AuthGate />
       </ConfigProvider>
     </AuthProvider>
   );
+
+  if (import.meta.env.DEV) {
+    return <DevUiGate>{app}</DevUiGate>;
+  }
+  return app;
 }

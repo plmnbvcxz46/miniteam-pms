@@ -1,0 +1,97 @@
+/* 行内与横幅提示组件：info 采用中性灰墨色，warning / danger 采用信号橙 */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-radius: var(--radius-none);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+/* ---------- 布局变体：inline / banner ---------- */
+.alert[data-variant="inline"] {
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-left-width: var(--border-width-thick);
+}
+
+.alert[data-variant="banner"] {
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--border-width-thin) solid var(--color-border-strong);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+/* ---------- 语气：info（中性灰墨色，不消耗信号橙） ---------- */
+.alert[data-tone="info"] {
+  background-color: var(--color-info-subtle);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  border-left-color: var(--color-border-strong);
+}
+
+/* ---------- 语气：warning（信号橙预警） ---------- */
+.alert[data-tone="warning"] {
+  background-color: var(--color-warning-subtle);
+  color: var(--color-text);
+  border-color: var(--color-warning);
+  border-left-color: var(--color-warning-text);
+}
+
+/* ---------- 语气：danger（信号橙报错/拦截） ---------- */
+.alert[data-tone="danger"] {
+  background-color: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  border-left-color: var(--color-danger-bg);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.alert[data-variant="banner"] .body {
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.alert[data-tone="warning"] .title {
+  color: var(--color-warning-text);
+}
+
+.alert[data-tone="danger"] .title {
+  color: var(--color-danger);
+}
+
+.content {
+  color: var(--color-text);
+}
+
+.alert[data-tone="info"] .content {
+  color: var(--color-info);
+}
+
+.alert[data-tone="danger"] .content {
+  color: var(--color-danger);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}

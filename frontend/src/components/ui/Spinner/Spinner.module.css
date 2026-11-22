@@ -1,0 +1,49 @@
+/* 极简纯 CSS 旋转指示环：继承 currentColor、100% 语义 Token、遵守 reduced-motion */
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring {
+  display: inline-block;
+  flex-shrink: 0;
+  border-width: var(--border-width-thin);
+  border-style: solid;
+  border-color: currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-full);
+  animation-name: ui-spinner-rotate;
+  animation-duration: calc(var(--duration-normal) * 3);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.ring[data-size="sm"] {
+  width: 12px;
+  height: 12px;
+}
+
+.ring[data-size="md"] {
+  width: 14px;
+  height: 14px;
+}
+
+.ring[data-size="lg"] {
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes ui-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring {
+    animation-duration: 0ms;
+    border-right-color: currentColor;
+    border-style: dashed;
+  }
+}

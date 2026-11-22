@@ -1,0 +1,93 @@
+/* 多行文本域：与 Input 同构的 underline / boxed 双变体及全交互态 */
+.textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 84px;
+  resize: vertical;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+  border-radius: var(--radius-none);
+  transition-property: border-color, background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.textarea::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ---------- 变体基础 ---------- */
+.textarea[data-variant="underline"] {
+  padding: var(--space-1-5) var(--space-0-5);
+  background-color: transparent;
+  border-width: 0;
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.textarea[data-variant="boxed"] {
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+/* ---------- 禁用态（boxed 浅灰底，underline 透明底 + 弱化点线） ---------- */
+.textarea:disabled {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+  border-color: var(--color-border);
+  border-style: dashed;
+  cursor: not-allowed;
+  resize: none;
+}
+
+.textarea[data-variant="underline"]:disabled {
+  background-color: transparent;
+  border-width: 0;
+  border-bottom: var(--border-width-thin) dotted var(--color-text-faint);
+}
+
+/* ---------- 只读态 ---------- */
+.textarea:read-only:not(:disabled) {
+  color: var(--color-text-muted);
+  border-bottom-style: dashed;
+}
+
+.textarea[data-variant="boxed"]:read-only:not(:disabled) {
+  background-color: var(--color-bg);
+  border-style: dashed;
+}
+
+/* ---------- 悬浮与焦点态 ---------- */
+.textarea[data-variant="underline"]:hover:not(:disabled, :read-only) {
+  border-bottom-color: var(--color-border-strong);
+}
+
+.textarea[data-variant="boxed"]:hover:not(:disabled, :read-only) {
+  border-color: var(--color-border-strong);
+}
+
+.textarea[data-variant="underline"]:focus-visible:not(:disabled) {
+  outline: none;
+  border-bottom: var(--border-width-thick) solid var(--color-accent);
+}
+
+.textarea[data-variant="boxed"]:focus-visible:not(:disabled) {
+  border-color: var(--color-border-strong);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+/* ---------- 校验错误态 ---------- */
+.textarea[data-invalid="true"],
+.textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.textarea[data-variant="underline"][data-invalid="true"],
+.textarea[data-variant="underline"][aria-invalid="true"] {
+  border-bottom-color: var(--color-danger);
+}

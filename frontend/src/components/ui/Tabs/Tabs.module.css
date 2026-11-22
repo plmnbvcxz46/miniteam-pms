@@ -1,0 +1,75 @@
+/* 平铺报刊风方角标签页：基于 radix-ui Tabs，激活项墨底反白，键盘方向键漫游 */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  height: 36px;
+  padding: var(--space-0) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-none);
+  letter-spacing: var(--letter-spacing-wide);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-width: 0;
+  border-right: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition-property: background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.trigger:focus-visible {
+  z-index: var(--z-sticky);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.trigger[data-disabled] {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+  border-right-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.trigger:hover:not([data-disabled], [data-state="active"]) {
+  background-color: var(--color-bg-subtle);
+}
+
+.trigger:active:not([data-disabled], [data-state="active"]) {
+  background-color: var(--color-border);
+}
+
+.trigger[data-state="active"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.content {
+  outline: none;
+}
+
+.content:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
