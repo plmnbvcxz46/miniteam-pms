@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.miniteam.pms.system.entity.LogRow;
 import org.miniteam.pms.task.CriticalPath.Node;
 import org.miniteam.pms.task.PriorityCalculator.Config;
 import org.miniteam.pms.task.PriorityCalculator.Input;
@@ -131,5 +132,78 @@ class TaskAlgorithmsTest {
         assertEquals(
                 TaskStatus.BLOCKED,
                 TaskAutoStart.decide(todo, List.of(task(TaskStatus.DONE, MON), task(TaskStatus.DOING, MON)), MON));
+    }
+
+    private static LogRow statusLog(Long userId, String action, String detail) {
+        LogRow row = new LogRow();
+        row.setUserId(userId);
+        row.setAction(action);
+        row.setDetail(detail);
+        return row;
+    }
+
+    @Test
+    void unblockOnlyAutoBlockedWhenAllPredsDone() {
+        var blocked = task(TaskStatus.BLOCKED, MON);
+        // 系统自动阻塞 + 全部前置完成 → 自动解阻为 DOING
+        assertEquals(TaskStatus.DOING, TaskAutoStart.decideUnblock(blocked, List.of(task(TaskStatus.DONE, MON)), true));
+        assertEquals(TaskStatus.DOING, TaskAutoStart.decideUnblock(blocked, List.of(), true));
+        // 人工手动移入的阻塞，即使前置全完成也不自动解阻
+        assertEquals(null, TaskAutoStart.decideUnblock(blocked, List.of(task(TaskStatus.DONE, MON)), false));
+        // 仍有未完成前置时不解阻
+        assertEquals(
+                null,
+                TaskAutoStart.decideUnblock(
+                        blocked, List.of(task(TaskStatus.DONE, MON), task(TaskStatus.DOING, MON)), true));
+        // 非 BLOCKED 状态不处理
+        assertEquals(
+                null,
+                TaskAutoStart.decideUnblock(task(TaskStatus.DOING, MON), List.of(task(TaskStatus.DONE, MON)), true));
+    }
+
+    @Test
+    void reblockOnlyUnstartedWhenPredReopened() {
+        var unfinishedPred = List.of(task(TaskStatus.DOING, MON));
+        // TODO 已到计划开始日 → 进入 BLOCKED；未到计划开始日 → 不动
+        assertEquals(
+                TaskStatus.BLOCKED,
+                TaskAutoStart.decideReblock(task(TaskStatus.TODO, MON), unfinishedPred, MON, false));
+        assertEquals(
+                null, TaskAutoStart.decideReblock(task(TaskStatus.TODO, MON.plusDays(1)), unfinishedPred, MON, false));
+        // DOING 但尚未实际开工（刚自动解阻或 actualStart 为空）→ 重新进入 BLOCKED
+        var autoUnblockedDoing = task(TaskStatus.DOING, MON);
+        autoUnblockedDoing.setActualStart(MON);
+        assertEquals(TaskStatus.BLOCKED, TaskAutoStart.decideReblock(autoUnblockedDoing, unfinishedPred, MON, true));
+        assertEquals(
+                TaskStatus.BLOCKED,
+                TaskAutoStart.decideReblock(task(TaskStatus.DOING, MON), unfinishedPred, MON, false));
+        // 已经实际开工的 DOING → 不动
+        var startedDoing = task(TaskStatus.DOING, MON);
+        startedDoing.setActualStart(MON);
+        assertEquals(null, TaskAutoStart.decideReblock(startedDoing, unfinishedPred, MON, false));
+        // 已完成的 DONE 或前置全 DONE → 不动
+        assertEquals(null, TaskAutoStart.decideReblock(task(TaskStatus.DONE, MON), unfinishedPred, MON, true));
+        assertEquals(
+                null, TaskAutoStart.decideReblock(autoUnblockedDoing, List.of(task(TaskStatus.DONE, MON)), MON, true));
+    }
+
+    @Test
+    void autoBlockAndUnblockLogDetection() {
+        // 最新 STATUS 是系统自动移入阻塞（忽略更早的记录和非 STATUS 记录）
+        assertTrue(TaskAutoStart.isAutoBlocked(List.of(
+                statusLog(1L, "UPDATE", "修改了任务"),
+                statusLog(null, "STATUS", TaskAutoStart.DETAIL_AUTO_BLOCKED),
+                statusLog(1L, "STATUS", "张三 把任务移到进行中"))));
+        // 最新 STATUS 是人工移入阻塞 → false
+        assertFalse(TaskAutoStart.isAutoBlocked(List.of(
+                statusLog(1L, "STATUS", "张三 把任务移到阻塞"), statusLog(null, "STATUS", TaskAutoStart.DETAIL_AUTO_BLOCKED))));
+        // 最新 STATUS 是系统自动解阻 → isUnstartedAutoDoing 为 true
+        assertTrue(TaskAutoStart.isUnstartedAutoDoing(List.of(
+                statusLog(null, "STATUS", TaskAutoStart.DETAIL_AUTO_UNBLOCKED),
+                statusLog(null, "STATUS", TaskAutoStart.DETAIL_AUTO_BLOCKED))));
+        // 人工移入进行中 → isUnstartedAutoDoing 为 false
+        assertFalse(TaskAutoStart.isUnstartedAutoDoing(List.of(
+                statusLog(1L, "STATUS", "张三 把任务移到进行中"),
+                statusLog(null, "STATUS", TaskAutoStart.DETAIL_AUTO_UNBLOCKED))));
     }
 }
