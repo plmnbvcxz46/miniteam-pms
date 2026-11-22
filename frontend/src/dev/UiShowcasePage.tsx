@@ -5,6 +5,11 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from "../components/ui/Button";
+import {
+  Spinner,
+  type SpinnerProps,
+  type SpinnerSize,
+} from "../components/ui/Spinner";
 import styles from "./UiShowcasePage.module.css";
 
 interface VariantRow {
@@ -38,6 +43,12 @@ const SIZE_LIST: { size: ButtonSize; label: string; heightNote: string }[] = [
   { size: "icon", label: "×", heightNote: "40×40" },
 ];
 
+const SPINNER_SIZES: { size: SpinnerSize; note: string }[] = [
+  { size: "sm", note: "12px · 紧凑控件" },
+  { size: "md", note: "14px · 按钮默认" },
+  { size: "lg", note: "20px · 面板/页面加载" },
+];
+
 const PLANNED_UI_COMPONENTS: {
   name: string;
   primitive: string;
@@ -45,25 +56,32 @@ const PLANNED_UI_COMPONENTS: {
   ready?: boolean;
 }[] = [
   {
-    name: "Button",
-    primitive: "原生 <button>",
-    note: "7 变体 × 4 尺寸 × 全交互态",
+    name: "Spinner",
+    primitive: "原生 <span>",
+    note: "sm / md / lg 纯 CSS 环",
     ready: true,
   },
-  { name: "Input", primitive: "原生 <input>", note: "underline / boxed + invalid" },
+  {
+    name: "Button",
+    primitive: "原生 <button>",
+    note: "6 变体 × 4 尺寸 × 全交互态",
+    ready: true,
+  },
+  { name: "Input", primitive: "原生 <input>", note: "underline / boxed + type=date" },
   { name: "Textarea", primitive: "原生 <textarea>", note: "underline / boxed + invalid" },
-  { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted" },
-  { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
-  { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态" },
   { name: "Checkbox", primitive: "radix-ui Checkbox", note: "16×16 0 圆角勾选框" },
-  { name: "ToggleGroup", primitive: "radix-ui ToggleGroup", note: "segmented / chips 单多选" },
-  { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
+  { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态" },
   { name: "Select", primitive: "radix-ui Select", note: "underline 下拉选择" },
+  { name: "ToggleGroup", primitive: "radix-ui ToggleGroup", note: "segmented / chips 单多选" },
+  { name: "Field", primitive: "原生语义容器", note: "useId 自动关联 label/hint/error" },
   { name: "Popover", primitive: "radix-ui Popover", note: "硬阴影暖纸通用浮层" },
   { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单" },
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉" },
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认" },
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示" },
+  { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted" },
+  { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
+  { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
   { name: "Progress", primitive: "radix-ui Progress", note: "solid / dual / segmented" },
   { name: "Separator", primitive: "radix-ui Separator", note: "single / double / dashed" },
 ];
@@ -96,6 +114,10 @@ function DemoButton(props: ButtonProps) {
   return <Button {...props} />;
 }
 
+function DemoSpinner(props: SpinnerProps) {
+  return <Spinner {...props} />;
+}
+
 export default function UiShowcasePage() {
   const [sandboxLoading, setSandboxLoading] = useState(false);
   const [sandboxDisabled, setSandboxDisabled] = useState(false);
@@ -118,6 +140,37 @@ export default function UiShowcasePage() {
           </div>
           <span className={styles.envBadge}>DEV ONLY · /dev/ui</span>
         </header>
+
+        {/* 0. Spinner 加载指示环 */}
+        <section className={styles.panel}>
+          <div className={styles.panelHead}>
+            <div className={styles.panelHeading}>
+              <span className={styles.kicker}>// SPINNER</span>
+              <h2 className={styles.panelTitle}>Spinner 加载指示环</h2>
+            </div>
+            <p className={styles.panelNote}>
+              纯 CSS 环、继承 currentColor、支持 label 无障碍状态播报
+            </p>
+          </div>
+
+          <div className={styles.row}>
+            {SPINNER_SIZES.map((item) => (
+              <div key={item.size} className={styles.spinnerDemoItem}>
+                <DemoSpinner size={item.size} label={`加载中（${item.size}）`} />
+                <span className={styles.code}>{item.size}</span>
+                <span className={styles.desc}>{item.note}</span>
+              </div>
+            ))}
+            <div className={styles.spinnerDemoAccent}>
+              <DemoSpinner size="md" />
+              <span className={styles.code}>继承信号橙</span>
+            </div>
+            <div className={styles.spinnerDemoInverse}>
+              <DemoSpinner size="md" />
+              <span className={styles.code}>继承反白</span>
+            </div>
+          </div>
+        </section>
 
         {/* 1. Button 全变体 × 全状态矩阵 */}
         <section className={styles.panel}>

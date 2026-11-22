@@ -211,6 +211,28 @@
   color: var(--color-accent-text);
 }
 
+.spinnerDemoItem,
+.spinnerDemoAccent,
+.spinnerDemoInverse {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.spinnerDemoAccent {
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+.spinnerDemoInverse {
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-strong);
+}
+
 /* ---------- 规划中组件索引 ---------- */
 .roadmapGrid {
   display: grid;

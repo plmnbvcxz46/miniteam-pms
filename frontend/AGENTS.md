@@ -58,7 +58,7 @@ src/
 ### 基础组件（`src/components/ui/`，共 19 项，分批落地）
 | 批次 | 组件 | 底层原语 | 状态 | 备注 |
 |---|---|---|---|---|
-| 前置 | `Spinner` | 原生 `<span>` | 待实现 | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion` |
+| 前置 | `Spinner` | 原生 `<span>` | **已实现**（`src/components/ui/Spinner/`） | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion`、可选 `label` |
 | 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`（待删 `ghost`/去 `selected`/统一禁用/复用 `Spinner`）；尺寸：`sm`/`md`/`lg`/`icon` |
 | 第 1 批（表单） | `Input` / `Textarea` | 原生 `<input>` / `<textarea>` | 待实现 | `underline`/`boxed`、`sm`/`md`、`Input` 完整对齐 `type="date"` 外观 |
 | 第 1 批（表单） | `Checkbox` / `Switch` / `Select` / `ToggleGroup` | `radix-ui` | 待实现 | 统一替代 `.ck`/`.sw2`/`.pm`/`select.u`/`.seg`/`.chips`/`.roles` |
