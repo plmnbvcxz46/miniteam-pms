@@ -75,7 +75,8 @@ src/
 | 第 3 批（展示） | `Badge` | 原生 `<span>` | **已实现**（`src/components/ui/Badge/`） | `solid`（墨底常态）/`outline`/`muted`/`accent`（橙色仅用于需注意状态），`sm`/`md` |
 | 第 3 批（展示） | `Alert` | 原生 `<div>` | **已实现**（`src/components/ui/Alert/`） | `inline`/`banner` × `info`（中性色）/`warning`（橙）/`danger`（橙），支持 `title` 与 `action` |
 | 第 3 批（展示） | `Tabs` | `radix-ui` `Tabs` | **已实现**（`src/components/ui/Tabs/`） | 平铺报刊风方角标签栏，`active` 墨底反白、方向键漫游与 `disabled` |
-| 第 3 批（展示） | `Progress` / `Separator` | `radix-ui` | 第 3 批封装中 | 展示与布局原语 |
+| 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（双层对比）/`segmented`（按周格子），完整 ARIA |
+| 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | 第 3 批封装中 | 展示与布局原语 |
 
 ### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
 | 范式组件 | 状态 | 职责摘要 |

@@ -12,6 +12,14 @@ import {
 } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import {
+  Progress,
+  type ProgressProps,
+  type ProgressSegment,
+  type ProgressSegmentState,
+  type ProgressTone,
+  type ProgressVariant,
+} from "../../components/ui/Progress";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -46,6 +54,29 @@ function DemoTabsTrigger(props: TabsTriggerProps) {
 function DemoTabsContent(props: TabsContentProps) {
   return <TabsContent {...props} />;
 }
+
+function DemoProgress(props: ProgressProps) {
+  return <Progress {...props} />;
+}
+
+const PROGRESS_VARIANT_NOTE: Record<ProgressVariant, string> = {
+  solid: "solid（单轨进度条 + 阈值上限线 / 斜纹预警）",
+  dual: "dual（双轨对比：时间流逝斜纹 + 完成率实底）",
+  segmented: "segmented（按周/按期分段格子：past 墨底 / today 信号橙 / future 纸底）",
+};
+
+const WARNING_PROGRESS_TONE: ProgressTone = "warning";
+const TODAY_SEG_STATE: ProgressSegmentState = "today";
+
+const WEEK_SEGMENTS: ProgressSegment[] = [
+  { key: "d1", state: "past", title: "周一 · 已过" },
+  { key: "d2", state: "past", title: "周二 · 已过" },
+  { key: "d3", state: "past", title: "周三 · 已过" },
+  { key: "d4", state: TODAY_SEG_STATE, title: "周四 · 今日（信号橙）" },
+  { key: "d5", state: "future", title: "周五 · 未来" },
+  { key: "d6", state: "future", title: "周六 · 未来" },
+  { key: "d7", state: "future", title: "周日 · 未来" },
+];
 
 const BADGE_ITEMS: {
   variant: BadgeVariant;
@@ -219,6 +250,73 @@ export function DisplayShowcase() {
             </div>
           </DemoTabsContent>
         </DemoTabs>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// PROGRESS · RADIX UI</span>
+            <h2 className={styles.panelTitle}>
+              Progress 进度条原语（solid / dual / segmented）
+            </h2>
+          </div>
+          <p className={styles.panelNote}>
+            具备完整 aria-valuemin / aria-valuemax / aria-valuenow 无障碍属性
+          </p>
+        </div>
+
+        <div className={styles.fieldStack}>
+          <div className={styles.formCell}>
+            <span className={styles.code}>
+              {PROGRESS_VARIANT_NOTE.solid} · 常态（64% / 阈值线 80%）
+            </span>
+            <DemoProgress
+              variant="solid"
+              value={64}
+              thresholdPercent={80}
+              aria-label="常规成员负载 64%"
+            />
+          </div>
+
+          <div className={styles.formCell}>
+            <span className={styles.code}>
+              solid · 超载预警（92% · warning + 斜纹 + 80% 满载线）
+            </span>
+            <DemoProgress
+              variant="solid"
+              tone={WARNING_PROGRESS_TONE}
+              striped
+              value={92}
+              thresholdPercent={80}
+              aria-label="超载成员负载 92%"
+            />
+          </div>
+
+          <div className={styles.formCell}>
+            <span className={styles.code}>
+              {PROGRESS_VARIANT_NOTE.dual}（时间进度 70% vs 任务完成率 58%）
+            </span>
+            <DemoProgress
+              variant="dual"
+              value={58}
+              secondaryValue={70}
+              aria-label="项目完成率 58%，时间已过 70%"
+            />
+          </div>
+
+          <div className={styles.formCell}>
+            <span className={styles.code}>
+              {PROGRESS_VARIANT_NOTE.segmented}（7 日周期，第 4 日为今天）
+            </span>
+            <DemoProgress
+              variant="segmented"
+              value={4}
+              max={7}
+              segments={WEEK_SEGMENTS}
+              aria-label="本周进度第 4 天"
+            />
+          </div>
+        </div>
       </section>
     </>
   );
