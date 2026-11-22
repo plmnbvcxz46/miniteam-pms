@@ -215,6 +215,8 @@
 3. **阶段进度条外层包装（定稿）**：经实测核查，`WeekLine`、`SummaryCard`、`ProgressPanel`、`ForecastHero` 4 处外层无任何两处重复，**维持各自直接复用 `ui/Progress`**，不新增 `patterns`。
 4. **阶段 4 最终迁移顺序（11 步定稿）**：
    - `1. features/auth` → `2. layout + features/projects + features/notifications` → `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → **`9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）** → **`9b. features/tasks-board`（`BoardPage` + `BoardColumn` + `TaskCard` + `useCardDrag` 4 处独立修复）** → `10. features/collab`。
+5. **`api/http.ts` 与 `state/*` 统一迁移时机（定稿）**：
+   - 被多模块跨层共用的基础请求封装 `src/api/http.ts` 与全部 `src/state/*`（含 `state/auth`、`state/access`、`state/project`、`state/issue`、`state/task`、`state/document`、`state/config`）**统一留待阶段 4 全部业务模块迁移完成后的最后一步集中迁入 `src/services/` 与 `src/stores/`**，避免单模块迁移期间跨 8+ 个未迁移页面引发大面积无关改动；各模块迁移时仅将自身独有的 `*Api`（如 `services/auth.ts`）先行落位 `services/`。
 
 ---
 
