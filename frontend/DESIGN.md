@@ -301,10 +301,10 @@
 | `.t-overlay-title` | `roles.css:16-22` | `disp / 44px / 900 / lh:1 / ls:-2px` | 6 处 | **`components/ui/Drawer`**（`Drawer.Title`）与 **`components/patterns/FormDrawer`**（`--font-size-display-sm`） |
 | `.t-section-title` | `roles.css:25-29` | `sans / 15px / 900` | 27 处 | **`components/patterns/Panel`**（面板标题槽）及 `features/board` 看板列头 |
 | `.t-kicker` | `roles.css:32-37` | `mono / 10px / 700 / muted` | 28 处 | **`components/patterns/Panel`** / **`PageHeader`** / **`HeroCard`** / **`MetricCard`** 各自内置 `kicker` 槽位 |
-| `.t-label` | `roles.css:40-44` | `sans / 13px / 700` | 40 处 | **`components/patterns/FormField`**（`label` 槽位） |
+| `.t-label` | `roles.css:40-44` | `sans / 13px / 700` | 40 处 | **`components/ui/Field`**（`label` 槽位） |
 | `.t-body` | `roles.css:47-52` | `sans / 13px / 400 / lh:1.45` | **0 处** | **直接删除**（全局 `base.css` `body` 默认承载正文排版） |
-| `.t-hint` | `roles.css:55-60` | `mono / 10px / 400 / muted` | 3 处 | **`components/patterns/FormField`**（`hint` 槽位）与 **`components/patterns/EmptyState`** |
-| `.t-error` | `roles.css:63-68` | `mono / 11px / 700 / danger` | 12 处 | **`components/patterns/FormField`**（`error` 槽位）与 **`components/ui/Alert`**（`data-variant="inline" data-tone="danger"`） |
+| `.t-hint` | `roles.css:55-60` | `mono / 10px / 400 / muted` | 3 处 | **`components/ui/Field`**（`hint` 槽位）与 **`components/patterns/EmptyState`** |
+| `.t-error` | `roles.css:63-68` | `mono / 11px / 700 / danger` | 12 处 | **`components/ui/Field`**（`error` 槽位）与 **`components/ui/Alert`**（`data-variant="inline" data-tone="danger"`） |
 | `.t-meta` | `roles.css:71-76` | `mono / 11px / 400 / muted` | 3 处 | **`components/patterns/EmptyState`** 与 **`components/patterns/ListRow`**（`meta` 槽位） |
 | `.t-figure` | `roles.css:79-85` | `mono / 56px / 800 / lh:0.88 / ls:-3px` | **0 处** | **直接删除**（大数字样式归入 **`MetricCard`** / **`HeroCard`** CSS Module，字号切 `--font-size-figure`） |
 | `.t-figure-sm` | `roles.css:88-94` | `mono / 28px / 800 / lh:1 / ls:-1px` | **0 处** | **直接删除**（中号数字样式归入 **`Panel`** / 业务统计组件 CSS Module） |
@@ -352,27 +352,41 @@
 - **Token 红线**：组件样式只允许引用第一层语义色/组件色与第二层样式 Token；状态切换只改变 Token 映射，不引起布局抖动。
 - **不提前抽象**：本清单仅登记项目 9 个页面与全局壳体**实际用到**的基础组件与变体。
 
-## 3.2 `components/ui/` 组件登记表
+## 3.2 `components/ui/` 组件登记表（共 19 项，分批封装）
 
-| 组件 | 底层原语 | 尺寸 / 变体（`data-size` / `data-variant`） | `data-*` 与 ARIA 属性 | 核心语义 Token | 替换旧实现 |
+> **阶段 3 封装批次规划**：
+> - **前置基础（2 项）**：`Button`（已试点，前置修正去 `ghost`/`selected`、统一禁用态、强化 `accent` hover 并复用 `Spinner`）、`Spinner`（纯 CSS 旋转环）；
+> - **第 1 批 · 表单控件（7 项）**：`Input`（含 `type="date"` 外观对齐）、`Textarea`、`Checkbox`、`Switch`、`Select`、`ToggleGroup`、`Field`；
+> - **第 2 批 · 浮层（5 项，不含 `Tooltip`）**：`Popover`、`DropdownMenu`、`Drawer`、`AlertDialog`、`Toast`；
+> - **第 3 批 · 展示类（5 项）**：`Badge`、`Alert`、`Tabs`、`Progress`、`Separator`。
+>
+> **明确不封装的控件决策（按实证核查拍板）**：
+> - **`Tooltip`**：全站 0 处自定义 Tooltip，仅 13 处原生 `title` 截断/提示，**不封装**，沿用原生 `title`；
+> - **`DatePicker`**：全站仅 5 处单日 `<input type="date">`，**不封装**独立日期选择器和日期库，直接复用 `ui/Input[type="date"]` 并确保其高度、描边、字号、字体、`focus`、`invalid`、`disabled` 与其他文本输入框完全一致；
+> - **`Avatar`**：全站仅 `AccountMenu.tsx:37` 1 处首字母方块，**不封装**，保留在 `AccountMenu` 局部样式；
+> - **骨架屏**：**不做**，页面与按钮加载态复用极简 `ui/Spinner` 或文字提示。
+
+| 组件 | 批次 / 底层原语 | 尺寸 / 变体（`data-size` / `data-variant`） | `data-*` 与 ARIA 属性 | 核心语义 Token | 替换旧实现 |
 |---|---|---|---|---|---|
-| **`Button`** | 原生 `<button>`（可选 `Slot`） | 变体：`default`（纸底黑框）、`primary`（墨底反白）、`accent`（信号橙底黑字）、`danger`（纸底橙字橙框）、`dashed`（虚线新建）、`ghost`（无框图标/辅助）、`link`（下划线行内）；尺寸：`sm`(30px) / `md`(34px) / `lg`(40px) / `icon`(40×40) | `data-variant`、`data-size`、`data-loading`、`aria-busy`、`disabled` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-surface-inverse-hover`、`--color-accent`、`--color-accent-hover`、`--color-danger`、`--color-border-strong`、`--border-width-thin`、`--focus-ring` | `.btn`（default/primary/go/risk）、`.addcard`、`.ov-close`、`.tk-back`、`.back`、`.hv-download-btn`、`.auth-alt button`、`.hero .go` |
-| **`Input`** | 原生 `<input>` | 变体：`underline`（下划线，表单/设置统一）、`boxed`（全框，搜索/行内输入）；尺寸：`sm` / `md` | `data-variant`、`data-size`、`data-invalid`、`aria-invalid`、`aria-describedby`、`readOnly`、`disabled` | `--color-surface`、`--color-text`、`--color-text-muted`、`--color-text-faint`、`--color-border-strong`、`--color-accent`、`--color-danger`、`--border-width-thin` | `.fr .u`、`.in`（含 `.sm`/`.xs`/`.u.n`）、`.field input` |
-| **`Textarea`** | 原生 `<textarea>` | 变体：`underline`（抽屉说明）、`boxed`（协作回复框） | `data-variant`、`data-invalid`、`aria-invalid`、`aria-describedby`、`disabled` | 同 `Input` | `.fr textarea.u`、`.reply textarea` |
-| **`Badge`** | 原生 `<span>` | 变体：`solid`（墨底反白）、`outline`（纸底黑框）、`accent`（橙底黑字，风险/高优/推荐）、`muted`（弱边灰字，编号/低优） | `data-variant` | `--color-surface-inverse`、`--color-text-inverse`、`--color-accent`、`--color-warning`、`--color-danger`、`--color-border`、`--font-size-2xs` | `.chip`、`.tag`、`.ds`、`.thr-late`、`.risk`、`.score` |
-| **`Switch`** | `radix-ui` `Switch` | 变体：`track`（单轨“有/无”）、`segmented`（双格“启用/停用”） | `data-variant`、`data-state="checked"\|"unchecked"`、`data-disabled`、`data-loading`、`aria-busy` | `--color-surface-inverse`、`--color-text-inverse`、`--color-bg-subtle`、`--color-border-strong`、`--color-text-faint`、`--focus-ring` | `overlays/settings/Switch`（`.sw2`）、`pages/members/PermToggle`（`.pm`） |
-| **`Checkbox`** | `radix-ui` `Checkbox` | 默认单尺寸（16×16 锐角方框 + 实心勾选） | `data-state="checked"\|"unchecked"`、`data-disabled`、`data-invalid` | `--color-surface`、`--color-surface-inverse`、`--color-text-inverse`、`--color-border-strong`、`--color-danger`、`--focus-ring` | `LoginPage` `.ck`、`InviteMemberDrawer` `.member-perm-check` |
-| **`ToggleGroup`** | `radix-ui` `ToggleGroup` | 变体：`segmented`（连体黑框分段）、`chips`（流式单/多选芯片）；支持 `type="single" \| "multiple"` | `data-variant`、`data-state="on"\|"off"`、`data-disabled` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-text-inverse`、`--color-border-strong`、`--color-text-faint` | `.seg`（3 页）、`.chips`（4 处，修复 `role="radio"` + `aria-pressed` 误用）、`.roles`（2 处，修复隐藏按钮吞焦点） |
-| **`Tabs`** | `radix-ui` `Tabs` | 默认单变体（方角平铺标签栏，支持组间 `Separator`） | `data-state="active"\|"inactive"`、`data-disabled` | `--color-surface-inverse`、`--color-text-inverse`、`--color-bg-subtle`、`--focus-ring` | `SettingDrawer` `.ov-tabs` |
-| **`Select`** | `radix-ui` `Select` | 变体：`underline`（抽屉与成员矩阵统一） | `data-state="open"\|"closed"`、`data-highlighted`、`data-disabled`、`data-invalid`、`data-placeholder` | `--color-surface`、`--color-bg-subtle`、`--color-border-strong`、`--color-accent`、`--color-danger`、`--shadow-md`、`--z-dropdown` | `UploadDocDrawer` / `InviteMemberDrawer` `select.u`、`MemberColumn` `select.in` |
-| **`Popover`** | `radix-ui` `Popover` | 通用浮层容器（Portal + 碰撞翻转 + 外部点击/Esc 关闭 + 焦点返回） | `data-state="open"\|"closed"`、`data-side` | `--color-surface`、`--color-border-strong`、`--shadow-md`、`--z-dropdown`、`--duration-fast` | `useDismiss` + `.issues`（`ProjectSwitch`、`IssueSwitch`、`NotificationBell`、`AssigneePicker`） |
-| **`DropdownMenu`** | `radix-ui` `DropdownMenu` | 操作菜单（内置键盘漫游、`MenuItem`、`MenuSeparator`） | `data-state="open"\|"closed"`、`data-highlighted`、`data-disabled`、`data-tone="danger"` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-danger`、`--shadow-md`、`--z-dropdown` | `AccountMenu` `.issues.accts` |
-| **`Drawer`** | `radix-ui` `Dialog` | 尺寸：`md`（表单抽屉，640–880px）、`lg`（设置抽屉，880px）；右侧滑入、内置焦点陷阱与背景惰性 | `data-size`、`data-state="open"\|"closed"` | `--color-surface`、`--color-border-strong`、`--comp-backdrop-dot`、`--shadow-lg`、`--z-backdrop`、`--z-modal`、`--duration-normal`、`--ease-standard` | `shared/components/Drawer.tsx`（消除 `#shell.classList` 直接 DOM 操作，补齐 Esc 与焦点管理） |
-| **`AlertDialog`** | `radix-ui` `AlertDialog` | 居中模态二次确认弹窗（默认焦点落“取消”，强确认破坏性操作） | `data-state="open"\|"closed"` | `--color-surface`、`--color-border-strong`、`--color-danger`、`--comp-backdrop-dot`、`--shadow-lg`、`--z-modal` | `window.confirm`（`DocumentsPage:113`）及 3 处不一致的双击确认（`TaskHeader:27`、`PeoplePanel:24`、`ProjPanel:33`） |
-| **`Toast`** | `radix-ui` `Toast` | 语气：`neutral`（信息/完成，墨色+暖纸）、`danger`（拦截/错误，信号橙边框与标识）；自动消失+可手动关闭 | `data-tone="neutral"\|"danger"`、`data-state="open"\|"closed"`、`role="status"` / `role="alert"` | `--color-surface`、`--color-surface-inverse`、`--color-border-strong`、`--color-danger`、`--shadow-lg`、`--z-toast` | `window.alert`（`BoardPage:35`、`TaskPage:55,61`）与短暂操作回执 |
-| **`Alert`** | 原生 `<div>` | 语气：`info`（墨色/灰）、`warning`（信号橙）、`danger`（信号橙）；变体：`inline` / `banner` | `data-tone`、`data-variant`、`role="alert"\|"status"` | `--color-text`、`--color-info`、`--color-warning-text`、`--color-danger`、`--color-border-strong`、`--border-width-thin` | `.page-note.err`、`.issue-note`、`.auth-note`、`.ss .msg[.err]`、`.err.t-error` |
-| **`Progress`** | `radix-ui` `Progress` | 变体：`solid`（单段完成）、`dual`（时间斜纹+完成实心）、`segmented`（主段+超期/提前段） | `data-variant`、`data-state`、`aria-valuenow`/`min`/`max` | `--color-surface`、`--color-surface-inverse`、`--color-border-strong`、`--comp-pattern-warn` | `SummaryCard` `.gauge`、`ProgressPanel` `.pbar`、`ForecastHero` `.fbar` |
-| **`Separator`** | `radix-ui` `Separator` | 变体：`single`（1.5px 实线）、`double`（报纸双横线 5px+1.5px）、`dashed`（虚线行分割） | `data-variant`、`data-orientation` | `--color-border-strong`、`--color-border`、`--border-width-thin` | `.double`、`.tsep` |
+| **`Spinner`** | 前置 · 原生 `<span>` | 尺寸：`sm`(12px) / `md`(14px) / `lg`(20px)；继承 `currentColor` | `data-size`、`role="status"`（传入 `label` 时）或 `aria-hidden="true"` | `--border-width-thin`、`--radius-full`、`--duration-normal` | 抽离 `Button` 旋转环，供按钮与阶段 4 `PageState` 复用 |
+| **`Button`** | 前置 · 原生 `<button>` | 变体（6 种，已删未使用的 `ghost`）：`default`（纸底黑框）、`primary`（墨底反白）、`accent`（信号橙底黑字）、`danger`（纸底橙字橙框）、`dashed`（虚线新建）、`link`（下划线行内）；尺寸：`sm`(30px) / `md`(34px) / `lg`(40px) / `icon`(40×40) | `data-variant`、`data-size`、`data-loading`、`data-full-width`、`aria-busy`、`disabled`（**不承载 `selected`/`aria-pressed`**） | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-surface-inverse-hover`、`--color-accent`、`--color-accent-text`、`--color-text-inverse`、`--color-danger`、`--color-border`、`--color-border-strong`、`--color-text-faint`、`--border-width-thin`、`--focus-ring` | `.btn`（default/primary/go/risk）、`.addcard`、`.ov-close`、`.bell`、`.tk-back`、`.back`、`.hv-download-btn`、`.auth-alt button`、`.hero .go` |
+| **`Input`** | 第 1 批 · 原生 `<input>` | 变体：`underline`（下划线，表单/设置统一）、`boxed`（全框，搜索/行内输入）；尺寸：`sm` / `md`；**兼容 `type="date"` 与文本输入外观完全一致** | `data-variant`、`data-size`、`data-invalid`、`aria-invalid`、`aria-describedby`、`readOnly`、`disabled` | `--color-surface`、`--color-bg-subtle`、`--color-text`、`--color-text-muted`、`--color-text-faint`、`--color-border`、`--color-border-strong`、`--color-accent`、`--color-danger`、`--border-width-thin` | `.fr .u`、`.in`（含 `.sm`/`.xs`/`.u.n`）、`.field input`、5 处 `input[type="date"]` |
+| **`Textarea`** | 第 1 批 · 原生 `<textarea>` | 变体：`underline`（抽屉说明）、`boxed`（协作回复框） | `data-variant`、`data-invalid`、`aria-invalid`、`aria-describedby`、`disabled` | 同 `Input` | `.fr textarea.u`、`.reply textarea` |
+| **`Checkbox`** | 第 1 批 · `radix-ui` `Checkbox` | 默认单尺寸（16×16 锐角方框 + 实心勾选） | `data-state="checked"\|"unchecked"`、`data-disabled`、`data-invalid` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-text-inverse`、`--color-border`、`--color-border-strong`、`--color-danger`、`--focus-ring` | `LoginPage` `.ck`、`InviteMemberDrawer` `.member-perm-check` |
+| **`Switch`** | 第 1 批 · `radix-ui` `Switch` | 变体：`track`（单轨“有/无”）、`segmented`（双格“启用/停用”） | `data-variant`、`data-state="checked"\|"unchecked"`、`data-disabled`、`data-loading`、`aria-busy` | `--color-surface-inverse`、`--color-text-inverse`、`--color-bg-subtle`、`--color-border`、`--color-border-strong`、`--color-text-faint`、`--focus-ring` | `overlays/settings/Switch`（`.sw2`）、`pages/members/PermToggle`（`.pm`） |
+| **`Select`** | 第 1 批 · `radix-ui` `Select` | 变体：`underline`（抽屉与成员矩阵统一） | `data-state="open"\|"closed"`、`data-highlighted`、`data-disabled`、`data-invalid`、`data-placeholder` | `--color-surface`、`--color-bg-subtle`、`--color-border`、`--color-border-strong`、`--color-accent`、`--color-danger`、`--shadow-md`、`--z-dropdown` | `UploadDocDrawer` / `InviteMemberDrawer` `select.u`、`MemberColumn` `select.in` |
+| **`ToggleGroup`** | 第 1 批 · `radix-ui` `ToggleGroup` | 变体：`segmented`（连体黑框分段）、`chips`（流式单/多选芯片）；支持 `type="single" \| "multiple"` | `data-variant`、`data-state="on"\|"off"`、`data-disabled` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-text-inverse`、`--color-border`、`--color-border-strong`、`--color-text-faint` | `.seg`（3 页）、`.chips`（4 处，修复 `role="radio"` + `aria-pressed` 误用）、`.roles`（2 处，修复隐藏按钮吞焦点）；**承接全站切换/选中态按钮** |
+| **`Field`** | 第 1 批 · 原生语义容器 | 布局：`layout="horizontal" \| "vertical"`、`align="baseline" \| "top"`；支持 `label`/`required`/`hint`/`error`；**内置 `useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`** | `data-layout`、`data-align`、`data-invalid`、`data-required` | `--color-text`、`--color-text-muted`、`--color-danger`、`--font-size-md`、`--font-size-2xs`、`--font-size-xs`、`--space-2` | 40 处 `.fr`（22）与 `.srow`（18）表单行（替代原 `patterns/FormField`） |
+| **`Popover`** | 第 2 批 · `radix-ui` `Popover` | 通用浮层容器（Portal + 碰撞翻转 + 外部点击/Esc 关闭 + 焦点返回） | `data-state="open"\|"closed"`、`data-side` | `--color-surface`、`--color-border-strong`、`--shadow-md`、`--z-dropdown`、`--duration-fast` | `useDismiss` + `.issues`（`ProjectSwitch`、`IssueSwitch`、`NotificationBell`、`AssigneePicker`） |
+| **`DropdownMenu`** | 第 2 批 · `radix-ui` `DropdownMenu` | 操作菜单（内置键盘漫游、`Item`、`Separator`、`Label`） | `data-state="open"\|"closed"`、`data-highlighted`、`data-disabled`、`data-tone="danger"` | `--color-surface`、`--color-bg-subtle`、`--color-surface-inverse`、`--color-danger`、`--shadow-md`、`--z-dropdown` | `AccountMenu` `.issues.accts` |
+| **`Drawer`** | 第 2 批 · `radix-ui` `Dialog` | 尺寸：`md`（表单抽屉，640–880px）、`lg`（设置抽屉，880px）；右侧滑入、点阵遮罩、双横线、复用 `Button(default, size="icon")` 关闭钮 | `data-size`、`data-state="open"\|"closed"` | `--color-surface`、`--color-border-strong`、`--comp-backdrop-dot`、`--shadow-lg`、`--z-backdrop`、`--z-modal`、`--duration-normal`、`--ease-standard` | `shared/components/Drawer.tsx`（消除 `#shell.classList` 直接 DOM 操作，补齐 Esc 与焦点管理） |
+| **`AlertDialog`** | 第 2 批 · `radix-ui` `AlertDialog` | 居中模态二次确认弹窗（点阵遮罩、硬阴影、**默认焦点落“取消”按钮**、确认钮用 `Button(danger)` 支持 `loading`） | `data-state="open"\|"closed"` | `--color-surface`、`--color-border-strong`、`--color-danger`、`--comp-backdrop-dot`、`--shadow-lg`、`--z-modal` | `window.confirm`（`DocumentsPage:113`）及 3 处不一致的双击确认（`TaskHeader:27`、`PeoplePanel:24`、`ProjPanel:33`） |
+| **`Toast`** | 第 2 批 · `radix-ui` `Toast` | 语气：`neutral`（信息/完成，墨色+暖纸）、`danger`（拦截/错误，信号橙边框与标识）；自动消失 + 手动关闭 | `data-tone="neutral"\|"danger"`、`data-state="open"\|"closed"`、`role="status"` / `role="alert"` | `--color-surface`、`--color-surface-inverse`、`--color-border-strong`、`--color-danger`、`--shadow-lg`、`--z-toast` | `window.alert`（`BoardPage:35`、`TaskPage:55,61`）与短暂操作回执 |
+| **`Badge`** | 第 3 批 · 原生 `<span>` | 变体：`solid`（墨底反白）、`outline`（纸底黑框）、`accent`（橙底黑字，风险/高优/推荐）、`muted`（弱边灰字，编号/低优） | `data-variant` | `--color-surface-inverse`、`--color-text-inverse`、`--color-accent`、`--color-warning`、`--color-danger`、`--color-border`、`--font-size-2xs` | `.chip`、`.tag`、`.ds`、`.thr-late`、`.risk`、`.score` |
+| **`Alert`** | 第 3 批 · 原生 `<div>` | 语气：`info`（墨色/灰）、`warning`（信号橙）、`danger`（信号橙）；变体：`inline` / `banner` | `data-tone`、`data-variant`、`role="alert"\|"status"` | `--color-text`、`--color-info`、`--color-warning-text`、`--color-danger`、`--color-border-strong`、`--border-width-thin` | `.page-note.err`、`.issue-note`、`.auth-note`、`.ss .msg[.err]`、`.err.t-error` |
+| **`Tabs`** | 第 3 批 · `radix-ui` `Tabs` | 默认单变体（方角平铺标签栏，支持组间 `Separator`） | `data-state="active"\|"inactive"`、`data-disabled` | `--color-surface-inverse`、`--color-text-inverse`、`--color-bg-subtle`、`--focus-ring` | `SettingDrawer` `.ov-tabs` |
+| **`Progress`** | 第 3 批 · `radix-ui` `Progress` | 变体：`solid`（单段完成）、`dual`（时间斜纹+完成实心）、`segmented`（主段+超期/提前段） | `data-variant`、`data-state`、`aria-valuenow`/`min`/`max` | `--color-surface`、`--color-surface-inverse`、`--color-border-strong`、`--comp-pattern-warn` | `SummaryCard` `.gauge`、`ProgressPanel` `.pbar`、`ForecastHero` `.fbar` |
+| **`Separator`** | 第 3 批 · `radix-ui` `Separator` | 变体：`single`（1.5px 实线）、`double`（报纸双横线 5px+1.5px）、`dashed`（虚线行分割） | `data-variant`、`data-orientation` | `--color-border-strong`、`--color-border`、`--border-width-thin` | `.double`、`.tsep` |
 
 ## 3.3 基础组件 9 态强制覆盖规范（补齐审计缺口）
 
@@ -380,15 +394,42 @@
 
 | 组件 | `default` | `hover` | `active`（全站新增补齐） | `focus-visible` | `disabled` | `loading` | `invalid` | `selected` | `open` |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `Button` | ✓ | ✓（浅底→`--color-bg-subtle`；反色/橙底→hover token） | ✓（按压背景加深 + `translate(1px, 1px)`，零抖动） | ✓（`var(--focus-ring)`） | ✓（文字 `--color-text-faint` + 边框弱化 + `not-allowed`） | ✓（`data-loading` + `disabled` + `aria-busy` + 指示符） | — | — | — |
-| `Input` / `Textarea` | ✓ | ✓（边框升至 `--color-border-strong`） | — | ✓（下划线切 `--color-accent` 粗底线或全框 `--focus-ring`） | ✓（虚线边 + `--color-text-faint` + `not-allowed`；`readOnly` 同步虚线底区分） | — | ✓（`[aria-invalid="true"]` 边框切 `--color-danger` + `aria-describedby`） | — | — |
-| `Switch` | ✓ | ✓（非禁用底色切 `--color-bg-subtle`） | ✓（按压微暗/缩进反馈） | ✓（`var(--focus-ring)`） | ✓（`--color-text-faint` + 边框弱化 + `not-allowed`） | ✓（`data-loading` 防连点） | — | ✓（`data-state="checked"` 实心反白） | — |
+| `Button` | ✓ | ✓（`default`/`dashed`→`--color-bg-subtle`；`primary`→`--color-surface-inverse-hover`；`accent`→`--color-accent-text` 深橙底+反白字；`danger`→`--color-danger-subtle`；`link`→`--color-accent-text`） | ✓（`accent`→墨底反白；其余按压加深 + `translate(1px, 1px)`，零抖动） | ✓（`var(--focus-ring)`） | ✓（全变体统一中性浅灰底 `--color-bg-subtle` + 灰字 `--color-text-faint` + 浅灰框 `--color-border` + `not-allowed`；`dashed` 保持虚线；`link` 透明底+灰字） | ✓（`data-loading` + `disabled` + `aria-busy` + 复用 `ui/Spinner`，原变体底色不退灰、宽高零抖动） | — | —（已移除，选中/切换统一迁往 `ToggleGroup` / `Switch`） | — |
+| `Input` / `Textarea` | ✓ | ✓（边框升至 `--color-border-strong`） | — | ✓（下划线切 `--color-accent` 粗底线或全框 `--focus-ring`） | ✓（虚线边 + `--color-bg-subtle` + `--color-text-faint` + `not-allowed`；`readOnly` 同步虚线底区分） | — | ✓（`[aria-invalid="true"]` 边框切 `--color-danger` + `aria-describedby`） | — | — |
+| `Switch` | ✓ | ✓（非禁用底色切 `--color-bg-subtle`） | ✓（按压微暗/缩进反馈） | ✓（`var(--focus-ring)`） | ✓（`--color-bg-subtle` + `--color-text-faint` + `--color-border` + `not-allowed`） | ✓（`data-loading` + 复用 `ui/Spinner` 防连点） | — | ✓（`data-state="checked"` 实心反白） | — |
 | `Checkbox` | ✓ | ✓（边框强化/浅底） | ✓（按压反色微调） | ✓（`var(--focus-ring)`） | ✓（含关联 `<label>` 同步 `not-allowed` 与弱化） | — | ✓（边框切 `--color-danger`） | ✓（`data-state="checked"`） | — |
-| `ToggleGroup` | ✓ | ✓（未选项切 `--color-bg-subtle`） | ✓（按压态反馈） | ✓（`var(--focus-ring)`，外层可见不吞焦点） | ✓（弱化文字+虚线/灰边，修复原仅改光标问题） | — | — | ✓（`data-state="on"` 墨底反白） | — |
+| `ToggleGroup` | ✓ | ✓（未选项切 `--color-bg-subtle`） | ✓（按压态反馈） | ✓（`var(--focus-ring)`，外层可见不吞焦点） | ✓（弱化文字+浅灰底+虚线/灰边，修复原仅改光标问题） | — | — | ✓（`data-state="on"` 墨底反白） | — |
 | `Tabs` | ✓ | ✓（非当前项切 `--color-bg-subtle`） | ✓ | ✓（`var(--focus-ring)`） | ✓ | — | — | ✓（`data-state="active"` 墨底反白） | — |
 | `Select` | ✓ | ✓（触发器与选项悬浮） | ✓ | ✓（`var(--focus-ring)`） | ✓ | — | ✓（触发器边框 `--color-danger`） | ✓（选项勾选/橙框标识） | ✓（`data-state="open"` 边框高亮 + 箭头 180° 翻转） |
 | `Popover` / `DropdownMenu` | ✓ | ✓（触发器与菜单项 `[data-highlighted]`） | ✓ | ✓（`var(--focus-ring)`） | ✓（菜单项 `[data-disabled]`） | — | — | ✓（当前项橙框标识） | ✓（触发器 `[data-state="open"]` 显式高亮 + 箭头翻转） |
-| `Drawer` / `AlertDialog` | ✓ | — | — | ✓（焦点自动进入并锁定在弹窗内，关闭返回触发器） | — | — | — | — | ✓（统一 `data-state="open"\|"closed"` 滑入/淡出动画） |
+| `Drawer` / `AlertDialog` | ✓ | — | — | ✓（焦点自动进入并锁定在弹窗内，关闭返回触发器；`AlertDialog` 默认落焦“取消”） | — | — | — | — | ✓（统一 `data-state="open"\|"closed"` 滑入/淡出动画） |
+
+## 3.4 全站既有 `aria-pressed` 迁移清单（阶段 4 统一迁离 `Button`）
+
+`Button` 不再承载 `selected` / `aria-pressed` 态。经全站扫描（排除 `src/dev/` 与 `src/components/ui/`），现有 **11 个 TSX 文件、13 处交互点** 均在阶段 4 迁往语义匹配的 `ToggleGroup` / `Switch` / `Badge`：
+
+### A. 迁往 `ui/ToggleGroup`（10 处，覆盖 9 个组件）
+| # | 文件路径与行号 | 所在组件 | 业务场景 | 模式 | 迁移目标 |
+|---:|---|---|---|---|---|
+| 1 | `src/pages/board/components/BoardHeader.tsx:37` | `BoardHeader` | 看板任务筛选（全部 / 我的 / 关键路径） | 单选 | `ToggleGroup(type="single", variant="segmented")` |
+| 2 | `src/pages/timeline/components/TimelineHeader.tsx:36` | `TimelineHeader` | 时间线刻度切换（按周 / 按月） | 单选 | `ToggleGroup(type="single", variant="segmented")` |
+| 3 | `src/pages/reports/components/ReportsHeader.tsx:42` | `ReportsHeader` | 燃尽图范围切换（本周 / 全周期） | 单选 | `ToggleGroup(type="single", variant="segmented")` |
+| 4 | `src/pages/task/components/StatusChips.tsx:20` | `StatusChips` | 任务状态切换（含非法回退单项禁用） | 单选 | `ToggleGroup(type="single", variant="chips")` |
+| 5 | `src/overlays/task/TaskDrawer.tsx:192` | `TaskDrawer` | 任务前置依赖多选 | **多选** | `ToggleGroup(type="multiple", variant="chips")` |
+| 6 | `src/pages/collab/components/NewDiscussionDrawer.tsx:142, 154` | `NewDiscussionDrawer` | 发起讨论关联任务选择（含锁定禁用） | 单选 | `ToggleGroup(type="single", variant="chips")` |
+| 7 | `src/pages/documents/components/UploadDocDrawer.tsx:207, 217` | `UploadDocDrawer` | 上传目标选择（新建 / 修订中文档；修复 `role="radio"` 混用） | 单选 | `ToggleGroup(type="single", variant="chips")` |
+| 8 | `src/pages/members/components/InviteMemberDrawer.tsx:204, 212, 220` | `InviteMemberDrawer` | 邀请成员项目角色选择（修复 `role="radio"` 混用） | 单选 | `ToggleGroup(type="single", variant="chips")` |
+| 9 | `src/overlays/settings/panels/PeoplePanel.tsx:205` | `PeoplePanel` | 人员详情系统账号类型选择（含 `disabled={isSelf}`） | 单选 | `ToggleGroup(type="single", variant="chips")` |
+| 10 | `src/overlays/settings/panels/PeoplePanel.tsx:356` | `PeoplePanel`（`NewPersonForm`） | 新增人员系统账号类型选择 | 单选 | `ToggleGroup(type="single", variant="chips")` |
+
+### B. 迁往 `ui/Switch` 或可移除标签（3 处，不归 `Button`）
+| # | 文件路径与行号 | 所在组件 | 业务场景与原形态 | 迁移目标 |
+|---:|---|---|---|---|
+| 11 | `src/overlays/settings/Switch.tsx:20, 27` | `Switch` | 账号状态“启用/停用”双格切换 | `ui/Switch(variant="segmented")`（Radix `role="switch"` + `aria-checked`） |
+| 12 | `src/pages/members/components/PermToggle.tsx:24` | `PermToggle` | 成员权限“有/无”单轨开关（清除冗余 `aria-pressed`） | `ui/Switch(variant="track")` |
+| 13 | `src/overlays/settings/panels/MePanel.tsx:136` | `MePanel` | 个人技能标签点击移除（恒 `true`，非切换态） | 阶段 4 改用 `ui/Badge` + 移除按钮 |
+
+*(另：`login.css:173` `.auth-demo-grid` 与 `index.css:2077` `.lab` 的 2 处死 CSS 选择器随阶段 4 旧样式清理。)*
 
 ---
 
@@ -411,8 +452,7 @@
 | **`Panel`** | `Separator` | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
 | **`Legend`** | `Badge`（或图例色块） | 数据驱动图例条：`items: { key, label, kind: "solid" \| "outline" \| "dashed" \| "hatch" \| "accent" }[]`，消除手写 `<i>` 与内联 style | 6 处 `.legend`（Overview、Timeline、Documents、Reports） |
 | **`FormDrawer`** | `Drawer`、`Button`、`Separator(double)`、`Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
-| **`FormField`** | `Alert(inline)` | 表单行容器：`label`、`required?`、`layout="horizontal" \| "vertical"`、`align="baseline" \| "top"`、`hint?`、`error?`、`htmlFor`；自动关联 `aria-invalid` 与 `aria-describedby` | 平行并存的 `.fr` 与 `.srow` 两套表单行 |
-| **`SearchInput`** | `Input(boxed)`、`Button(ghost)` | 带标签/图标与清空动作的搜索框（可选提交按钮），统一 `:focus-within` 外框态 | 3 处 `.field`（`DocumentHeader`、`CrewLabels`、`PeoplePanel`）+ `.invite-search` |
+| **`SearchInput`** | `Input(boxed)`、`Button(default)` | 带标签/图标与清空动作的搜索框（可选提交按钮），统一 `:focus-within` 外框态 | 3 处 `.field`（`DocumentHeader`、`CrewLabels`、`PeoplePanel`）+ `.invite-search` |
 | **`ConfirmDialog`** | `AlertDialog`、`Button` | 破坏性操作二次确认范式：`title`、`description`、`confirmLabel`（明确动词）、`loading`、`onConfirm`；默认焦点在“取消” | `window.confirm` 与 3 处双击确认逻辑 |
 | **`MetricStrip` / `MetricCard`** | `Badge` | 4 格 KPI 指标条：首格反白、`label`（`// WORD`）、`value`、`unit?`、`sub?`、`alert?`（信号橙顶条+风险徽标） | `overview/{FigureStrip,Figure}` + `task/{TaskFigures,FigureItem}` |
 | **`HeroCard`** | `Badge` | 强调头条/预测/文档详情顶卡：`tone="alert" \| "calm"`、`kicker`、`title?`、`badge?`、`figure`、`figureSub`、`footer?` | `HeadlinePanel`、`ForecastHero`、`DocumentDetailHero` |
@@ -440,7 +480,7 @@
 ## 5.2 破坏性操作与用户反馈
 - **Do**：破坏性操作（删除任务、删除账号、归档项目、定稿锁定）依靠**明确动词文案 + 图标/后果说明 + `ConfirmDialog`（Radix `AlertDialog`）二次确认**来与普通操作区分，不靠新颜色区分；弹窗默认焦点落在“取消”按钮。
 - **Don't**：不要另设暗红等新色区分破坏性操作；严禁使用原生 `window.confirm` / `window.alert`；严禁继续使用“失焦取消”或“无取消按钮”的双击按钮模式。
-- **Do**：**短暂结果反馈与操作拦截**（如“文档未定稿不可完成任务”、“已保存”、“导出成功”）使用 `Toast`；**需要用户处理/修正才能继续的错误**（表单字段校验、登录失败、页面无存档/加载失败）使用**行内提示**（`FormField` 错误文本 + `aria-invalid="true"`，或页面内 `Alert` / `PageState`）。
+- **Do**：**短暂结果反馈与操作拦截**（如“文档未定稿不可完成任务”、“已保存”、“导出成功”）使用 `Toast`；**需要用户处理/修正才能继续的错误**（表单字段校验、登录失败、页面无存档/加载失败）使用**行内提示**（`ui/Field` 错误文本 + `aria-invalid="true"`，或页面内 `Alert` / `PageState`）。
 - **Don't**：不要把表单字段校验错误塞进自动消失的 `Toast`；不要只在表单底部报文字错误而不给出错输入框设置 `aria-invalid="true"`。
 
 ## 5.3 状态覆盖、交互自治与无障碍

@@ -51,25 +51,27 @@ src/
 
 ---
 
-## 组件清单登记表（当前：阶段 2 基础设施就绪）
+## 组件清单登记表（当前：阶段 3 分批封装中）
 
-> 阶段 3 实现与阶段 4 迁移时，每落地或变更一个组件须同步更新本表与 `DESIGN.md`；禁止不经登记私自造重复控件。
+> 阶段 3 实现与阶段 4 迁移时，每落地或变更一个组件须同步更新本表与 `DESIGN.md`；禁止不经登记私自造重复控件。明确**不封装** `Tooltip`（沿用原生 `title`）、`DatePicker`（复用 `Input[type="date"]`）、`Avatar`（保留在 `AccountMenu` 局部）与骨架屏。
 
-### 基础组件（`src/components/ui/`）
-| 组件 | 底层原语 | 状态 | 备注 |
-|---|---|---|---|
-| `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`ghost`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；支持 `loading`（防连点无抖动）、`leadingIcon`/`trailingIcon`、`fullWidth`、`aria-pressed` |
-| `Input` / `Textarea` / `Badge` / `Alert` | 原生语义元素 | 待阶段 3 实现 | 覆盖 9 态，支持 `data-variant` / `data-size` |
-| `Switch` / `Checkbox` / `ToggleGroup` / `Tabs` | `radix-ui` | 待阶段 3 实现 | 统一替代 `.sw2`/`.pm`/`.ck`/`.seg`/`.chips`/`.roles`/`.ov-tabs` |
-| `Select` / `Popover` / `DropdownMenu` | `radix-ui` | 待阶段 3 实现 | 替代手写 `useDismiss` + `.issues` 与原生 `<select>` |
-| `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待阶段 3 实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
-| `Progress` / `Separator` | `radix-ui` | 待阶段 3 实现 | 支持双段进度与报纸双横线 |
+### 基础组件（`src/components/ui/`，共 19 项，分批落地）
+| 批次 | 组件 | 底层原语 | 状态 | 备注 |
+|---|---|---|---|---|
+| 前置 | `Spinner` | 原生 `<span>` | 待实现 | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion` |
+| 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`（待删 `ghost`/去 `selected`/统一禁用/复用 `Spinner`）；尺寸：`sm`/`md`/`lg`/`icon` |
+| 第 1 批（表单） | `Input` / `Textarea` | 原生 `<input>` / `<textarea>` | 待实现 | `underline`/`boxed`、`sm`/`md`、`Input` 完整对齐 `type="date"` 外观 |
+| 第 1 批（表单） | `Checkbox` / `Switch` / `Select` / `ToggleGroup` | `radix-ui` | 待实现 | 统一替代 `.ck`/`.sw2`/`.pm`/`select.u`/`.seg`/`.chips`/`.roles` |
+| 第 1 批（表单） | `Field` | 原生语义容器 | 待实现 | `useId()` 自动关联 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
+| 第 2 批（浮层） | `Popover` / `DropdownMenu` | `radix-ui` | 待实现 | 硬阴影暖纸浮层；不含 `Tooltip` |
+| 第 2 批（浮层） | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
+| 第 3 批（展示） | `Badge` / `Alert` / `Tabs` / `Progress` / `Separator` | 原生 + `radix-ui` | 待第 3 批实现 | 留待第 1、2 批验收后封装 |
 
 ### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
 | 范式组件 | 状态 | 职责摘要 |
 |---|---|---|
 | `AppShell` / `PageHeader` / `Panel` / `Legend` | 阶段 4 按需建立 | `PageHeader` 吸收 `.t-page-title`（`60px`/`44px` 断点切 Token） |
-| `FormDrawer` / `FormField` / `SearchInput` / `ConfirmDialog` | 阶段 4 按需建立 | 统一 `.fr`/`.srow` 表单行与破坏性操作二次确认 |
+| `FormDrawer` / `SearchInput` / `ConfirmDialog` | 阶段 4 按需建立 | 表单抽屉壳、搜索框与破坏性操作二次确认（表单行已升格至 `ui/Field`） |
 | `MetricStrip` / `HeroCard` / `LoadBar` / `TaskBar` | 阶段 4 按需建立 | `TaskBar` 剥离 `useIssue()` 改为受控 `today` prop |
 | `ListRow` / `ActivityFeed` / `EmptyState` / `PageState` | 阶段 4 按需建立 | 强制原生 `<button>`/`<Link>` 语义，消除非语义点击元素 |
 | `AssigneeCombobox` / `MentionTextarea` / `FileDropzone` | 阶段 4 按需建立 | `FileDropzone` 内部自治拖拽上传，文案不变 |
