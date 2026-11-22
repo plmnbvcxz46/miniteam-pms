@@ -48,7 +48,7 @@
   border: var(--border-width-thin) solid var(--color-border);
 }
 
-/* ---------- 禁用态（统一中性灰） ---------- */
+/* ---------- 禁用态（boxed 浅灰底，underline 透明底 + 弱化点线） ---------- */
 .input:disabled {
   background-color: var(--color-bg-subtle);
   color: var(--color-text-faint);
@@ -58,8 +58,9 @@
 }
 
 .input[data-variant="underline"]:disabled {
+  background-color: transparent;
   border-width: 0;
-  border-bottom: var(--border-width-thin) dashed var(--color-border);
+  border-bottom: var(--border-width-thin) dotted var(--color-text-faint);
 }
 
 /* ---------- 只读态 ---------- */

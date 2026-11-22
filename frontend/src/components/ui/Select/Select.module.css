@@ -26,9 +26,9 @@
 }
 
 .trigger[data-disabled] {
-  background-color: var(--color-bg-subtle);
+  background-color: transparent;
   color: var(--color-text-faint);
-  border-bottom: var(--border-width-thin) dashed var(--color-border);
+  border-bottom: var(--border-width-thin) dotted var(--color-text-faint);
   cursor: not-allowed;
 }
 

@@ -192,7 +192,10 @@
 }
 
 .button[data-variant="dashed"]:disabled:not([data-loading="true"]) {
+  background-color: var(--color-surface);
+  border-color: var(--color-text-faint);
   border-style: dashed;
+  color: var(--color-text-faint);
 }
 
 .button[data-variant="link"]:disabled:not([data-loading="true"]) {
