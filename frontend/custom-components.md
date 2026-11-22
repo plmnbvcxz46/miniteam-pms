@@ -108,15 +108,21 @@
 - **视觉变化影响**：`MemberLoad` / `SelfLoad` / `LoadRow` 视觉基本一致（高度与斜纹统一对齐 `ui/Progress` 规范，成员页与报表页负载条厚度将完全统一）。
 
 ### 组 5：时间条与阶段进度条（`TaskBar` / 概览 `ScheduleRow` / 文档 `TimelineBar` / 报表 `DeviationRow` / `SummaryCard` / `ProgressPanel` / `ForecastHero` / `WeekLine`）
-- **差异点**：
-  1. `SummaryCard`（`.gauge` 双层）、`ProgressPanel`（`.pbar` 双段）、`ForecastHero`（`.fbar` 主段+超期/提前段）、`WeekLine`（`.weeks` 按周格子）：本质均为无时间轴坐标的通用进度条，**已可由阶段 3 `ui/Progress` 的 `solid` / `dual` / `segmented` 变体直接承接**。
+- **差异点与外层包装实测核查（阶段 3.5 补充确认）**：
+  1. 4 处阶段/项目进度条的外层包装逐一核对结果：
+     - `WeekLine`（`src/layout/topbar/WeekLine.tsx:12-39`，仅全局顶栏 1 处）：横向三段 `[开始月日] + [按周格子 .weeks（past/now）] + [结束月日]`；
+     - `SummaryCard`（`src/layout/sidebar/SummaryCard.tsx:19-39`，仅全局侧栏 1 处）：垂直卡 `距计划结束 N 天 + [双层时间/完成条 .gauge] + 底部时间/完成百分比`；
+     - `ProgressPanel`（`src/pages/overview/components/ProgressPanel.tsx:11-37`，仅总览 1 处）：标准 `Panel + 百分比大数 + [双段条 .pbar（内嵌已完成/剩余数字）] + Legend`；
+     - `ForecastHero`（`src/pages/reports/components/ForecastHero.tsx:63-81`，仅报表 Hero 1 处）：`[主段+超期斜纹/提前虚线 .fbar] + 贴合主段宽度的“今天 / 计划”日期标注`；
+     - 时间线页（`TimelinePage`）无此类阶段进度条（`GanttAxis` 为周/日表头刻度，任务行复用 `patterns/TaskBar`）。
+     - **核查结论**：上述 4 处外层包装**无任何两处存在相同包装逻辑**，各自仅出现 1 次 → **维持现状，不升级为新的 `patterns` 组件**，在各自所属模块直接调用 `ui/Progress`（及已登记的 `Panel`/`Legend`/`HeroCard`）即可。
   2. `TaskBar`（`timeline`、`task`、`board` 3 处复用）：完整任务生命周期模型（`taskBarModel.ts`：未开始/进行中/阻塞多段/逾期/提前完成/今天线/截止线/完成标记），已有 `compact` 紧凑模式。
   3. `ScheduleRow`（`overview`）：本周 7 天多泳道自动堆叠排期，每条是可点击 `<button>` 且内嵌任务标题，**今天线精确到当前时刻（非 24:00）**，业务语义与 DOM 结构与 `TaskBar` 完全不同。
   4. `DocumentRevisingItem` 内 `TimelineBar`（`documents`）：基于文档版本日期数组计算 `first` → `due` → `today`，嵌套在 `role="option"` 选中行内，反色选中时条色同步反白。
   5. `DeviationRow`（`reports`）：无日期轴，是“计划天数虚线 vs 实际天数实线 + 超期段”的工期对比条。
 - **归类**：**结构或交互差别大 / 差别太大**。
-- **建议**：
-  - `SummaryCard` / `ProgressPanel` / `ForecastHero` / `WeekLine` → 直接复用 `ui/Progress`；
+- **已确认方案**：
+  - `SummaryCard` / `ProgressPanel` / `ForecastHero` / `WeekLine` → 维持各自模块内直接复用 `ui/Progress`，不新建 `patterns`；
   - `TaskBar` → 归入 `patterns/TaskBar`（剥离 `useIssue()` 必传 `today`，提供 `variant="full" | "compact"`）；
   - `ScheduleRow`、`DocumentRevisingItem`、`DeviationRow` → **各自留在所属 `features/` 内部，保持独立**，仅共享 `shared/utils/date.ts` 日期计算纯函数与语义斜纹 Token（`--comp-pattern-warn`）。
 - **视觉变化影响**：无（避免强行合并破坏“总览精确到此刻、其余按天 24:00”的核心业务约定）。
@@ -192,22 +198,20 @@
 
 ---
 
-## 五、现有拖拽实现（`useCardDrag.ts`）保留策略与现存 Bug 清单
+## 五、现有拖拽实现（`useCardDrag.ts`）保留策略与阶段 4 修复计划（已拍板）
 
-- **默认策略**：阶段 4 第 9b 步迁移 `BoardPage` 时，**保留 `useCardDrag.ts` 全部手写指针拖拽算法**，仅迁至 `features/tasks/hooks/useCardDrag.ts`（并将 `document.body.classList.toggle("dragging")` 改为作用域状态或 `data-dragging` 属性）。
-- **盘点发现的 4 处现有缺陷 / Bug（请用户决定阶段 4 是否顺手修复，未确认前绝不擅自替换）**：
-  1. **【迁移必改】DOM 选择器强耦合全局类名**（`src/pages/board/useCardDrag.ts:33, 36`）：`findDropTarget` 写死了 `.closest(".drop[data-status]")` 与 `drop.querySelectorAll(".card")`。迁移到 CSS Modules 后类名会被哈希，**必须改为 `data-drop-zone` 与 `data-drag-card` 属性选择器**，否则拖拽将完全失效。
-  2. **指针丢失 / 多触点残留浮卡 Bug**（`src/pages/board/useCardDrag.ts:65-107, 124`）：未记录 `e.pointerId` 也未调用 `setPointerCapture`，当指针拖出浏览器窗口外松手、或双指/副指针触发 `pointerup` 时，可能漏收结束事件导致悬浮浮卡与 `body.dragging` 残留（直到按 Esc 或再点页面）。
-  3. **`wasDragged()` 状态在键盘打开卡片时的误判风险**（`src/pages/board/useCardDrag.ts:93, 125, 136`）：`draggedRef.current` 在拖拽结束时设为 `true`，仅在下次鼠标 `pointerdown` 时重置为 `false`；如果某次拖放结束未触发源卡片 `click`（例如拖到另一列后松手），随后用户通过键盘焦点打开卡片（不触发 `pointerdown`），`wasDragged()` 仍返回 `true` 导致打开被拦截。
-  4. **卡片本身为非语义 `<article onClick>` 且无键盘排序**（`src/pages/board/components/TaskCard.tsx:45-50`）：当前无法通过 Tab/Enter 打开卡片详情（需按前序决策补齐原生语义触发或键盘 `Enter`/`Space` 打开，拖拽本身可继续保持指针操作，因任务详情页已有状态切换替代方案）。
+- **已确认策略**：阶段 4 第 9b 步迁移 `BoardPage` 时，**保留 `useCardDrag.ts` 手写指针拖拽逻辑**，迁至 `features/tasks/hooks/useCardDrag.ts`（不引入第三方拖拽库），并将以下 **4 处缺陷逐一修复，每处单独提交**；修复完成后提供**手动拖拽验证步骤**供用户实测确认：
+  1. **提交 ①**：将 `useCardDrag.ts:33, 36` 硬编码的全局类名选择器 `.drop[data-status]` / `.card` 改为 `data-drop-zone` / `data-drag-card` 属性选择器，适配 CSS Modules。
+  2. **提交 ②**：补齐 `pointerId` 追踪与 `setPointerCapture`（及 `lostpointercapture` 处理），修复指针拖出浏览器窗口外松手或多触点时残留悬浮浮卡与 `body.dragging` 的 Bug。
+  3. **提交 ③**：修复拖放落点在源卡片外后紧接用键盘打开卡片时 `wasDragged()` 仍返回 `true` 造成误拦截的 Bug。
+  4. **提交 ④**：`TaskCard.tsx:45` 补齐键盘可达性（`Tab` 聚焦、`Enter`/`Space` 打开详情），拖拽本身仍保持纯指针操作。
 
 ---
 
-## 六、阶段 4 迁移顺序复核建议
+## 六、阶段 3.5 已拍板决策与阶段 4 迁移顺序（定稿）
 
-对照本次 14 项 `patterns` 的首次建立时机，原 `audit.md` 第 6.2 节的 10 步顺序整体高度合理（低耦合 → 高耦合、所有 `patterns` 均在首次需要它的模块自然诞生、无前置空转）：
-
-- **唯一建议微调**：将原第 9 步 `features/tasks`（合并了 `overlays/task/` 653L + `pages/task/` 524L + `pages/board/` 500L = 1,677L，且同时包含 `AssigneePicker` 与高风险拖拽看板）拆为两个独立迁移分支：
-  - **第 9a 步：`features/tasks`**（`TaskDrawer` + `AssigneePicker` + `TaskPage`）
-  - **第 9b 步：`features/tasks-board`**（`BoardPage` + `BoardColumn` + `TaskCard` + `useCardDrag`）
-- 其余 1–8 步与第 10 步（`features/collab` 压轴）保持不变。
+1. **依赖政策（定稿）**：全程 **0 新增第三方依赖**；`AssigneePicker` 采用方案 A（`radix-ui` `Popover` + `ui/Input` + 保留 `assignee.ts`），图表、甘特、拖拽均保留手写实现。
+2. **6 处视觉统一（定稿）**：全部同意在阶段 4 对应步骤执行（`FormDrawer`、`Panel`、`LoadBar`、`HeroCard`、`ActivityFeed`/`ListRow`、`SearchInput`）；**其中 `LoadBar` 与 `HeroCard` 统一时，必须提供修改前后对比截图由用户确认**。
+3. **阶段进度条外层包装（定稿）**：经实测核查，`WeekLine`、`SummaryCard`、`ProgressPanel`、`ForecastHero` 4 处外层无任何两处重复，**维持各自直接复用 `ui/Progress`**，不新增 `patterns`。
+4. **阶段 4 最终迁移顺序（11 步定稿）**：
+   - `1. features/auth` → `2. layout + features/projects + features/notifications` → `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → **`9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）** → **`9b. features/tasks-board`（`BoardPage` + `BoardColumn` + `TaskCard` + `useCardDrag` 4 处独立修复）** → `10. features/collab`。

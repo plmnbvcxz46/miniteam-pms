@@ -447,7 +447,10 @@
 
 ## 4.2 `components/patterns/` 组件登记表（共 14 项，全部待建）
 
-> 依据阶段 3.5 自定义组件盘点（详见 [`custom-components.md`](./custom-components.md)），**仅被 ≥ 2 个模块复用的组合才进入 `components/patterns/`**；原草案中仅单模块使用的 `AppShell`（`layout`）、`AssigneePicker`（`tasks`）、`MentionInput`（`collab`）、`FileDropzone`（`documents`）已移出 `patterns/`，保留在对应模块内部。完整差异分析与视觉统一待决项见 [`custom-components.md`](./custom-components.md)。
+> 依据阶段 3.5 自定义组件盘点与用户拍板决策（详见 [`custom-components.md`](./custom-components.md)）：
+> - **仅被 ≥ 2 个模块复用的组合才进入 `components/patterns/`**；原草案中仅单模块使用的 `AppShell`（`layout`）、`AssigneePicker`（`tasks`）、`MentionInput`（`collab`）、`FileDropzone`（`documents`）已移出 `patterns/`，保留在对应模块内部。
+> - **阶段进度条外层核查结论**：`WeekLine`、`SummaryCard`、`ProgressPanel`、`ForecastHero` 4 处外层包装各不相同且均仅出现 1 次，维持各自直接复用 `ui/Progress`，不新建 `patterns`。
+> - **全程 0 新增第三方依赖**；`LoadBar` 与 `HeroCard` 在阶段 4 统一时须截修改前后对比图确认；第 9 步拆为 `9a (features/tasks)` 与 `9b (features/tasks-board)`（`useCardDrag` 4 处缺陷按每处独立提交修复并提供手动拖拽验收步骤）。
 
 | 范式组件 | 状态与建立时机 | 组合/底层方案 | 职责与核心 Props 契约 | 替换旧实现 |
 |---|---|---|---|---|
