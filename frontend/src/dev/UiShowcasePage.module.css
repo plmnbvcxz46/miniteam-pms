@@ -264,20 +264,6 @@
   gap: var(--space-2);
 }
 
-.roadmapTag {
-  padding: var(--space-0-5) var(--space-1-5);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-semibold);
-  background-color: var(--color-bg-subtle);
-  color: var(--color-text-muted);
-}
-
-.roadmapCard[data-ready="true"] .roadmapTag {
-  background-color: var(--color-accent);
-  color: var(--color-text);
-}
-
 /* ---------- 表单与浮层展示辅助网格 ---------- */
 .formGrid {
   display: grid;

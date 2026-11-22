@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Badge } from "../components/ui/Badge";
 import {
   Button,
   type ButtonProps,
@@ -10,6 +11,7 @@ import {
   type SpinnerProps,
   type SpinnerSize,
 } from "../components/ui/Spinner";
+import { DisplayShowcase } from "./sections/DisplayShowcase";
 import { FormShowcase } from "./sections/FormShowcase";
 import { OverlayShowcase } from "./sections/OverlayShowcase";
 import styles from "./UiShowcasePage.module.css";
@@ -80,7 +82,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉", ready: true },
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认", ready: true },
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示", ready: true },
-  { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted" },
+  { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted", ready: true },
   { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
   { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
   { name: "Progress", primitive: "radix-ui Progress", note: "solid / dual / segmented" },
@@ -342,7 +344,10 @@ export default function UiShowcasePage() {
         {/* 5. 第 2 批浮层组件展示 */}
         <OverlayShowcase />
 
-        {/* 6. 后续阶段 3 待封装 UI 组件索引 */}
+        {/* 6. 第 3 批展示类组件展示 */}
+        <DisplayShowcase />
+
+        {/* 7. 阶段 3 UI 基础组件索引 */}
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div className={styles.panelHeading}>
@@ -352,7 +357,7 @@ export default function UiShowcasePage() {
               </h2>
             </div>
             <p className={styles.panelNote}>
-              前置 2 项 + 第 1 批 7 表单 + 第 2 批 5 浮层已就绪，第 3 批 5 展示类待验收后封装
+              已就绪组件使用墨色 Badge(solid)，规划中组件使用弱化 Badge(muted)
             </p>
           </div>
 
@@ -365,9 +370,9 @@ export default function UiShowcasePage() {
               >
                 <div className={styles.roadmapTop}>
                   <span className={styles.code}>{item.name}</span>
-                  <span className={styles.roadmapTag}>
+                  <Badge size="sm" variant={item.ready ? "solid" : "muted"}>
                     {item.ready ? "已就绪" : "规划中"}
-                  </span>
+                  </Badge>
                 </div>
                 <span className={styles.desc}>{item.primitive}</span>
                 <span className={styles.desc}>{item.note}</span>
