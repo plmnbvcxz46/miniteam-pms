@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:lines": "node scripts/check-css-lines.mjs",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
     "knip": "knip",
-    "check": "pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip",
+    "check": "pnpm lint && pnpm lint:css && pnpm lint:lines && pnpm typecheck && pnpm knip",
     "preview": "vite preview"
   },
   "dependencies": {

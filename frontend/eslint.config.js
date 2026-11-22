@@ -62,6 +62,26 @@ export default defineConfig([
       "no-restricted-imports": ["error", { patterns: [RADIX_SUBPACKAGE] }],
     },
   },
+  // 新架构目录体量门禁：单文件有效行数 ≤ 250（建议 ≤ 150），单函数有效行数 ≤ 80（不含空行与注释）
+  {
+    files: [
+      "src/components/**/*.{ts,tsx}",
+      "src/dev/**/*.{ts,tsx}",
+      "src/features/**/*.{ts,tsx}",
+      "src/services/**/*.{ts,tsx}",
+      "src/stores/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "max-lines": [
+        "error",
+        { max: 250, skipBlankLines: true, skipComments: true },
+      ],
+      "max-lines-per-function": [
+        "error",
+        { max: 80, skipBlankLines: true, skipComments: true },
+      ],
+    },
+  },
   // components 兜底：禁止任何业务域与数据层依赖
   {
     files: ["src/components/**/*.{ts,tsx}"],

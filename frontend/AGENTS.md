@@ -89,17 +89,25 @@ src/
 
 ---
 
-## 工程门禁规定（提交前必跑，不配置 husky）
+## 文件体量与工程门禁规定（提交前必跑，不配置 husky）
 
+### 单文件与单函数有效行数红线（不含空行与注释）
+- **组件与业务 TS/TSX 文件（`.tsx` / `.ts`）**：建议 **≤ 150 行**，硬上限 **250 行**（`max-lines: ["error", { max: 250, skipBlankLines: true, skipComments: true }]`）；单函数有效行数建议且硬上限 **≤ 80 行**（`max-lines-per-function: ["error", { max: 80, skipBlankLines: true, skipComments: true }]`）。
+- **样式文件（`.module.css` / `base.css` / `tokens/*.css`）**：建议 **≤ 150 行**，硬上限 **250 行**（由 `scripts/check-css-lines.mjs` 强制校验，超过 150 行告警、超过 250 行退出码为 1）。
+- **`/dev/ui` 展示页及各分区文件**：同样严格遵守上述行数上限。
+- **拆分原则**：超过建议值（150 行）时按职责合理拆分为子组件、领域 hooks、样式分片或子展示分区；严禁为凑行数做无意义碎片化拆分。
+
+### 提交前必跑门禁命令
 - 本前端**不安装 `husky` / `lint-staged`**（不修改 Monorepo 根目录配置）。
 - **每次提交前必须在 `frontend/` 目录运行以下命令，全部退出码为 0 方可提交**：
   ```bash
-  pnpm check   # 串联执行 pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip
+  pnpm check   # 串联执行 pnpm lint && pnpm lint:css && pnpm lint:lines && pnpm typecheck && pnpm knip
   pnpm build   # 验证 tsc -b && vite build 完整产物构建
   ```
 - 各单项命令说明：
-  - `pnpm lint`：ESLint 10 代码检查 + 单向依赖/跨 feature/Radix 单包约束。
+  - `pnpm lint`：ESLint 10 代码检查 + 单向依赖/跨 feature/Radix 单包约束 + TS/TSX 单文件（≤250）与单函数（≤80）有效行数硬上限。
   - `pnpm lint:css`：Stylelint + `stylelint-declaration-strict-value` Token 强制校验与原始色板禁令。
+  - `pnpm lint:lines`：`node scripts/check-css-lines.mjs` 校验新规范 CSS / CSS Modules 单文件有效行数（建议 ≤150，硬上限 ≤250）。
   - `pnpm typecheck`：无状态全量检查 `tsconfig.app.json` 与 `tsconfig.node.json`。
   - `pnpm knip`：死文件、死导出与未用依赖检测。
 

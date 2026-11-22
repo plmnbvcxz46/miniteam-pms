@@ -522,6 +522,9 @@ frontend/src/styles/
 ### B. 阶段 2–3 质量门禁与开发环境样式手册约定（替代 husky）
 - **开发依赖（阶段 2 已安装）**：`stylelint`、`stylelint-config-standard`、`stylelint-declaration-strict-value`、`knip`（**不安装 `husky` / `lint-staged`**）；
 - **运行时依赖（阶段 3 按需安装）**：`radix-ui`（单包按需具名导入，留待阶段 3 封装首个 Radix 组件时安装，避免触发 `knip` 未使用依赖报错）；
-- **门禁脚本**：在 `frontend/package.json` 配置 `lint`（`eslint .`）、`lint:css`（`stylelint "src/**/*.css"`）、`typecheck`（`tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit`）、`knip`（`knip`）与聚合脚本 `check`（`pnpm lint && pnpm lint:css && pnpm typecheck && pnpm knip`），使每次提交与模块迁移均可一键校验依赖方向、Token 红线、类型安全与死代码。
+- **单文件与单函数体量门禁（不含空行与注释）**：
+  - `.tsx` / `.ts`（覆盖 `src/components/**`、`src/dev/**`、`src/features/**`、`src/services/**`、`src/stores/**`）：单文件有效行数建议 **≤ 150 行**、硬上限 **250 行**（ESLint `max-lines`），单函数有效行数 **≤ 80 行**（ESLint `max-lines-per-function`）；
+  - `.module.css` / `base.css` / `tokens/*.css`：单文件有效行数建议 **≤ 150 行**、硬上限 **250 行**（由 `scripts/check-css-lines.mjs` 强制校验）；超过建议值按职责拆分子组件、hooks 或样式分片。
+- **门禁脚本**：在 `frontend/package.json` 配置 `lint`（`eslint .`）、`lint:css`（`stylelint "src/**/*.css"`）、`lint:lines`（`node scripts/check-css-lines.mjs`）、`typecheck`（`tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit`）、`knip`（`knip`）与聚合脚本 `check`（`pnpm lint && pnpm lint:css && pnpm lint:lines && pnpm typecheck && pnpm knip`），使每次提交与模块迁移均可一键校验依赖方向、Token 红线、文件体量、类型安全与死代码。
 - **开发环境样式手册（`/dev/ui`）**：在 `src/dev/UiShowcasePage.tsx` 提供长期保留的组件样式手册，仅通过 `import.meta.env.DEV` + 懒加载挂在免登录路由 `/dev/ui`，生产构建（`pnpm build`）彻底 tree-shake 排除；其样式（`src/dev/**/*.module.css`）同样受 Stylelint 严格 Token 规则约束。
 - **遗留参考文件**：`frontend/prototype/`（及 `tsconfig.app.json:25` 引用）在文档模块完成 `FileDropzone` 拖拽上传收归之前保留作为参考实现，并在 `knip.json` 中忽略 `prototype/**`。
