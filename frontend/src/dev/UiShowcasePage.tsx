@@ -32,7 +32,6 @@ const VARIANT_ROWS: VariantRow[] = [
     usage: "高危触发，需配合 AlertDialog 二次确认",
   },
   { variant: "dashed", label: "+ 添加条目", usage: "虚线框，看板列尾/附加入口" },
-  { variant: "ghost", label: "辅助操作", usage: "无框透明底，图标与轻量按钮" },
   { variant: "link", label: "查看详情", usage: "下划线行内文字操作" },
 ];
 
@@ -256,7 +255,7 @@ export default function UiShowcasePage() {
               后置图标
             </Button>
             <Button
-              variant="ghost"
+              variant="default"
               size="icon"
               aria-label="新增图标按钮"
               leadingIcon={<PlusIcon />}
@@ -304,7 +303,7 @@ export default function UiShowcasePage() {
             >
               Selected: {sandboxPressed ? "开" : "关"}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setClickCount(0)}>
+            <Button size="sm" variant="link" onClick={() => setClickCount(0)}>
               重置计数
             </Button>
             <span className={styles.counter}>

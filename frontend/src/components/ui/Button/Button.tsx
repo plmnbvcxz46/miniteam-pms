@@ -7,7 +7,6 @@ export type ButtonVariant =
   | "accent"
   | "danger"
   | "dashed"
-  | "ghost"
   | "link";
 
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
