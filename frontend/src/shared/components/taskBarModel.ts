@@ -1,5 +1,5 @@
 import type { Activity } from "../types/global";
-import type { TaskDetail } from "../types/task";
+import type { DependencyTask, TaskDetail } from "../types/task";
 import {
   dayEnd,
   getAxisRange,
@@ -47,7 +47,9 @@ export interface TaskBarModel {
 export type TaskBarTask = Pick<
   TaskDetail,
   "status" | "planStart" | "dueDate" | "actualStart" | "actualEnd"
->;
+> & {
+  predecessors?: Pick<DependencyTask, "status">[];
+};
 
 /**
  * 从操作记录推算阻塞区间：进入阻塞 → 离开阻塞，可能有多段。
@@ -64,9 +66,13 @@ export function getBlockedSpans(
     .filter((item) => item.targetType === "TASK" && item.action === "STATUS")
     .map((item) => {
       const toBlocked = item.detail.includes("阻塞");
-      const auto = toBlocked && item.user === null && actualStart;
+      const auto =
+        toBlocked &&
+        item.user === null &&
+        Boolean(actualStart) &&
+        item.detail.startsWith("到了计划开始日");
       return {
-        time: auto ? toDay(actualStart) : parseDateTime(item.createdAt),
+        time: auto && actualStart ? toDay(actualStart) : parseDateTime(item.createdAt),
         toBlocked,
       };
     })
@@ -120,12 +126,21 @@ export function buildTaskBar(
   let done: TaskBarModel["done"] = null;
 
   const blocked = getBlockedSpans(activities, task.actualStart);
+  if (
+    task.status === "BLOCKED" &&
+    !blocked.some((span) => span.to === Infinity)
+  ) {
+    // 处于阻塞状态但缺少对应 STATUS 动态（如旧数据或动态截断），兜底从计划开始日画阻塞斜纹
+    blocked.push({ from: start, to: Infinity });
+  }
   const addBlocked = (limit: TimeSpan, kind: BarFill["kind"]) => {
     for (const span of blocked) {
       const part = clip(span, limit);
       if (part) fills.push({ ...part, kind });
     }
   };
+  const hasUnfinishedPredecessor =
+    task.predecessors?.some((p) => p.status !== "DONE") ?? false;
 
   if (task.status === "DONE") {
     // 没记录完成日的（旧数据）按今天完成
@@ -151,6 +166,12 @@ export function buildTaskBar(
       if (elapsed.to > elapsed.from) {
         fills.push({ ...elapsed, kind: "ink" });
         addBlocked(elapsed, "warn");
+      }
+    } else if (task.status === "TODO" && hasUnfinishedPredecessor) {
+      // 待开始但已到计划开始日且存在未完成前置，兜底从计划开始日按阻塞画斜纹
+      const elapsed = { from: start, to: Math.min(now, due) };
+      if (elapsed.to > elapsed.from) {
+        fills.push({ ...elapsed, kind: "warn" });
       }
     }
     if (now > due) {
