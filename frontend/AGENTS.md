@@ -71,7 +71,7 @@ src/
 | 第 1 批（表单） | `Field` | 原生语义容器 | **已实现**（`src/components/ui/Field/`） | `horizontal`（内容列左起点严格对齐）/`vertical`、墨色必填星号 `*`、`useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
 | 第 2 批（浮层） | `Popover` | `radix-ui` `Popover` | **已实现**（`src/components/ui/Popover/`） | Portal 碰撞避让、硬阴影暖纸浮层、支持 `padding="default"\|"none"`、触发器 `open` 显式高亮；不含 `Tooltip` |
 | 第 2 批（浮层） | `DropdownMenu` | `radix-ui` `DropdownMenu` | **已实现**（`src/components/ui/DropdownMenu/`） | 常规/危险菜单项、分割线、分组标签、键盘漫游与 `disabled` |
-| 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px，44px 标题)/`lg`(880px，60px 标题)、6px 半色调点阵遮罩（4.5% 压暗）、双横线刊头、复用 `Button(default, size="icon")` 关闭钮、焦点陷阱与 Esc |
+| 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px，44px 标题)/`lg`(880px，60px 标题)、6px 半色调点阵遮罩（4.5% 压暗）、`Separator(masthead)` 粗黑刊头双横线（5px+1.5px）、复用 `Button(default, size="icon")` 大号 `×` 关闭钮、焦点陷阱与 Esc |
 | 第 2 批（浮层） | `AlertDialog` | `radix-ui` `AlertDialog` | **已实现**（`src/components/ui/AlertDialog/`） | 6px 半色调点阵遮罩（4.5% 压暗）、硬阴影、默认焦点落“取消”、确认钮复用 `Button(danger)` 支持 `loading` |
 | 第 2 批（浮层） | `Toast` | `radix-ui` `Toast` | **已实现**（`src/components/ui/Toast/`） | `neutral`/`danger` 语气、`ToastProvider`/`ToastViewport`/`Toast`、多条队列右下角最新在上叠放与独立计时、手动关闭、替代 `window.alert` |
 | 第 3 批（展示） | `Badge` | 原生 `<span>` | **已实现**（`src/components/ui/Badge/`） | `solid`（墨底常态）/`outline`/`muted`/`accent`（橙色仅用于需注意状态），`sm`/`md` |
