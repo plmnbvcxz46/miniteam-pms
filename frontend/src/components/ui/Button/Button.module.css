@@ -11,12 +11,10 @@
   font-family: var(--font-mono);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-none);
-  border-width: var(--border-width-thin);
-  border-style: solid;
+  border: var(--border-width-thin) solid var(--color-border-strong);
   border-radius: var(--radius-none);
   background-color: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-border-strong);
   transition-property: background-color, color, border-color, transform, opacity;
   transition-duration: var(--duration-fast);
   transition-timing-function: var(--ease-standard);
@@ -32,39 +30,39 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-.content {
+.content,
+.icon,
+.spinnerSlot {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.content {
   gap: var(--space-1-5);
 }
 
 .icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
 }
 
 .spinnerSlot {
   position: absolute;
   inset: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* ---------- 尺寸档位（data-size） ---------- */
-.button[data-size="sm"] {
-  height: 30px;
+.button[data-size="sm"],
+.button[data-size="md"] {
   padding: 0 var(--space-3);
   font-size: var(--font-size-xs);
+}
+
+.button[data-size="sm"] {
+  height: 30px;
 }
 
 .button[data-size="md"] {
   height: 34px;
-  padding: 0 var(--space-3);
-  font-size: var(--font-size-xs);
 }
 
 .button[data-size="lg"] {
@@ -80,37 +78,33 @@
   font-size: var(--font-size-md);
 }
 
-/* ---------- 变体：default（暖纸黑框） ---------- */
-.button[data-variant="default"]:hover:not(:disabled) {
+.button[data-variant="dashed"] {
+  border-style: dashed;
+}
+
+.button[data-variant="default"]:hover:not(:disabled),
+.button[data-variant="dashed"]:hover:not(:disabled) {
   background-color: var(--color-bg-subtle);
 }
 
-.button[data-variant="default"]:active:not(:disabled) {
+.button[data-variant="default"]:active:not(:disabled),
+.button[data-variant="dashed"]:active:not(:disabled) {
   background-color: var(--color-border);
   transform: translate(1px, 1px);
 }
 
-/* ---------- 变体：primary（墨黑反白） ---------- */
 .button[data-variant="primary"] {
   background-color: var(--color-surface-inverse);
   color: var(--color-text-inverse);
-  border-color: var(--color-border-strong);
 }
 
 .button[data-variant="primary"]:hover:not(:disabled) {
   background-color: var(--color-surface-inverse-hover);
 }
 
-.button[data-variant="primary"]:active:not(:disabled) {
-  background-color: var(--color-surface-inverse);
-  transform: translate(1px, 1px);
-}
-
-/* ---------- 变体：accent（单视图信号橙主强调） ---------- */
 .button[data-variant="accent"] {
   background-color: var(--color-accent);
   color: var(--color-text);
-  border-color: var(--color-border-strong);
   font-weight: var(--font-weight-heavy);
 }
 
@@ -119,15 +113,14 @@
   color: var(--color-text-inverse);
 }
 
+.button[data-variant="primary"]:active:not(:disabled),
 .button[data-variant="accent"]:active:not(:disabled) {
   background-color: var(--color-surface-inverse);
   color: var(--color-text-inverse);
   transform: translate(1px, 1px);
 }
 
-/* ---------- 变体：danger（高危/破坏性操作触发） ---------- */
 .button[data-variant="danger"] {
-  background-color: var(--color-surface);
   color: var(--color-danger);
   border-color: var(--color-danger);
 }
@@ -143,31 +136,11 @@
   transform: translate(1px, 1px);
 }
 
-/* ---------- 变体：dashed（虚线新建/附加入口） ---------- */
-.button[data-variant="dashed"] {
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border-color: var(--color-border-strong);
-  border-style: dashed;
-}
-
-.button[data-variant="dashed"]:hover:not(:disabled) {
-  background-color: var(--color-bg-subtle);
-}
-
-.button[data-variant="dashed"]:active:not(:disabled) {
-  background-color: var(--color-border);
-  transform: translate(1px, 1px);
-}
-
-/* ---------- 变体：link（下划线行内操作） ---------- */
 .button[data-variant="link"] {
   height: auto;
   padding: var(--space-0);
   background-color: transparent;
-  color: var(--color-text);
   border-width: 0;
-  border-color: transparent;
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: var(--border-width-thin);
@@ -178,33 +151,25 @@
 }
 
 .button[data-variant="link"]:active:not(:disabled) {
-  color: var(--color-text);
   opacity: 0.7;
 }
 
-/* ---------- 禁用态（全部变体统一中性灰处理，加载态除外） ---------- */
 .button:disabled:not([data-loading="true"]) {
   background-color: var(--color-bg-subtle);
   color: var(--color-text-faint);
   border-color: var(--color-border);
-  opacity: 1;
   cursor: not-allowed;
 }
 
 .button[data-variant="dashed"]:disabled:not([data-loading="true"]) {
   background-color: var(--color-surface);
   border-color: var(--color-text-faint);
-  border-style: dashed;
-  color: var(--color-text-faint);
 }
 
 .button[data-variant="link"]:disabled:not([data-loading="true"]) {
   background-color: transparent;
-  border-color: transparent;
-  color: var(--color-text-faint);
 }
 
-/* ---------- 加载态（保持原变体视觉、防连点、零宽高抖动） ---------- */
 .button[data-loading="true"] {
   cursor: wait;
 }

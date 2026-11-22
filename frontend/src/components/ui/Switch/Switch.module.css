@@ -6,6 +6,7 @@
   justify-content: center;
   flex-shrink: 0;
   white-space: nowrap;
+  height: 30px;
   padding: var(--space-0);
   margin: var(--space-0);
   font-family: var(--font-mono);
@@ -18,6 +19,11 @@
   cursor: pointer;
   user-select: none;
   transition-property: background-color, border-color, color, transform;
+}
+
+.root,
+.bar,
+.thumb {
   transition-duration: var(--duration-fast);
   transition-timing-function: var(--ease-standard);
 }
@@ -27,32 +33,31 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-/* ---------- 变体 1：track（单轨“有/无”） ---------- */
 .root[data-variant="track"] {
-  height: 30px;
-  padding: var(--space-0);
   border-width: 0;
   background-color: transparent;
 }
 
-.trackContent {
+.trackContent,
+.bar,
+.segOn,
+.segOff,
+.spinnerSlot {
   display: inline-flex;
   align-items: center;
+}
+
+.trackContent {
   gap: var(--space-2);
 }
 
 .bar {
   position: relative;
-  display: inline-flex;
-  align-items: center;
   width: 28px;
   height: 12px;
   border: var(--border-width-thin) solid var(--color-border-strong);
-  border-radius: var(--radius-none);
   background-color: var(--color-surface);
   transition-property: background-color, border-color;
-  transition-duration: var(--duration-fast);
-  transition-timing-function: var(--ease-standard);
 }
 
 .thumb {
@@ -61,18 +66,18 @@
   left: 1px;
   width: 8px;
   height: 8px;
-  border-radius: var(--radius-none);
   background-color: var(--color-text);
   transform: translate(0, -50%);
   transition-property: background-color, transform;
-  transition-duration: var(--duration-fast);
-  transition-timing-function: var(--ease-standard);
+}
+
+.stateText,
+.segContent {
+  display: inline-grid;
 }
 
 .stateText {
-  display: inline-grid;
   min-width: 16px;
-  text-align: left;
 }
 
 .onText,
@@ -98,15 +103,11 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- 变体 2：segmented（双格“启用/停用”） ---------- */
 .root[data-variant="segmented"] {
-  height: 30px;
   border: var(--border-width-thin) solid var(--color-border-strong);
-  background-color: var(--color-surface);
 }
 
 .segContent {
-  display: inline-grid;
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
   height: 100%;
@@ -114,15 +115,9 @@
 
 .segOn,
 .segOff {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  white-space: nowrap;
   padding: var(--space-0) var(--space-3);
   color: var(--color-text-muted);
-  transition-property: background-color, color;
-  transition-duration: var(--duration-fast);
-  transition-timing-function: var(--ease-standard);
 }
 
 .segOff {
@@ -135,12 +130,7 @@
   color: var(--color-text-inverse);
 }
 
-/* ---------- 悬浮与按压 ---------- */
-.root[data-variant="track"]:hover:not([data-disabled]) {
-  background-color: var(--color-bg-subtle);
-}
-
-.root[data-variant="segmented"]:hover:not([data-disabled]) {
+.root:hover:not([data-disabled]) {
   background-color: var(--color-bg-subtle);
 }
 
@@ -148,16 +138,12 @@
   transform: translate(1px, 1px);
 }
 
-/* ---------- 禁用态（统一中性灰，加载态除外） ---------- */
 .root[data-disabled]:not([data-loading="true"]) {
   cursor: not-allowed;
   color: var(--color-text-faint);
 }
 
-.root[data-variant="track"][data-disabled]:not([data-loading="true"]) {
-  background-color: transparent;
-}
-
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]),
 .root[data-variant="track"][data-disabled]:not([data-loading="true"]) .bar {
   border-color: var(--color-border);
   background-color: var(--color-bg-subtle);
@@ -167,27 +153,16 @@
   background-color: var(--color-text-faint);
 }
 
-.root[data-variant="track"][data-disabled]:not([data-loading="true"]) .offText,
-.root[data-variant="track"][data-disabled]:not([data-loading="true"]) .onText {
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOn,
+.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOff {
   color: var(--color-text-faint);
-}
-
-.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) {
-  border-color: var(--color-border);
-  background-color: var(--color-bg-subtle);
+  background-color: transparent;
 }
 
 .root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOff {
   border-left-color: var(--color-border);
 }
 
-.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOn,
-.root[data-variant="segmented"][data-disabled]:not([data-loading="true"]) .segOff {
-  background-color: var(--color-bg-subtle);
-  color: var(--color-text-faint);
-}
-
-/* ---------- 加载态（复用 Spinner，零宽高抖动） ---------- */
 .root[data-loading="true"] {
   cursor: wait;
 }
@@ -200,8 +175,6 @@
 .spinnerSlot {
   position: absolute;
   inset: 0;
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
   pointer-events: none;
 }

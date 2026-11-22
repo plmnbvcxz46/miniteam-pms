@@ -1,4 +1,4 @@
-/* 开发环境组件样式手册页：100% 语义 Token、0 圆角暖纸黑墨 + 单信号橙报刊风 */
+/* 开发环境组件样式手册页公共布局与面板骨架：100% 语义 Token、0 圆角暖纸黑墨 + 单信号橙 */
 .page {
   min-height: 100vh;
   background-color: var(--color-bg);
@@ -18,7 +18,6 @@
   gap: var(--space-6);
 }
 
-/* ---------- 刊头双线页头 ---------- */
 .header {
   position: relative;
   display: flex;
@@ -38,10 +37,12 @@
   border-bottom: var(--border-width-thin) solid var(--color-border-strong);
 }
 
-.headerMeta {
+.headerMeta,
+.panelHeading,
+.formCell {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1-5);
 }
 
 .kicker {
@@ -73,12 +74,9 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- 面板 ---------- */
 .panel {
   background-color: var(--color-surface);
-  border-width: var(--border-width-thin);
-  border-style: solid;
-  border-color: var(--color-border-strong);
+  border: var(--border-width-thin) solid var(--color-border-strong);
   border-radius: var(--radius-none);
   padding: var(--space-5);
   display: flex;
@@ -93,12 +91,6 @@
   gap: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: var(--border-width-thin) solid var(--color-border-strong);
-}
-
-.panelHeading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-0-5);
 }
 
 .panelTitle {
@@ -116,35 +108,6 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- 展示矩阵 ---------- */
-.matrix {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.matrix th,
-.matrix td {
-  padding: var(--space-3) var(--space-2);
-  border-bottom: var(--border-width-hair) dashed var(--color-border);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.matrix th {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
-  color: var(--color-text-muted);
-  border-bottom: var(--border-width-thick) solid var(--color-border-strong);
-}
-
-.variantCell {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-0-5);
-}
-
 .code {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
@@ -156,109 +119,24 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- 尺寸、图标与互动沙盒 ---------- */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.fullWidthBox {
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
+.row,
 .sandboxControls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
+}
+
+.sandboxControls {
   padding: var(--space-3);
   background-color: var(--color-bg);
-  border-width: var(--border-width-thin);
-  border-style: dashed;
-  border-color: var(--color-border);
+  border: var(--border-width-thin) dashed var(--color-border);
 }
 
-.counter {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-}
-
-.counterValue {
-  font-weight: var(--font-weight-heavy);
-  color: var(--color-accent-text);
-}
-
-.spinnerDemoItem,
-.spinnerDemoAccent,
-.spinnerDemoInverse {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-width-thin) solid var(--color-border);
-  background-color: var(--color-bg);
-}
-
-.spinnerDemoAccent {
-  color: var(--color-accent-text);
-  border-color: var(--color-accent);
-}
-
-.spinnerDemoInverse {
-  background-color: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-  border-color: var(--color-border-strong);
-}
-
-/* ---------- 规划中组件索引 ---------- */
-.roadmapGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--space-3);
-}
-
-.roadmapCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
-  padding: var(--space-3);
-  background-color: var(--color-bg);
-  border-width: var(--border-width-thin);
-  border-style: dashed;
-  border-color: var(--color-border);
-}
-
-.roadmapCard[data-ready="true"] {
-  background-color: var(--color-surface);
-  border-style: solid;
-  border-color: var(--color-border-strong);
-}
-
-.roadmapTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-/* ---------- 表单与浮层展示辅助网格 ---------- */
 .formGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-4);
-}
-
-.formCell {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
 }
 
 .subHead {
@@ -271,19 +149,6 @@
   flex-direction: column;
   gap: var(--space-4);
   max-width: 640px;
-}
-
-.popoverBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 240px;
-}
-
-.drawerBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 
 @media (width <= 900px) {
