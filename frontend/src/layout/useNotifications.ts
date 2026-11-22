@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { notificationApi } from "../api/collab";
+import { notificationApi } from "../services/notifications";
 import type { Notification } from "../shared/types/global";
 
 /** 通知多久向服务器问一次新的 */

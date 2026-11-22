@@ -5,7 +5,7 @@ import type {
   DiscussionCreate,
   DiscussionDetail,
 } from "../shared/types/collab";
-import type { Activity, Notification } from "../shared/types/global";
+import type { Activity } from "../shared/types/global";
 import { http } from "./http";
 
 export const collabApi = {
@@ -22,12 +22,4 @@ export const collabApi = {
   /** 项目动态，新的在前，一次最多 100 条 */
   listActivities: (projectId: number, limit = 100) =>
     http.get<Activity[]>(`/projects/${projectId}/activities`, { limit }),
-};
-
-export const notificationApi = {
-  list: (query: { unreadOnly?: boolean; page?: number; size?: number } = {}) =>
-    http.get<{ total: number; list: Notification[] }>("/notifications", query),
-  unreadCount: () => http.get<number>("/notifications/unread-count"),
-  markRead: (notificationId: number) => http.put<void>(`/notifications/${notificationId}/read`),
-  markAllRead: () => http.put<void>("/notifications/read-all"),
 };

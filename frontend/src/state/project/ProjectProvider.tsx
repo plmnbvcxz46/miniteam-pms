@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { activityApi, memberApi, projectApi } from "../../api/project";
+import { activityApi, memberApi } from "../../api/project";
+import { projectApi } from "../../services/projects";
 import type {
   Activity,
   MemberPermissions,
