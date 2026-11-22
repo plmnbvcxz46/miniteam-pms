@@ -14,20 +14,21 @@
 | 归属层 | 数量 | 说明 |
 |---|---:|---|
 | **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已在另一工作目录的后续提交中抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
-| **`components/patterns/`（待建）** | **14 项** | 严格满足 ≥ 2 个模块复用；按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
+| **`components/patterns/`** | **15 项（1 已实现，14 待建）** | 严格满足 ≥ 2 个模块复用；`BrandMark` 于第 1 步（`auth`）已提取并复用，其余按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
 | **`features/<模块>` / `layout` 内部保留** | **15 项** | 仅单一业务模块使用的图表、矩阵、拖拽看板、富文本 `@提及`、负责人选择器、文件拖放区与外壳部件，严禁提前抽象至 `patterns/`。 |
-| **合计盘点项** | **29 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
+| **合计盘点项** | **30 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
 
 ---
 
-## 二、自定义组件全量盘点表（29 项）
+## 二、自定义组件全量盘点表（30 项）
 
 > 建立时机对应阶段 4 迁移顺序：`1. auth` → `2. layout + projects + notifications` → `3. settings` → `4. reports` → `5. members` → `6. documents` → `7. timeline` → `8. overview` → `9a. tasks(详情/表单)` → `9b. tasks-board(看板拖拽)` → `10. collab`。
 
-### A. 归属 `components/patterns/`（14 项，待建）
+### A. 归属 `components/patterns/`（15 项：1 已实现，14 待建）
 
 | # | 组件名 | 现有实现位置（文件:行） | 使用它的模块 | 交互复杂度 | 建议归属 | 底层方案 | 建立时机 |
 |---:|---|---|---|---|---|---|---|
+| 0 | **`BrandMark`** | `src/components/patterns/BrandMark/`（替换原 `LoginHeader.tsx`、`ProjectSwitch.tsx:37`、`SettingDrawer.tsx:62`） | `auth`、`layout`、`settings`（3 模块 3 处） | 低 | `components/patterns` | 纯展示 SVG + CSS Modules（`size="sm"\|"md"`、`tone="default"\|"inverse"`、`showWordmark?`） | **阶段 4 第 1 步（已实现）** |
 | 1 | **`PageHeader`** | `OverviewHeader.tsx:15`、`BoardHeader.tsx:27`、`TimelineHeader.tsx:26`、`ReportsHeader.tsx:30`、`CollabHeader.tsx:14`、`DocumentHeader.tsx:38`、`MembersHeader.tsx:24`、`SelfHeader.tsx:13`、`TaskHeader.tsx:30-88`、`NoProject.tsx:9-21`、`NoAccess.tsx:9-21` | `layout`、`overview`、`board`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（9 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Button`、`Separator(masthead)`） | 阶段 4 第 2 步（`layout`） |
 | 2 | **`Panel`** | 20+ 处 `.pnl`/`.phd`（`NoProject.tsx:23`、`TodoPanel.tsx:21`、`ProgressPanel.tsx:11`、`GanttPanel.tsx:66`、`BurndownPanel.tsx:13`、`TaskInfoPanel.tsx:20`、`TaskLogPanel.tsx:11`、`ActivityFeedPanel.tsx:30`、`SelfLoad.tsx:17`、`DocumentRevising.tsx:39`、`DocumentFinal.tsx:21`） | `layout`、`overview`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（8 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Separator` + CSS Modules 容器） | 阶段 4 第 2 步（`layout`） |
 | 3 | **`FormDrawer`** | `NewProjectDrawer.tsx:60-149`、`TaskDrawer.tsx:112-225`、`UploadDocDrawer.tsx:156-291`、`InviteMemberDrawer.tsx:121-283`、`NewDiscussionDrawer.tsx:95-207` | `projects`、`tasks`、`documents`、`members`、`collab`（5 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Drawer(md)`、`Button`、`Alert`、`Separator`） | 阶段 4 第 2 步（`projects`） |
@@ -64,7 +65,7 @@
 | 29 | **`DraggableBoard`（`TaskCard` + `useCardDrag`）** | `BoardPage.tsx:32-123`、`BoardColumn.tsx:1-79`、`TaskCard.tsx:1-82`、`useCardDrag.ts:1-139` | `tasks`（仅看板，1 模块） | 高 | `features/tasks` | C. 保留现有手写指针拖拽实现（只迁位置并改 `data-*` 选择器；内部条复用 `patterns/TaskBar(compact)`，详见第五节 Bug 清单） | 阶段 4 第 9b 步（`tasks-board`） |
 | *(附)* | **`MentionInput` & `MessageItem`** | `MentionInput.tsx:1-211`、`MessageItem.tsx:1-80` | `collab`（`ReplyForm` 与 `NewDiscussionDrawer` 同属 1 模块） | 高 | `features/collab` | C. 保留现有手写 `@` 光标触发与键盘导航逻辑（外框复用 `ui/Textarea` 与 `Popover` 浮层视觉 Token） | 阶段 4 第 10 步（`collab`） |
 
-> 注：以上 `B` 表含 15 组（计入 `MentionInput` 共 16 项，与 `A` 表 14 项合计覆盖全部非 `ui/` 自定义组件；`ProgressPanel` `.pbar` 已直接由阶段 3 `ui/Progress(solid)` 覆盖，无需额外自定义）。
+> 注：以上 `B` 表含 15 组（计入 `MentionInput` 共 16 项，与 `A` 表 15 项合计覆盖全部非 `ui/` 自定义组件；`ProgressPanel` `.pbar` 已直接由阶段 3 `ui/Progress(solid)` 覆盖，无需额外自定义）。
 
 ---
 

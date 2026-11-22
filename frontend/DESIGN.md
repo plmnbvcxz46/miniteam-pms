@@ -445,7 +445,7 @@
   - 所有业务数据（含 `today`、权限布尔值、选项列表）和异步回调一律由上层 `features/*` 通过 props 传入。
   - 各 `features/<域>` 之间禁止互引；跨领域复用界面结构一律上收至 `patterns/`。
 
-## 4.2 `components/patterns/` 组件登记表（共 14 项，全部待建）
+## 4.2 `components/patterns/` 组件登记表（共 15 项：1 项已实现，14 项待建）
 
 > 依据阶段 3.5 自定义组件盘点与用户拍板决策（详见 [`custom-components.md`](./custom-components.md)）：
 > - **仅被 ≥ 2 个模块复用的组合才进入 `components/patterns/`**；原草案中仅单模块使用的 `AppShell`（`layout`）、`AssigneePicker`（`tasks`）、`MentionInput`（`collab`）、`FileDropzone`（`documents`）已移出 `patterns/`，保留在对应模块内部。
@@ -454,6 +454,7 @@
 
 | 范式组件 | 状态与建立时机 | 组合/底层方案 | 职责与核心 Props 契约 | 替换旧实现 |
 |---|---|---|---|---|
+| **`BrandMark`** | **已实现** · 阶段 4 第 1 步（`src/components/patterns/BrandMark/`） | 纯展示 SVG + CSS Modules | 品牌双色几何方块 + 可选 `MINITEAM PMS` 字标：`size="sm"(22px) \| "md"(28px)`、`tone="default" \| "inverse"`、`showWordmark?` | `LoginHeader`、`ProjectSwitch`、`SettingDrawer` 3 处重复双色 Logo SVG |
 | **`PageHeader`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Button`、`ui/Separator(masthead)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`default` 用 `--font-size-display`（60px），窄屏（`≤900px`）及详情页 `compact` 切 `--font-size-display-sm`（44px） | 11 处 `.vh`（8 页标准 Header + `TaskHeader` + `NoProject` + `NoAccess`；`LoginPage` 保持独立轻页头，同样使用 `ui/Separator(masthead)`） |
 | **`Panel`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Separator` + CSS Modules | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
 | **`FormDrawer`** | **待建** · 阶段 4 第 2 步（`projects`） | `ui/Drawer(md)`、`ui/Button`、`ui/Separator(double)`、`ui/Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |

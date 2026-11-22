@@ -80,11 +80,12 @@ src/
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（双层对比）/`segmented`（按周格子），完整 ARIA |
 | 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（抽屉双线 2px+1.5px）/`masthead`（页头刊头双横线 5px+1.5px）/`dashed`（墨色虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，共 14 项待建，阶段 4 迁移到首个用到它的模块时按需建立）
+### 业务范式组件（`src/components/patterns/`，共 15 项：1 项已实现，14 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
 > 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
 
 | 范式组件 | 状态与建立时机 | 职责摘要 |
 |---|---|---|
+| `BrandMark` | **已实现** · 阶段 4 第 1 步（`src/components/patterns/BrandMark/`） | 双色品牌几何标识 + 可选 `MINITEAM PMS` 字标（`size="sm"\|"md"`、`tone="default"\|"inverse"`，供 `LoginHeader`、`ProjectSwitch`、`SettingDrawer` 复用） |
 | `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **待建** · 阶段 4 第 2 步（`layout` / `projects`） | 双线页头（`60px`/`44px` 切 Token）、三变体面板、表单抽屉壳、空态/页态、`.issues` 浮层壳 |
 | `SearchDropdown` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 公共下拉搜索组合（`Popover` + `Input` + `Spinner`，跨 4 模块 5 处）与破坏性操作二次确认 |
 | `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |

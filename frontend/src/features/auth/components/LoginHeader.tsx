@@ -1,3 +1,4 @@
+import { BrandMark } from "../../../components/patterns/BrandMark";
 import { Separator } from "../../../components/ui/Separator";
 import styles from "./LoginHeader.module.css";
 
@@ -8,13 +9,7 @@ export interface LoginHeaderProps {
 export function LoginHeader({ isRegister }: LoginHeaderProps) {
   return (
     <header className={styles.header}>
-      <div className={styles.brand}>
-        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true">
-          <rect x="0" y="0" width="15" height="34" className={styles.logoInk} />
-          <rect x="19" y="0" width="15" height="18" className={styles.logoAccent} />
-        </svg>
-        MINITEAM PMS
-      </div>
+      <BrandMark showWordmark />
 
       <div className={styles.heading}>
         <div className={styles.kicker}>{isRegister ? "SIGN UP" : "SIGN IN"}</div>
