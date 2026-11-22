@@ -73,22 +73,6 @@
   color: var(--color-text-muted);
 }
 
-.envBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1) var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
-  background-color: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-  border-width: var(--border-width-thin);
-  border-style: solid;
-  border-color: var(--color-border-strong);
-  border-radius: var(--radius-none);
-}
-
 /* ---------- 面板 ---------- */
 .panel {
   background-color: var(--color-surface);

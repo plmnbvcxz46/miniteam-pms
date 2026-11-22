@@ -51,32 +51,32 @@ src/
 
 ---
 
-## 组件清单登记表（当前：阶段 3 分批封装中）
+## 组件清单登记表（当前：阶段 3 基础组件全部 19 项已实现）
 
 > 阶段 3 实现与阶段 4 迁移时，每落地或变更一个组件须同步更新本表与 `DESIGN.md`；禁止不经登记私自造重复控件。明确**不封装** `Tooltip`（沿用原生 `title`）、`DatePicker`（复用 `Input[type="date"]`）、`Avatar`（保留在 `AccountMenu` 局部）与骨架屏。
 
-### 基础组件（`src/components/ui/`，共 19 项，分批落地）
+### 基础组件（`src/components/ui/`，共 19 项，已全部实现）
 | 批次 | 组件 | 底层原语 | 状态 | 备注 |
 |---|---|---|---|---|
 | 前置 | `Spinner` | 原生 `<span>` | **已实现**（`src/components/ui/Spinner/`） | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion`、可选 `label` |
-| 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；统一中性灰禁用态、强对比 `accent` hover、复用 `Spinner` 无抖动 `loading`（不含 `selected`） |
-| 第 1 批（表单） | `Input` | 原生 `<input>` | **已实现**（`src/components/ui/Input/`） | `underline`/`boxed`、`sm`/`md`、`mono`、`invalid`、`readOnly`、`disabled`、完整对齐 `type="date"` 外观 |
-| 第 1 批（表单） | `Textarea` | 原生 `<textarea>` | **已实现**（`src/components/ui/Textarea/`） | `underline`/`boxed`、`invalid`、`readOnly`、`disabled` 全态 |
+| 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；统一中性灰禁用态（`dashed` 保留清晰虚线）、强对比 `accent` hover、复用 `Spinner` 无抖动 `loading`（不含 `selected`） |
+| 第 1 批（表单） | `Input` | 原生 `<input>` | **已实现**（`src/components/ui/Input/`） | `underline`（透明点线禁用态）/`boxed`（浅灰底禁用态）、`sm`/`md`、`mono`、`invalid`、`readOnly`、`disabled`、完整对齐 `type="date"` 外观 |
+| 第 1 批（表单） | `Textarea` | 原生 `<textarea>` | **已实现**（`src/components/ui/Textarea/`） | `underline`（透明点线禁用态）/`boxed`（浅灰底禁用态）、`invalid`、`readOnly`、`disabled` 全态 |
 | 第 1 批（表单） | `Checkbox` | `radix-ui` `Checkbox` | **已实现**（`src/components/ui/Checkbox/`） | 16×16 0 圆角方框、`checked`/`invalid`/关联 `label` 同步禁用弱化 |
-| 第 1 批（表单） | `Switch` | `radix-ui` `Switch` | **已实现**（`src/components/ui/Switch/`） | `track`（有/无）& `segmented`（启用/停用）双变体、复用 `Spinner` `loading` 与统一禁用态 |
-| 第 1 批（表单） | `Select` | `radix-ui` `Select` | **已实现**（`src/components/ui/Select/`） | `underline` 触发器（34px）、展开箭头翻转、硬阴影暖纸面板、含 `invalid`/`disabled` |
+| 第 1 批（表单） | `Switch` | `radix-ui` `Switch` | **已实现**（`src/components/ui/Switch/`） | `track`（28×12 固定轨道 + 8×8 方形滑块 + 有/无）& `segmented`（启用/停用）双变体、复用 `Spinner` 锁定同宽零抖动 `loading` 与统一禁用态 |
+| 第 1 批（表单） | `Select` | `radix-ui` `Select` | **已实现**（`src/components/ui/Select/`） | `underline` 触发器（34px，透明点线禁用态）、展开箭头翻转、硬阴影暖纸面板、含 `invalid`/`disabled` |
 | 第 1 批（表单） | `ToggleGroup` | `radix-ui` `ToggleGroup` | **已实现**（`src/components/ui/ToggleGroup/`） | `segmented`/`chips`、`single`/`multiple`、统一中性灰禁用态，承接全站切换态 |
-| 第 1 批（表单） | `Field` | 原生语义容器 | **已实现**（`src/components/ui/Field/`） | `horizontal`/`vertical`、`useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
+| 第 1 批（表单） | `Field` | 原生语义容器 | **已实现**（`src/components/ui/Field/`） | `horizontal`（内容列左起点严格对齐）/`vertical`、墨色必填星号 `*`、`useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
 | 第 2 批（浮层） | `Popover` | `radix-ui` `Popover` | **已实现**（`src/components/ui/Popover/`） | Portal 碰撞避让、硬阴影暖纸浮层、触发器 `open` 显式高亮；不含 `Tooltip` |
 | 第 2 批（浮层） | `DropdownMenu` | `radix-ui` `DropdownMenu` | **已实现**（`src/components/ui/DropdownMenu/`） | 常规/危险菜单项、分割线、分组标签、键盘漫游与 `disabled` |
-| 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px)/`lg`(880px)、点阵遮罩、双横线刊头、复用 `Button(default, size="icon")` 关闭钮、焦点陷阱与 Esc |
-| 第 2 批（浮层） | `AlertDialog` | `radix-ui` `AlertDialog` | **已实现**（`src/components/ui/AlertDialog/`） | 点阵遮罩、硬阴影、默认焦点落“取消”、确认钮复用 `Button(danger)` 支持 `loading` |
-| 第 2 批（浮层） | `Toast` | `radix-ui` `Toast` | **已实现**（`src/components/ui/Toast/`） | `neutral`/`danger` 语气、`ToastProvider`/`ToastViewport`/`Toast`、多条队列叠放、手动关闭、替代 `window.alert` |
+| 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px，44px 标题)/`lg`(880px，60px 标题)、8px 降对比点阵遮罩、双横线刊头、复用 `Button(default, size="icon")` 关闭钮、焦点陷阱与 Esc |
+| 第 2 批（浮层） | `AlertDialog` | `radix-ui` `AlertDialog` | **已实现**（`src/components/ui/AlertDialog/`） | 8px 降对比点阵遮罩、硬阴影、默认焦点落“取消”、确认钮复用 `Button(danger)` 支持 `loading` |
+| 第 2 批（浮层） | `Toast` | `radix-ui` `Toast` | **已实现**（`src/components/ui/Toast/`） | `neutral`/`danger` 语气、`ToastProvider`/`ToastViewport`/`Toast`、多条队列右下角最新在上叠放与独立计时、手动关闭、替代 `window.alert` |
 | 第 3 批（展示） | `Badge` | 原生 `<span>` | **已实现**（`src/components/ui/Badge/`） | `solid`（墨底常态）/`outline`/`muted`/`accent`（橙色仅用于需注意状态），`sm`/`md` |
 | 第 3 批（展示） | `Alert` | 原生 `<div>` | **已实现**（`src/components/ui/Alert/`） | `inline`/`banner` × `info`（中性色）/`warning`（橙）/`danger`（橙），支持 `title` 与 `action` |
 | 第 3 批（展示） | `Tabs` | `radix-ui` `Tabs` | **已实现**（`src/components/ui/Tabs/`） | 平铺报刊风方角标签栏，`active` 墨底反白、方向键漫游与 `disabled` |
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（双层对比）/`segmented`（按周格子），完整 ARIA |
-| 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | 第 3 批封装中 | 展示与布局原语 |
+| 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（报刊上粗下细双线）/`dashed`（虚线），支持 `horizontal`/`vertical` |
 
 ### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
 | 范式组件 | 状态 | 职责摘要 |

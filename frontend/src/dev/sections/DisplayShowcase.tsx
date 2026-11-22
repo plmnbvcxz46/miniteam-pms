@@ -20,6 +20,12 @@ import {
   type ProgressVariant,
 } from "../../components/ui/Progress";
 import {
+  Separator,
+  type SeparatorOrientation,
+  type SeparatorProps,
+  type SeparatorVariant,
+} from "../../components/ui/Separator";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -58,6 +64,18 @@ function DemoTabsContent(props: TabsContentProps) {
 function DemoProgress(props: ProgressProps) {
   return <Progress {...props} />;
 }
+
+function DemoSeparator(props: SeparatorProps) {
+  return <Separator {...props} />;
+}
+
+const SEPARATOR_VARIANTS: { variant: SeparatorVariant; label: string }[] = [
+  { variant: "single", label: "single（1.5px 墨色单实线）" },
+  { variant: "double", label: "double（报刊刊头上粗下细双横线）" },
+  { variant: "dashed", label: "dashed（1px 弱化虚线分割）" },
+];
+
+const VERTICAL_ORIENTATION: SeparatorOrientation = "vertical";
 
 const PROGRESS_VARIANT_NOTE: Record<ProgressVariant, string> = {
   solid: "solid（单轨进度条 + 阈值上限线 / 斜纹预警）",
@@ -316,6 +334,50 @@ export function DisplayShowcase() {
               aria-label="本周进度第 4 天"
             />
           </div>
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// SEPARATOR · RADIX UI</span>
+            <h2 className={styles.panelTitle}>
+              Separator 报刊分割线（single / double / dashed）
+            </h2>
+          </div>
+          <p className={styles.panelNote}>
+            支持 horizontal（水平）与 vertical（垂直）双方向及 decorative 无障碍语义
+          </p>
+        </div>
+
+        <div className={styles.fieldStack}>
+          {SEPARATOR_VARIANTS.map((item) => (
+            <div key={item.variant} className={styles.formCell}>
+              <span className={styles.code}>{item.label} · horizontal</span>
+              <DemoSeparator variant={item.variant} orientation="horizontal" />
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.row}>
+          <span className={styles.code}>vertical 垂直分割：</span>
+          <span className={styles.desc}>第 32 期</span>
+          <DemoSeparator
+            variant="single"
+            orientation={VERTICAL_ORIENTATION}
+            decorative={false}
+          />
+          <span className={styles.desc}>2026-11-22</span>
+          <DemoSeparator
+            variant="double"
+            orientation={VERTICAL_ORIENTATION}
+          />
+          <span className={styles.desc}>剩余 6 天</span>
+          <DemoSeparator
+            variant="dashed"
+            orientation={VERTICAL_ORIENTATION}
+          />
+          <span className={styles.desc}>完成率 58%</span>
         </div>
       </section>
     </>

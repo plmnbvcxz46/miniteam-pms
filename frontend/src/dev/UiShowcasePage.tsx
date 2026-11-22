@@ -86,7 +86,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）", ready: true },
   { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏", ready: true },
   { name: "Progress", primitive: "radix-ui Progress", note: "solid / dual / segmented", ready: true },
-  { name: "Separator", primitive: "radix-ui Separator", note: "single / double / dashed" },
+  { name: "Separator", primitive: "radix-ui Separator", note: "single / double / dashed", ready: true },
 ];
 
 function PlusIcon() {
@@ -131,16 +131,16 @@ export default function UiShowcasePage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerMeta}>
-            <span className={styles.kicker}>// STYLE GUIDE · PHASE 3 PILOT</span>
+            <span className={styles.kicker}>// STYLE GUIDE · PHASE 3 COMPLETE</span>
             <h1 className={styles.title}>
               组件样式<em className={styles.titleAccent}>手册</em>
             </h1>
             <p className={styles.subtitle}>
-              仅开发环境可见（import.meta.env.DEV），用于验收 Design Tokens 与
-              components/ui 基础组件视觉与交互态。
+              仅开发环境可见（import.meta.env.DEV），阶段 3 全部 19 项 components/ui
+              基础组件已就绪。
             </p>
           </div>
-          <span className={styles.envBadge}>DEV ONLY · /dev/ui</span>
+          <Badge variant="solid">DEV ONLY · /dev/ui · 19/19 已就绪</Badge>
         </header>
 
         {/* 0. Spinner 加载指示环 */}
@@ -357,7 +357,7 @@ export default function UiShowcasePage() {
               </h2>
             </div>
             <p className={styles.panelNote}>
-              已就绪组件使用墨色 Badge(solid)，规划中组件使用弱化 Badge(muted)
+              阶段 3 全部 19 项基础组件均已实现，统一标为墨色 Badge(solid)“已就绪”
             </p>
           </div>
 
