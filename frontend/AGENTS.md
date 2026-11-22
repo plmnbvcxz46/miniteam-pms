@@ -71,7 +71,7 @@ src/
 | 第 2 批（浮层） | `DropdownMenu` | `radix-ui` `DropdownMenu` | **已实现**（`src/components/ui/DropdownMenu/`） | 常规/危险菜单项、分割线、分组标签、键盘漫游与 `disabled` |
 | 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px)/`lg`(880px)、点阵遮罩、双横线刊头、复用 `Button(default, size="icon")` 关闭钮、焦点陷阱与 Esc |
 | 第 2 批（浮层） | `AlertDialog` | `radix-ui` `AlertDialog` | **已实现**（`src/components/ui/AlertDialog/`） | 点阵遮罩、硬阴影、默认焦点落“取消”、确认钮复用 `Button(danger)` 支持 `loading` |
-| 第 2 批（浮层） | `Toast` | `radix-ui` `Toast` | 待实现 | `neutral`/`danger` 语气、手动关闭、替代 `window.alert` |
+| 第 2 批（浮层） | `Toast` | `radix-ui` `Toast` | **已实现**（`src/components/ui/Toast/`） | `neutral`/`danger` 语气、`ToastProvider`/`ToastViewport`/`Toast`、手动关闭、替代 `window.alert` |
 | 第 3 批（展示） | `Badge` / `Alert` / `Tabs` / `Progress` / `Separator` | 原生 + `radix-ui` | 待第 3 批实现 | 留待第 1、2 批验收后封装 |
 
 ### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）

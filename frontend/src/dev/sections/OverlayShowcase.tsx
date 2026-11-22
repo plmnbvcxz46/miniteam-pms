@@ -36,6 +36,14 @@ import {
   AlertDialogTrigger,
   type AlertDialogContentProps,
 } from "../../components/ui/AlertDialog";
+import {
+  Toast,
+  ToastProvider,
+  ToastViewport,
+  type ToastProps,
+  type ToastTone,
+  type ToastViewportProps,
+} from "../../components/ui/Toast";
 import { Field } from "../../components/ui/Field";
 import { Input } from "../../components/ui/Input";
 import styles from "../UiShowcasePage.module.css";
@@ -72,6 +80,14 @@ function DemoAlertDialogContent(props: AlertDialogContentProps) {
   return <AlertDialogContent {...props} />;
 }
 
+function DemoToast(props: ToastProps) {
+  return <Toast {...props} />;
+}
+
+function DemoToastViewport(props: ToastViewportProps) {
+  return <ToastViewport {...props} />;
+}
+
 const DANGER_TONE: DropdownMenuItemTone = "danger";
 const DRAWER_SIZES: { size: DrawerSize; label: string }[] = [
   { size: "md", label: "打开 md 表单抽屉（640px）" },
@@ -82,6 +98,14 @@ export function OverlayShowcase() {
   const [menuAction, setMenuAction] = useState("尚未触发");
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertLoading, setAlertLoading] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastTone, setToastTone] = useState<ToastTone>("neutral");
+
+  const triggerToast = (tone: ToastTone) => {
+    setToastOpen(false);
+    setToastTone(tone);
+    window.setTimeout(() => setToastOpen(true), 20);
+  };
 
   const handleConfirmArchive = () => {
     setAlertLoading(true);
@@ -204,9 +228,35 @@ export function OverlayShowcase() {
             onConfirm={handleConfirmArchive}
           />
         </AlertDialog>
+
+        <Button variant="primary" onClick={() => triggerToast("neutral")}>
+          触发 Toast（neutral）
+        </Button>
+        <Button variant="danger" onClick={() => triggerToast("danger")}>
+          触发 Toast（danger）
+        </Button>
       </div>
 
-      <p className={styles.panelNote}>最近菜单动作：{menuAction}</p>
+      <p className={styles.panelNote}>最近浮层动作：{menuAction}</p>
+
+      <ToastProvider swipeDirection="right">
+        <DemoToast
+          open={toastOpen}
+          onOpenChange={setToastOpen}
+          tone={toastTone}
+          title={
+            toastTone === "danger"
+              ? "文档未定稿，无法标记完成"
+              : "项目参数已保存"
+          }
+          description={
+            toastTone === "danger"
+              ? "请先在“项目文档”中完成关联文档定稿后再流转任务状态。"
+              : "新权重将在下次看板刷新时生效，可手动点 × 立即关闭。"
+          }
+        />
+        <DemoToastViewport />
+      </ToastProvider>
     </section>
   );
 }

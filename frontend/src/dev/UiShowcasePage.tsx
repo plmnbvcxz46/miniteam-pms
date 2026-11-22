@@ -79,7 +79,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单", ready: true },
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉", ready: true },
   { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认", ready: true },
-  { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示" },
+  { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示", ready: true },
   { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted" },
   { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
   { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
@@ -346,13 +346,13 @@ export default function UiShowcasePage() {
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div className={styles.panelHeading}>
-              <span className={styles.kicker}>// ROADMAP · 17 COMPONENTS</span>
+              <span className={styles.kicker}>// ROADMAP · 19 COMPONENTS</span>
               <h2 className={styles.panelTitle}>
-                后续阶段 3 待封装 UI 组件索引（规划中）
+                阶段 3 UI 基础组件清单与落位进度
               </h2>
             </div>
             <p className={styles.panelNote}>
-              验收 Button 风格后再安装 radix-ui 单包批量落地其余 16 项
+              前置 2 项 + 第 1 批 7 表单 + 第 2 批 5 浮层已就绪，第 3 批 5 展示类待验收后封装
             </p>
           </div>
 
