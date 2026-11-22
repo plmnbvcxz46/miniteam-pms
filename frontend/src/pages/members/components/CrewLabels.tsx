@@ -8,7 +8,7 @@ interface CrewLabelsProps {
   onSearchChange: (keyword: string) => void;
   /** 权限行定义配置列表 */
   permDefs: PermDef[];
-  /** 每周工时上限的显示文字，如“上限 40” */
+  /** 每周工时上限的显示文字，如“40” */
   capacityText: string;
 }
 
@@ -36,7 +36,9 @@ export default function CrewLabels({
       {/* 行 2：本周工时 */}
       <div className="c-lb">
         <b>本周工时</b>
-        <small>单位：小时{capacityText && `（${capacityText}）`}</small>
+        <small>
+          单位：小时{capacityText && ` · ${capacityText}/周`}
+        </small>
       </div>
 
       {/* 行 3：负责任务 */}

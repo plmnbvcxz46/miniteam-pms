@@ -115,7 +115,8 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  max-height: 200px;
+  /* 占满标题到底部按钮之间的剩余高度，版本多时只在这里纵向滚动，永远没有横向滚动 */
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -124,9 +125,11 @@
 
 .hv {
   display: grid;
-  grid-template-columns: 44px 1fr;
+  /* 右列要 minmax(0, 1fr)：纯 1fr 的下限是内容最小宽度，不换行的长文件名会把整行撑出面板 */
+  grid-template-columns: 44px minmax(0, 1fr);
   gap: 3px 10px;
   padding: 10px 16px;
+  flex-shrink: 0;
   border-bottom: 1px dashed var(--ink);
   font-size: var(--fs-md);
 }
@@ -142,6 +145,14 @@
 .hv .hv-note {
   font-weight: var(--fw-bold);
   line-height: var(--lh-normal);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  /* 最多两行，超出省略 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .hv .hv-file {
@@ -161,21 +172,22 @@
   align-items: center;
   gap: 4px;
   min-width: 0;
+}
+
+/* 文件名可收缩并省略；大小和下载按钮不收缩 */
+.hv .hv-file-name {
+  color: var(--text);
+  font-weight: var(--fw-regular);
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.hv .hv-file-name {
-  color: var(--text);
-  font-weight: var(--fw-regular);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .hv .hv-file-size {
   color: var(--text-mute);
   flex-shrink: 0;
+  white-space: nowrap;
   font-size: var(--fs-2xs);
 }
 

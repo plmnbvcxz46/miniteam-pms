@@ -167,6 +167,3 @@ body.dragging * {
 .col.done .card .meta {
   color: var(--text-mute);
 }
-.col.done .card .meta span:last-child::before {
-  content: "✓ ";
-}

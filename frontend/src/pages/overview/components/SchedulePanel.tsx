@@ -56,21 +56,23 @@ export default function SchedulePanel({
           </div>
         </div>
         <div className="rows">
-          {todayIndex >= 0 && (
-            <div
-              className="today"
-              aria-hidden="true"
-              style={{ "--at": todayIndex + dayProgress } as CSSProperties}
-            />
-          )}
-          {rows.map((row) => (
-            <ScheduleRow
-              key={row.user.id}
-              row={row}
-              now={todayIndex + dayProgress}
-              onOpen={onOpenTask}
-            />
-          ))}
+          <div className="rows-in">
+            {todayIndex >= 0 && (
+              <div
+                className="today"
+                aria-hidden="true"
+                style={{ "--at": todayIndex + dayProgress } as CSSProperties}
+              />
+            )}
+            {rows.map((row) => (
+              <ScheduleRow
+                key={row.user.id}
+                row={row}
+                now={todayIndex + dayProgress}
+                onOpen={onOpenTask}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

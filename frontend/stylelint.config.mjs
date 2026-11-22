@@ -9,6 +9,7 @@ export default {
     "src/styles/legacy.css",
     "src/styles/typography/roles.css",
     "src/shared/components/TaskBar.css",
+    "src/shared/components/SearchDropdown.css",
     "src/pages/login/css/**/*.css",
     "src/pages/reports/css/**/*.css",
     "src/pages/members/css/**/*.css",

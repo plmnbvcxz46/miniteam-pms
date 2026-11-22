@@ -38,8 +38,13 @@ export default function DocumentDetailHero({
           ) : (
             <>
               {status}
-              <br />
-              截止 {doc.due}
+              {/* 没有截止日就不显示“截止”这一行 */}
+              {doc.due && (
+                <>
+                  <br />
+                  截止 {doc.due}
+                </>
+              )}
             </>
           )}
         </span>

@@ -135,6 +135,11 @@
   padding-right: 8px;
   background: var(--paper);
 }
+.gt-name b,
+.gt-name small {
+  align-self: flex-start;
+  max-width: 100%;
+}
 .gt-name b {
   font-weight: var(--fw-medium);
   font-size: var(--fs-md);
@@ -169,6 +174,21 @@
   --tb-trk: 40px;
   padding: 0;
 }
+/* 空心的条框垫上面板底色，下层的依赖线被条盖住；框降到填充下面，填充、斜纹、完成标记仍在上，
+   斜纹段的上下边补回原来框线的位置 */
+.gt-lane .tb-frame {
+  z-index: 1;
+  background: var(--paper);
+}
+.gt-lane .tb-fill {
+  z-index: 2;
+}
+.gt-lane .tb-warn,
+.gt-lane .tb-past {
+  box-shadow:
+    inset 0 var(--tb-border) 0 var(--ink),
+    inset 0 calc(var(--tb-border) * -1) 0 var(--ink);
+}
 .gt-lane .tb-compact .tb-now {
   display: none;
 }
@@ -190,17 +210,30 @@
 .gt-line.pred {
   border-left: 3px solid var(--signal);
 }
+/* 日期标签：在表头下面的一条里，竖向滚动时跟表头一起固定 */
+.gt-flags {
+  position: sticky;
+  top: 45px;
+  z-index: 6;
+  height: 22px;
+  background: var(--paper);
+}
+/* 按月时放在表头里原本空着的日号行，不多占高度 */
+.gt-flags.in-head {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: none;
+}
 .gt-flag {
   position: absolute;
-  bottom: -20px;
+  top: 4px;
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   white-space: nowrap;
-  transform: translateX(-50%);
-}
-.gt-flag.left {
-  transform: translateX(calc(-100% - 6px));
 }
 .gt-flag.late {
   color: var(--text-alert);
@@ -213,19 +246,57 @@
   top: 0;
   pointer-events: none;
   overflow: visible;
-  z-index: 2;
+  z-index: 0;
 }
 .gt-deps path {
   fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.gt-deps .head {
+  fill: var(--hair);
+  stroke: none;
+}
+/* 关键路径 */
+.gt-deps g.crit path {
   stroke: var(--ink);
   stroke-width: 1.5;
 }
-.gt-deps path.free {
-  stroke-dasharray: 4 4;
-}
-.gt-deps .head {
+.gt-deps g.crit .head {
   fill: var(--ink);
-  stroke: none;
+}
+/* 前置和后继都已完成的线再淡一档 */
+.gt-deps g.done {
+  opacity: 0.55;
+}
+/* 悬停时其余的线（包括关键路径）统一变浅 */
+.gt-deps g.dim path {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.gt-deps g.dim .head {
+  fill: var(--hair);
+}
+/* 命中线：透明的宽线接收鼠标，可见的线和高亮层都不接收 */
+.gt-deps.hit path {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 8;
+  pointer-events: stroke;
+}
+.gt-deps.top {
+  pointer-events: none;
+}
+/* 悬停任务直接相连的线：深色，画在任务条上面 */
+.gt-deps.top {
+  z-index: 5;
+}
+.gt-deps g.hot path {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.gt-deps g.hot .head {
+  fill: var(--ink);
 }
 
 /* ---------- 关键路径计算 ---------- */

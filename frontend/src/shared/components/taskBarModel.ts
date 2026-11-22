@@ -146,9 +146,8 @@ export function buildTaskBar(
   } else {
     frames.push({ from: start, to: due, dashed: false, tail: false });
     if (task.status === "DOING" || task.status === "BLOCKED") {
-      // 从实际开始日涂黑，晚开工的前面留空；提前开工的不画到计划框外面
-      const begun = Math.max(start, toDay(task.actualStart ?? task.planStart));
-      const elapsed = { from: begun, to: Math.min(now, due) };
+      // 从计划开始日涂黑；到了计划开始日由后端自动开始，不单独画晚开工的空段
+      const elapsed = { from: start, to: Math.min(now, due) };
       if (elapsed.to > elapsed.from) {
         fills.push({ ...elapsed, kind: "ink" });
         addBlocked(elapsed, "warn");

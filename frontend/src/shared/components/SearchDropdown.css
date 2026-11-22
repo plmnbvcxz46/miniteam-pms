@@ -1,0 +1,142 @@
+/* 公共下拉搜索（SearchDropdown）：输入框 + 紧贴下方的结果面板 */
+.sd {
+  position: relative;
+}
+
+/* 关闭态：显示当前值的按钮，外观同表单抽屉里的下划线输入框 */
+.sd-tg {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 12px;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--fs-lg);
+  line-height: 30px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.sd-tg:hover {
+  background: var(--wash);
+}
+.sd-tg:focus-visible {
+  outline: none;
+  border-bottom-color: var(--signal);
+}
+.sd-tg-val {
+  display: contents;
+}
+
+/* 面板 */
+.sd-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, var(--sd-min, 0px));
+  z-index: 30;
+  white-space: normal;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-sizing: border-box;
+}
+.sd-pop.right {
+  left: auto;
+  right: 0;
+}
+.sd-pop h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wider);
+  background: var(--ink);
+  color: var(--text-inverse);
+}
+.sd-pop h4::before {
+  content: "//";
+  margin-right: -4px;
+}
+.sd-pop h4 em {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--text-inverse-mute);
+}
+.sd-list {
+  max-height: 252px;
+  flex: none;
+  /* 只在浮层里放开标准滚动条属性，Chrome 才会用 6px 黑色细条 */
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+.sd-empty {
+  margin: 0;
+  padding: 16px;
+  font-size: var(--fs-md);
+  color: var(--text-mute);
+}
+
+/* 行：外壳。行内布局由使用处的类决定，单行两栏用 .sd-row */
+.sd-opt {
+  border-bottom: 1px solid var(--hair);
+  font-size: var(--fs-md);
+  cursor: pointer;
+}
+.sd-list > .sd-opt:last-child {
+  border-bottom: 0;
+}
+.sd-opt.on {
+  background: var(--wash);
+}
+.sd-opt[aria-selected="true"] {
+  outline: 1.5px solid var(--signal);
+  outline-offset: -1.5px;
+}
+.sd-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+  padding: 0 14px;
+}
+.sd-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sd-row .sd-nm {
+  font-weight: var(--fw-bold);
+}
+.sd-row .sd-sub {
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  color: var(--text-mute);
+}
+.sd-row .sd-end {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-mute);
+}
+.sd-foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .sd-list {
+    max-height: min(252px, 45vh);
+  }
+}

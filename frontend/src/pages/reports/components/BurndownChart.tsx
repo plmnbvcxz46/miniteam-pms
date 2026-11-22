@@ -1,6 +1,6 @@
 import { useId } from "react";
 import type { Burndown } from "../../../shared/types/reports";
-import { addDays, toDay } from "../../../shared/utils/date";
+import { addDays, formatDayLabel, toDay } from "../../../shared/utils/date";
 import { toMonthDay } from "../utils";
 
 interface BurndownChartProps {
@@ -47,7 +47,7 @@ export default function BurndownChart({ burndown }: BurndownChartProps) {
   const step = span <= 10 ? 1 : 7;
   const xLabels = Array.from({ length: Math.floor(span / step) + 1 }, (_, i) => ({
     d: i * step,
-    text: toMonthDay(addDays(start, i * step), false),
+    text: formatDayLabel(addDays(start, i * step)),
   }));
 
   // 三条线的点：计划线画全程，实际线只有今天之前，预测线只有今天之后
@@ -87,8 +87,34 @@ export default function BurndownChart({ burndown }: BurndownChartProps) {
   const plannedEndLabel = toMonthDay(burndown.plannedEnd);
   const predictedEndLabel = toMonthDay(burndown.predictedEnd, false);
 
-  // “计划”“实际”文字标在全周期图靠前四分之一处，计划标在线下，实际标在线上
-  const labelPoint = points[Math.floor(points.length / 4)];
+  // 完工日期文字排版：等宽字体按字符数估算宽度（中文占一个字宽，其余约 0.6 个字宽），
+  // 默认计划靠左、预测靠右跟着各自的标记；靠近图边界时翻到另一侧，两段会重叠就合成一行
+  const FONT = 11;
+  const textWidth = (s: string) =>
+    [...s].reduce((w, ch) => w + (ch.charCodeAt(0) > 255 ? FONT : FONT * 0.6), 0);
+  const plannedText = `计划 ${plannedEndLabel}`;
+  const predictedText = `预测 ${predictedEndLabel}`;
+  const plannedW = textWidth(plannedText);
+  const predictedW = textWidth(predictedText);
+  const plannedX = X(plannedDay);
+  const predictedX = X(predictedDay);
+  // 每段文字占的区间 [左, 右]，anchorEnd 为 true 表示右对齐到 x
+  const plannedSpan = (() => {
+    const left = plannedX - 4 - plannedW;
+    return left >= 0
+      ? { x: plannedX - 4, end: true, l: left, r: plannedX - 4 }
+      : { x: plannedX + 6, end: false, l: plannedX + 6, r: plannedX + 6 + plannedW };
+  })();
+  const predictedSpan = (() => {
+    const right = predictedX + 6 + predictedW;
+    return right <= 815
+      ? { x: predictedX + 6, end: false, l: predictedX + 6, r: right }
+      : { x: predictedX - 4, end: true, l: predictedX - 4 - predictedW, r: predictedX - 4 };
+  })();
+  const endsGap = FONT;
+  const endsOverlap =
+    plannedSpan.l < predictedSpan.r + endsGap && predictedSpan.l < plannedSpan.r + endsGap;
+  const mergedEndX = Math.min(815, Math.max(plannedX, predictedX) + 4);
 
   return (
     <svg
@@ -172,9 +198,9 @@ export default function BurndownChart({ burndown }: BurndownChartProps) {
       {todayVal !== null && (
         <text
           className="t"
-          x={X(todayD)}
+          x={X(todayD) - 6}
           y={Y(todayVal) - 12 < Y(yMax) + 14 ? Y(todayVal) + 20 : Y(todayVal) - 12}
-          textAnchor="middle"
+          textAnchor="end"
         >
           {todayVal}
         </text>
@@ -198,37 +224,38 @@ export default function BurndownChart({ burndown }: BurndownChartProps) {
             y2={Y(0) + 28}
             style={{ strokeDasharray: "3 3" }}
           />
-          <text className="t" x={X(plannedDay) - 4} y={Y(0) + 40} textAnchor="end">
-            计划 {plannedEndLabel}
-          </text>
-
           <line
             className="pred"
             style={{ strokeDasharray: "none", strokeWidth: 3 }}
-            x1={X(predictedDay)}
-            x2={X(predictedDay)}
+            x1={predictedX}
+            x2={predictedX}
             y1={Y(0) - 10}
             y2={Y(0) + 28}
           />
-          <text className="t sig" x={X(predictedDay) + 6} y={Y(0) + 40}>
-            预测 {predictedEndLabel}
-          </text>
-
-          {labelPoint && labelPoint.actual !== null && (
+          {endsOverlap ? (
+            <text className="t" x={mergedEndX} y={Y(0) + 40} textAnchor="end">
+              {plannedText}
+              <tspan className="sig" dx={endsGap}>
+                {predictedText}
+              </tspan>
+            </text>
+          ) : (
             <>
               <text
-                className="t m"
-                x={X(dayOf(labelPoint.date))}
-                y={Y(labelPoint.planned) + 16}
+                className="t"
+                x={plannedSpan.x}
+                y={Y(0) + 40}
+                textAnchor={plannedSpan.end ? "end" : "start"}
               >
-                计划
+                {plannedText}
               </text>
               <text
-                className="t"
-                x={X(dayOf(labelPoint.date))}
-                y={Y(labelPoint.actual) - 8}
+                className="t sig"
+                x={predictedSpan.x}
+                y={Y(0) + 40}
+                textAnchor={predictedSpan.end ? "end" : "start"}
               >
-                实际
+                {predictedText}
               </text>
             </>
           )}

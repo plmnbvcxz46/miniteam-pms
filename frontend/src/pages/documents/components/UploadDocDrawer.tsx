@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Drawer from "../../../shared/components/Drawer";
+import SearchDropdown from "../../../shared/components/SearchDropdown";
 import type { DocumentItem } from "../../../shared/types/documents";
 
 interface UploadDocDrawerProps {
@@ -86,6 +87,26 @@ function UploadDocForm({
     initialTask && !availableTasks.some((opt) => opt.id === initialTask.id)
       ? [...availableTasks, initialTask]
       : availableTasks;
+
+  // 关联任务下拉：输入框内容由这里管，打开和关闭时清空
+  const [taskQuery, setTaskQuery] = useState("");
+  const filterTasks = (query: string) => {
+    const keyword = query.trim().toLowerCase();
+    return keyword
+      ? taskOptions.filter((opt) => opt.name.toLowerCase().includes(keyword))
+      : taskOptions;
+  };
+  const filteredTasks = filterTasks(taskQuery);
+  const selectedTask = taskOptions.find((opt) => opt.id === taskId) ?? null;
+  // 打开时高亮当前任务，没关联任务或用 ↑ 打开则落在最后一行
+  const getTaskInitialActive = (initialQuery: string, last: boolean) => {
+    const list = filterTasks(initialQuery);
+    if (last || taskId === 0) return list.length;
+    return Math.max(
+      list.findIndex((opt) => opt.id === taskId),
+      0,
+    );
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -254,21 +275,51 @@ function UploadDocForm({
 
           {/* 关联任务（新建文档时显示） */}
           {isNewDoc && (
-            <label className="fr">
-              <span className="lb t-label">关联任务</span>
-              <select
-                className="u"
-                value={taskId}
-                onChange={(e) => setTaskId(Number(e.target.value))}
-              >
-                <option value={0}>不关联任务（项目文档）</option>
-                {taskOptions.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="fr">
+              <span className="lb t-label" id="f-task-lb">
+                关联任务
+              </span>
+              <SearchDropdown
+                items={filteredTasks}
+                getKey={(opt) => opt.id}
+                onPick={(opt) => setTaskId(opt.id)}
+                value={taskQuery}
+                onChange={setTaskQuery}
+                labelId="f-task-lb"
+                placeholder="输入任务名筛选"
+                headWord="TASKS"
+                emptyText="没有匹配的任务"
+                getInitialActive={getTaskInitialActive}
+                isSelected={(opt) => opt.id === taskId}
+                itemClassName={() => "sd-row"}
+                itemLabel={(opt) => opt.name}
+                renderItem={(opt) => <span>{opt.name}</span>}
+                footer={{
+                  content: "不关联任务（项目文档）",
+                  selected: taskId === 0,
+                  onPick: () => setTaskId(0),
+                }}
+                toggle={
+                  <>
+                    <span className={selectedTask ? "ap-val" : "ap-val none"}>
+                      {selectedTask ? selectedTask.name : "不关联任务（项目文档）"}
+                    </span>
+                    <span />
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      aria-hidden="true"
+                    >
+                      <path d="M2 4l4 4 4-4" />
+                    </svg>
+                  </>
+                }
+              />
+            </div>
           )}
 
           {/* 错误提示 */}

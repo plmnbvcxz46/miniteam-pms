@@ -77,6 +77,15 @@
   --mute: #cfcfca;
   --wash: #0a0a0a;
   --over: repeating-linear-gradient(135deg, #ff5a1f 0 3px, #0a0a0a 3px 6px);
+  /* 文字色在 :root 上已解析成黑色，反色后要在这一行重新声明才会跟着变 */
+  --text: var(--ink);
+  --text-mute: var(--mute);
+  --text-inverse: var(--paper);
+}
+
+/* 橙底的逾期标签保持黑字 */
+.dr[aria-selected="true"] .ds.late {
+  color: var(--paper);
 }
 
 .dn {
