@@ -21,7 +21,7 @@ function DemoTextarea(props: TextareaProps) {
 }
 
 const INPUT_VARIANTS: { variant: InputVariant; label: string }[] = [
-  { variant: "underline", label: "underline（表单下划线）" },
+  { variant: "underline", label: "underline（墨色表单下划线）" },
   { variant: "boxed", label: "boxed（全框搜索/输入）" },
 ];
 

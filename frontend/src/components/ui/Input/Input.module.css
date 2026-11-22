@@ -39,7 +39,7 @@
   padding: var(--space-0) var(--space-0-5);
   background-color: transparent;
   border-width: 0;
-  border-bottom: var(--border-width-thin) solid var(--color-border);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
 }
 
 .input[data-variant="boxed"] {
