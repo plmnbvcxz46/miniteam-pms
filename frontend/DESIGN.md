@@ -388,7 +388,7 @@
 | **`Alert`** | 第 3 批 · 原生 `<div>` | 语气：`info`（**中性灰墨色** `--color-info-subtle`/`--color-info`）、`warning`（**信号橙**）、`danger`（**信号橙**）；变体：`inline` / `banner` | `data-tone`、`data-variant`、`role="alert"\|"status"` | `--color-text`、`--color-info`、`--color-info-subtle`、`--color-warning-text`、`--color-danger`、`--color-border-strong`、`--border-width-thin` | `.page-note.err`、`.issue-note`、`.auth-note`、`.ss .msg[.err]`、`.err.t-error` |
 | **`Tabs`** | 第 3 批 · `radix-ui` `Tabs` | 默认单变体（方角平铺标签栏，支持组间 `Separator`） | `data-state="active"\|"inactive"`、`data-disabled` | `--color-surface-inverse`、`--color-text-inverse`、`--color-bg-subtle`、`--focus-ring` | `SettingDrawer` `.ov-tabs` |
 | **`Progress`** | 第 3 批 · `radix-ui` `Progress` | 变体：`solid`（单段完成）、`dual`（时间斜纹+完成实心）、`segmented`（主段+超期/提前段） | `data-variant`、`data-state`、`aria-valuenow`/`min`/`max` | `--color-surface`、`--color-surface-inverse`、`--color-border-strong`、`--comp-pattern-warn` | `SummaryCard` `.gauge`、`ProgressPanel` `.pbar`、`ForecastHero` `.fbar` |
-| **`Separator`** | 第 3 批 · `radix-ui` `Separator` | 变体：`single`（1.5px 实线）、`double`（报纸双横线 5px+1.5px）、`dashed`（虚线行分割） | `data-variant`、`data-orientation` | `--color-border-strong`、`--color-border`、`--border-width-thin` | `.double`、`.tsep` |
+| **`Separator`** | 第 3 批 · `radix-ui` `Separator` | 变体：`single`（1.5px 实线）、`double`（抽屉/分区双线 2px+1.5px）、`masthead`（**页头标准分隔**，报刊粗细双横线 5px+1.5px）、`dashed`（1px 墨色虚线行/字段分割） | `data-variant`、`data-orientation` | `--color-border-strong`、`--border-width-thin`、`--border-width-thick`、`--border-width-hair` | `.vh`（`masthead`）、`.double`（`double`）、`.tsep` / 表单分割（`dashed`） |
 
 ## 3.3 基础组件 9 态强制覆盖规范（补齐审计缺口）
 
@@ -454,7 +454,7 @@
 
 | 范式组件 | 状态与建立时机 | 组合/底层方案 | 职责与核心 Props 契约 | 替换旧实现 |
 |---|---|---|---|---|
-| **`PageHeader`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Button`、`ui/Separator(double)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`default` 用 `--font-size-display`（60px），窄屏（`≤900px`）及详情页 `compact` 切 `--font-size-display-sm`（44px） | 11 处 `.vh`（8 页标准 Header + `TaskHeader` + `NoProject` + `NoAccess`；`LoginPage` 保持独立轻页头） |
+| **`PageHeader`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Button`、`ui/Separator(masthead)` | 报纸双线页头：`kicker`、`breadcrumb?`、`title`、`accentTitle?`、`subtitle?`、`size="default" \| "compact"`、`actions?`；`default` 用 `--font-size-display`（60px），窄屏（`≤900px`）及详情页 `compact` 切 `--font-size-display-sm`（44px） | 11 处 `.vh`（8 页标准 Header + `TaskHeader` + `NoProject` + `NoAccess`；`LoginPage` 保持独立轻页头，同样使用 `ui/Separator(masthead)`） |
 | **`Panel`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Separator` + CSS Modules | 面板容器：`variant="default" \| "flat" \| "dark"`、`kicker`（`// WORD`）、`title`、`headerRight?`、`scrollable?`；支持一屏内联滚动 | 20+ 处 `.pnl`/`.phd` 与文档页 `.dsec`/`.dsec-h` |
 | **`FormDrawer`** | **待建** · 阶段 4 第 2 步（`projects`） | `ui/Drawer(md)`、`ui/Button`、`ui/Separator(double)`、`ui/Alert` | 表单抽屉标准外壳：`open`、`onOpenChange`、`title`、`accentTitle?`、`submitLabel`、`submitting`、`submitError?`、`onSubmit`、`children` | 5 个表单抽屉（`NewProjectDrawer`、`TaskDrawer`、`UploadDocDrawer`、`InviteMemberDrawer`、`NewDiscussionDrawer`） |
 | **`EmptyState` / `PageState`** | **待建** · 阶段 4 第 2 步（`layout`） | `ui/Alert`、`ui/Button`、`ui/Spinner` | `EmptyState` 统一面板/列表空态；`PageState` 统一页面级 `loading` / `missing`（往期无存档）/ `error`（可带重试按钮） | `NoProject`、`NoAccess`、6 种零散空态类、4 页重复 `missing`/`error` 分支 |

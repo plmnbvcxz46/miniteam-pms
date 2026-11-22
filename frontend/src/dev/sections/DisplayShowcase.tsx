@@ -44,8 +44,9 @@ const WEEK_SEGMENTS: ProgressSegment[] = [
 
 const SEPARATOR_VARIANTS: { variant: SeparatorVariant; label: string }[] = [
   { variant: "single", label: "single（1.5px 墨色单实线）" },
-  { variant: "double", label: "double（报刊刊头上粗下细双横线）" },
-  { variant: "dashed", label: "dashed（1px 弱化虚线分割）" },
+  { variant: "double", label: "double（2px+1.5px 抽屉/分区双线）" },
+  { variant: "masthead", label: "masthead（报刊页头 5px+1.5px 粗细双横线）" },
+  { variant: "dashed", label: "dashed（1px 墨色虚线分割）" },
 ];
 
 const VERTICAL_ORIENTATION: SeparatorOrientation = "vertical";
@@ -88,7 +89,7 @@ export function DisplayShowcase() {
         <div className={styles.panelHead}>
           <div className={styles.panelHeading}>
             <span className={styles.kicker}>// SEPARATOR · RADIX UI</span>
-            <h2 className={styles.panelTitle}>Separator 报刊分割线（single / double / dashed）</h2>
+            <h2 className={styles.panelTitle}>Separator 报刊分割线（single / double / masthead / dashed）</h2>
           </div>
           <p className={styles.panelNote}>支持 horizontal（水平）与 vertical（垂直）双方向及 decorative 无障碍语义</p>
         </div>
@@ -109,6 +110,8 @@ export function DisplayShowcase() {
           <span className={styles.desc}>2026-11-22</span>
           <DemoSeparator variant="double" orientation={VERTICAL_ORIENTATION} />
           <span className={styles.desc}>剩余 6 天</span>
+          <DemoSeparator variant="masthead" orientation={VERTICAL_ORIENTATION} />
+          <span className={styles.desc}>正常</span>
           <DemoSeparator variant="dashed" orientation={VERTICAL_ORIENTATION} />
           <span className={styles.desc}>完成率 58%</span>
         </div>

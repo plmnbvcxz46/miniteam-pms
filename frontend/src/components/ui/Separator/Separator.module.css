@@ -1,4 +1,4 @@
-/* 报刊风分割线：基于 radix-ui Separator，支持 single（单实线）/ double（报刊双线）/ dashed（虚线） */
+/* 报刊风分割线：基于 radix-ui Separator，支持 single / double / masthead / dashed */
 .separator {
   flex-shrink: 0;
   margin: var(--space-0);
@@ -18,10 +18,20 @@
   border-bottom: var(--border-width-thin) solid var(--color-border-strong);
 }
 
+.separator[data-orientation="horizontal"][data-variant="masthead"] {
+  width: 100%;
+  height: 10px;
+  background:
+    linear-gradient(var(--color-border-strong), var(--color-border-strong)) left top / 100% 5px
+      no-repeat,
+    linear-gradient(var(--color-border-strong), var(--color-border-strong)) left bottom / 100%
+      var(--border-width-thin) no-repeat;
+}
+
 .separator[data-orientation="horizontal"][data-variant="dashed"] {
   width: 100%;
   height: 0;
-  border-top: var(--border-width-hair) dashed var(--color-border);
+  border-top: var(--border-width-hair) dashed var(--color-border-strong);
 }
 
 /* ---------- 垂直方向（vertical） ---------- */
@@ -42,10 +52,22 @@
   border-right: var(--border-width-thin) solid var(--color-border-strong);
 }
 
+.separator[data-orientation="vertical"][data-variant="masthead"] {
+  display: inline-block;
+  align-self: stretch;
+  width: 10px;
+  min-height: 16px;
+  background:
+    linear-gradient(var(--color-border-strong), var(--color-border-strong)) left top / 5px 100%
+      no-repeat,
+    linear-gradient(var(--color-border-strong), var(--color-border-strong)) right top /
+      var(--border-width-thin) 100% no-repeat;
+}
+
 .separator[data-orientation="vertical"][data-variant="dashed"] {
   display: inline-block;
   align-self: stretch;
   width: 0;
   min-height: 16px;
-  border-left: var(--border-width-hair) dashed var(--color-border);
+  border-left: var(--border-width-hair) dashed var(--color-border-strong);
 }

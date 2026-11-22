@@ -22,7 +22,7 @@ export function LoginHeader({ isRegister }: LoginHeaderProps) {
         <span className={styles.subtitle}>小型软件团队项目管理系统</span>
       </div>
 
-      <Separator variant="double" />
+      <Separator variant="masthead" />
     </header>
   );
 }
