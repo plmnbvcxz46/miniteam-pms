@@ -22,6 +22,16 @@ import {
   type DropdownMenuLabelProps,
   type DropdownMenuSeparatorProps,
 } from "../../components/ui/DropdownMenu";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+  type DrawerContentProps,
+  type DrawerSize,
+} from "../../components/ui/Drawer";
+import { Field } from "../../components/ui/Field";
+import { Input } from "../../components/ui/Input";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoPopoverTrigger(props: PopoverTriggerProps) {
@@ -48,7 +58,15 @@ function DemoMenuSeparator(props: DropdownMenuSeparatorProps) {
   return <DropdownMenuSeparator {...props} />;
 }
 
+function DemoDrawerContent(props: DrawerContentProps) {
+  return <DrawerContent {...props} />;
+}
+
 const DANGER_TONE: DropdownMenuItemTone = "danger";
+const DRAWER_SIZES: { size: DrawerSize; label: string }[] = [
+  { size: "md", label: "打开 md 表单抽屉（640px）" },
+  { size: "lg", label: "打开 lg 设置抽屉（880px）" },
+];
 
 export function OverlayShowcase() {
   const [menuAction, setMenuAction] = useState("尚未触发");
@@ -114,6 +132,39 @@ export function OverlayShowcase() {
             </DemoMenuItem>
           </DemoMenuContent>
         </DropdownMenu>
+
+        {DRAWER_SIZES.map(({ size, label }) => (
+          <Drawer key={size}>
+            <DrawerTrigger asChild>
+              <Button variant="default">{label}</Button>
+            </DrawerTrigger>
+            <DemoDrawerContent
+              size={size}
+              kicker={`// DRAWER · ${size.toUpperCase()}`}
+              title={size === "md" ? "新建任务" : "系统设置"}
+              description="基于 Radix Dialog：点阵遮罩、双横线刊头、焦点陷阱、按 Esc 关闭并返还焦点。"
+              footer={
+                <>
+                  <DrawerClose asChild>
+                    <Button variant="accent">保存并关闭</Button>
+                  </DrawerClose>
+                  <DrawerClose asChild>
+                    <Button variant="default">取消</Button>
+                  </DrawerClose>
+                </>
+              }
+            >
+              <div className={styles.drawerBody}>
+                <Field label="名称" required>
+                  <Input placeholder="输入示例标题，按 Tab 测试焦点陷阱" />
+                </Field>
+                <Field label="计划开始日" required>
+                  <Input type="date" defaultValue="2026-11-22" />
+                </Field>
+              </div>
+            </DemoDrawerContent>
+          </Drawer>
+        ))}
       </div>
 
       <p className={styles.panelNote}>最近菜单动作：{menuAction}</p>

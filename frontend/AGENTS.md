@@ -69,7 +69,8 @@ src/
 | 第 1 批（表单） | `Field` | 原生语义容器 | **已实现**（`src/components/ui/Field/`） | `horizontal`/`vertical`、`useId()` 自动打通 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
 | 第 2 批（浮层） | `Popover` | `radix-ui` `Popover` | **已实现**（`src/components/ui/Popover/`） | Portal 碰撞避让、硬阴影暖纸浮层、触发器 `open` 显式高亮；不含 `Tooltip` |
 | 第 2 批（浮层） | `DropdownMenu` | `radix-ui` `DropdownMenu` | **已实现**（`src/components/ui/DropdownMenu/`） | 常规/危险菜单项、分割线、分组标签、键盘漫游与 `disabled` |
-| 第 2 批（浮层） | `Drawer` / `AlertDialog` / `Toast` | `radix-ui` | 待实现 | `Drawer` 基于 `Dialog`；统一替代 `window.alert`/`confirm` |
+| 第 2 批（浮层） | `Drawer` | `radix-ui` `Dialog` | **已实现**（`src/components/ui/Drawer/`） | `md`(640px)/`lg`(880px)、点阵遮罩、双横线刊头、复用 `Button(default, size="icon")` 关闭钮、焦点陷阱与 Esc |
+| 第 2 批（浮层） | `AlertDialog` / `Toast` | `radix-ui` | 待实现 | 统一替代 `window.alert`/`confirm` |
 | 第 3 批（展示） | `Badge` / `Alert` / `Tabs` / `Progress` / `Separator` | 原生 + `radix-ui` | 待第 3 批实现 | 留待第 1、2 批验收后封装 |
 
 ### 业务范式组件（`src/components/patterns/`，阶段 4 迁移到首个用到它的模块时按需建立）
