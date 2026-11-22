@@ -101,6 +101,7 @@ export function OverlayShowcase() {
   const [alertLoading, setAlertLoading] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const toastSeqRef = useRef(0);
+  const explicitActionRef = useRef(false);
 
   const triggerToast = (tone: ToastTone) => {
     toastSeqRef.current += 1;
@@ -118,14 +119,18 @@ export function OverlayShowcase() {
           : "多条 Toast 最新在上叠放、各自独立计时 4s，也可点 × 单独关闭。",
     };
     setToasts((prev) => [nextItem, ...prev]);
+    setMenuAction(
+      `已触发 Toast #${seq}（${tone === "danger" ? "danger 警告" : "neutral 常规"}）`,
+    );
   };
 
   const handleConfirmArchive = () => {
     setAlertLoading(true);
+    setMenuAction("AlertDialog 正在执行归档…");
     window.setTimeout(() => {
       setAlertLoading(false);
       setAlertOpen(false);
-      setMenuAction("已确认归档项目（模拟异步完成）");
+      setMenuAction("AlertDialog 已确认归档项目（模拟异步完成）");
     }, 600);
   };
   return (
@@ -141,7 +146,16 @@ export function OverlayShowcase() {
       </div>
 
       <div className={styles.row}>
-        <Popover>
+        <Popover
+          onOpenChange={(open) => {
+            if (open) {
+              setMenuAction("Popover：已展开浮层");
+            } else if (!explicitActionRef.current) {
+              setMenuAction("Popover：已关闭浮层（Esc / 点击外部）");
+            }
+            explicitActionRef.current = false;
+          }}
+        >
           <PopoverAnchor asChild>
             <DemoPopoverTrigger>展开 Popover 浮层 ▾</DemoPopoverTrigger>
           </PopoverAnchor>
@@ -154,12 +168,26 @@ export function OverlayShowcase() {
               </span>
               <div className={styles.row}>
                 <PopoverClose asChild>
-                  <Button size="sm" variant="primary">
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={() => {
+                      explicitActionRef.current = true;
+                      setMenuAction("Popover：已确认切换至第 32 期");
+                    }}
+                  >
                     确认切换
                   </Button>
                 </PopoverClose>
                 <PopoverClose asChild>
-                  <Button size="sm" variant="default">
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={() => {
+                      explicitActionRef.current = true;
+                      setMenuAction("Popover：已取消切换");
+                    }}
+                  >
                     取消
                   </Button>
                 </PopoverClose>
@@ -168,23 +196,31 @@ export function OverlayShowcase() {
           </DemoPopoverContent>
         </Popover>
 
-        <DropdownMenu>
+        <DropdownMenu
+          onOpenChange={(open) => {
+            if (open) setMenuAction("DropdownMenu：已展开菜单");
+          }}
+        >
           <DropdownMenuTrigger asChild>
             <Button variant="default">账号操作 DropdownMenu ▾</Button>
           </DropdownMenuTrigger>
           <DemoMenuContent>
             <DemoMenuLabel>当前账号 · ADMIN</DemoMenuLabel>
-            <DemoMenuItem onSelect={() => setMenuAction("打开个人资料")}>
+            <DemoMenuItem
+              onSelect={() => setMenuAction("DropdownMenu：打开个人资料与密码")}
+            >
               个人资料与密码
             </DemoMenuItem>
-            <DemoMenuItem onSelect={() => setMenuAction("打开系统设置")}>
+            <DemoMenuItem
+              onSelect={() => setMenuAction("DropdownMenu：打开系统参数与日志")}
+            >
               系统参数与日志
             </DemoMenuItem>
             <DemoMenuItem disabled>切换演示账号（已禁用）</DemoMenuItem>
             <DemoMenuSeparator />
             <DemoMenuItem
               tone={DANGER_TONE}
-              onSelect={() => setMenuAction("退出当前登录")}
+              onSelect={() => setMenuAction("DropdownMenu：触发退出登录")}
             >
               退出登录
             </DemoMenuItem>
@@ -192,7 +228,17 @@ export function OverlayShowcase() {
         </DropdownMenu>
 
         {DRAWER_SIZES.map(({ size, label }) => (
-          <Drawer key={size}>
+          <Drawer
+            key={size}
+            onOpenChange={(open) => {
+              if (open) {
+                setMenuAction(`Drawer（${size}）：已打开抽屉`);
+              } else if (!explicitActionRef.current) {
+                setMenuAction(`Drawer（${size}）：已关闭抽屉（× / Esc / 遮罩）`);
+              }
+              explicitActionRef.current = false;
+            }}
+          >
             <DrawerTrigger asChild>
               <Button variant="default">{label}</Button>
             </DrawerTrigger>
@@ -204,10 +250,26 @@ export function OverlayShowcase() {
               footer={
                 <>
                   <DrawerClose asChild>
-                    <Button variant="accent">保存并关闭</Button>
+                    <Button
+                      variant="accent"
+                      onClick={() => {
+                        explicitActionRef.current = true;
+                        setMenuAction(`Drawer（${size}）：已保存并关闭`);
+                      }}
+                    >
+                      保存并关闭
+                    </Button>
                   </DrawerClose>
                   <DrawerClose asChild>
-                    <Button variant="default">取消</Button>
+                    <Button
+                      variant="default"
+                      onClick={() => {
+                        explicitActionRef.current = true;
+                        setMenuAction(`Drawer（${size}）：已取消并关闭`);
+                      }}
+                    >
+                      取消
+                    </Button>
                   </DrawerClose>
                 </>
               }
@@ -227,7 +289,14 @@ export function OverlayShowcase() {
         <AlertDialog
           open={alertOpen}
           onOpenChange={(next) => {
-            if (!alertLoading) setAlertOpen(next);
+            if (!alertLoading) {
+              setAlertOpen(next);
+              setMenuAction(
+                next
+                  ? "AlertDialog：已打开二次确认弹窗"
+                  : "AlertDialog：已取消并关闭",
+              );
+            }
           }}
         >
           <AlertDialogTrigger asChild>
