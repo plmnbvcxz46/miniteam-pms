@@ -11,6 +11,16 @@ import {
   type BadgeVariant,
 } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+} from "../../components/ui/Tabs";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoBadge(props: BadgeProps) {
@@ -19,6 +29,22 @@ function DemoBadge(props: BadgeProps) {
 
 function DemoAlert(props: AlertProps) {
   return <Alert {...props} />;
+}
+
+function DemoTabs(props: TabsProps) {
+  return <Tabs {...props} />;
+}
+
+function DemoTabsList(props: TabsListProps) {
+  return <TabsList {...props} />;
+}
+
+function DemoTabsTrigger(props: TabsTriggerProps) {
+  return <TabsTrigger {...props} />;
+}
+
+function DemoTabsContent(props: TabsContentProps) {
+  return <TabsContent {...props} />;
 }
 
 const BADGE_ITEMS: {
@@ -137,6 +163,62 @@ export function DisplayShowcase() {
             </DemoAlert>
           ))}
         </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// TABS · RADIX UI</span>
+            <h2 className={styles.panelTitle}>Tabs 平铺报刊风标签页</h2>
+          </div>
+          <p className={styles.panelNote}>
+            基于 radix-ui Tabs · 墨底反白激活态 · 支持方向键切换与单项禁用
+          </p>
+        </div>
+
+        <DemoTabs defaultValue="me">
+          <DemoTabsList aria-label="系统设置面板切换">
+            <DemoTabsTrigger value="me">01 个人资料</DemoTabsTrigger>
+            <DemoTabsTrigger value="people">02 人员管理</DemoTabsTrigger>
+            <DemoTabsTrigger value="params">03 系统参数</DemoTabsTrigger>
+            <DemoTabsTrigger value="logs">04 操作日志</DemoTabsTrigger>
+            <DemoTabsTrigger value="sso" disabled>
+              05 外部集成（已禁用）
+            </DemoTabsTrigger>
+          </DemoTabsList>
+          <DemoTabsContent value="me">
+            <div className={styles.sandboxControls}>
+              <span className={styles.code}>PANEL 01 · 个人资料与密码</span>
+              <span className={styles.desc}>
+                当前登录身份：ADMIN · 支持修改显示名、联系方式与登录密码。
+              </span>
+            </div>
+          </DemoTabsContent>
+          <DemoTabsContent value="people">
+            <div className={styles.sandboxControls}>
+              <span className={styles.code}>PANEL 02 · 人员与系统角色</span>
+              <span className={styles.desc}>
+                管理系统管理员（ADMIN）与普通用户（USER）账号状态及初始密码重置。
+              </span>
+            </div>
+          </DemoTabsContent>
+          <DemoTabsContent value="params">
+            <div className={styles.sandboxControls}>
+              <span className={styles.code}>PANEL 03 · 全局系统参数</span>
+              <span className={styles.desc}>
+                配置项目最大成员数、默认归档阈值及文档上传大小上限。
+              </span>
+            </div>
+          </DemoTabsContent>
+          <DemoTabsContent value="logs">
+            <div className={styles.sandboxControls}>
+              <span className={styles.code}>PANEL 04 · 审计操作日志</span>
+              <span className={styles.desc}>
+                按时间倒序查阅全站写操作记录与操作人 IP。
+              </span>
+            </div>
+          </DemoTabsContent>
+        </DemoTabs>
       </section>
     </>
   );

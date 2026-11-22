@@ -84,7 +84,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示", ready: true },
   { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted", ready: true },
   { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）", ready: true },
-  { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏" },
+  { name: "Tabs", primitive: "radix-ui Tabs", note: "平铺方角标签栏", ready: true },
   { name: "Progress", primitive: "radix-ui Progress", note: "solid / dual / segmented" },
   { name: "Separator", primitive: "radix-ui Separator", note: "single / double / dashed" },
 ];
