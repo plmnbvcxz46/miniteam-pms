@@ -1,0 +1,99 @@
+/* 报刊刊头页面头部：kicker + 双色重磅标题 + 右侧操作槽 + masthead 双横线 */
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text);
+}
+
+.kicker:not([data-raw="true"])::before {
+  content: "[";
+}
+
+.kicker:not([data-raw="true"])::after {
+  content: "]";
+}
+
+.title {
+  margin: var(--space-0);
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-none);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text);
+}
+
+.pageHeader[data-size="compact"] .title {
+  font-size: var(--font-size-display-sm);
+}
+
+.accent {
+  font-style: normal;
+  color: var(--color-accent);
+}
+
+.subtitle {
+  margin: var(--space-0);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+@media (width <= 900px) {
+  .row {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--font-size-display-sm);
+  }
+}
+
+@media (height <= 700px) {
+  .title {
+    font-size: var(--font-size-display-sm);
+  }
+}
