@@ -10,6 +10,11 @@ import {
   type TextareaProps,
   type TextareaVariant,
 } from "../../components/ui/Textarea";
+import {
+  Checkbox,
+  type CheckboxCheckedState,
+  type CheckboxProps,
+} from "../../components/ui/Checkbox";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoInput(props: InputProps) {
@@ -18,6 +23,10 @@ function DemoInput(props: InputProps) {
 
 function DemoTextarea(props: TextareaProps) {
   return <Textarea {...props} />;
+}
+
+function DemoCheckbox(props: CheckboxProps) {
+  return <Checkbox {...props} />;
 }
 
 const TEXTAREA_VARIANTS: { variant: TextareaVariant; label: string }[] = [
@@ -34,6 +43,7 @@ const INPUT_SIZES: InputSize[] = ["sm", "md"];
 
 export function FormShowcase() {
   const [dateVal, setDateVal] = useState("2026-11-22");
+  const [rememberMe, setRememberMe] = useState<CheckboxCheckedState>(true);
 
   return (
     <>
@@ -174,6 +184,30 @@ export function FormShowcase() {
               defaultValue="归档项目或往期快照下的只读/禁用说明文本。"
             />
           </div>
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// CHECKBOX · RADIX UI</span>
+            <h2 className={styles.panelTitle}>Checkbox 复选框</h2>
+          </div>
+          <p className={styles.panelNote}>
+            16×16 0 圆角方框 · 含 checked / invalid / 关联 label 同步禁用弱化
+          </p>
+        </div>
+
+        <div className={styles.row}>
+          <DemoCheckbox
+            label="记住登录账号（受控）"
+            checked={rememberMe}
+            onCheckedChange={setRememberMe}
+          />
+          <DemoCheckbox label="未勾选默认态" />
+          <DemoCheckbox label="校验失败态（invalid）" invalid />
+          <DemoCheckbox label="禁用未勾选（label 同步弱化）" disabled />
+          <DemoCheckbox label="禁用已勾选" disabled defaultChecked />
         </div>
       </section>
     </>
