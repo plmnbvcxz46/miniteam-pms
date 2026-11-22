@@ -20,6 +20,21 @@ import {
   type SwitchProps,
   type SwitchVariant,
 } from "../../components/ui/Switch";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  type SelectContentProps,
+  type SelectItemProps,
+  type SelectLabelProps,
+  type SelectSeparatorProps,
+  type SelectTriggerProps,
+} from "../../components/ui/Select";
 import styles from "../UiShowcasePage.module.css";
 
 function DemoInput(props: InputProps) {
@@ -36,6 +51,26 @@ function DemoCheckbox(props: CheckboxProps) {
 
 function DemoSwitch(props: SwitchProps) {
   return <Switch {...props} />;
+}
+
+function DemoSelectTrigger(props: SelectTriggerProps) {
+  return <SelectTrigger {...props} />;
+}
+
+function DemoSelectContent(props: SelectContentProps) {
+  return <SelectContent {...props} />;
+}
+
+function DemoSelectItem(props: SelectItemProps) {
+  return <SelectItem {...props} />;
+}
+
+function DemoSelectLabel(props: SelectLabelProps) {
+  return <SelectLabel {...props} />;
+}
+
+function DemoSelectSeparator(props: SelectSeparatorProps) {
+  return <SelectSeparator {...props} />;
 }
 
 const SWITCH_VARIANTS: { variant: SwitchVariant; title: string }[] = [
@@ -60,6 +95,7 @@ export function FormShowcase() {
   const [rememberMe, setRememberMe] = useState<CheckboxCheckedState>(true);
   const [permOn, setPermOn] = useState(true);
   const [acctActive, setAcctActive] = useState(true);
+  const [roleVal, setRoleVal] = useState("DEV");
 
   return (
     <>
@@ -266,6 +302,67 @@ export function FormShowcase() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelHeading}>
+            <span className={styles.kicker}>// SELECT · RADIX UI</span>
+            <h2 className={styles.panelTitle}>Select 下拉选择器</h2>
+          </div>
+          <p className={styles.panelNote}>
+            underline 触发器（34px）· 展开箭头 180° 翻转 · 硬阴影暖纸浮层
+          </p>
+        </div>
+
+        <div className={styles.formGrid}>
+          <div className={styles.formCell}>
+            <span className={styles.code}>default（受控 · 分组与分割线）</span>
+            <Select value={roleVal} onValueChange={setRoleVal}>
+              <DemoSelectTrigger aria-label="项目角色">
+                <SelectValue placeholder="请选择项目角色" />
+              </DemoSelectTrigger>
+              <DemoSelectContent>
+                <SelectGroup>
+                  <DemoSelectLabel>管理角色</DemoSelectLabel>
+                  <DemoSelectItem value="PM">项目经理（PM）</DemoSelectItem>
+                </SelectGroup>
+                <DemoSelectSeparator />
+                <SelectGroup>
+                  <DemoSelectLabel>研发与测试</DemoSelectLabel>
+                  <DemoSelectItem value="DEV">开发工程师</DemoSelectItem>
+                  <DemoSelectItem value="TESTER">测试工程师</DemoSelectItem>
+                  <DemoSelectItem value="GUEST" disabled>
+                    外部访客（已禁用选项）
+                  </DemoSelectItem>
+                </SelectGroup>
+              </DemoSelectContent>
+            </Select>
+          </div>
+          <div className={styles.formCell}>
+            <span className={styles.code}>placeholder + invalid</span>
+            <Select>
+              <DemoSelectTrigger invalid aria-label="必选文档类型">
+                <SelectValue placeholder="请选择关联任务（必填）" />
+              </DemoSelectTrigger>
+              <DemoSelectContent>
+                <DemoSelectItem value="t1">T-01 认证模块联调</DemoSelectItem>
+                <DemoSelectItem value="t2">T-02 甘特图关键路径</DemoSelectItem>
+              </DemoSelectContent>
+            </Select>
+          </div>
+          <div className={styles.formCell}>
+            <span className={styles.code}>disabled</span>
+            <Select defaultValue="PM" disabled>
+              <DemoSelectTrigger aria-label="禁用角色选择">
+                <SelectValue />
+              </DemoSelectTrigger>
+              <DemoSelectContent>
+                <DemoSelectItem value="PM">项目经理（PM）</DemoSelectItem>
+              </DemoSelectContent>
+            </Select>
+          </div>
         </div>
       </section>
     </>
