@@ -13,7 +13,7 @@
 4. **单向依赖红线**：严格遵守 `features/*` → `components/patterns/*` → `components/ui/*` → `styles/tokens/*`；各 `features/<业务域>` 之间禁止互引；`components/ui/` 与 `components/patterns/` 严禁直接调用 `services/*` 或读取业务 `stores/*`。
 5. **工程质量门禁**：**不配置 `husky` / Git hooks**（避免改动 Monorepo 根配置或干扰协作提交），统一在 `frontend/package.json` 提供 `check` 脚本串联执行 `eslint` + `stylelint` + `tsc` + `knip`，并由开发者与 CI 按需执行。
 6. **历史遗留处置约定**：
-   - `frontend/prototype/`（含 `tsconfig.app.json:25` 中的引用）在文档模块完成将拖拽上传收归 `FileDropzone`（且队友确认不再参考）之前**保留作为参考实现**，暂不删除；
+   - `frontend/prototype/`（含 `tsconfig.app.json:25` 中的引用）在文档模块完成将拖拽上传收归 `FileDropzone` 且确认不再参考之前**保留作为参考实现**，暂不删除；
    - `src/styles/index.css` 中从未挂载的 `.enter` / `.first`（19 条规则）及 8 个死 `@keyframes`（`wipe`/`wipeup`/`linedown`/`wipedown`/`stroke`/`draw`/`rise`/`rule`）在阶段 2 **确认删除**，保留 `@media (prefers-reduced-motion: reduce)`；
    - `UploadDocDrawer` 拖拽上传交互（原位于旧原型 `frontend/prototype/global.js:3291-3309` 外层容器委托）在迁移文档模块时**收归 `FileDropzone` 内部**，文案保持“把文件拖到这里，或点此选择”不变。
 
