@@ -5,8 +5,9 @@ import { useAccess } from "../state/access/useAccess";
 import { useAuth, useMe } from "../state/auth/useAuth";
 import type { ProfileUpdate } from "../shared/types/settings";
 import TaskDrawer from "../overlays/task/TaskDrawer";
-import { useState } from "react";
+import { NotificationBell, useNotifications } from "../features/notifications";
 import { NewProjectDrawer } from "../features/projects";
+import { useState } from "react";
 import { useTaskStore } from "../state/task/taskStore";
 import { getColumnTasks } from "../state/task/utils";
 import NoProject from "./NoProject";
@@ -14,10 +15,8 @@ import ProjectSwitch from "./sidebar/ProjectSwitch";
 import SidebarNav from "./sidebar/SidebarNav";
 import SummaryCard from "./sidebar/SummaryCard";
 import IssueSwitch from "./topbar/IssueSwitch";
-import NotificationBell from "./topbar/NotificationBell";
 import AccountMenu from "./topbar/AccountMenu";
 import WeekLine from "./topbar/WeekLine";
-import { useNotifications } from "./useNotifications";
 import type { ShellContext } from "./useProjectPeriod";
 
 export default function Shell() {

@@ -1,0 +1,97 @@
+/* 通知浮层列表项样式：左侧未读橙点、类型标签、标题与时间 */
+.item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-0-5) var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-7);
+  background-color: transparent;
+  border: 0;
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.item[data-unread="true"]::before {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-4);
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+}
+
+.type {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text);
+}
+
+.type[data-risk="true"] {
+  color: var(--color-warning-text);
+}
+
+.title {
+  grid-column: 2 / 4;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.time {
+  grid-column: 3;
+  grid-row: 2;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.content {
+  grid-column: 2;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item:not([data-unread="true"]) .type {
+  color: var(--color-text-muted);
+}
+
+.item .type[data-risk="true"] {
+  color: var(--color-warning-text);
+}
+
+.item:not([data-unread="true"]) .title {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.item:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.item:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.item:hover .title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: var(--border-width-thin);
+}
