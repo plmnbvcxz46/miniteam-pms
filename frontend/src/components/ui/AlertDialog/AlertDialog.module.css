@@ -1,0 +1,103 @@
+/* 破坏性操作二次确认弹窗：基于 radix-ui AlertDialog，默认焦点落“取消”，硬阴影点阵遮罩 */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  background-color: var(--color-empty-tint);
+  background-image: var(--comp-backdrop-dot);
+  background-size: 5px 5px;
+}
+
+.overlay[data-state="open"] {
+  animation-name: ui-alert-fade-in;
+  animation-duration: var(--duration-fast);
+  animation-timing-function: var(--ease-standard);
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--z-modal);
+  width: calc(100vw - var(--space-8));
+  max-width: 440px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-top: var(--border-width-thick) solid var(--color-danger);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-lg);
+  outline: none;
+}
+
+.content[data-state="open"] {
+  animation-name: ui-alert-pop-in;
+  animation-duration: var(--duration-fast);
+  animation-timing-function: var(--ease-standard);
+}
+
+@keyframes ui-alert-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ui-alert-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-danger);
+  text-transform: uppercase;
+}
+
+.title {
+  margin: var(--space-0);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.description {
+  margin: var(--space-0);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}

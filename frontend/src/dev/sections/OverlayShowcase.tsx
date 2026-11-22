@@ -30,6 +30,12 @@ import {
   type DrawerContentProps,
   type DrawerSize,
 } from "../../components/ui/Drawer";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTrigger,
+  type AlertDialogContentProps,
+} from "../../components/ui/AlertDialog";
 import { Field } from "../../components/ui/Field";
 import { Input } from "../../components/ui/Input";
 import styles from "../UiShowcasePage.module.css";
@@ -62,6 +68,10 @@ function DemoDrawerContent(props: DrawerContentProps) {
   return <DrawerContent {...props} />;
 }
 
+function DemoAlertDialogContent(props: AlertDialogContentProps) {
+  return <AlertDialogContent {...props} />;
+}
+
 const DANGER_TONE: DropdownMenuItemTone = "danger";
 const DRAWER_SIZES: { size: DrawerSize; label: string }[] = [
   { size: "md", label: "打开 md 表单抽屉（640px）" },
@@ -70,6 +80,17 @@ const DRAWER_SIZES: { size: DrawerSize; label: string }[] = [
 
 export function OverlayShowcase() {
   const [menuAction, setMenuAction] = useState("尚未触发");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertLoading, setAlertLoading] = useState(false);
+
+  const handleConfirmArchive = () => {
+    setAlertLoading(true);
+    window.setTimeout(() => {
+      setAlertLoading(false);
+      setAlertOpen(false);
+      setMenuAction("已确认归档项目（模拟异步完成）");
+    }, 600);
+  };
   return (
     <section className={styles.panel}>
       <div className={styles.panelHead}>
@@ -165,6 +186,24 @@ export function OverlayShowcase() {
             </DemoDrawerContent>
           </Drawer>
         ))}
+
+        <AlertDialog
+          open={alertOpen}
+          onOpenChange={(next) => {
+            if (!alertLoading) setAlertOpen(next);
+          }}
+        >
+          <AlertDialogTrigger asChild>
+            <Button variant="danger">打开 AlertDialog 确认</Button>
+          </AlertDialogTrigger>
+          <DemoAlertDialogContent
+            title="确认归档当前项目？"
+            description="归档后项目将变为只读状态，成员无法再新建或修改任务。弹窗打开时键盘焦点默认落在“取消”按钮。"
+            confirmLabel="确认归档"
+            loading={alertLoading}
+            onConfirm={handleConfirmArchive}
+          />
+        </AlertDialog>
       </div>
 
       <p className={styles.panelNote}>最近菜单动作：{menuAction}</p>

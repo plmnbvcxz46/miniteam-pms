@@ -78,7 +78,7 @@ const PLANNED_UI_COMPONENTS: {
   { name: "Popover", primitive: "radix-ui Popover", note: "硬阴影暖纸通用浮层", ready: true },
   { name: "DropdownMenu", primitive: "radix-ui DropdownMenu", note: "键盘漫游操作菜单", ready: true },
   { name: "Drawer", primitive: "radix-ui Dialog", note: "md / lg 右侧滑出抽屉", ready: true },
-  { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认" },
+  { name: "AlertDialog", primitive: "radix-ui AlertDialog", note: "破坏性操作二次确认", ready: true },
   { name: "Toast", primitive: "radix-ui Toast", note: "neutral / danger 轻提示" },
   { name: "Badge", primitive: "原生 <span>", note: "solid / outline / accent / muted" },
   { name: "Alert", primitive: "原生 <div>", note: "inline / banner（info/warning/danger）" },
