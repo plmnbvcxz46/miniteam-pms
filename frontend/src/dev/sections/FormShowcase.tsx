@@ -129,6 +129,7 @@ export function FormShowcase() {
   const [rememberMe, setRememberMe] = useState<CheckboxCheckedState>(true);
   const [permOn, setPermOn] = useState(true);
   const [acctActive, setAcctActive] = useState(true);
+  const [switchLoading, setSwitchLoading] = useState(false);
   const [roleVal, setRoleVal] = useState("DEV");
   const [boardFilter, setBoardFilter] = useState("all");
   const [taskStatus, setTaskStatus] = useState("doing");
@@ -313,6 +314,16 @@ export function FormShowcase() {
           </p>
         </div>
 
+        <div className={styles.sandboxControls}>
+          <Button
+            size="sm"
+            variant={switchLoading ? "primary" : "default"}
+            onClick={() => setSwitchLoading((v) => !v)}
+          >
+            切换原地 Loading（验证零宽高抖动）: {switchLoading ? "开" : "关"}
+          </Button>
+        </div>
+
         <div className={styles.formGrid}>
           {SWITCH_VARIANTS.map(({ variant, title }) => (
             <div key={variant} className={styles.formCell}>
@@ -321,6 +332,7 @@ export function FormShowcase() {
                 <DemoSwitch
                   variant={variant}
                   aria-label={`${title} 交互示例`}
+                  loading={switchLoading}
                   checked={variant === "track" ? permOn : acctActive}
                   onCheckedChange={
                     variant === "track" ? setPermOn : setAcctActive
