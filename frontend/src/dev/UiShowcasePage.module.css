@@ -278,6 +278,44 @@
   color: var(--color-text);
 }
 
+/* ---------- 表单与浮层展示辅助网格 ---------- */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.formCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.subHead {
+  padding-top: var(--space-2);
+  border-top: var(--border-width-hair) dashed var(--color-border);
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 640px;
+}
+
+.popoverBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 240px;
+}
+
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 @media (width <= 900px) {
   .page {
     padding: var(--space-4);

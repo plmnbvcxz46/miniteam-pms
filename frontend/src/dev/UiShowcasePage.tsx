@@ -10,6 +10,7 @@ import {
   type SpinnerProps,
   type SpinnerSize,
 } from "../components/ui/Spinner";
+import { FormShowcase } from "./sections/FormShowcase";
 import styles from "./UiShowcasePage.module.css";
 
 interface VariantRow {
@@ -66,7 +67,7 @@ const PLANNED_UI_COMPONENTS: {
     note: "6 变体 × 4 尺寸 × 全交互态",
     ready: true,
   },
-  { name: "Input", primitive: "原生 <input>", note: "underline / boxed + type=date" },
+  { name: "Input", primitive: "原生 <input>", note: "underline / boxed + type=date", ready: true },
   { name: "Textarea", primitive: "原生 <textarea>", note: "underline / boxed + invalid" },
   { name: "Checkbox", primitive: "radix-ui Checkbox", note: "16×16 0 圆角勾选框" },
   { name: "Switch", primitive: "radix-ui Switch", note: "track / segmented 双形态" },
@@ -334,7 +335,10 @@ export default function UiShowcasePage() {
           </div>
         </section>
 
-        {/* 4. 后续阶段 3 待封装 UI 组件索引 */}
+        {/* 4. 第 1 批表单控件展示 */}
+        <FormShowcase />
+
+        {/* 5. 后续阶段 3 待封装 UI 组件索引 */}
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div className={styles.panelHeading}>
