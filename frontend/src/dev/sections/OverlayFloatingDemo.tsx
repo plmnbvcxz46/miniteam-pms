@@ -116,7 +116,7 @@ export function OverlayFloatingDemo({ onAction }: { onAction: (action: string) =
             size={size}
             kicker={`// DRAWER · ${size.toUpperCase()}`}
             title={size === "md" ? "新建任务" : "系统设置"}
-            description="基于 Radix Dialog：点阵遮罩、双横线刊头、焦点陷阱、按 Esc 关闭并返还焦点。"
+            description="基于 Radix Dialog：点阵遮罩、masthead 粗黑刊头双线（5px+1.5px）、大号 × 关闭钮、焦点陷阱与 Esc 关闭。"
             footer={
               <>
                 <DrawerClose asChild>
