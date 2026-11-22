@@ -49,6 +49,7 @@ src/
 - **样式标尺**：间距以 **4px 为基准**，仅允许 `--space-0-5`（`2px`）与 `--space-1-5`（`6px`）两个半步（原 `10px`/`14px` 迁入新样式时对齐 `8/12/16px`）；全站坚持 **`0` 圆角**（仅圆形元素用 `--radius-full`）；标准描边 `1.5px` / 粗描边 `2px`；保留 `--font-size-2xs: 10px`、展示双档 `--font-size-display: 60px` / `--font-size-display-sm: 44px`（断点处切换 Token）以及大号统计数字语义 Token `--font-size-figure`（指向 `--font-size-display`）。
 - **CSS Modules + `data-*` 驱动**：新组件与新页面样式统一使用 `*.module.css`，变体与交互态通过 `data-variant`、`data-size`、`data-state`、`data-loading`、`data-invalid` 与标准伪类（含补齐 `:active`、`:focus-visible`、`disabled` 弱化、`[aria-invalid="true"]`）驱动，**禁止拼接状态 class 名**。
 - **破坏性操作与反馈**：使用 Radix `AlertDialog`（`ConfirmDialog`）统一替代原生 `window.confirm` 与双击确认，使用 `Toast` 替代 `window.alert` 与短暂操作反馈，表单/页面校验错误使用行内提示。
+- **组件样式边界（`className` 传参铁律）**：页面向 `components/ui/` 传入的 `className` **只能用于布局**（`margin`、`width`、`grid`/`flex` 位置等），**不得覆盖颜色、字体、边框等视觉样式**；如既有变体或尺寸不满足需求，应在 `components/ui/` 层修正或新增明确变体/尺寸，并同步更新 `DESIGN.md` 与 `/dev/ui`。
 
 ---
 
@@ -61,7 +62,7 @@ src/
 |---|---|---|---|---|
 | 前置 | `Spinner` | 原生 `<span>` | **已实现**（`src/components/ui/Spinner/`） | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion`、可选 `label` |
 | 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；统一中性灰禁用态（`dashed` 保留清晰虚线）、强对比 `accent` hover、复用 `Spinner` 无抖动 `loading`（不含 `selected`） |
-| 第 1 批（表单） | `Input` | 原生 `<input>` | **已实现**（`src/components/ui/Input/`） | `underline`（透明点线禁用态）/`boxed`（浅灰底禁用态）、`sm`/`md`、`mono`、`invalid`、`readOnly`、`disabled`、完整对齐 `type="date"` 外观 |
+| 第 1 批（表单） | `Input` | 原生 `<input>` | **已实现**（`src/components/ui/Input/`） | `underline`（默认 `--color-border-strong` 墨色下划线，focus 切 2px 信号橙；透明点线禁用态）/`boxed`（浅灰底禁用态）、`sm`/`md`、`mono`、`invalid`、`readOnly`、`disabled`、完整对齐 `type="date"` 外观 |
 | 第 1 批（表单） | `Textarea` | 原生 `<textarea>` | **已实现**（`src/components/ui/Textarea/`） | `underline`（透明点线禁用态）/`boxed`（浅灰底禁用态）、`invalid`、`readOnly`、`disabled` 全态 |
 | 第 1 批（表单） | `Checkbox` | `radix-ui` `Checkbox` | **已实现**（`src/components/ui/Checkbox/`） | 16×16 0 圆角方框、`checked`/`invalid`/关联 `label` 同步禁用弱化 |
 | 第 1 批（表单） | `Switch` | `radix-ui` `Switch` | **已实现**（`src/components/ui/Switch/`） | `track`（28×12 固定轨道 + 8×8 方形滑块 + 有/无）& `segmented`（启用/停用）双变体、复用 `Spinner` 锁定同宽零抖动 `loading` 与统一禁用态 |
@@ -77,13 +78,14 @@ src/
 | 第 3 批（展示） | `Alert` | 原生 `<div>` | **已实现**（`src/components/ui/Alert/`） | `inline`/`banner` × `info`（中性色）/`warning`（橙）/`danger`（橙），支持 `title` 与 `action` |
 | 第 3 批（展示） | `Tabs` | `radix-ui` `Tabs` | **已实现**（`src/components/ui/Tabs/`） | 平铺报刊风方角标签栏，`active` 墨底反白、方向键漫游与 `disabled` |
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（双层对比）/`segmented`（按周格子），完整 ARIA |
-| 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（报刊上粗下细双线）/`dashed`（虚线），支持 `horizontal`/`vertical` |
+| 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（抽屉双线 2px+1.5px）/`masthead`（页头刊头双横线 5px+1.5px）/`dashed`（墨色虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，共 14 项待建，阶段 4 迁移到首个用到它的模块时按需建立）
+### 业务范式组件（`src/components/patterns/`，共 15 项：1 项已实现，14 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
 > 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
 
 | 范式组件 | 状态与建立时机 | 职责摘要 |
 |---|---|---|
+| `BrandMark` | **已实现** · 阶段 4 第 1 步（`src/components/patterns/BrandMark/`） | 双色品牌几何标识 + 可选 `MINITEAM PMS` 字标（`size="sm"\|"md"`、`tone="default"\|"inverse"`，供 `LoginHeader`、`ProjectSwitch`、`SettingDrawer` 复用） |
 | `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **待建** · 阶段 4 第 2 步（`layout` / `projects`） | 双线页头（`60px`/`44px` 切 Token）、三变体面板、表单抽屉壳、空态/页态、`.issues` 浮层壳 |
 | `SearchDropdown` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 公共下拉搜索组合（`Popover` + `Input` + `Spinner`，跨 4 模块 5 处）与破坏性操作二次确认 |
 | `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |

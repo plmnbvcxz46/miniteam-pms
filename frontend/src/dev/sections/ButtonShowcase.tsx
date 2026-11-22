@@ -19,7 +19,7 @@ const VARIANT_ROWS: { variant: ButtonVariant; label: string; usage: string }[] =
   { variant: "accent", label: "新建任务", usage: "信号橙重心，单视图尽量 ≤ 1 处" },
   { variant: "danger", label: "删除任务", usage: "高危触发，配合 AlertDialog 确认" },
   { variant: "dashed", label: "+ 添加条目", usage: "虚线框，看板列尾/附加入口" },
-  { variant: "link", label: "查看详情", usage: "下划线行内文字操作" },
+  { variant: "link", label: "查看详情", usage: "下划线行内文字操作（继承上下文排版）" },
 ];
 
 const SIZE_LIST: { size: ButtonSize; label: string; heightNote: string }[] = [

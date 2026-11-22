@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { authApi } from "../../../api/auth";
+import { authApi } from "../../../services/auth";
 import { useMe } from "../../../state/auth/useAuth";
 import type { ProfileUpdate } from "../../../shared/types/settings";
 

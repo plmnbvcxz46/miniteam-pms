@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { BrandMark } from "../../components/patterns/BrandMark";
 import { roleLabel } from "../../shared/constants/labels";
 import type { ProjectSummary } from "../../shared/types/global";
 import { formatDayLabel } from "../../shared/utils/date";
@@ -34,10 +35,7 @@ export default function ProjectSwitch({
         aria-label="切换项目"
         onClick={() => setOpen((v) => !v)}
       >
-        <svg className="logo" viewBox="0 0 34 34" aria-hidden="true">
-          <rect x="0" y="0" width="15" height="34" fill="#FAFAF7" />
-          <rect x="19" y="0" width="15" height="18" fill="#FF5A1F" />
-        </svg>
+        <BrandMark size="sm" tone="inverse" />
         <span id="proj-name">{current?.name ?? "没有项目"}</span>
         <svg
           width="12"

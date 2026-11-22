@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrandMark } from "../../components/patterns/BrandMark";
 import Drawer from "../../shared/components/Drawer";
 import { useAccess } from "../../state/access/useAccess";
 import { getVisibleSections, resolveSection, type SectionId } from "./sections";
@@ -59,10 +60,7 @@ export default function SettingsDrawer({
   return (
     <Drawer className="ov drawer" label="设置" onClose={onClose}>
       <header className="ov-head">
-        <svg className="logo" viewBox="0 0 34 34" aria-hidden="true">
-          <rect x="0" y="0" width="15" height="34" fill="currentColor" />
-          <rect x="19" y="0" width="15" height="18" fill="#FF5A1F" />
-        </svg>
+        <BrandMark className="logo" />
         <h1 className="ov-title t-overlay-title">系统<em>设置</em></h1>
 
         {/* 顶部标签：分组变化处插一条分隔线 */}
