@@ -34,12 +34,6 @@
   color: var(--color-text-muted);
 }
 
-.switchBtn {
-  font-family: var(--font-sans);
-  font-size: var(--font-size-md);
-  color: var(--color-text);
-}
-
 @media (height >= 760px) {
   .col {
     margin-top: var(--space-12);

@@ -119,7 +119,6 @@ export function AuthForm({ form }: AuthFormProps) {
         {isRegister ? "已有账号？" : "没有账号？"}
         <Button
           variant="link"
-          className={styles.switchBtn}
           onClick={() => switchMode(isRegister ? "login" : "register")}
         >
           {isRegister ? "登录" : "注册"}

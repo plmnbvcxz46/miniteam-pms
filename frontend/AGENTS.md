@@ -49,6 +49,7 @@ src/
 - **样式标尺**：间距以 **4px 为基准**，仅允许 `--space-0-5`（`2px`）与 `--space-1-5`（`6px`）两个半步（原 `10px`/`14px` 迁入新样式时对齐 `8/12/16px`）；全站坚持 **`0` 圆角**（仅圆形元素用 `--radius-full`）；标准描边 `1.5px` / 粗描边 `2px`；保留 `--font-size-2xs: 10px`、展示双档 `--font-size-display: 60px` / `--font-size-display-sm: 44px`（断点处切换 Token）以及大号统计数字语义 Token `--font-size-figure`（指向 `--font-size-display`）。
 - **CSS Modules + `data-*` 驱动**：新组件与新页面样式统一使用 `*.module.css`，变体与交互态通过 `data-variant`、`data-size`、`data-state`、`data-loading`、`data-invalid` 与标准伪类（含补齐 `:active`、`:focus-visible`、`disabled` 弱化、`[aria-invalid="true"]`）驱动，**禁止拼接状态 class 名**。
 - **破坏性操作与反馈**：使用 Radix `AlertDialog`（`ConfirmDialog`）统一替代原生 `window.confirm` 与双击确认，使用 `Toast` 替代 `window.alert` 与短暂操作反馈，表单/页面校验错误使用行内提示。
+- **组件样式边界（`className` 传参铁律）**：页面向 `components/ui/` 传入的 `className` **只能用于布局**（`margin`、`width`、`grid`/`flex` 位置等），**不得覆盖颜色、字体、边框等视觉样式**；如既有变体或尺寸不满足需求，应在 `components/ui/` 层修正或新增明确变体/尺寸，并同步更新 `DESIGN.md` 与 `/dev/ui`。
 
 ---
 

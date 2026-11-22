@@ -141,6 +141,9 @@
   padding: var(--space-0);
   background-color: transparent;
   border-width: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: var(--border-width-thin);
