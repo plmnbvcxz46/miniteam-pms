@@ -30,6 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   type PopoverContentProps,
+  type PopoverPadding,
   type PopoverTriggerProps,
 } from "../../components/ui/Popover";
 import styles from "../UiShowcasePage.module.css";
@@ -44,6 +45,7 @@ function DemoMenuSeparator(props: DropdownMenuSeparatorProps) { return <Dropdown
 function DemoDrawerContent(props: DrawerContentProps) { return <DrawerContent {...props} />; }
 
 const DANGER_TONE: DropdownMenuItemTone = "danger";
+const DEFAULT_POPOVER_PADDING: PopoverPadding = "default";
 const DRAWER_SIZES: { size: DrawerSize; label: string }[] = [
   { size: "md", label: "打开 md 表单抽屉（640px）" },
   { size: "lg", label: "打开 lg 设置抽屉（880px）" },
@@ -61,7 +63,7 @@ function PopoverAndMenuDemo({ onAction }: { onAction: (action: string) => void }
         }}
       >
         <PopoverAnchor asChild><DemoPopoverTrigger>展开 Popover 浮层 ▾</DemoPopoverTrigger></PopoverAnchor>
-        <DemoPopoverContent>
+        <DemoPopoverContent padding={DEFAULT_POPOVER_PADDING}>
           <div className={widgetStyles.popoverBody}>
             <span className={styles.kicker}>// ISSUE ARCHIVE</span>
             <span className={styles.code}>第 32 期 · 2026.11.22</span>

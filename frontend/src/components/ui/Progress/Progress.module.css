@@ -1,10 +1,14 @@
-/* 进度条原语：基于 radix-ui Progress，支持 solid（单轨/超载线）、dual（双轨对比）、segmented（分段格子） */
+/* 进度条原语：基于 radix-ui Progress，支持 solid（单轨/超载线）、dual（单轨双层对比）、segmented（分段格子） */
 .root {
   position: relative;
   display: block;
   width: 100%;
   overflow: hidden;
   border-radius: var(--radius-none);
+}
+
+.root[data-fixed-segments="true"] {
+  width: auto;
 }
 
 /* ---------- 变体 1：solid（单轨进度条 + 可选上限线） ---------- */
@@ -17,7 +21,8 @@
   overflow: hidden;
 }
 
-.indicator {
+.indicator,
+.dualIndicator {
   display: block;
   height: 100%;
   background-color: var(--color-surface-inverse);
@@ -44,21 +49,22 @@
   pointer-events: none;
 }
 
-/* ---------- 变体 2：dual（双层时间进度 + 完成率对比条） ---------- */
-.dualWrap {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  width: 100%;
-}
-
+/* ---------- 变体 2：dual（单轨叠加时间斜纹 + 完成实底对比条） ---------- */
 .dualTrack {
   position: relative;
   width: 100%;
   height: 8px;
   background-color: var(--color-surface);
-  border: var(--border-width-hair) solid var(--color-border-strong);
+  border: var(--border-width-thin) solid var(--color-border-strong);
   overflow: hidden;
+}
+
+.secondaryFill,
+.dualIndicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .secondaryFill {
@@ -70,12 +76,25 @@
   transition-timing-function: var(--ease-standard);
 }
 
+.root[data-surface="inverse"] .dualTrack {
+  background-color: var(--color-surface-inverse);
+  border-color: var(--color-border-inverse);
+}
+
+.root[data-surface="inverse"] .secondaryFill {
+  background-image: var(--comp-pattern-time-inverse);
+}
+
+.root[data-surface="inverse"] .dualIndicator {
+  background-color: var(--color-border-inverse);
+}
+
 /* ---------- 变体 3：segmented（按周/按期分段格子条） ---------- */
 .segmentGrid {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: var(--space-0-5);
+  gap: var(--space-1);
   width: 100%;
   height: 10px;
 }
@@ -83,7 +102,7 @@
 .segmentCell {
   display: block;
   height: 100%;
-  border: var(--border-width-hair) solid var(--color-border-strong);
+  border: var(--border-width-thin) solid var(--color-border-strong);
   background-color: var(--color-surface);
 }
 
@@ -92,5 +111,6 @@
 }
 
 .segmentCell[data-seg-state="today"] {
-  background-color: var(--color-accent);
+  border: var(--border-width-thick) solid var(--color-accent);
+  background-color: transparent;
 }

@@ -4,6 +4,7 @@ import styles from "./Progress.module.css";
 
 export type ProgressVariant = "solid" | "dual" | "segmented";
 export type ProgressTone = "default" | "warning";
+export type ProgressSurface = "default" | "inverse";
 export type ProgressSegmentState = "past" | "today" | "future";
 
 export interface ProgressSegment {
@@ -21,11 +22,15 @@ export interface ProgressProps
   max?: number;
   variant?: ProgressVariant;
   tone?: ProgressTone;
+  /** 表面对比度：default（浅纸底）| inverse（深墨底，如侧栏摘要卡） */
+  surface?: ProgressSurface;
   striped?: boolean;
   thresholdPercent?: number;
   secondaryValue?: number;
   segments?: ProgressSegment[];
   totalSegments?: number;
+  /** 可选固定单格宽度（px），不传则撑满容器均分 */
+  segmentWidth?: number;
 }
 
 function clampPercent(val: number, max: number): number {
@@ -58,24 +63,40 @@ function ProgressTracks(props: {
   secondaryPercent: number;
   thresholdPercent?: number;
   segments: ProgressSegment[];
+  segmentWidth?: number;
 }) {
   if (props.variant === "dual") {
     return (
-      <div className={styles.dualWrap}>
-        <div className={styles.dualTrack}>
-          <span className={styles.secondaryFill} style={{ width: `${props.secondaryPercent}%` }} aria-hidden="true" />
-        </div>
-        <div className={styles.dualTrack}>
-          <RadixProgress.Indicator className={styles.indicator} style={{ width: `${props.primaryPercent}%` }} />
-        </div>
+      <div className={styles.dualTrack}>
+        <span
+          className={styles.secondaryFill}
+          style={{ width: `${props.secondaryPercent}%` }}
+          aria-hidden="true"
+        />
+        <RadixProgress.Indicator
+          className={styles.dualIndicator}
+          style={{ width: `${props.primaryPercent}%` }}
+        />
       </div>
     );
   }
   if (props.variant === "segmented") {
     return (
-      <div className={styles.segmentGrid}>
+      <div
+        className={styles.segmentGrid}
+        style={
+          props.segmentWidth != null
+            ? { gridAutoColumns: `${props.segmentWidth}px` }
+            : undefined
+        }
+      >
         {props.segments.map((seg) => (
-          <span key={seg.key} title={seg.title} data-seg-state={seg.state} className={styles.segmentCell} />
+          <span
+            key={seg.key}
+            title={seg.title}
+            data-seg-state={seg.state}
+            className={styles.segmentCell}
+          />
         ))}
       </div>
     );
@@ -99,11 +120,13 @@ export function Progress({
   max = 100,
   variant = "solid",
   tone = "default",
+  surface = "default",
   striped = false,
   thresholdPercent,
   secondaryValue = 0,
   segments,
   totalSegments = 7,
+  segmentWidth,
   className,
   ref,
   ...rest
@@ -124,7 +147,9 @@ export function Progress({
       aria-valuenow={clampedValue}
       data-variant={variant}
       data-tone={tone}
+      data-surface={surface}
       data-striped={striped ? "true" : undefined}
+      data-fixed-segments={segmentWidth != null ? "true" : undefined}
       className={className ? `${styles.root} ${className}` : styles.root}
       {...rest}
     >
@@ -134,6 +159,7 @@ export function Progress({
         secondaryPercent={secondaryPercent}
         thresholdPercent={thresholdPercent}
         segments={resolvedSegments}
+        segmentWidth={segmentWidth}
       />
     </RadixProgress.Root>
   );

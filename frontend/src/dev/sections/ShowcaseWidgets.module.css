@@ -108,3 +108,9 @@
   flex-direction: column;
   gap: var(--space-4);
 }
+
+.progressInverseWrap {
+  padding: var(--space-3);
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}

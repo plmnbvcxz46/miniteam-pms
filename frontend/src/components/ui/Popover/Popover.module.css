@@ -50,6 +50,10 @@
   outline: none;
 }
 
+.content[data-padding="none"] {
+  padding: var(--space-0);
+}
+
 .content[data-state="open"] {
   animation-name: ui-popover-in;
   animation-duration: var(--duration-fast);
