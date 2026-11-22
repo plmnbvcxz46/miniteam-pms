@@ -1,0 +1,31 @@
+/* 表单抽屉标准外壳样式：承接 Drawer(md) 表单体、行内错误与底部操作栏 */
+.accent {
+  font-style: normal;
+  color: var(--color-accent);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footerNote {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
