@@ -29,7 +29,7 @@
 | # | 组件名 | 现有实现位置（文件:行） | 使用它的模块 | 交互复杂度 | 建议归属 | 底层方案 | 建立时机 |
 |---:|---|---|---|---|---|---|---|
 | 0 | **`BrandMark`** | `src/components/patterns/BrandMark/`（替换原 `LoginHeader.tsx`、`ProjectSwitch.tsx:37`、`SettingDrawer.tsx:62`） | `auth`、`layout`、`settings`（3 模块 3 处） | 低 | `components/patterns` | 纯展示 SVG + CSS Modules（`size="sm"\|"md"`、`tone="default"\|"inverse"`、`showWordmark?`） | **阶段 4 第 1 步（已实现）** |
-| 1 | **`PageHeader`** | `OverviewHeader.tsx:15`、`BoardHeader.tsx:27`、`TimelineHeader.tsx:26`、`ReportsHeader.tsx:30`、`CollabHeader.tsx:14`、`DocumentHeader.tsx:38`、`MembersHeader.tsx:24`、`SelfHeader.tsx:13`、`TaskHeader.tsx:30-88`、`NoProject.tsx:9-21`、`NoAccess.tsx:9-21` | `layout`、`overview`、`board`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（9 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Button`、`Separator(masthead)`） | 阶段 4 第 2 步（`layout`） |
+| 1 | **`PageHeader`** | `OverviewHeader.tsx:15`、`BoardHeader.tsx:27`、`TimelineHeader.tsx:26`、`ReportsHeader.tsx:30`、`CollabHeader.tsx:14`、`DocumentHeader.tsx:38`、`MembersHeader.tsx:24`、`SelfHeader.tsx:13`、`TaskHeader.tsx:30-88`、`NoProject.tsx:9-21`、`NoAccess.tsx:9-21`、`LoginHeader.tsx:14-20`（待复用） | `layout`、`auth`、`overview`、`board`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（10 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Button`、`Separator(masthead)`）；**建立时将 `LoginHeader` 标题区改为复用 `PageHeader` 或其子部件（`Kicker` / `PageTitle`）** | 阶段 4 第 2 步（`layout`） |
 | 2 | **`Panel`** | 20+ 处 `.pnl`/`.phd`（`NoProject.tsx:23`、`TodoPanel.tsx:21`、`ProgressPanel.tsx:11`、`GanttPanel.tsx:66`、`BurndownPanel.tsx:13`、`TaskInfoPanel.tsx:20`、`TaskLogPanel.tsx:11`、`ActivityFeedPanel.tsx:30`、`SelfLoad.tsx:17`、`DocumentRevising.tsx:39`、`DocumentFinal.tsx:21`） | `layout`、`overview`、`task`、`timeline`、`documents`、`collab`、`members`、`reports`（8 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Separator` + CSS Modules 容器） | 阶段 4 第 2 步（`layout`） |
 | 3 | **`FormDrawer`** | `NewProjectDrawer.tsx:60-149`、`TaskDrawer.tsx:112-225`、`UploadDocDrawer.tsx:156-291`、`InviteMemberDrawer.tsx:121-283`、`NewDiscussionDrawer.tsx:95-207` | `projects`、`tasks`、`documents`、`members`、`collab`（5 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Drawer(md)`、`Button`、`Alert`、`Separator`） | 阶段 4 第 2 步（`projects`） |
 | 4 | **`EmptyState` / `PageState`** | `NoProject.tsx:9-26`、`NoAccess.tsx:9-26`、`OverviewPage.tsx:71-86`、`TimelinePage.tsx:70-85`、`DocumentsPage.tsx:172-186`、`ReportsPage.tsx:50-65`、`DocumentDetail.tsx:31`、`PermLog.tsx:30`、`LogsPanel.tsx:52,75` | `layout`、`overview`、`task`、`timeline`、`documents`、`reports`、`members`、`settings`、`collab`（9 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Alert`、`Button`、`Spinner`） | 阶段 4 第 2 步（`layout`） |
@@ -89,7 +89,7 @@
 - **归类**：
   - `TaskHeader` 与其余 10 处标准页头 → **有意的小差别**；
   - `LoginPage` → **差别太大**。
-- **建议**：`patterns/PageHeader` 仅提供 `size="default" | "compact"` 两个明确变体（1 个变体属性，零布尔堆叠：`default` 用 `60px`、`compact` 用 `44px` 供 `TaskHeader` 使用，可选 `breadcrumb` 与 `actions` 插槽）；`LoginPage` 保持独立轻页头 `LoginHeader`，仅引用 `--font-size-display`。
+- **建议**：`patterns/PageHeader` 仅提供 `size="default" | "compact"` 两个明确变体（1 个变体属性，零布尔堆叠：`default` 用 `60px`、`compact` 用 `44px` 供 `TaskHeader` 使用，可选 `breadcrumb` 与 `actions` 插槽）；**阶段 4 第 2 步建立 `PageHeader` 时，`LoginHeader` 的标题区改为复用 `PageHeader` 或其子部件（`Kicker` / `PageTitle`），不再各写一份**（仅保留顶部 `BrandMark` 差异）。
 - **视觉变化影响**：无视觉变化（精确还原各页现有排版）。
 
 ### 组 3：面板容器（20+ 处 `.pnl`/`.phd` vs 文档页 `.dsec`/`.dsec-h`）
@@ -229,6 +229,7 @@
    - **归属调整**：新增登记 `components/patterns/SearchDropdown`；由于原 4 处普通搜索框中 3 处已改用 `SearchDropdown`、仅剩 `members/CrewLabels` 1 处，原 `patterns/SearchInput` 移出 `patterns/`，由 `features/members/` 直接使用 `ui/Input(boxed)`。
    - **与 `AssigneePicker` 方案 A 合并建议**：底座合二为一进入 `patterns/SearchDropdown`（方案 A：`ui/Popover` + `ui/Input` + `ui/Spinner`，0 新增依赖，拆分满足 ≤ 250 行 / ≤ 80 行门禁），`AssigneePicker` 留在 `features/tasks/` 内作为业务薄封装调用 `patterns/SearchDropdown` + `patterns/LoadBar` + `ui/Badge` + `assignee.ts`。
 2. **对阶段 4 各步骤的具体影响**：
+   - **第 2 步（`layout`）**：建立 `patterns/PageHeader` 时，同步将 `features/auth/components/LoginHeader` 的标题区（kicker + 大标题 + 副标题 + 刊头双线）改为复用 `PageHeader` 或其子部件（`Kicker` / `PageTitle`），不再各写一份。
    - **第 3 步（`features/settings`）**：原建 `SearchInput` 改为**首次建立 `patterns/SearchDropdown`**（供 `PeoplePanel` 使用，并以 `ui/Popover` 取代旧组件对 `layout/useDismiss` 的耦合）。
    - **第 5 步（`features/members`）**：`InviteMemberDrawer` 复用 `patterns/SearchDropdown`（异步搜索模式）；`CrewLabels` 直接用 `ui/Input(boxed)`，不再建设 `patterns/SearchInput`。
    - **第 6 步（`features/documents`）**：`DocumentHeader`（`variant="box"` 右对齐）与 `UploadDocDrawer`（`variant="line"` + `toggle` + `footer`）复用 `patterns/SearchDropdown`；旧 `shared/components/SearchDropdown.*` 暂留至第 9a 步全部迁移完毕后删除。
