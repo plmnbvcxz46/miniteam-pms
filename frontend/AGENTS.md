@@ -131,6 +131,57 @@ src/
 
 ---
 
+## 重构进度与接手指南
+
+### 当前进度与下一步顺序
+- **已完成**：
+  - 阶段 0（审计 `audit.md`）～ 阶段 3.5（自定义组件盘点 `custom-components.md`，19 项 `components/ui/` 全部就位）；
+  - 甘特阻塞修复（PR #40）；
+  - 阶段 4 第 1 步：`features/auth`（PR #42，提取 `BrandMark`）；
+  - 阶段 4 第 2 步：`layout + projects + notifications`（PR #43，新增 `PageHeader`/`Panel`/`EmptyState`/`PageState`/`FormDrawer`/`ActionPopover`，并完成 `LoginHeader` 复用 `PageHeader`）。
+- **下一步**：**阶段 4 第 3 步 `features/settings`**（新建 `patterns/SearchDropdown`、`patterns/ConfirmDialog`）。
+- **后续完整顺序**：
+  `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
+
+### 已登记待办与遗留状态
+- **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
+- **`src/layout/useDismiss.ts` 暂留**：当前仍被尚未迁移的 `src/shared/components/SearchDropdown.tsx` 引用；第 3 步建立 `patterns/SearchDropdown` 并在第 9a 步全部替换完后删除 `useDismiss.ts` 与旧 `SearchDropdown.*`。
+- **时间线第 7 步 2 项甘特待办（PR #40 遗留，详见 `custom-components.md` 第七节）**：
+  1. 核对 `GanttPanel`、`GanttRow` 等是否实际传入任务前置状态以确保 `taskBarModel` 兜底生效，并补齐 `taskBarModel` 5 项场景断言测试；
+  2. 后端 `TaskAutoStart.isAutoBlocked()` 从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对。
+- **`api/http.ts` 与 `state/*` 集中迁移**：留待阶段 4 全部业务模块迁移完成后最后一步统一迁入 `services/` 与 `stores/`。
+- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**。
+
+### 每一步的固定流程
+1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
+2. 先列出迁移计划写进汇报，不必等确认直接执行；
+3. 迁移要求：业务逻辑与接口行为不变；页面改用 `components/ui` 与 `patterns`；请求移入 `services/`；样式只用 Token；旧实现（含 `index.css` / `legacy.css` / `roles.css` 对应规则）在同一提交中删除；每个独立改动单独提交（Conventional Commits 中文描述）；
+4. 视觉忠实于原版：基础组件默认样式若导致变淡或偏样，在 `components/ui/` 层修正并同步 `/dev/ui` 与 `DESIGN.md`，禁止在页面用 `className` 覆盖（`className` 仅限布局）；
+5. 验证：`pnpm check` 与 `pnpm build` 全部通过；本步涉及的每个页面迁移前后各截对比图并实测主要交互；
+6. 推送分支并用 `gh pr create` 提 PR 到 `main`（不合并，等待审阅）；审阅通过后以 **merge commit** 合并、删除远程与本地短分支并拉取最新 `main`。
+
+### 已批准的视觉变更清单
+- **`AccountMenu`（阶段 4 第 2 步已批准）**：账号菜单采用 `ui/DropdownMenu` 简洁样式替代原 `.accts` 双列底栏浮层，危险项（退出登录）使用 `tone="danger"` 语气。
+- **`FormDrawer`（阶段 4 第 2 步已批准）**：5 个表单抽屉统一使用 `ui/Drawer(md)` `640px` 宽、头部 `Separator(masthead)` 5px+1.5px 粗黑双横线与 40×40 大号 `×` 关闭钮、提交/取消按钮统一置于抽屉底部 `footer`。
+- **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`Panel`（文档页 `.dsec` 对齐全站）、`LoadBar`（第 4 步，**须截前后对比图确认**）、`HeroCard`（第 4 步，**须截前后对比图确认**）、`ActivityFeed` / `ListRow`、`SearchDropdown`。
+
+### 下一步启动指令模板（直接复制使用）
+```text
+你在接手一个进行中的前端重构。阶段 0～3.5 与阶段 4 已完成部分见 frontend/AGENTS.md 的“重构进度与接手指南”。开始前先完整阅读 frontend/AGENTS.md、frontend/DESIGN.md、frontend/audit.md、frontend/custom-components.md，严格遵守其中所有规则（设计 token、分层依赖方向、单文件行数门禁、className 只能用于布局、Git 短分支流程、pnpm check）。
+
+本次任务：阶段 4 第 <X> 步——按 audit.md / custom-components.md 中的迁移顺序，迁移“<模块名>”这一步涉及的模块。只做这一步。
+1. 切到 main 并 pull 到最新，确认工作区干净且本地无残留已合并分支，从 main 切出 refactor/migrate-<模块名>。
+2. 先列出迁移计划：涉及哪些页面和组件；用到哪些 ui 组件；按 custom-components.md 登记应在本步建立的 patterns；要抽出的 services / hooks；要删除的旧样式与旧组件。全局搜索确认没有可复用的现有实现。计划写进汇报，不必等我确认，直接执行。
+3. 迁移要求：
+   - 业务逻辑与接口行为不变；页面改用 components/ui 与 patterns；请求移入 services；样式只用 token；旧实现（含 index.css / legacy.css / roles.css / stylelint.config.mjs ignoreFiles 中对应规则）在同一提交中删除；每个独立改动单独提交，Conventional Commits 中文描述。
+   - 视觉必须忠实于原版：线条粗细、颜色深浅、字号层级、间距与原页面一致。如果发现基础组件的默认样式会让页面变淡或变样，在 ui 组件层修正（并同步 /dev/ui 和 DESIGN.md），不要在页面里用 className 覆盖。
+4. 验证：pnpm check 与 pnpm build 通过；本步涉及的每个页面迁移前后各截一张对比图；手动走一遍这些页面的主要交互（以实际功能为准）。
+5. 完成后推送 refactor/migrate-<模块名> 并用 gh 提 PR 到 main，不要合并，等我审阅。
+6. 汇报：迁移计划、新建的 patterns 清单（附 /dev/ui 截图）、提交列表、PR 链接、前后对比图、legacy.css 剩余行数、发现的问题或需要我决定的事。最后一行单独写【等待审阅：阶段4-第<X>步<模块名>迁移完成】。
+```
+
+---
+
 ## 过渡期旧样式与遗留文件说明
 
 - **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css`、`src/shared/components/SearchDropdown.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。**阶段 4 全部模块迁移完成后，`legacy.css` 必须为空并删除**。
