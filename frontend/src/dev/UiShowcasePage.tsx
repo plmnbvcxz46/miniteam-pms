@@ -120,7 +120,6 @@ function DemoSpinner(props: SpinnerProps) {
 export default function UiShowcasePage() {
   const [sandboxLoading, setSandboxLoading] = useState(false);
   const [sandboxDisabled, setSandboxDisabled] = useState(false);
-  const [sandboxPressed, setSandboxPressed] = useState(false);
   const [clickCount, setClickCount] = useState(0);
 
   return (
@@ -188,9 +187,8 @@ export default function UiShowcasePage() {
               <tr>
                 <th>VARIANT</th>
                 <th>DEFAULT / HOVER / ACTIVE</th>
-                <th>SELECTED (aria-pressed)</th>
-                <th>LOADING（无抖动）</th>
-                <th>DISABLED</th>
+                <th>LOADING（复用 Spinner · 零抖动）</th>
+                <th>DISABLED（统一中性灰）</th>
               </tr>
             </thead>
             <tbody>
@@ -204,11 +202,6 @@ export default function UiShowcasePage() {
                   </td>
                   <td>
                     <DemoButton variant={row.variant}>{row.label}</DemoButton>
-                  </td>
-                  <td>
-                    <DemoButton variant={row.variant} aria-pressed={true}>
-                      {row.label}
-                    </DemoButton>
                   </td>
                   <td>
                     <DemoButton variant={row.variant} loading>
@@ -284,24 +277,17 @@ export default function UiShowcasePage() {
           <div className={styles.sandboxControls}>
             <Button
               size="sm"
-              aria-pressed={sandboxLoading}
+              variant={sandboxLoading ? "primary" : "default"}
               onClick={() => setSandboxLoading((v) => !v)}
             >
               Loading: {sandboxLoading ? "开" : "关"}
             </Button>
             <Button
               size="sm"
-              aria-pressed={sandboxDisabled}
+              variant={sandboxDisabled ? "primary" : "default"}
               onClick={() => setSandboxDisabled((v) => !v)}
             >
               Disabled: {sandboxDisabled ? "开" : "关"}
-            </Button>
-            <Button
-              size="sm"
-              aria-pressed={sandboxPressed}
-              onClick={() => setSandboxPressed((v) => !v)}
-            >
-              Selected: {sandboxPressed ? "开" : "关"}
             </Button>
             <Button size="sm" variant="link" onClick={() => setClickCount(0)}>
               重置计数
@@ -316,7 +302,6 @@ export default function UiShowcasePage() {
               variant="accent"
               loading={sandboxLoading}
               disabled={sandboxDisabled}
-              aria-pressed={sandboxPressed}
               onClick={() => setClickCount((c) => c + 1)}
             >
               提交当前操作
@@ -325,7 +310,6 @@ export default function UiShowcasePage() {
               variant="primary"
               loading={sandboxLoading}
               disabled={sandboxDisabled}
-              aria-pressed={sandboxPressed}
               leadingIcon={<PlusIcon />}
               onClick={() => setClickCount((c) => c + 1)}
             >
@@ -335,7 +319,6 @@ export default function UiShowcasePage() {
               variant="default"
               loading={sandboxLoading}
               disabled={sandboxDisabled}
-              aria-pressed={sandboxPressed}
               onClick={() => setClickCount((c) => c + 1)}
             >
               取消并返回
@@ -344,7 +327,6 @@ export default function UiShowcasePage() {
               variant="danger"
               loading={sandboxLoading}
               disabled={sandboxDisabled}
-              aria-pressed={sandboxPressed}
               onClick={() => setClickCount((c) => c + 1)}
             >
               确认删除

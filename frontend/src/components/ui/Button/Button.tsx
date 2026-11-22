@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef, ReactNode } from "react";
+import { Spinner } from "../Spinner";
 import styles from "./Button.module.css";
 
 export type ButtonVariant =
@@ -16,7 +17,7 @@ export interface ButtonProps extends ComponentPropsWithRef<"button"> {
   variant?: ButtonVariant;
   /** 尺寸档位：默认 md（34px） */
   size?: ButtonSize;
-  /** 加载中：禁用点击、显示居中指示器并保持按钮宽高零抖动 */
+  /** 加载中：禁用点击、显示居中指示环并保持按钮宽高零抖动 */
   loading?: boolean;
   /** 可选前置图标 */
   leadingIcon?: ReactNode;
@@ -68,7 +69,11 @@ export function Button({
           </span>
         )}
       </span>
-      {loading && <span className={styles.spinner} aria-hidden="true" />}
+      {loading && (
+        <span className={styles.spinnerSlot} aria-hidden="true">
+          <Spinner size={size === "sm" ? "sm" : "md"} />
+        </span>
+      )}
     </button>
   );
 }

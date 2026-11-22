@@ -59,7 +59,7 @@ src/
 | 批次 | 组件 | 底层原语 | 状态 | 备注 |
 |---|---|---|---|---|
 | 前置 | `Spinner` | 原生 `<span>` | **已实现**（`src/components/ui/Spinner/`） | `sm`/`md`/`lg`、`currentColor`、纯 CSS 环、`prefers-reduced-motion`、可选 `label` |
-| 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`（待去 `selected`/统一禁用/强化 `accent` hover/复用 `Spinner`）；尺寸：`sm`/`md`/`lg`/`icon` |
+| 前置 | `Button` | 原生 `<button>` | **已实现**（`src/components/ui/Button/`） | 变体：`default`/`primary`/`accent`/`danger`/`dashed`/`link`；尺寸：`sm`/`md`/`lg`/`icon`；统一中性灰禁用态、强对比 `accent` hover、复用 `Spinner` 无抖动 `loading`（不含 `selected`） |
 | 第 1 批（表单） | `Input` / `Textarea` | 原生 `<input>` / `<textarea>` | 待实现 | `underline`/`boxed`、`sm`/`md`、`Input` 完整对齐 `type="date"` 外观 |
 | 第 1 批（表单） | `Checkbox` / `Switch` / `Select` / `ToggleGroup` | `radix-ui` | 待实现 | 统一替代 `.ck`/`.sw2`/`.pm`/`select.u`/`.seg`/`.chips`/`.roles` |
 | 第 1 批（表单） | `Field` | 原生语义容器 | 待实现 | `useId()` 自动关联 `htmlFor`/`id`/`aria-invalid`/`aria-describedby`（替代原 `FormField`） |
