@@ -1,0 +1,162 @@
+/* 公共下拉搜索：输入框 + 紧贴下方的结果面板（面板外壳复用 ui/Popover） */
+.root {
+  position: relative;
+  min-width: 0;
+}
+
+/* 带框外观：左侧小字 + 带框输入 */
+.boxField {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* 关闭态：显示当前值的按钮，外观同下划线输入框 */
+.toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto var(--space-3);
+  align-items: center;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-0) var(--space-0-5);
+  font: inherit;
+  font-size: var(--font-size-lg);
+  height: 34px;
+  line-height: var(--line-height-none);
+  color: var(--color-text);
+  text-align: left;
+  background-color: transparent;
+  border: 0;
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.toggle:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.toggleValue {
+  display: contents;
+}
+
+/* 浮层：宽度跟输入框，且不小于 --sd-min */
+.pop {
+  width: max(var(--radix-popover-trigger-width), var(--sd-min, 0px));
+  white-space: normal;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-inverse);
+  background-color: var(--color-surface-inverse);
+}
+
+.head em {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--color-text-inverse-muted);
+}
+
+.list {
+  max-height: 252px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+}
+
+.option {
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+}
+
+.list > .option:last-child {
+  border-bottom: 0;
+}
+
+.option[data-active="true"] {
+  background-color: var(--color-bg-subtle);
+}
+
+.option[aria-selected="true"] {
+  outline: var(--border-width-thin) solid var(--color-accent);
+  outline-offset: calc(var(--border-width-thin) * -1);
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  height: 36px;
+  padding: var(--space-0) var(--space-3);
+  border-top: var(--border-width-thin) solid var(--color-border-strong);
+  border-bottom: 0;
+}
+
+/* 单行两栏的行：名称 + 副标题 | 附注 */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  height: 36px;
+  padding: var(--space-0) var(--space-3);
+}
+
+.rowMain {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowName {
+  font-weight: var(--font-weight-semibold);
+}
+
+.rowSub {
+  margin-left: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.rowEnd {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+@media (width <= 900px) {
+  .list {
+    max-height: min(252px, 45vh);
+  }
+}
