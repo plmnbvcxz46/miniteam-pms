@@ -1,2 +1,2 @@
-export { SearchDropdown, type SearchDropdownProps } from "./SearchDropdown";
+export { SearchDropdown } from "./SearchDropdown";
 export { SearchDropdownRow } from "./SearchDropdownRow";
