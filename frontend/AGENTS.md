@@ -80,14 +80,14 @@ src/
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（单轨叠加时间斜纹+完成实心，支持 `surface="default"\|"inverse"`）/`segmented`（按周格子，当期空心信号橙粗框，支持 `segmentWidth`），完整 ARIA |
 | 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（抽屉双线 2px+1.5px）/`masthead`（页头刊头双横线 5px+1.5px）/`dashed`（墨色虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，共 15 项：6 项已实现，9 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
+### 业务范式组件（`src/components/patterns/`，共 16 项：9 项已实现，7 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
 > 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
 
 | 范式组件 | 状态与建立时机 | 职责摘要 |
 |---|---|---|
 | `BrandMark` | **已实现** · 阶段 4 第 1 步（`src/components/patterns/BrandMark/`） | 双色品牌几何标识 + 可选 `MINITEAM PMS` 字标（`size="sm"\|"md"`、`tone="default"\|"inverse"`，供 `LoginHeader`、`ProjectSwitch`、`SettingDrawer` 复用） |
 | `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **已实现** · 阶段 4 第 2 步（`src/components/patterns/{PageHeader,Panel,FormDrawer,EmptyState,PageState,ActionPopover}/`） | 双线页头（`60px`/`44px` 切 Token，已由 `LoginHeader` 与 `NoProject` 复用）、三变体面板、表单抽屉壳、空态/页态、刊头列表浮层壳 |
-| `SearchDropdown` / `ConfirmDialog` | **待建** · 阶段 4 第 3 步（`settings`） | 公共下拉搜索组合（`Popover` + `Input` + `Spinner`，跨 4 模块 5 处）与破坏性操作二次确认 |
+| `SearchDropdown` / `ConfirmDialog` / `ToastHost` | **已实现** · 阶段 4 第 3 步（`src/components/patterns/{SearchDropdown,ConfirmDialog,ToastHost}/`） | 公共下拉搜索（`Popover` + `Input` + `Spinner`，已替换 settings 的 `PeoplePanel`，其余 4 处调用方继续用旧 `shared/components/SearchDropdown`）、破坏性操作二次确认（`AlertDialog`）、全局轻提示队列（`useToast()`，由 `Shell` 挂载） |
 | `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |
 | `ListRow` / `ActivityFeed` | **待建** · 阶段 4 第 5 步（`members`） | 原生语义跳转列表行、浅/深面时间线动态流（`LogsPanel` 4 列按日表保持独立） |
 | `TaskBar` | **待建** · 阶段 4 第 7 步（`timeline`） | 任务生命周期时间条（剥离 `useIssue()`，改为受控 `today` prop） |
@@ -138,19 +138,21 @@ src/
   - 阶段 0（审计 `audit.md`）～ 阶段 3.5（自定义组件盘点 `custom-components.md`，19 项 `components/ui/` 全部就位）；
   - 甘特阻塞修复（PR #40）；
   - 阶段 4 第 1 步：`features/auth`（PR #42，提取 `BrandMark`）；
-  - 阶段 4 第 2 步：`layout + projects + notifications`（PR #43，新增 `PageHeader`/`Panel`/`EmptyState`/`PageState`/`FormDrawer`/`ActionPopover`，并完成 `LoginHeader` 复用 `PageHeader`）。
-- **下一步**：**阶段 4 第 3 步 `features/settings`**（新建 `patterns/SearchDropdown`、`patterns/ConfirmDialog`）。
+  - 阶段 4 第 2 步：`layout + projects + notifications`（PR #43，新增 `PageHeader`/`Panel`/`EmptyState`/`PageState`/`FormDrawer`/`ActionPopover`，并完成 `LoginHeader` 复用 `PageHeader`）；
+  - 阶段 4 第 3 步：`features/settings`（新增 `SearchDropdown`/`ConfirmDialog`/`ToastHost`，删除 `overlays/settings/` 与 `index.css` 中的设置样式，`api/system.ts` 移入 `services/system.ts`；待审阅合并）。
+- **下一步**：**阶段 4 第 4 步 `features/reports`**（新建 `patterns/Legend`、`HeroCard`、`LoadBar`）。
 - **后续完整顺序**：
-  `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
+  ~~`3. features/settings`~~ → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
 
 ### 已登记待办与遗留状态
 - **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
-- **`src/layout/useDismiss.ts` 暂留**：当前仍被尚未迁移的 `src/shared/components/SearchDropdown.tsx` 引用；第 3 步建立 `patterns/SearchDropdown` 并在第 9a 步全部替换完后删除 `useDismiss.ts` 与旧 `SearchDropdown.*`。
+- **`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**：`patterns/SearchDropdown` 已在第 3 步建立并替换 settings 的 `PeoplePanel`；`InviteMemberDrawer`（第 5 步）、`DocumentHeader`/`UploadDocDrawer`（第 6 步）、`AssigneePicker`（第 9a 步）迁移时各自换成新组件，全部换完后删除旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`，并从 `stylelint.config.mjs` 的 `ignoreFiles` 移出。
+- **`ToastHost` 复用**：后续模块的“已保存/已删除”等操作反馈统一用 `useToast()`；`ConfirmDialog` 待替换处：`DocumentsPage`（第 6 步）、`TaskHeader`（第 9a 步）。
 - **时间线第 7 步 2 项甘特待办（PR #40 遗留，详见 `custom-components.md` 第七节）**：
   1. 核对 `GanttPanel`、`GanttRow` 等是否实际传入任务前置状态以确保 `taskBarModel` 兜底生效，并补齐 `taskBarModel` 5 项场景断言测试；
   2. 后端 `TaskAutoStart.isAutoBlocked()` 从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对。
 - **`api/http.ts` 与 `state/*` 集中迁移**：留待阶段 4 全部业务模块迁移完成后最后一步统一迁入 `services/` 与 `stores/`。
-- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**。
+- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（设置模块没有独占的旧变量别名，行数不变；`index.css` 同步删除设置相关 321 行）。
 
 ### 每一步的固定流程
 1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
@@ -163,6 +165,7 @@ src/
 ### 已批准的视觉变更清单
 - **`AccountMenu`（阶段 4 第 2 步已批准）**：账号菜单采用 `ui/DropdownMenu` 简洁样式替代原 `.accts` 双列底栏浮层，危险项（退出登录）使用 `tone="danger"` 语气。
 - **`FormDrawer`（阶段 4 第 2 步已批准）**：5 个表单抽屉统一使用 `ui/Drawer(md)` `640px` 宽、头部 `Separator(masthead)` 5px+1.5px 粗黑双横线与 40×40 大号 `×` 关闭钮、提交/取消按钮统一置于抽屉底部 `footer`。
+- **`SettingsDrawer`（阶段 4 第 3 步，待审阅）**：设置抽屉改用 `ui/Drawer(lg)` + `ui/Tabs` + `Field` 表单行，原 `#shell.dim` 灰化压暗改为 Drawer 点阵遮罩，分区标签用 `ui/Tabs`（去掉按组分隔的竖线）；删除账号/归档项目改 `ConfirmDialog`；保存、新增、删除等反馈改 `Toast`；重置密码后的新密码保留为行内 `Alert`。
 - **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`Panel`（文档页 `.dsec` 对齐全站）、`LoadBar`（第 4 步，**须截前后对比图确认**）、`HeroCard`（第 4 步，**须截前后对比图确认**）、`ActivityFeed` / `ListRow`、`SearchDropdown`。
 
 ### 下一步启动指令模板（直接复制使用）

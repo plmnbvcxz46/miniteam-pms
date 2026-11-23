@@ -104,6 +104,14 @@
   color: var(--color-text-faint);
 }
 
+/* 已选中又被禁用（如不能改自己的账号类型）：保持墨底反白，只靠禁用光标示意 */
+.root[data-variant="chips"] .item[data-state="on"][data-disabled] {
+  border-style: solid;
+  border-color: var(--color-border-strong);
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
 .root[data-variant="chips"] .item:hover:not([data-disabled]) {
   color: var(--color-text);
 }

@@ -39,7 +39,7 @@
 }
 
 .content {
-  z-index: var(--z-dropdown);
+  z-index: var(--z-floating);
   min-width: 220px;
   padding: var(--space-3);
   background-color: var(--color-surface);

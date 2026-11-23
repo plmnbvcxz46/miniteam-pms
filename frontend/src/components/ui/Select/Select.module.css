@@ -79,7 +79,7 @@
 
 /* ---------- 下拉浮层面板 ---------- */
 .content {
-  z-index: var(--z-dropdown);
+  z-index: var(--z-floating);
   min-width: var(--radix-select-trigger-width);
   max-height: 280px;
   overflow: hidden;

@@ -45,7 +45,7 @@
 .input[data-variant="boxed"] {
   padding: var(--space-0) var(--space-3);
   background-color: var(--color-surface);
-  border: var(--border-width-thin) solid var(--color-border);
+  border: var(--border-width-thin) solid var(--color-border-strong);
 }
 
 /* ---------- 禁用态（boxed 浅灰底，underline 透明底 + 弱化点线） ---------- */

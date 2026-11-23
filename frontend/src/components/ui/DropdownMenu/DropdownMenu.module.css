@@ -1,6 +1,6 @@
 /* 操作下拉菜单：基于 radix-ui DropdownMenu，支持键盘漫游与 danger 语气项 */
 .content {
-  z-index: var(--z-dropdown);
+  z-index: var(--z-floating);
   min-width: 196px;
   padding: var(--space-1) var(--space-0);
   background-color: var(--color-surface);
