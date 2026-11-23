@@ -14,7 +14,7 @@
 | 归属层 | 数量 | 说明 |
 |---|---:|---|
 | **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已在另一工作目录的后续提交中抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
-| **`components/patterns/`** | **15 项（6 已实现，9 待建）** | 严格满足 ≥ 2 个模块复用；`BrandMark` 于第 1 步、`PageHeader`/`Panel`/`FormDrawer`/`EmptyState`&`PageState`/`ActionPopover` 于第 2 步已提取并复用，其余按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
+| **`components/patterns/`** | **16 项（9 已实现，7 待建；含第 3 步补充的 `ToastHost`）** | 严格满足 ≥ 2 个模块复用；`BrandMark` 于第 1 步、`PageHeader`/`Panel`/`FormDrawer`/`EmptyState`&`PageState`/`ActionPopover` 于第 2 步已提取并复用，其余按阶段 4 迁移到首个使用模块时按需建立（合并 `origin/main` PR #37 后：新增跨 4 模块 5 处复用的 `SearchDropdown`，原 `SearchInput` 仅剩 `CrewLabels` 1 处故移出 `patterns/`；另保留原决策，不收入仅单模块使用的 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`）。 |
 | **`features/<模块>` / `layout` 内部保留** | **15 项** | 仅单一业务模块使用的图表、矩阵、拖拽看板、富文本 `@提及`、负责人选择器、文件拖放区与外壳部件，严禁提前抽象至 `patterns/`。 |
 | **合计盘点项** | **30 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
 
@@ -24,7 +24,7 @@
 
 > 建立时机对应阶段 4 迁移顺序：`1. auth` → `2. layout + projects + notifications` → `3. settings` → `4. reports` → `5. members` → `6. documents` → `7. timeline` → `8. overview` → `9a. tasks(详情/表单)` → `9b. tasks-board(看板拖拽)` → `10. collab`。
 
-### A. 归属 `components/patterns/`（15 项：6 已实现，9 待建）
+### A. 归属 `components/patterns/`（原盘点 15 项 + 第 3 步补充 `ToastHost`：9 已实现，7 待建）
 
 | # | 组件名 | 现有实现位置（文件:行） | 使用它的模块 | 交互复杂度 | 建议归属 | 底层方案 | 建立时机 |
 |---:|---|---|---|---|---|---|---|
@@ -34,8 +34,8 @@
 | 3 | **`FormDrawer`** | `src/components/patterns/FormDrawer/`（已替换 `NewProjectDrawer.tsx`，待替换 `TaskDrawer` 等 4 处） | `projects`、`tasks`、`documents`、`members`、`collab`（5 模块） | 中 | `components/patterns` | A. `ui/Drawer(md)`、`ui/Button`、`ui/Alert` | **阶段 4 第 2 步（已实现）** |
 | 4 | **`EmptyState` / `PageState`** | `src/components/patterns/{EmptyState,PageState}/`（已替换 `NoProject.tsx`，待替换其余空态与整页状态分支） | `layout`、`overview`、`task`、`timeline`、`documents`、`reports`、`members`、`settings`、`collab`（9 模块） | 低 | `components/patterns` | A. `ui/Alert`、`ui/Button`、`ui/Spinner`、`patterns/Panel`、`patterns/PageHeader` | **阶段 4 第 2 步（已实现）** |
 | 5 | **`ActionPopover`** | `src/components/patterns/ActionPopover/`（已替换 `ProjectSwitch.tsx`、`IssueSwitch.tsx`、`NotificationBell.tsx`） | `layout`、`notifications`（2 模块 3 处） | 中 | `components/patterns` | A. `ui/Popover(padding="none")` + CSS Modules | **阶段 4 第 2 步（已实现）** |
-| 6 | **`SearchDropdown`** | `shared/components/SearchDropdown.tsx:1-371` + `SearchDropdown.css`（被 `PeoplePanel.tsx:135`、`InviteMemberDrawer.tsx:173`、`DocumentHeader.tsx:51`、`UploadDocDrawer.tsx:282`、`AssigneePicker.tsx:60` 复用） | `settings`、`members`、`documents`、`tasks`（4 模块 5 处） | 高 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Popover` + `Input` + `Spinner` + 完整 WAI-ARIA `combobox`/`listbox` 键盘状态机，按行数门禁拆分子文件，0 新增依赖） | 阶段 4 第 3 步（`settings`） |
-| 7 | **`ConfirmDialog`** | `PeoplePanel.tsx:24,235`、`ProjPanel.tsx:33,183`、`DocumentsPage.tsx:113`、`TaskHeader.tsx:27,77` | `settings`、`documents`、`tasks`（3 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`AlertDialog`、`Button(danger)`） | 阶段 4 第 3 步（`settings`） |
+| 6 | **`SearchDropdown`** | `shared/components/SearchDropdown.tsx:1-371` + `SearchDropdown.css`（被 `PeoplePanel.tsx:135`、`InviteMemberDrawer.tsx:173`、`DocumentHeader.tsx:51`、`UploadDocDrawer.tsx:282`、`AssigneePicker.tsx:60` 复用） | `settings`、`members`、`documents`、`tasks`（4 模块 5 处） | 高 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Popover` + `Input` + `Spinner` + 完整 WAI-ARIA `combobox`/`listbox` 键盘状态机，按行数门禁拆分子文件，0 新增依赖） | **阶段 4 第 3 步（已实现，仅替换 settings 调用方）** |
+| 7 | **`ConfirmDialog`** | `PeoplePanel.tsx:24,235`、`ProjPanel.tsx:33,183`、`DocumentsPage.tsx:113`、`TaskHeader.tsx:27,77` | `settings`、`documents`、`tasks`（3 模块） | 中 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`AlertDialog`、`Button(danger)`） | **阶段 4 第 3 步（已实现）** |
 | 8 | **`Legend`** | `BurndownPanel.tsx:18-37`、`DeviationPanel.tsx:18-31`、`DocumentRevisingHeader.tsx:18-30`、`GanttPanel.tsx:73-90`、`SchedulePanel.tsx:25-44`、`ProgressPanel.tsx:27-36`（6 处） | `reports`、`documents`、`timeline`、`overview`（4 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（数据驱动纯展示组件，与 `Badge` 对齐） | 阶段 4 第 4 步（`reports`） |
 | 9 | **`HeroCard`** | `ForecastHero.tsx:49-115`、`DocumentDetailHero.tsx:18-47`、`HeadlinePanel.tsx:26-59` | `reports`、`documents`、`overview`（3 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Badge` + 共享外框/顶栏/风险态外壳，主体 slot 由各模块组合） | 阶段 4 第 4 步（`reports`） |
 | 10 | **`LoadBar`** | `LoadRow.tsx:25-49`、`MemberLoad.tsx:30-39`、`SelfLoad.tsx:33-50`、`AssigneePicker.tsx:30-39`（`LoadMeter`） | `reports`、`members`、`tasks`（3 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（基于 `Progress(solid, striped, thresholdPercent)` + `role="meter"` + `load.ts`） | 阶段 4 第 4 步（`reports`） |
