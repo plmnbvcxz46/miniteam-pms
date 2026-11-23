@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { userApi } from "../../../api/system";
+import { userApi } from "../../../services/system";
 import Drawer from "../../../shared/components/Drawer";
 import SearchDropdown from "../../../shared/components/SearchDropdown";
 import type { MemberPermissions, ProjectRole, UserBrief } from "../../../shared/types/global";

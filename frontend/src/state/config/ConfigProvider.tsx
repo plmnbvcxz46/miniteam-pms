@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { configApi } from "../../api/system";
+import { configApi } from "../../services/system";
 import { useAuth } from "../auth/useAuth";
 import type { ConfigItem } from "../../shared/types/settings";
 import { ConfigContext, type ConfigState } from "./ConfigContext";
