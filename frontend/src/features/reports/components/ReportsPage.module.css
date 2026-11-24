@@ -1,0 +1,44 @@
+/* 统计报表页面布局：一屏展示（≤900px 降级自适应），3 列 × 2 行报刊网格 */
+.view {
+  flex: 1;
+  height: calc(100vh - 94px);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow: hidden;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  flex: 1;
+  min-height: 0;
+}
+
+.span2 {
+  grid-column: span 2;
+}
+
+@media (width <= 900px) {
+  .view {
+    height: auto;
+    overflow: visible;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .grid > * {
+    min-height: 220px;
+  }
+
+  .span2 {
+    grid-column: span 1;
+  }
+}

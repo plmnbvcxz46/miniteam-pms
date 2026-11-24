@@ -1,0 +1,72 @@
+/* 工期偏差双层对比条面板（仅使用语义 Token） */
+.list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.row {
+  flex: 1;
+  min-height: 26px;
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.value {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-heavy);
+}
+
+.value[data-late="true"] {
+  color: var(--color-warning-text);
+}
+
+.bars {
+  position: relative;
+  height: 16px;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  height: 6px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.bar[data-kind="plan"] {
+  top: 0;
+  border-style: dashed;
+  background-color: transparent;
+}
+
+.bar[data-kind="actual"] {
+  bottom: 0;
+  background-color: var(--color-surface-inverse);
+}
+
+.bar[data-kind="over"] {
+  bottom: 0;
+  border-left: 0;
+  background-image: var(--comp-pattern-warn);
+}

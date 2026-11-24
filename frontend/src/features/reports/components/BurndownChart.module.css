@@ -1,0 +1,87 @@
+/* 燃尽图 SVG 样式：保留数据可视化编码线宽，全量切入语义 Token */
+.chartBox {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chart {
+  position: absolute;
+  inset: var(--space-1) 0 0 0;
+  width: 100%;
+  height: calc(100% - var(--space-1));
+  display: block;
+  overflow: visible;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  fill: var(--color-text);
+}
+
+.label[data-tone="muted"] {
+  fill: var(--color-text-muted);
+}
+
+.label[data-tone="accent"],
+.labelAccent {
+  fill: var(--color-accent-text);
+}
+
+.grid {
+  stroke: var(--color-chart-grid);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.plan {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+  fill: none;
+}
+
+.planDash {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  fill: none;
+}
+
+.actual {
+  stroke: var(--color-border-strong);
+  stroke-width: 3;
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.pred {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-dasharray: 7 5;
+  fill: none;
+}
+
+.pred[data-ok="true"] {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 4;
+}
+
+.predEnd {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+}
+
+.now {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+}

@@ -1,0 +1,115 @@
+/* 预测完工强调卡内容样式（外壳复用 patterns/HeroCard，仅使用语义 Token） */
+.status {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-black);
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  margin-top: var(--space-0-5);
+}
+
+.bar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 9px;
+}
+
+.barSolid {
+  height: 100%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+/* 实心块与斜纹块平齐拼接，交界处保持垂直直线 */
+.barOver {
+  flex: 1;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    135deg,
+    currentColor 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.barEarly {
+  flex: 1;
+  height: 0;
+  align-self: center;
+  border-top: var(--border-width-thick) dashed currentColor;
+  margin-left: var(--space-1);
+}
+
+.dates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.figure {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-figure);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+  margin-top: auto;
+}
+
+.delay {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+}
+
+.footerList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.task {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.taskName {
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskDays {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  flex-shrink: 0;
+}
+
+.sep {
+  font-style: normal;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.more {
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.none {
+  font-weight: var(--font-weight-semibold);
+}
