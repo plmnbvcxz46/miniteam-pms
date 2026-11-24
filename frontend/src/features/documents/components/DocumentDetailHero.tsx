@@ -1,5 +1,8 @@
+import { HeroCard } from "../../../components/patterns/HeroCard";
+import { Badge } from "../../../components/ui/Badge";
 import type { DocumentItem } from "../../../shared/types/documents";
 import { pad2 } from "../../../shared/utils/date";
+import styles from "./DocumentDetail.module.css";
 
 interface DocumentDetailHeroProps {
   doc: DocumentItem;
@@ -15,14 +18,20 @@ export default function DocumentDetailHero({
   lateDays,
 }: DocumentDetailHeroProps) {
   return (
-    <div className={`dhero${isLate ? " late" : ""}`} id="doc-hero">
-      <div className="hk">
-        <h2 id="doc-title">{doc.n}</h2>
-        <span className="chip">风险</span>
-      </div>
-      <div className="row">
-        <b id="dh-n">{isLate ? pad2(lateDays) : doc.v}</b>
-        <span id="dh-sub">
+    <HeroCard
+      tone={isLate ? "alert" : "surface"}
+      kicker={doc.n}
+      badge={
+        isLate ? (
+          <Badge variant="solid" size="sm">
+            风险
+          </Badge>
+        ) : undefined
+      }
+    >
+      <div className={styles.heroRow}>
+        <b className={styles.heroFigure}>{isLate ? pad2(lateDays) : doc.v}</b>
+        <span className={styles.heroSub}>
           {isLate ? (
             <>
               天 逾期
@@ -38,7 +47,6 @@ export default function DocumentDetailHero({
           ) : (
             <>
               {status}
-              {/* 没有截止日就不显示“截止”这一行 */}
               {doc.due && (
                 <>
                   <br />
@@ -49,7 +57,6 @@ export default function DocumentDetailHero({
           )}
         </span>
       </div>
-    </div>
+    </HeroCard>
   );
 }
-

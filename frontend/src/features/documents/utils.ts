@@ -9,9 +9,7 @@ import {
   toDay,
 } from "../../shared/utils/date";
 
-/**
- * 时间跨度（天数）
- */
+/** 时间跨度（天数） */
 export const DSPAN = 21;
 
 /** 时间轴起点在今天前面几天，今天落在轴上约一半的位置 */
@@ -34,7 +32,9 @@ export function getAxisDates(today: string): string[] {
 function toFullDate(md: string, today: string): string {
   const [m, d] = md.split(/[.-]/).map(Number);
   const year = Number(today.slice(0, 4));
-  const candidates = [year - 1, year, year + 1].map((y) => `${y}-${pad2(m)}-${pad2(d)}`);
+  const candidates = [year - 1, year, year + 1].map(
+    (y) => `${y}-${pad2(m)}-${pad2(d)}`,
+  );
   const base = toDay(today);
   return candidates.reduce((best, c) =>
     Math.abs(toDay(c) - base) < Math.abs(toDay(best) - base) ? c : best,
@@ -52,25 +52,30 @@ export function withTaskTitle(doc: DocumentItem): BoundDocument {
   return { ...doc, taskTitle: doc.taskTitle ?? "项目文档" };
 }
 
-/**
- * 将天数偏移量转换为甘特图轨道上的百分比位置字符串
- */
+/** 将天数偏移量转换为甘特图轨道上的百分比位置字符串 */
 export function getTimelinePercent(n: number): string {
   return ((Math.max(0, Math.min(DSPAN, n)) / DSPAN) * 100).toFixed(2) + "%";
 }
 
-/**
- * 文档状态计算结果
- */
-export interface DocStatusInfo {
-  status: string; // 状态文案："定稿" | "逾期 X 天" | "今天截止" | "修订中"
-  isLate: boolean; // 是否逾期
-  lateDays: number; // 逾期天数（非逾期为 0）
+/** 格式化文件大小为易读字符串（如 1.8 MB、512 KB） */
+export function formatFileSize(size: number): string {
+  if (!size) return "";
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/**
- * 根据文档定稿标志、截止日期与当前日期动态计算文档状态
- */
+/** 文档状态计算结果 */
+export interface DocStatusInfo {
+  /** 状态文案："定稿" | "逾期 X 天" | "今天截止" | "修订中" */
+  status: string;
+  /** 是否逾期 */
+  isLate: boolean;
+  /** 逾期天数（非逾期为 0） */
+  lateDays: number;
+}
+
+/** 根据文档定稿标志、截止日期与当前日期动态计算文档状态 */
 export function getDocStatus(
   doc: { final?: boolean; due: string },
   today: string,

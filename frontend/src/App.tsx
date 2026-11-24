@@ -14,7 +14,7 @@ import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./state/task/TaskProvider";
 import DocumentProvider from "./state/document/DocumentProvider";
 import { ReportsPage } from "./features/reports";
-import DocumentsPage from "./pages/documents/DocumentsPage";
+import { DocumentsPage } from "./features/documents";
 import { MembersPage } from "./features/members";
 import TimelinePage from "./pages/timeline/TimelinePage";
 import CollabPage from "./pages/collab/CollabPage";
