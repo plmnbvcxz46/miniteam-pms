@@ -1,0 +1,56 @@
+.panel {
+  min-height: 0;
+}
+
+.total {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.percent {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-figure);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+  margin-top: var(--space-2);
+}
+
+.percentMark {
+  font-style: normal;
+  color: var(--color-accent-text);
+}
+
+.bar {
+  display: flex;
+  height: 22px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  margin-top: auto;
+}
+
+.barPart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.barDone {
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text);
+}
+
+.barLeft {
+  flex: 1;
+}
+
+.legendWrap {
+  margin-top: var(--space-2);
+}
+
+.legendCount {
+  font-weight: var(--font-weight-heavy);
+}

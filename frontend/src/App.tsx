@@ -9,7 +9,7 @@ import IssueProvider from "./state/issue/IssueProvider";
 import ProjectProvider from "./state/project/ProjectProvider";
 import { LoginPage } from "./features/auth";
 import Shell from "./layout/Shell";
-import OverviewPage from "./pages/overview/OverviewPage";
+import { OverviewPage } from "./features/overview";
 import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./state/task/TaskProvider";
 import DocumentProvider from "./state/document/DocumentProvider";

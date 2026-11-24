@@ -1,0 +1,110 @@
+.card {
+  min-height: 0;
+}
+
+.headline {
+  margin: var(--space-0);
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-tight);
+  display: flex;
+  flex-direction: column;
+}
+
+.big {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.delayValue {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-figure);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+}
+
+.delaySub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+.tags {
+  display: flex;
+  gap: var(--space-1-5);
+  flex-wrap: wrap;
+  min-height: 0;
+}
+
+.tagBtn {
+  appearance: none;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  padding: var(--space-0-5) var(--space-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.tagBtn:hover {
+  background-color: var(--color-bg);
+}
+
+.tagBtn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.ctaBtn {
+  appearance: none;
+  border: 0;
+  border-radius: var(--radius-none);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-heavy);
+  padding: var(--space-2) var(--space-3);
+  margin-top: var(--space-1);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ctaBtn:hover {
+  background-color: var(--color-surface-inverse-hover);
+}
+
+.ctaBtn[data-calm="true"] {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.ctaBtn[data-calm="true"]:hover {
+  background-color: var(--color-bg);
+}
+
+.ctaBtn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (height <= 800px) {
+  .headline {
+    font-size: var(--font-size-xl);
+  }
+
+  .delayValue {
+    font-size: var(--font-size-display-sm);
+  }
+}

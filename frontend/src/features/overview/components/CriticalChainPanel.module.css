@@ -1,0 +1,111 @@
+.panel {
+  min-height: 0;
+}
+
+.totalChip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-1-5);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-heavy);
+}
+
+.chain {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.cells {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.cell {
+  flex: 0 1 22px;
+  min-width: 0;
+  height: 10px;
+  box-sizing: border-box;
+  border: var(--border-width-thin) solid var(--comp-inverse-border);
+}
+
+.cell[data-state="done"] {
+  background-color: var(--comp-inverse-border);
+}
+
+.cell[data-state="now"] {
+  border-width: var(--border-width-thick);
+  border-color: var(--color-accent);
+}
+
+.cell[data-hot="true"] {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.step {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--comp-inverse-text);
+}
+
+.step[data-next="true"] {
+  color: var(--comp-inverse-text-muted);
+}
+
+.stepNo {
+  flex-shrink: 0;
+}
+
+.stepTitle {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stepOverrun {
+  flex-shrink: 0;
+  font-style: normal;
+  color: var(--color-accent);
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.footLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-normal);
+  color: var(--comp-inverse-text-muted);
+}
+
+.footDate {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-display-sm);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--comp-inverse-text);
+}
+
+.footDate[data-late="true"] {
+  color: var(--color-accent);
+}

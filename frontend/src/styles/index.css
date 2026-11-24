@@ -406,117 +406,6 @@ code {
   display: inline-block;
 }
 
-/* ---------- overview（样式迁到 src/pages/overview/css/overview.css；.bar 基础样式、.hero 与统计报表共用，保留在此） ---------- */
-.bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  padding-left: 8px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  line-height: 23px;
-  white-space: nowrap;
-  overflow: hidden;
-  border: 1.5px solid var(--ink);
-}
-.hero {
-  background: var(--signal);
-  border: 1.5px solid var(--ink);
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-.hero .hk {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-heavy);
-}
-.hero .hk .chip {
-  color: var(--text-accent);
-}
-.hero .headline {
-  margin: 0;
-  font-weight: var(--fw-black);
-  font-size: var(--fs-2xl);
-  line-height: var(--lh-snug);
-  display: flex;
-  flex-direction: column;
-}
-.hero .headline[data-t]:hover,
-.hero .headline[data-go]:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 5px;
-}
-.hero .big {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-top: auto;
-}
-.hero .big b {
-  font-family: var(--font-mono);
-  font-weight: var(--fw-heavy);
-  font-size: var(--fs-7xl);
-  line-height: var(--lh-solid);
-  letter-spacing: var(--ls-tighter);
-}
-.hero .big span {
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-normal);
-}
-.hero .tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  min-height: 0;
-}
-.hero .tags:empty {
-  display: none;
-}
-.hero .tags span {
-  background: var(--paper);
-  color: var(--text);
-  border: 1.5px solid var(--ink);
-  padding: 2px 6px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
-  cursor: pointer;
-}
-.hero .go {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--ink);
-  color: var(--text-inverse);
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-heavy);
-  padding: 9px 12px;
-  flex-shrink: 0;
-}
-.hero.calm {
-  background: var(--ink);
-  color: var(--text-inverse);
-}
-.hero.calm .hk .chip {
-  display: none;
-}
-.hero.calm .go {
-  background: var(--paper);
-  color: var(--text);
-}
-
 /* ---------- board (styles moved to src/pages/board/css/board.css) ---------- */
 
 /* ---------- reports (styles moved to src/pages/reports/css/reports.css；.span2、.track 为多页共用，保留在此) ---------- */
@@ -1051,25 +940,13 @@ select.in {
   .figure:nth-child(n + 3) {
     border-top: 1.5px solid var(--ink);
   }
-  .ov1,
-  .ov2,
-  .tg,
-  .dg {
+  .tg {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
     height: auto;
   }
-  .ov1 > * {
-    min-height: 240px;
-  }
   .span2 {
     grid-column: auto;
-  }
-  .tl {
-    min-width: 520px;
-  }
-  .tl .rows {
-    max-height: none;
   }
   .fx {
     width: auto;
