@@ -10,7 +10,6 @@ export default {
     "src/styles/typography/roles.css",
     "src/shared/components/TaskBar.css",
     "src/shared/components/SearchDropdown.css",
-    "src/pages/members/css/**/*.css",
     "src/pages/documents/css/**/*.css",
     "src/pages/timeline/css/**/*.css",
     "src/pages/overview/css/**/*.css",

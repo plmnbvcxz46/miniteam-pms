@@ -1,0 +1,101 @@
+/* 统一跳转/选择列表行：支持 Link、原生 button 与只读容器，含紧凑/舒适两档与告警/选中态 */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: transparent;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  transition-property: background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.row[data-density="compact"] {
+  min-height: 36px;
+  padding: var(--space-1-5) var(--space-2);
+}
+
+.row[data-density="comfortable"] {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.row[data-interactive="true"] {
+  cursor: pointer;
+}
+
+.row[data-interactive="true"]:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.row[data-interactive="true"]:hover:not([data-selected="true"]) {
+  background-color: var(--color-bg-subtle);
+}
+
+.row[data-selected="true"] {
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text);
+}
+
+.leading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.row[data-tone="alert"] .trailing {
+  color: var(--color-warning-text);
+}
+
+.row[data-selected="true"] .meta {
+  color: var(--comp-inverse-text-muted);
+}
+
+.row[data-selected="true"][data-tone="alert"] .trailing {
+  color: var(--color-accent);
+}

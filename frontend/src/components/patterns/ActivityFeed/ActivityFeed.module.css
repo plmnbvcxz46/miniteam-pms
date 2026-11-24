@@ -1,0 +1,126 @@
+/* 时间线动态与变更记录列表：支持浅/深面、单双列网格、单行截断及可选中交互 */
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.list[data-columns="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-7);
+}
+
+.list[data-surface="dark"] {
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text);
+  scrollbar-color: var(--comp-inverse-border) transparent;
+}
+
+.list:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1-5) var(--space-0);
+  border: 0;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+}
+
+.list[data-surface="dark"] .item {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border-bottom-style: solid;
+  border-bottom-color: var(--comp-inverse-border-subtle);
+}
+
+.item[data-interactive="true"] {
+  cursor: pointer;
+  border-left: var(--border-width-thick) solid transparent;
+  transition-property: background-color, border-color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.item[data-interactive="true"]:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.list[data-surface="light"] .item[data-interactive="true"] {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.list[data-surface="light"] .item[data-interactive="true"]:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.list[data-surface="dark"] .item[data-interactive="true"]:hover {
+  background-color: var(--color-inverse-hover);
+}
+
+.item[data-active="true"] {
+  border-left-color: var(--color-accent);
+  background-color: var(--color-accent-subtle);
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.list[data-surface="dark"] .time {
+  font-size: var(--font-size-2xs);
+  color: var(--comp-inverse-text-muted);
+}
+
+.content {
+  margin: var(--space-0);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  min-width: 0;
+}
+
+.list[data-truncate="true"] .content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empty {
+  padding: var(--space-2) var(--space-0);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.empty[data-surface="dark"] {
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--comp-inverse-bg);
+  color: var(--comp-inverse-text-muted);
+}
+
+@media (width <= 900px) {
+  .list[data-columns="2"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

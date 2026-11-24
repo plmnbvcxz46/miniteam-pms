@@ -3,6 +3,7 @@ import { ButtonShowcase } from "./sections/ButtonShowcase";
 import { DisplayShowcase } from "./sections/DisplayShowcase";
 import { FormShowcase } from "./sections/FormShowcase";
 import { OverlayShowcase } from "./sections/OverlayShowcase";
+import { MemberPatternsShowcase } from "./sections/MemberPatternsShowcase";
 import { PatternsShowcase } from "./sections/PatternsShowcase";
 import { ReportPatternsShowcase } from "./sections/ReportPatternsShowcase";
 import { SearchConfirmShowcase } from "./sections/SearchConfirmShowcase";
@@ -34,6 +35,7 @@ export default function UiShowcasePage() {
         <PatternsShowcase />
         <SearchConfirmShowcase />
         <ReportPatternsShowcase />
+        <MemberPatternsShowcase />
         <RoadmapSection />
       </div>
     </div>

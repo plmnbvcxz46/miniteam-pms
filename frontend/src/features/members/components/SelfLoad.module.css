@@ -1,0 +1,28 @@
+/* 个人本周工时面板内容样式（仅使用语义 Token） */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+
+.big {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-figure);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+}
+
+.big[data-over="true"] {
+  color: var(--color-warning-text);
+}
+
+.cap {
+  margin-left: var(--space-2);
+  font-size: var(--font-size-lg);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-text-muted);
+}

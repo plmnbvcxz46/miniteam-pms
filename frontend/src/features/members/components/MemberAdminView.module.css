@@ -1,0 +1,9 @@
+/* 成员管理页主容器：min-width: 0 防止横向滚动矩阵撑宽外层主区域 */
+.view {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

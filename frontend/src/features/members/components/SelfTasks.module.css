@@ -1,0 +1,113 @@
+/* 个人负责任务面板内容样式（仅使用语义 Token） */
+.total {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-snug);
+}
+
+.stat {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.statCell {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+}
+
+.statCell + .statCell {
+  border-left: var(--border-width-hair) solid var(--color-border);
+}
+
+.statLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.statNum {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-heavy);
+  line-height: var(--line-height-none);
+  letter-spacing: var(--letter-spacing-snug);
+}
+
+.statCell[data-zero="true"] {
+  color: var(--color-text-muted);
+}
+
+.swatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 8px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.swatch[data-status="DOING"] {
+  background-color: var(--color-surface-inverse);
+}
+
+.swatch[data-status="BLOCKED"] {
+  background-image: var(--comp-pattern-warn);
+}
+
+.swatch[data-status="DONE"] {
+  border-style: dashed;
+}
+
+.statCell[data-zero="true"] .swatch {
+  border-color: var(--color-text-muted);
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.taskNo,
+.taskStatus {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.taskStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-width: 76px;
+}
+
+.emptyWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (width <= 900px) {
+  .list {
+    max-height: 320px;
+  }
+}
