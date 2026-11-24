@@ -80,7 +80,7 @@ src/
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（单轨叠加时间斜纹+完成实心，支持 `surface="default"\|"inverse"`）/`segmented`（按周格子，当期空心信号橙粗框，支持 `segmentWidth`），完整 ARIA |
 | 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（抽屉双线 2px+1.5px）/`masthead`（页头刊头双横线 5px+1.5px）/`dashed`（墨色虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，共 16 项：9 项已实现，7 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
+### 业务范式组件（`src/components/patterns/`，共 16 项：12 项已实现，4 项待建，其余按阶段 4 迁移到首个用到它的模块时按需建立）
 > 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
 
 | 范式组件 | 状态与建立时机 | 职责摘要 |
@@ -88,7 +88,7 @@ src/
 | `BrandMark` | **已实现** · 阶段 4 第 1 步（`src/components/patterns/BrandMark/`） | 双色品牌几何标识 + 可选 `MINITEAM PMS` 字标（`size="sm"\|"md"`、`tone="default"\|"inverse"`，供 `LoginHeader`、`ProjectSwitch`、`SettingDrawer` 复用） |
 | `PageHeader` / `Panel` / `FormDrawer` / `EmptyState` & `PageState` / `ActionPopover` | **已实现** · 阶段 4 第 2 步（`src/components/patterns/{PageHeader,Panel,FormDrawer,EmptyState,PageState,ActionPopover}/`） | 双线页头（`60px`/`44px` 切 Token，已由 `LoginHeader` 与 `NoProject` 复用）、三变体面板、表单抽屉壳、空态/页态、刊头列表浮层壳 |
 | `SearchDropdown` / `ConfirmDialog` / `ToastHost` | **已实现** · 阶段 4 第 3 步（`src/components/patterns/{SearchDropdown,ConfirmDialog,ToastHost}/`） | 公共下拉搜索（`Popover` + `Input` + `Spinner`，已替换 settings 的 `PeoplePanel`，其余 4 处调用方继续用旧 `shared/components/SearchDropdown`）、破坏性操作二次确认（`AlertDialog`）、全局轻提示队列（`useToast()`，由 `Shell` 挂载） |
-| `Legend` / `HeroCard` / `LoadBar` | **待建** · 阶段 4 第 4 步（`reports`） | 数据驱动图例、强调卡外壳（共享顶栏与风险态）、工时负载轨道（`role="meter"`） |
+| `Legend` / `HeroCard` / `LoadBar` | **已实现** · 阶段 4 第 4 步（`src/components/patterns/{Legend,HeroCard,LoadBar}/`） | 数据驱动图例（已替换 `BurndownPanel`/`DeviationPanel`）、三态强调卡外壳（`alert`/`calm`/`surface`，已替换 `ForecastHero`）、工时负载轨道（`detailed`/`compact`，`role="meter"`，已替换 `LoadRow`） |
 | `ListRow` / `ActivityFeed` | **待建** · 阶段 4 第 5 步（`members`） | 原生语义跳转列表行、浅/深面时间线动态流（`LogsPanel` 4 列按日表保持独立） |
 | `TaskBar` | **待建** · 阶段 4 第 7 步（`timeline`） | 任务生命周期时间条（剥离 `useIssue()`，改为受控 `today` prop） |
 | `MetricStrip` | **待建** · 阶段 4 第 8 步（`overview`） | 4 格 KPI 指标条（`--font-size-figure`，支持 `unit`/`sub`/`alert`） |
@@ -139,10 +139,11 @@ src/
   - 甘特阻塞修复（PR #40）；
   - 阶段 4 第 1 步：`features/auth`（PR #42，提取 `BrandMark`）；
   - 阶段 4 第 2 步：`layout + projects + notifications`（PR #43，新增 `PageHeader`/`Panel`/`EmptyState`/`PageState`/`FormDrawer`/`ActionPopover`，并完成 `LoginHeader` 复用 `PageHeader`）；
-  - 阶段 4 第 3 步：`features/settings`（新增 `SearchDropdown`/`ConfirmDialog`/`ToastHost`，删除 `overlays/settings/` 与 `index.css` 中的设置样式，`api/system.ts` 移入 `services/system.ts`；待审阅合并）。
-- **下一步**：**阶段 4 第 4 步 `features/reports`**（新建 `patterns/Legend`、`HeroCard`、`LoadBar`）。
+  - 阶段 4 第 3 步：`features/settings`（PR #45，新增 `SearchDropdown`/`ConfirmDialog`/`ToastHost`，删除 `overlays/settings/` 与 `index.css` 中的设置样式，`api/system.ts` 移入 `services/system.ts`）；
+  - 阶段 4 第 4 步：`features/reports`（新增 `Legend`/`HeroCard`/`LoadBar`，拆分 `burndownModel.ts` 与 `hooks/useReportsPage.ts`，删除 `pages/reports/` 与 `stylelint.config.mjs` 对应豁免，`api/report.ts` 移入 `services/report.ts`；待审阅合并）。
+- **下一步**：**阶段 4 第 5 步 `features/members`**（新建 `patterns/ListRow`、`ActivityFeed`，并复用 `LoadBar`、`SearchDropdown`）。
 - **后续完整顺序**：
-  ~~`3. features/settings`~~ → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
+  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
 
 ### 已登记待办与遗留状态
 - **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
@@ -152,7 +153,7 @@ src/
   1. 核对 `GanttPanel`、`GanttRow` 等是否实际传入任务前置状态以确保 `taskBarModel` 兜底生效，并补齐 `taskBarModel` 5 项场景断言测试；
   2. 后端 `TaskAutoStart.isAutoBlocked()` 从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对。
 - **`api/http.ts` 与 `state/*` 集中迁移**：留待阶段 4 全部业务模块迁移完成后最后一步统一迁入 `services/` 与 `stores/`。
-- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（设置模块没有独占的旧变量别名，行数不变；`index.css` 同步删除设置相关 321 行）。
+- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（报表模块依赖的 `--fs-6xl` 仍由 `overview`/`documents`/`members`/`board` 引用，暂留）。
 
 ### 每一步的固定流程
 1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
@@ -165,8 +166,9 @@ src/
 ### 已批准的视觉变更清单
 - **`AccountMenu`（阶段 4 第 2 步已批准）**：账号菜单采用 `ui/DropdownMenu` 简洁样式替代原 `.accts` 双列底栏浮层，危险项（退出登录）使用 `tone="danger"` 语气。
 - **`FormDrawer`（阶段 4 第 2 步已批准）**：5 个表单抽屉统一使用 `ui/Drawer(md)` `640px` 宽、头部 `Separator(masthead)` 5px+1.5px 粗黑双横线与 40×40 大号 `×` 关闭钮、提交/取消按钮统一置于抽屉底部 `footer`。
-- **`SettingsDrawer`（阶段 4 第 3 步，待审阅）**：设置抽屉改用 `ui/Drawer(lg)` + `ui/Tabs` + `Field` 表单行，原 `#shell.dim` 灰化压暗改为 Drawer 点阵遮罩，分区标签用 `ui/Tabs`（去掉按组分隔的竖线）；删除账号/归档项目改 `ConfirmDialog`；保存、新增、删除等反馈改 `Toast`；重置密码后的新密码保留为行内 `Alert`。
-- **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`Panel`（文档页 `.dsec` 对齐全站）、`LoadBar`（第 4 步，**须截前后对比图确认**）、`HeroCard`（第 4 步，**须截前后对比图确认**）、`ActivityFeed` / `ListRow`、`SearchDropdown`。
+- **`SettingsDrawer`（阶段 4 第 3 步已批准）**：设置抽屉改用 `ui/Drawer(lg)` + `ui/Tabs` + `Field` 表单行，原 `#shell.dim` 灰化压暗改为 Drawer 点阵遮罩，分区标签用 `ui/Tabs`（去掉按组分隔的竖线）；删除账号/归档项目改 `ConfirmDialog`；保存、新增、删除等反馈改 `Toast`；重置密码后的新密码保留为行内 `Alert`。
+- **`HeroCard` & `LoadBar`（阶段 4 第 4 步，待审阅）**：`ForecastHero` 改用 `patterns/HeroCard` + `ui/Badge(solid)`（`calm` 正常态由原橙底白字统一为反色墨底白字，风险标签统一为黑底白字；大号日期从 56px 对齐 `--font-size-figure` 60px）；`LoadRow` 改用 `patterns/LoadBar(detailed)`（轨道高度统一为 14px，内置 `role="meter"`）。
+- **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`Panel`（文档页 `.dsec` 对齐全站）、`LoadBar`（`members` / `tasks` 后续复用）、`HeroCard`（`documents` / `overview` 后续复用）、`ActivityFeed` / `ListRow`、`SearchDropdown`。
 
 ### 下一步启动指令模板（直接复制使用）
 ```text
