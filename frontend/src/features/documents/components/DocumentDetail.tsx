@@ -77,8 +77,7 @@ export default function DocumentDetail({
                   className={styles.actionBtn}
                   onClick={onUploadVersion}
                 >
-                  <span>上传新版本</span>
-                  <span aria-hidden="true">↑</span>
+                  上传新版本 <span aria-hidden="true">↑</span>
                 </Button>
                 {onFinalize && (
                   <Button
@@ -86,8 +85,7 @@ export default function DocumentDetail({
                     className={styles.actionBtn}
                     onClick={onFinalize}
                   >
-                    <span>定稿</span>
-                    <span aria-hidden="true">✓</span>
+                    定稿 <span aria-hidden="true">✓</span>
                   </Button>
                 )}
               </>
