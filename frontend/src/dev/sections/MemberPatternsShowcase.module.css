@@ -1,0 +1,33 @@
+/* 成员与动态范式组件演示区布局样式（仅使用语义 Token） */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.listBox {
+  display: flex;
+  flex-direction: column;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.monoTag {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.feedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+
+.lightFeed {
+  max-height: 120px;
+}
+
+.darkFeed {
+  min-height: 150px;
+}
