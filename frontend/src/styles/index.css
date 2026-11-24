@@ -590,8 +590,6 @@ code {
 
 /* ---------- docs (styles moved to src/pages/documents/css/documents.css) ---------- */
 
-/* ---------- members (styles moved to src/pages/members/css/members.css) ---------- */
-
 /* ---------- task detail (styles moved to src/pages/task/css/task.css) ---------- */
 
 /* ---------- chips ---------- */
@@ -846,14 +844,6 @@ select.in {
 }
 .fr .err {
   grid-column: 2;
-}
-.fr .pms {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 18px;
-}
-.fr .pms .pm {
-  margin-left: 0;
 }
 /* 负责人选择器（任务抽屉）：输入框、面板、行外壳在 shared/components/SearchDropdown.css，这里只留成员行特有的 */
 .ap-val {

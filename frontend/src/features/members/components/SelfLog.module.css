@@ -1,0 +1,10 @@
+/* 个人变更记录列表容器高度适配（仅使用语义 Token） */
+.feed {
+  flex: 1;
+}
+
+@media (width <= 900px) {
+  .feed {
+    max-height: 320px;
+  }
+}

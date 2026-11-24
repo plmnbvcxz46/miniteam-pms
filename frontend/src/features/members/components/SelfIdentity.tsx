@@ -1,5 +1,7 @@
+import { Panel } from "../../../components/patterns/Panel";
 import { roleLabel } from "../../../shared/constants/labels";
 import type { ProjectRole, UserBrief } from "../../../shared/types/global";
+import styles from "./SelfIdentity.module.css";
 
 interface SelfIdentityProps {
   user: UserBrief;
@@ -15,16 +17,10 @@ export default function SelfIdentity({
   skillTags,
 }: SelfIdentityProps) {
   return (
-    <section className="pnl dark me-id" aria-labelledby="me-id-h">
-      <div className="phd">
-        <div>
-          <span className="k t-kicker">// PROFILE</span>
-          <h2 className="t-section-title" id="me-id-h">基本信息</h2>
-        </div>
-      </div>
-      <div className="me-id-body">
-        <b className="me-name">{user.realName}</b>
-        <dl className="me-kv">
+    <Panel variant="dark" kicker="// PROFILE" title="基本信息">
+      <div className={styles.body}>
+        <b className={styles.name}>{user.realName}</b>
+        <dl className={styles.kv}>
           <dt>账号</dt>
           <dd>{user.username}</dd>
           <dt>岗位</dt>
@@ -33,13 +29,15 @@ export default function SelfIdentity({
           <dd>{projectRole ? roleLabel[projectRole] : "—"}</dd>
         </dl>
         {skillTags.length > 0 && (
-          <ul className="me-tags" aria-label="技能">
+          <ul className={styles.tags} aria-label="技能">
             {skillTags.map((tag) => (
-              <li key={tag}>{tag}</li>
+              <li key={tag} className={styles.tag}>
+                {tag}
+              </li>
             ))}
           </ul>
         )}
       </div>
-    </section>
+    </Panel>
   );
 }

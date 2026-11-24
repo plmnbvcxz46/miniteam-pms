@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import { useAccess } from "../../state/access/useAccess";
-import { useMe } from "../../state/auth/useAuth";
-import { useTaskStore } from "../../state/task/taskStore";
-import SelfHeader from "./components/SelfHeader";
-import SelfIdentity from "./components/SelfIdentity";
-import SelfLoad from "./components/SelfLoad";
-import SelfLog from "./components/SelfLog";
-import SelfPerms from "./components/SelfPerms";
-import SelfTasks from "./components/SelfTasks";
-import "./css/members.css";
+import { useAccess } from "../../../state/access/useAccess";
+import { useMe } from "../../../state/auth/useAuth";
+import { useTaskStore } from "../../../state/task/taskStore";
+import styles from "./MemberSelfView.module.css";
+import SelfHeader from "./SelfHeader";
+import SelfIdentity from "./SelfIdentity";
+import SelfLoad from "./SelfLoad";
+import SelfLog from "./SelfLog";
+import SelfPerms from "./SelfPerms";
+import SelfTasks from "./SelfTasks";
 
 /** 没有“管理成员”权限的人看到的“我的信息”：只有自己在当前项目里的信息 */
 export default function MemberSelfView() {
@@ -33,9 +33,9 @@ export default function MemberSelfView() {
   const openCount = myTasks.filter((task) => task.status !== "DONE").length;
 
   return (
-    <section className="view" id="view-members" data-view="members-self">
+    <section className={styles.view}>
       <SelfHeader openCount={openCount} hours={hours} />
-      <div className="me-grid">
+      <div className={styles.grid}>
         <SelfIdentity
           user={user}
           position={member?.position ?? null}
@@ -44,7 +44,7 @@ export default function MemberSelfView() {
         />
         <SelfLoad hours={hours} capacity={capacity} />
         <SelfPerms permissions={permissions} />
-        <SelfTasks tasks={myTasks} />
+        <SelfTasks tasks={myTasks} className={styles.span2} />
         <SelfLog logs={myLogs} />
       </div>
     </section>

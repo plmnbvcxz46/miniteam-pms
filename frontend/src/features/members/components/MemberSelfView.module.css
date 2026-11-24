@@ -1,0 +1,38 @@
+/* 成员个人视图布局：上三等分卡片 + 下 2:1 负责任务与变更记录网格（仅使用语义 Token） */
+.view {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 188px minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.span2 {
+  grid-column: span 2;
+}
+
+@media (width <= 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    flex: none;
+  }
+
+  .grid > * {
+    min-height: 188px;
+  }
+
+  .span2 {
+    grid-column: span 1;
+  }
+}

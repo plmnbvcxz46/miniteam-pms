@@ -1,0 +1,40 @@
+/* 成员权限变更记录底栏布局（仅使用语义 Token） */
+.wrap {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  column-gap: var(--space-3);
+  border-top: var(--border-width-thick) solid var(--color-border-strong);
+  padding-top: var(--space-2);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+}
+
+.feed {
+  max-height: 92px;
+  padding-right: var(--space-2);
+}
+
+@media (width <= 900px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+}

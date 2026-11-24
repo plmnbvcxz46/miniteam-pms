@@ -1,0 +1,55 @@
+/* 个人项目权限面板内容样式（仅使用语义 Token） */
+.list {
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  margin: var(--space-0);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.label {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+}
+
+.state {
+  margin: var(--space-0);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.row[data-on="true"] .label,
+.row[data-on="true"] .state {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.swatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 8px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.swatch[data-on="true"] {
+  background-color: var(--color-surface-inverse);
+}
+
+.swatch[data-on="false"] {
+  border-style: dashed;
+}
