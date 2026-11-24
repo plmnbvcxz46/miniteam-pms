@@ -8,7 +8,6 @@ export default {
     "src/styles/index.css",
     "src/styles/legacy.css",
     "src/styles/typography/roles.css",
-    "src/shared/components/TaskBar.css",
     "src/shared/components/SearchDropdown.css",
     "src/pages/timeline/css/**/*.css",
     "src/pages/overview/css/**/*.css",

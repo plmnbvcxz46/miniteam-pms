@@ -1,0 +1,33 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-hair) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.cardLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+@media (width <= 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

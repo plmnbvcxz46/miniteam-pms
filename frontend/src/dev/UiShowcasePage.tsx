@@ -7,6 +7,7 @@ import { MemberPatternsShowcase } from "./sections/MemberPatternsShowcase";
 import { PatternsShowcase } from "./sections/PatternsShowcase";
 import { ReportPatternsShowcase } from "./sections/ReportPatternsShowcase";
 import { SearchConfirmShowcase } from "./sections/SearchConfirmShowcase";
+import { TimelinePatternsShowcase } from "./sections/TimelinePatternsShowcase";
 import { RoadmapSection } from "./sections/RoadmapSection";
 import styles from "./UiShowcasePage.module.css";
 
@@ -36,6 +37,7 @@ export default function UiShowcasePage() {
         <SearchConfirmShowcase />
         <ReportPatternsShowcase />
         <MemberPatternsShowcase />
+        <TimelinePatternsShowcase />
         <RoadmapSection />
       </div>
     </div>
