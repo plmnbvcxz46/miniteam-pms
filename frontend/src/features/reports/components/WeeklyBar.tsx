@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import type { WeeklyCompleted } from "../../../shared/types/reports";
+import styles from "./WeeklyPanel.module.css";
 
 interface WeeklyBarProps {
   item: WeeklyCompleted;
@@ -12,20 +14,20 @@ export default function WeeklyBar({
   maxCount = 6,
 }: WeeklyBarProps) {
   const isNone = item.count === 0 && !item.current;
-  const cls = isNone ? "none" : item.current ? "now" : "done";
+  const state = isNone ? "none" : item.current ? "now" : "done";
   const heightPercent = maxCount > 0 ? ((item.count || 0) / maxCount) * 100 : 0;
   const delay = (index * 0.07).toFixed(2);
 
   return (
-    <div className="wk">
-      {!isNone ? <span>{item.count}</span> : null}
+    <div className={styles.col} data-state={state}>
+      {!isNone ? <span className={styles.count}>{item.count}</span> : null}
       <span
-        className={`bar ${cls}`}
+        className={styles.bar}
         style={
           {
             "--h": `${heightPercent}%`,
             "--d": `${delay}s`,
-          } as React.CSSProperties
+          } as CSSProperties
         }
       />
     </div>

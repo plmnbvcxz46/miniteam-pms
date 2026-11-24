@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import type { DurationDeviation } from "../../../shared/types/reports";
+import styles from "./DeviationPanel.module.css";
 
 interface DeviationRowProps {
   item: DurationDeviation;
@@ -12,7 +14,6 @@ export default function DeviationRow({
   const DU = 0.09;
   const safeMax = Math.max(maxDays, 1);
 
-  // 计划宽度与基准天数
   const planWidth = (item.planDays / safeMax) * 100;
   const baseActualDays =
     item.deviationDays > 0
@@ -31,46 +32,49 @@ export default function DeviationRow({
       : "0";
 
   return (
-    <div className="drow">
-      <span title={item.task.title}>{item.label}</span>
-      <div className="dbars">
-        {/* 计划虚线条 */}
+    <div className={styles.row}>
+      <span className={styles.label} title={item.task.title}>
+        {item.label}
+      </span>
+      <div className={styles.bars}>
         <span
-          className="p"
+          className={styles.bar}
+          data-kind="plan"
           style={
             {
               width: `${planWidth}%`,
               "--dur": `${(item.planDays * DU).toFixed(2)}s`,
-            } as React.CSSProperties
+            } as CSSProperties
           }
         />
-        {/* 实际实线条 */}
         <span
-          className="a"
+          className={styles.bar}
+          data-kind="actual"
           style={
             {
               width: `${actualWidth}%`,
               "--dur": `${(baseActualDays * DU).toFixed(2)}s`,
-            } as React.CSSProperties
+            } as CSSProperties
           }
         />
-        {/* 延期超期段 */}
         {overDays > 0 && (
           <span
-            className="o"
+            className={styles.bar}
+            data-kind="over"
             style={
               {
                 left: `${actualWidth}%`,
                 width: `${overWidth}%`,
                 "--d": `${(baseActualDays * DU).toFixed(2)}s`,
                 "--dur": `${(overDays * DU).toFixed(2)}s`,
-              } as React.CSSProperties
+              } as CSSProperties
             }
           />
         )}
       </div>
-      <span className={`v${isLate ? " late" : ""}`}>{devText}</span>
+      <span className={styles.value} data-late={isLate ? "true" : undefined}>
+        {devText}
+      </span>
     </div>
   );
 }
-

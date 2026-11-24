@@ -13,7 +13,7 @@ import OverviewPage from "./pages/overview/OverviewPage";
 import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./state/task/TaskProvider";
 import DocumentProvider from "./state/document/DocumentProvider";
-import ReportsPage from "./pages/reports/ReportsPage";
+import { ReportsPage } from "./features/reports";
 import DocumentsPage from "./pages/documents/DocumentsPage";
 import MembersPage from "./pages/members/MembersPage";
 import TimelinePage from "./pages/timeline/TimelinePage";

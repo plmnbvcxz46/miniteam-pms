@@ -6,7 +6,7 @@ import { formatWeekNo } from "../../shared/utils/date";
 
 /**
  * 将 yyyy-MM-dd 截取为 M.DD 或 M.D（如 "2026-11-27" → "11.27"，"2026-12-01" → "12.1"）
- * @param preserveZero 是否保留日期的两位补零，默认保留（例如 12.01）；传 false 则输出 12.1（用于 Forecast 大字展示）
+ * @param preserveZero 是否保留日期的两位补零，默认保留（例如 12.01）；传 false 则输出 12.1（用于燃尽图预测标签）
  */
 export function toMonthDay(date: string, preserveZero = true): string {
   if (!date) return "";
@@ -17,17 +17,13 @@ export function toMonthDay(date: string, preserveZero = true): string {
   return `${month}.${day}`;
 }
 
-/**
- * 格式化顶部 Kicker 文案
- */
+/** 格式化顶部 Kicker 文案 */
 export function formatKicker(summary: ReportSummary): string {
   const week = formatWeekNo(summary.weekNo, summary.totalWeeks);
   return `第 ${week} 周 · 已完成 ${summary.done} / ${summary.total} 项 · 剩余 ${summary.remaining} 项`;
 }
 
-/**
- * 格式化延期天数文案
- */
+/** 格式化延期天数文案 */
 export function formatDelayText(delayDays: number): string {
   if (delayDays > 0) return `晚 ${delayDays} 天`;
   if (delayDays < 0) return `早 ${Math.abs(delayDays)} 天`;

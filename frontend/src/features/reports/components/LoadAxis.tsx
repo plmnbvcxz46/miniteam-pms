@@ -1,3 +1,5 @@
+import styles from "./LoadPanel.module.css";
+
 interface LoadAxisProps {
   /** 上限虚线所在的百分比位置，成员上限不一致时不标 */
   capPercent: number | null;
@@ -7,12 +9,16 @@ interface LoadAxisProps {
 
 export default function LoadAxis({ capPercent, capacity }: LoadAxisProps) {
   return (
-    <div className="axisrow">
+    <div className={styles.axisRow}>
       <span />
-      <span>
-        <i style={{ left: 0 }}>0</i>
+      <span className={styles.axisTrack}>
+        <i className={styles.tick} style={{ left: 0 }}>
+          0
+        </i>
         {capPercent !== null && capacity !== null && (
-          <i style={{ left: `${capPercent}%` }}>{capacity}</i>
+          <i className={styles.tick} style={{ left: `${capPercent}%` }}>
+            {capacity}
+          </i>
         )}
       </span>
       <span />

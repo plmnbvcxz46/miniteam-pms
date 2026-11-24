@@ -1,6 +1,8 @@
+import { Panel } from "../../../components/patterns/Panel";
 import type { WeeklyCompleted } from "../../../shared/types/reports";
-import WeeklyBar from "./WeeklyBar";
 import WeeklyAxis from "./WeeklyAxis";
+import WeeklyBar from "./WeeklyBar";
+import styles from "./WeeklyPanel.module.css";
 
 interface WeeklyPanelProps {
   items: WeeklyCompleted[];
@@ -10,15 +12,12 @@ export default function WeeklyPanel({ items }: WeeklyPanelProps) {
   const maxCount = Math.max(1, ...items.map((i) => i.count)) + 1;
 
   return (
-    <section className="pnl">
-      <div className="phd">
-        <div>
-          <span className="k t-kicker">// TASKS</span>
-          <h2 className="t-section-title">完成任务</h2>
-        </div>
-        <span className="u">单位：项</span>
-      </div>
-      <div className="weekly" id="weekly">
+    <Panel
+      kicker="// TASKS"
+      title="完成任务"
+      headerRight={<span className={styles.unit}>单位：项</span>}
+    >
+      <div className={styles.weekly}>
         {items.map((item, idx) => (
           <WeeklyBar
             key={item.weekStart}
@@ -29,6 +28,6 @@ export default function WeeklyPanel({ items }: WeeklyPanelProps) {
         ))}
       </div>
       <WeeklyAxis items={items} />
-    </section>
+    </Panel>
   );
 }
