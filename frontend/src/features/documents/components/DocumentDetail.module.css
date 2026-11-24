@@ -1,0 +1,111 @@
+.emptyPanel {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  max-height: 100%;
+}
+
+.heroRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.heroFigure {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-figure);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+}
+
+.heroSub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-heavy);
+  line-height: var(--line-height-normal);
+}
+
+.detailCard {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  margin: var(--space-0);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+  font-size: var(--font-size-md);
+}
+
+.factLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+  align-self: center;
+}
+
+.factValue {
+  margin: var(--space-0);
+  font-weight: var(--font-weight-semibold);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.factValue[data-late="true"] {
+  color: var(--color-danger);
+}
+
+.taskLink {
+  appearance: none;
+  border: 0;
+  padding: var(--space-0);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.taskLink:hover {
+  color: var(--color-accent-text);
+}
+
+.taskLink:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width-thin) solid var(--color-border-strong);
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  width: 100%;
+}

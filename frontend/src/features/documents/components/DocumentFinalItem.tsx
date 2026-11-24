@@ -1,41 +1,37 @@
-import React from "react";
 import type { BoundDocument } from "../../../shared/types/documents";
+import styles from "./DocumentFinal.module.css";
 
 interface DocumentFinalItemProps {
   doc: BoundDocument;
-  orderIndex: number;
   isSelected: boolean;
   onSelect?: () => void;
 }
 
 export default function DocumentFinalItem({
   doc,
-  orderIndex,
   isSelected,
   onSelect,
 }: DocumentFinalItemProps) {
   return (
     <button
-      key={doc.id}
       type="button"
-      className="df"
+      className={styles.card}
       role="option"
-      data-i={doc.id}
-      style={{ "--i": orderIndex } as React.CSSProperties}
       aria-selected={isSelected}
       onClick={onSelect}
     >
-      <span className="dn">
-        <b>{doc.n}</b>
-        <small>
+      <span className={styles.docInfo}>
+        <b className={styles.docTitle} title={doc.n}>
+          {doc.n}
+        </b>
+        <small className={styles.docMeta}>
           {doc.taskTitle} · {doc.who}
         </small>
       </span>
-      <span className="fv">
-        <b>{doc.v}</b>
-        <small>{doc.up} 定稿</small>
+      <span className={styles.versionCol}>
+        <b className={styles.version}>{doc.v}</b>
+        <small className={styles.statusText}>{doc.up} 定稿</small>
       </span>
     </button>
   );
 }
-

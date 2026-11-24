@@ -220,7 +220,6 @@ code {
   min-width: 0;
 }
 .phd > .legend,
-.dsec-h > .legend,
 .phd .r .legend {
   flex-direction: row;
   margin-right: 0;
@@ -587,8 +586,6 @@ code {
 }
 
 /* ---------- team (styles moved to src/pages/collab/css/collab.css) ---------- */
-
-/* ---------- docs (styles moved to src/pages/documents/css/documents.css) ---------- */
 
 /* ---------- task detail (styles moved to src/pages/task/css/task.css) ---------- */
 
@@ -984,34 +981,6 @@ select.in {
   .ap-tags:empty {
     display: none;
   }
-}
-.dz {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 22px 24px;
-  border: 1.5px dashed var(--ink);
-  cursor: pointer;
-  font-size: var(--fs-lg);
-}
-.dz small {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  color: var(--text-mute);
-}
-.dz:hover,
-.dz.over {
-  background: var(--wash);
-}
-.dz b {
-  font-weight: var(--fw-bold);
-}
-.dz input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
 }
 .fx-acts {
   display: flex;

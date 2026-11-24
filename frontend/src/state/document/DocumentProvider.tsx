@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { documentApi } from "../../api/document";
+import { documentApi } from "../../services/document";
 import { useIssueData } from "../issue/useIssueData";
 import { useProject } from "../project/useProject";
 import type { DocumentDetailApi } from "../../shared/types/documents";

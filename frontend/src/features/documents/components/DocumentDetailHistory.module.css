@@ -1,0 +1,106 @@
+.historyHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: var(--space-3) var(--space-4) var(--space-1-5);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+.historyTitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-black);
+}
+
+.historyCount {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.versionItem {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: var(--space-1) var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  flex-shrink: 0;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+  font-size: var(--font-size-md);
+}
+
+.versionItem:last-child {
+  border-bottom: 0;
+}
+
+.versionTag {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-heavy);
+  grid-row: span 3;
+  padding-top: var(--space-0-5);
+}
+
+.versionNote {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.versionFileRow {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.versionFileInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.versionFileName {
+  color: var(--color-text);
+  font-weight: var(--font-weight-regular);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.versionFileSize {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--font-size-2xs);
+}
+
+.versionMeta {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
