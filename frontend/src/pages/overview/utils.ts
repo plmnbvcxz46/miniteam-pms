@@ -15,7 +15,7 @@ import {
   weekStartOf,
 } from "../../shared/utils/date";
 import { taskStatusKey } from "../../shared/constants/task";
-import type { TimelineForecast } from "../timeline/utils";
+import type { TimelineForecast } from "../../shared/utils/forecast";
 
 /** 一周的天数 */
 export const WEEK_DAYS = 7;

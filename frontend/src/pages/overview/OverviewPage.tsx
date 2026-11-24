@@ -6,7 +6,7 @@ import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";
 import { useProjectPeriod } from "../../layout/useProjectPeriod";
 import { useTaskStore } from "../../state/task/taskStore";
-import { toForecast } from "../timeline/utils";
+import { toForecast } from "../../shared/utils/forecast";
 import CriticalChainPanel from "./components/CriticalChainPanel";
 import FigureStrip from "./components/FigureStrip";
 import HeadlinePanel from "./components/HeadlinePanel";

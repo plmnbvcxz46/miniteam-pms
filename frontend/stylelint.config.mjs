@@ -9,7 +9,6 @@ export default {
     "src/styles/legacy.css",
     "src/styles/typography/roles.css",
     "src/shared/components/SearchDropdown.css",
-    "src/pages/timeline/css/**/*.css",
     "src/pages/overview/css/**/*.css",
     "src/pages/task/css/**/*.css",
     "src/pages/board/css/**/*.css",

@@ -519,35 +519,6 @@ code {
 
 /* ---------- board (styles moved to src/pages/board/css/board.css) ---------- */
 
-/* ---------- gantt（样式迁到 src/pages/timeline/css/timeline.css；.tbl 为多页共用，保留在此） ---------- */
-.tbl {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  min-width: 640px;
-}
-.tbl th {
-  font-weight: var(--fw-bold);
-  font-size: var(--fs-2xs);
-  text-align: right;
-  padding: 4px 8px 6px;
-  border-bottom: 2.5px solid var(--ink);
-}
-.tbl th:first-child,
-.tbl td:first-child {
-  text-align: left;
-  padding-left: 0;
-}
-.tbl td {
-  text-align: right;
-  padding: 3px 8px;
-  border-bottom: 1px solid var(--ink);
-}
-.tbl tr:last-child td {
-  border-bottom: 2.5px solid var(--ink);
-}
-
 /* ---------- reports (styles moved to src/pages/reports/css/reports.css；.span2、.track 为多页共用，保留在此) ---------- */
 .span2 {
   grid-column: span 2;

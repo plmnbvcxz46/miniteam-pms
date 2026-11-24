@@ -1,0 +1,18 @@
+.page {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: calc(100vh - 94px);
+  max-height: calc(100vh - 94px);
+  min-height: 480px;
+  overflow: hidden;
+}
+
+@media (width <= 900px) {
+  .page {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+}

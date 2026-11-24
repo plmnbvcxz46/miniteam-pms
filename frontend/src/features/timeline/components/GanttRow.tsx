@@ -1,19 +1,19 @@
-import TaskBar from "../../../shared/components/TaskBar";
+import { TaskBar } from "../../../components/patterns/TaskBar";
 import type { Activity } from "../../../shared/types/global";
 import type { TaskDetail } from "../../../shared/types/task";
 import type { AxisRange } from "../../../shared/utils/date";
 import type { CpmRow } from "../utils";
+import styles from "./GanttRow.module.css";
 
 interface GanttRowProps {
   task: TaskDetail;
   activities: Activity[];
   range: AxisRange;
-  /** 横轴总宽度（px） */
   width: number;
+  today: string;
   cpm: CpmRow;
   last: boolean;
   onOpen: (taskId: number) => void;
-  /** 鼠标移入或键盘聚焦这一行 / 离开（null） */
   onHover: (taskId: number | null) => void;
 }
 
@@ -22,14 +22,13 @@ export default function GanttRow({
   activities,
   range,
   width,
+  today,
   cpm,
   last,
   onOpen,
   onHover,
 }: GanttRowProps) {
   const critical = cpm.slack === 0;
-
-  // 只有任务名那两行字和任务条本身触发悬停，格子里的空白和行的空白都不触发
   const hoverName = {
     onMouseEnter: () => onHover(task.id),
     onMouseLeave: () => onHover(null),
@@ -37,33 +36,43 @@ export default function GanttRow({
 
   return (
     <div
-      className={`gt-row${last ? " last" : ""}`}
+      className={styles.row}
+      data-last={last ? "true" : undefined}
       onFocus={() => onHover(task.id)}
       onBlur={() => onHover(null)}
     >
       <button
-        className={`gt-name${critical ? " crit" : ""}`}
+        className={styles.nameButton}
         type="button"
+        data-critical={critical ? "true" : undefined}
         onClick={() => onOpen(task.id)}
       >
-        <b {...hoverName}>{task.title}</b>
-        <small {...hoverName}>
+        <b className={styles.title} {...hoverName}>
+          {task.title}
+        </b>
+        <small className={styles.meta} {...hoverName}>
           {task.assignee?.realName ?? "未分配"} · {task.planDays} 天
         </small>
       </button>
       <div
-        className="gt-lane"
+        className={styles.lane}
         style={{ width }}
         onMouseOver={(e) =>
           onHover(
-            (e.target as Element).closest(".tb-fill, .tb-frame")
+            (e.target as Element).closest("[data-taskbar-hit]")
               ? task.id
               : null,
           )
         }
         onMouseLeave={() => onHover(null)}
       >
-        <TaskBar task={task} activities={activities} range={range} compact />
+        <TaskBar
+          task={task}
+          today={today}
+          activities={activities}
+          range={range}
+          variant="gantt"
+        />
       </div>
     </div>
   );

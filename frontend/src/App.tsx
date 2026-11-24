@@ -16,7 +16,7 @@ import DocumentProvider from "./state/document/DocumentProvider";
 import { ReportsPage } from "./features/reports";
 import { DocumentsPage } from "./features/documents";
 import { MembersPage } from "./features/members";
-import TimelinePage from "./pages/timeline/TimelinePage";
+import { TimelinePage } from "./features/timeline";
 import CollabPage from "./pages/collab/CollabPage";
 import TaskPage from "./pages/task/TaskPage";
 

@@ -1,0 +1,59 @@
+.svg {
+  position: absolute;
+  left: var(--space-0);
+  top: var(--space-0);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.svg path {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: var(--border-width-hair);
+}
+
+.hit path {
+  fill: none;
+  stroke: transparent;
+  pointer-events: stroke;
+}
+
+.head {
+  fill: var(--color-border);
+  stroke: none;
+}
+
+.top {
+  pointer-events: none;
+}
+
+.group[data-done="true"] {
+  opacity: 0.55;
+}
+
+.group[data-critical="true"] path {
+  stroke: var(--color-border-strong);
+  stroke-width: var(--border-width-thin);
+}
+
+.group[data-critical="true"] .head {
+  fill: var(--color-border-strong);
+}
+
+.group[data-dim="true"] path {
+  stroke: var(--color-border);
+  stroke-width: var(--border-width-hair);
+}
+
+.group[data-dim="true"] .head {
+  fill: var(--color-border);
+}
+
+.group[data-hot="true"] path {
+  stroke: var(--color-border-strong);
+  stroke-width: var(--border-width-thin);
+}
+
+.group[data-hot="true"] .head {
+  fill: var(--color-border-strong);
+}

@@ -1,6 +1,6 @@
 import type { CriticalNode } from "../../../shared/types/progress";
 import { formatDayLabel } from "../../../shared/utils/date";
-import type { TimelineForecast } from "../../timeline/utils";
+import type { TimelineForecast } from "../../../shared/utils/forecast";
 import { isLate } from "../utils";
 
 interface CriticalChainPanelProps {
