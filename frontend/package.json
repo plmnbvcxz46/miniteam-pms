@@ -11,6 +11,7 @@
     "lint:lines": "node scripts/check-css-lines.mjs",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
     "knip": "knip",
+    "test": "node --test scripts/test-taskbar-model.ts",
     "check": "pnpm lint && pnpm lint:css && pnpm lint:lines && pnpm typecheck && pnpm knip",
     "preview": "vite preview"
   },

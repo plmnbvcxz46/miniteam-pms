@@ -1,0 +1,130 @@
+.panel {
+  flex: 1;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-5);
+}
+
+.pred {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding-left: var(--space-5);
+  border-left: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.predLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  text-align: right;
+}
+
+.predDate {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-display-sm);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text);
+}
+
+.predDate[data-late="true"] {
+  color: var(--color-accent-text);
+}
+
+.scrollArea {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.chart {
+  padding-bottom: var(--space-6);
+}
+
+.head {
+  position: sticky;
+  top: var(--space-0);
+  z-index: var(--z-chrome);
+  background-color: var(--color-surface);
+  display: flex;
+  border-bottom: var(--border-width-hair) solid var(--color-border-strong);
+  font-family: var(--font-mono);
+}
+
+.gutter {
+  position: sticky;
+  left: var(--space-0);
+  z-index: var(--z-sticky);
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+}
+
+.flags {
+  position: sticky;
+  top: 45px;
+  z-index: var(--z-chrome);
+  height: 22px;
+  background-color: var(--color-surface);
+}
+
+.flags[data-in-head="true"] {
+  position: absolute;
+  top: var(--space-5);
+  left: var(--space-0);
+  right: var(--space-0);
+  z-index: var(--z-base);
+  background: none;
+}
+
+.flag {
+  position: absolute;
+  top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.flag[data-late="true"] {
+  color: var(--color-danger);
+}
+
+.body {
+  position: relative;
+}
+
+.line {
+  position: absolute;
+  top: var(--space-0);
+  bottom: var(--space-0);
+  width: 0;
+  pointer-events: none;
+}
+
+.lineToday {
+  border-left: var(--border-width-thin) solid var(--color-accent);
+}
+
+.linePlan {
+  border-left: var(--border-width-thin) dashed var(--color-border-strong);
+}
+
+.linePred {
+  border-left: var(--border-width-thick) solid var(--color-accent);
+}
+
+@media (width <= 900px) {
+  .headerMeta {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}

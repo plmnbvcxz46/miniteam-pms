@@ -1,19 +1,18 @@
 import {
+  addDays,
   dateToX,
   formatDayLabel,
   getAxisDays,
-  addDays,
   isWeekend,
   type AxisRange,
 } from "../../../shared/utils/date";
 import { getWeekStarts } from "../utils";
+import styles from "./GanttAxis.module.css";
 
 interface GanttAxisProps {
   range: AxisRange;
-  /** 横轴总宽度（px） */
   width: number;
   today: string;
-  /** 按周显示每一天的日号，按月只留每周一的标签 */
   showDays: boolean;
 }
 
@@ -27,11 +26,11 @@ export default function GanttAxis({
   const dayWidth = width / (range.end - range.start);
 
   return (
-    <div className="gt-axis" style={{ width }}>
+    <div className={styles.axis} style={{ width }}>
       {getWeekStarts(range).map((monday) => (
         <span
           key={monday}
-          className="gt-wk"
+          className={styles.week}
           style={{ left: x(monday), width: dayWidth * 7 }}
         >
           {formatDayLabel(monday)} – {formatDayLabel(addDays(monday, 6))}
@@ -41,7 +40,9 @@ export default function GanttAxis({
         getAxisDays(range).map((date) => (
           <span
             key={date}
-            className={`gt-d${isWeekend(date) ? " off" : ""}${date === today ? " today" : ""}`}
+            className={styles.day}
+            data-off={isWeekend(date) ? "true" : undefined}
+            data-today={date === today ? "true" : undefined}
             style={{ left: x(date), width: dayWidth }}
           >
             {Number(date.slice(8))}

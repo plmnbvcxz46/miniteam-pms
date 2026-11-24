@@ -1,0 +1,187 @@
+.root {
+  --tb-bar: 16px;
+  --tb-trk: 52px;
+  --tb-border: var(--border-width-thin);
+}
+
+.root[data-variant="compact"] {
+  --tb-bar: 8px;
+  --tb-trk: 16px;
+  --tb-border: var(--border-width-hair);
+
+  padding: var(--space-0) var(--space-1);
+}
+
+.root[data-variant="gantt"] {
+  --tb-bar: 14px;
+  --tb-trk: 40px;
+  --tb-border: var(--border-width-thin);
+}
+
+.axis {
+  position: relative;
+  height: 14px;
+}
+
+.axisLabel {
+  position: absolute;
+  bottom: var(--space-0);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.axisLabel:first-child {
+  transform: none;
+}
+
+.track {
+  position: relative;
+  height: var(--tb-trk);
+  border-bottom: var(--border-width-hair) solid var(--color-border-strong);
+}
+
+.root[data-variant="compact"] .track,
+.root[data-variant="gantt"] .track {
+  border-bottom: 0;
+}
+
+.day {
+  position: absolute;
+  bottom: var(--space-0);
+  display: block;
+  width: 0;
+  height: 4px;
+  border-left: var(--border-width-hair) solid var(--color-border-strong);
+}
+
+.fill,
+.frame,
+.unused {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+  height: var(--tb-bar);
+  box-sizing: border-box;
+}
+
+.fillInk {
+  background-color: var(--color-border-strong);
+}
+
+.fillWarn {
+  background-image: var(--comp-pattern-warn);
+}
+
+.fillPast {
+  background-image: var(--comp-pattern-past);
+}
+
+.frame {
+  border: var(--tb-border) solid var(--color-border-strong);
+}
+
+.root[data-variant="gantt"] .frame {
+  background-color: var(--color-surface);
+}
+
+.root[data-variant="gantt"] .fillWarn,
+.root[data-variant="gantt"] .fillPast {
+  border-top: var(--tb-border) solid var(--color-border-strong);
+  border-bottom: var(--tb-border) solid var(--color-border-strong);
+}
+
+.frame[data-dashed="true"] {
+  border-style: dashed;
+}
+
+.frame[data-tail="true"] {
+  border-left: 0;
+}
+
+.frame[data-tail="true"]:not([data-dashed="true"]) {
+  border-right: 0;
+}
+
+.unused {
+  height: calc(var(--tb-bar) - 8px);
+  border: var(--border-width-hair) dashed var(--color-border);
+}
+
+.root[data-variant="compact"] .unused {
+  height: 4px;
+}
+
+.now {
+  position: absolute;
+  top: var(--space-0);
+  bottom: var(--space-0);
+  transform: translateX(-50%);
+  display: block;
+  width: 2px;
+  background-color: var(--color-accent);
+}
+
+.root[data-variant="compact"] .now {
+  width: 1px;
+}
+
+.root[data-variant="gantt"] .now {
+  display: none;
+}
+
+.done {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 3px;
+  height: calc(var(--tb-bar) + 12px);
+  background-color: var(--color-border-strong);
+}
+
+.root[data-variant="compact"] .done {
+  width: 2px;
+  height: 14px;
+}
+
+.cap {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 0;
+  height: 30px;
+  border-left: var(--border-width-thin) dashed var(--color-border-strong);
+}
+
+.label {
+  position: absolute;
+  padding-left: var(--space-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-none);
+  white-space: nowrap;
+}
+
+.labelDue {
+  top: var(--space-0-5);
+}
+
+.labelDue[data-late="true"] {
+  color: var(--color-danger);
+}
+
+.labelDone {
+  bottom: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.label[data-flip="true"] {
+  padding-left: var(--space-0);
+  padding-right: var(--space-1-5);
+  transform: translateX(-100%);
+}

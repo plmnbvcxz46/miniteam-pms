@@ -1,0 +1,76 @@
+.row {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+}
+
+.row[data-last="true"] {
+  border-bottom: var(--border-width-thick) solid var(--color-border-strong);
+}
+
+.nameButton {
+  box-sizing: border-box;
+  appearance: none;
+  border: 0;
+  padding: var(--space-0) var(--space-2) var(--space-0) var(--space-4);
+  cursor: pointer;
+  position: sticky;
+  left: var(--space-0);
+  z-index: var(--z-sticky);
+  width: var(--gantt-name-width);
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-0-5);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.nameButton:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.title,
+.meta {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.title {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nameButton:hover .title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.nameButton[data-critical="true"] .title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.nameButton:not([data-critical="true"]) .title {
+  color: var(--color-text-muted);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.lane {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+}

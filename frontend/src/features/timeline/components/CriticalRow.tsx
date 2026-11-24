@@ -1,5 +1,6 @@
 import type { TaskDetail } from "../../../shared/types/task";
 import type { CpmRow } from "../utils";
+import styles from "./CriticalPanel.module.css";
 
 interface CriticalRowProps {
   task: TaskDetail;
@@ -8,7 +9,10 @@ interface CriticalRowProps {
 
 export default function CriticalRow({ task, cpm }: CriticalRowProps) {
   return (
-    <tr className={cpm.slack === 0 ? "crit" : ""}>
+    <tr
+      className={styles.row}
+      data-critical={cpm.slack === 0 ? "true" : undefined}
+    >
       <td>{task.title}</td>
       <td>{task.planDays}</td>
       <td>{cpm.es}</td>
