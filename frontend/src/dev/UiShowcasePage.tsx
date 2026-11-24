@@ -4,6 +4,7 @@ import { DisplayShowcase } from "./sections/DisplayShowcase";
 import { FormShowcase } from "./sections/FormShowcase";
 import { OverlayShowcase } from "./sections/OverlayShowcase";
 import { PatternsShowcase } from "./sections/PatternsShowcase";
+import { ReportPatternsShowcase } from "./sections/ReportPatternsShowcase";
 import { SearchConfirmShowcase } from "./sections/SearchConfirmShowcase";
 import { RoadmapSection } from "./sections/RoadmapSection";
 import styles from "./UiShowcasePage.module.css";
@@ -32,6 +33,7 @@ export default function UiShowcasePage() {
         <DisplayShowcase />
         <PatternsShowcase />
         <SearchConfirmShowcase />
+        <ReportPatternsShowcase />
         <RoadmapSection />
       </div>
     </div>

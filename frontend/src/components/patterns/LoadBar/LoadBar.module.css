@@ -1,0 +1,55 @@
+/* 工时负载轨道：detailed（带上限虚线与超载斜纹）与 compact（迷你单轨，供选择器复用） */
+.root {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-none);
+}
+
+.root[data-variant="detailed"] {
+  height: 14px;
+}
+
+.cap {
+  position: absolute;
+  z-index: var(--z-base);
+  top: calc(var(--space-1) * -1);
+  bottom: calc(var(--space-1) * -1);
+  border-left: var(--border-width-thin) dashed var(--color-border-strong);
+  margin-left: calc(var(--border-width-thin) / -2);
+  pointer-events: none;
+}
+
+.fill,
+.over {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: var(--z-sticky);
+}
+
+.fill {
+  left: 0;
+  background-color: var(--color-surface-inverse);
+}
+
+.over {
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-left: 0;
+  background-image: var(--comp-pattern-warn);
+}
+
+.root[data-variant="compact"] {
+  height: 6px;
+  background-color: var(--color-bg-subtle);
+  overflow: hidden;
+}
+
+.compactFill {
+  display: block;
+  height: 100%;
+  background-color: var(--color-surface-inverse);
+}
+
+.root[data-variant="compact"][data-over="true"] .compactFill {
+  background-color: var(--color-warning);
+}

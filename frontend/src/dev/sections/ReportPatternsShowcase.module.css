@@ -1,0 +1,66 @@
+/* 报表相关范式组件演示区布局样式（仅使用语义 Token） */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.legendRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg);
+  border: var(--border-width-thin) dashed var(--color-border);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.heroFigure {
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-figure);
+  font-weight: var(--font-weight-heavy);
+  line-height: var(--line-height-solid);
+  letter-spacing: var(--letter-spacing-tighter);
+}
+
+.heroNote {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+}
+
+.calmStatus {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-black);
+}
+
+.surfaceRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.loadList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 520px;
+}
+
+.loadRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.compactBox {
+  width: 64px;
+}
