@@ -1,5 +1,5 @@
 import type { CriticalPath, Gantt, Overview, PriorityItem, TodoItem } from "../shared/types/progress";
-import { http } from "./http";
+import { http } from "../api/http";
 
 export const progressApi = {
   gantt: (projectId: number) => http.get<Gantt>(`/projects/${projectId}/gantt`),

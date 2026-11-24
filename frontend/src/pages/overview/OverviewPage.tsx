@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccess } from "../../state/access/useAccess";
-import { progressApi } from "../../api/progress";
+import { progressApi } from "../../services/progress";
 import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";
 import { useProjectPeriod } from "../../layout/useProjectPeriod";
