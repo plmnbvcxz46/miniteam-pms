@@ -141,20 +141,21 @@ src/
   - 阶段 4 第 2 步：`layout + projects + notifications`（PR #43，新增 `PageHeader`/`Panel`/`EmptyState`/`PageState`/`FormDrawer`/`ActionPopover`，并完成 `LoginHeader` 复用 `PageHeader`）；
   - 阶段 4 第 3 步：`features/settings`（PR #45，新增 `SearchDropdown`/`ConfirmDialog`/`ToastHost`，删除 `overlays/settings/` 与 `index.css` 中的设置样式，`api/system.ts` 移入 `services/system.ts`）；
   - 阶段 4 第 4 步：`features/reports`（PR #46，新增 `Legend`/`HeroCard`/`LoadBar`，拆分 `burndownModel.ts` 与 `hooks/useReportsPage.ts`，删除 `pages/reports/` 与 `stylelint.config.mjs` 对应豁免，`api/report.ts` 移入 `services/report.ts`）；
-  - 阶段 4 第 5 步：`features/members`（新增 `ListRow`/`ActivityFeed`，复用 `LoadBar`/`SearchDropdown`/`FormDrawer`/`Select`/`Switch`/`ToggleGroup`/`Checkbox`，删除 `pages/members/` 与 `stylelint.config.mjs` 对应豁免及 `index.css` 废弃 `.fr .pms` 规则；待审阅合并）。
-- **下一步**：**阶段 4 第 6 步 `features/documents`**（复用 `Panel`/`Legend`/`HeroCard`/`SearchDropdown`/`ConfirmDialog`/`FormDrawer`，构建 `FileDropzone` 与 `DocumentRevisingTimeline`）。
+  - 阶段 4 第 5 步：`features/members`（PR #47，新增 `ListRow`/`ActivityFeed`，复用 `LoadBar`/`SearchDropdown`/`FormDrawer`/`Select`/`Switch`/`ToggleGroup`/`Checkbox`，删除 `pages/members/` 与 `stylelint.config.mjs` 对应豁免及 `index.css` 废弃 `.fr .pms` 规则）；
+  - 阶段 4 第 6 步：`features/documents`（复用 `PageHeader`/`Panel`/`Legend`/`HeroCard`/`SearchDropdown`/`ConfirmDialog`/`FormDrawer`/`ToastHost`，内部落地 `FileDropzone` 与 `DocumentRevisingTimeline`，`api/document.ts` 移入 `services/document.ts`，删除 `pages/documents/`、`shared/constants/legends.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 中的 `.dsec-h > .legend` / `.dz*` 规则；待审阅合并）。
+- **下一步**：**阶段 4 第 7 步 `features/timeline`**（构建 `TaskBar`，迁移 `GanttChart` / `CriticalPathTable`，并处理 PR #40 遗留的 2 项甘特待办）。
 - **后续完整顺序**：
-  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → `6. features/documents` → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
+  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → `7. features/timeline` → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
 
 ### 已登记待办与遗留状态
 - **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
-- **`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**：`patterns/SearchDropdown` 已在第 3 步建立并已替换 `PeoplePanel` 与 `InviteMemberDrawer`（第 5 步）；`DocumentHeader`/`UploadDocDrawer`（第 6 步）、`AssigneePicker`（第 9a 步）迁移时各自换成新组件，全部换完后删除旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`，并从 `stylelint.config.mjs` 的 `ignoreFiles` 移出。
-- **`ToastHost` 复用**：后续模块的“已保存/已删除”等操作反馈统一用 `useToast()`；`ConfirmDialog` 待替换处：`DocumentsPage`（第 6 步）、`TaskHeader`（第 9a 步）。
+- **`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**：`patterns/SearchDropdown` 已在第 3 步建立并先后替换 `PeoplePanel`（第 3 步）、`InviteMemberDrawer`（第 5 步）、`DocumentHeader` 与 `UploadDocDrawer`（第 6 步）；仅余 `AssigneePicker`（第 9a 步）仍在复用旧组件，待第 9a 步换完后删除旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`，并从 `stylelint.config.mjs` 的 `ignoreFiles` 移出。
+- **`ToastHost` 复用**：后续模块的“已保存/已删除/已发布”等操作反馈统一用 `useToast()`；`ConfirmDialog` 已在第 6 步替换 `DocumentsPage` 定稿确认，仅余 `TaskHeader`（第 9a 步）待替换。
 - **时间线第 7 步 2 项甘特待办（PR #40 遗留，详见 `custom-components.md` 第七节）**：
   1. 核对 `GanttPanel`、`GanttRow` 等是否实际传入任务前置状态以确保 `taskBarModel` 兜底生效，并补齐 `taskBarModel` 5 项场景断言测试；
   2. 后端 `TaskAutoStart.isAutoBlocked()` 从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对。
 - **`api/http.ts` 与 `state/*` 集中迁移**：留待阶段 4 全部业务模块迁移完成后最后一步统一迁入 `services/` 与 `stores/`。
-- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（`--fs-6xl` 等旧变量仍由 `overview`/`documents`/`board`/`collab` 引用，暂留；`index.css` 同步删除 `.fr .pms` 8 行废弃样式）。
+- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（`--fs-6xl` 等旧变量仍由 `overview`/`board`/`collab` 引用，暂留；`index.css` 同步删除 `.dsec-h > .legend` 与 `.dz*` 文档上传区废弃样式）。
 
 ### 每一步的固定流程
 1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
@@ -169,8 +170,9 @@ src/
 - **`FormDrawer`（阶段 4 第 2 步已批准）**：5 个表单抽屉统一使用 `ui/Drawer(md)` `640px` 宽、头部 `Separator(masthead)` 5px+1.5px 粗黑双横线与 40×40 大号 `×` 关闭钮、提交/取消按钮统一置于抽屉底部 `footer`。
 - **`SettingsDrawer`（阶段 4 第 3 步已批准）**：设置抽屉改用 `ui/Drawer(lg)` + `ui/Tabs` + `Field` 表单行，原 `#shell.dim` 灰化压暗改为 Drawer 点阵遮罩，分区标签用 `ui/Tabs`（去掉按组分隔的竖线）；删除账号/归档项目改 `ConfirmDialog`；保存、新增、删除等反馈改 `Toast`；重置密码后的新密码保留为行内 `Alert`。
 - **`HeroCard` & `LoadBar`（阶段 4 第 4 步已批准）**：`ForecastHero` 改用 `patterns/HeroCard` + `ui/Badge(solid)`（`calm` 正常态由原橙底白字统一为反色墨底白字，风险标签统一为黑底白字；大号日期从 56px 对齐 `--font-size-figure` 60px）；`LoadRow` 改用 `patterns/LoadBar(detailed)`（轨道高度统一为 14px，内置 `role="meter"`）。
-- **`features/members` 视觉统一（阶段 4 第 5 步，待审阅）**：`MemberColumn` 角色下拉换 `ui/Select`（消除原生 `<select>` 双下拉箭头）、权限开关换 `ui/Switch(track)`、`InviteMemberDrawer` 换 `FormDrawer` + `SearchDropdown` + `ToggleGroup(chips)` + `Checkbox`、`MemberLoad`/`SelfLoad` 复用 `LoadBar(detailed)`、`PermLog`/`SelfLog` 复用 `ActivityFeed`、`SelfTasks` 复用 `ListRow`。
-- **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`Panel`（文档页 `.dsec` 对齐全站）、`LoadBar`（`tasks` 后续复用）、`HeroCard`（`documents` / `overview` 后续复用）、`ActivityFeed` / `ListRow`（`overview` / `tasks` / `collab` 后续复用）、`SearchDropdown`（`documents` / `tasks` 后续复用）。
+- **`features/members` 视觉统一（阶段 4 第 5 步已批准）**：`MemberColumn` 角色下拉换 `ui/Select`（消除原生 `<select>` 双下拉箭头）、权限开关换 `ui/Switch(track)`、`InviteMemberDrawer` 换 `FormDrawer` + `SearchDropdown` + `ToggleGroup(chips)` + `Checkbox`、`MemberLoad`/`SelfLoad` 复用 `LoadBar(detailed)`、`PermLog`/`SelfLog` 复用 `ActivityFeed`、`SelfTasks` 复用 `ListRow`。
+- **`features/documents` 视觉统一（阶段 4 第 6 步，待审阅）**：`DocumentRevising`/`DocumentFinal` 复用 `Panel(variant="flat")`（原 `.dsec` 修订中黑底刊头统一为全站暖纸底刊头）、`DocumentRevising` 复用 `Legend` 与 `Badge(accent)`、`DocumentDetailHero` 改用独立 `HeroCard(alert/surface)` 置顶（与下方详情卡留 `--space-3` 间距避免双边框粘连，大号数字对齐 `--font-size-figure` 60px）、`DocumentDetail` 底部全宽操作钮居中对齐（不覆盖 `Button` 内部对齐）、定稿操作改 `ConfirmDialog` 替代 `window.confirm`、上传抽屉换 `FormDrawer` + `ToggleGroup(chips)` + `SearchDropdown` + `FileDropzone`、操作反馈接入 `ToastHost`。
+- **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`LoadBar`（`tasks` 后续复用）、`HeroCard`（`overview` 后续复用）、`ActivityFeed` / `ListRow`（`overview` / `tasks` / `collab` 后续复用）、`SearchDropdown`（`tasks` 后续复用）。
 
 ### 下一步启动指令模板（直接复制使用）
 ```text
@@ -192,9 +194,9 @@ src/
 ## 过渡期旧样式与遗留文件说明
 
 - **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css`、`src/styles/typography/roles.css`、`src/shared/components/TaskBar.css`、`src/shared/components/SearchDropdown.css` 及 `src/pages/*/css/**/*.css` 已在 `stylelint.config.mjs` 的 `ignoreFiles` 中按模块登记；**严禁向这些旧文件新增规则**，阶段 4 每迁移完一个业务模块即从 `ignoreFiles` 移出并删除对应旧样式。**阶段 4 全部模块迁移完成后，`legacy.css` 必须为空并删除**。
-- **过渡期公共下拉搜索组件（`SearchDropdown`）**：`src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 为另一工作目录后续提交中抽出的公共下拉搜索组件（当前被 `PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer`、`AssigneePicker` 使用）；未迁移的旧页面/表单若需带搜索的下拉输入，过渡期继续统一复用它，不要各写各的下拉；阶段 4 迁移时按 [`custom-components.md`](./custom-components.md) 收归至 `components/patterns/SearchDropdown`，全部调用方迁完后删除旧文件并移出 `ignoreFiles`。
-- **组件样式手册 `/dev/ui`**：位于 `src/dev/UiShowcasePage.tsx`，通过 `import.meta.env.DEV` + 懒加载挂载在免登录路由 `/dev/ui`，供本地 `pnpm dev` 验收基础组件视觉与交互态，生产构建自动排除。
-- **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，且仍登记于 `tsconfig.app.json:25`）。在阶段 4 文档模块把拖拽上传收归 `FileDropzone` 且确认不再参考之前**保留作为参考实现**，已在 `knip.json` 中忽略 `prototype/**`。
+- **过渡期公共下拉搜索组件（`SearchDropdown`）**：`src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 为过渡期公共下拉搜索组件；`PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer` 4 处已迁至 `components/patterns/SearchDropdown`，当前仅剩 `AssigneePicker`（第 9a 步）待迁移，全部调用方迁完后删除旧文件与 `layout/useDismiss.ts` 并移出 `ignoreFiles`。
+- **组件样式手册 `/dev/ui`**：位于 `src/dev/UiShowcasePage.tsx`，通过 `import.meta.env.DEV` + 懒加载挂在免登录路由 `/dev/ui`，供本地 `pnpm dev` 验收基础组件视觉与交互态，生产构建自动排除。
+- **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，仍登记于 `tsconfig.app.json:25`）。第 6 步已将文档拖拽上传收归 `features/documents/components/FileDropzone`，暂留 `prototype/` 待第 6 步审阅确认不再参考后统一决策清理（已在 `knip.json` 中忽略 `prototype/**`）。
 
 ---
 

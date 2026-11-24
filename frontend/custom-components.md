@@ -232,7 +232,7 @@
    - **第 2 步（`layout`，已完成）**：建立 `patterns/PageHeader` 时，已同步将 `features/auth/components/LoginHeader` 的标题区（kicker + 大标题 + 副标题）改为复用 `<PageHeader as="div" ... showRule={false} />`，并清理对应重复样式与 TODO。
    - **第 3 步（`features/settings`）**：原建 `SearchInput` 改为**首次建立 `patterns/SearchDropdown`**（供 `PeoplePanel` 使用，并以 `ui/Popover` 取代旧组件对 `layout/useDismiss` 的耦合）。
    - **第 5 步（`features/members`）**：`InviteMemberDrawer` 复用 `patterns/SearchDropdown`（异步搜索模式）；`CrewLabels` 直接用 `ui/Input(boxed)`，不再建设 `patterns/SearchInput`。
-   - **第 6 步（`features/documents`）**：`DocumentHeader`（`variant="box"` 右对齐）与 `UploadDocDrawer`（`variant="line"` + `toggle` + `footer`）复用 `patterns/SearchDropdown`；旧 `shared/components/SearchDropdown.*` 暂留至第 9a 步全部迁移完毕后删除。
+   - **第 6 步（`features/documents`，已完成待审阅）**：`DocumentHeader`（`variant="box"` 右对齐）与 `UploadDocDrawer`（`variant="line"` + `footer`）已迁至 `patterns/SearchDropdown`，`DocumentRevising` 复用 `Panel(flat)` + `Legend` 并内建 `DocumentRevisingTimeline`，`DocumentDetailHero` 复用 `HeroCard`，定稿确认换 `ConfirmDialog`，拖拽上传收归内部 `FileDropzone`，同步删除 `pages/documents/` 与 `shared/constants/legends.ts`；旧 `shared/components/SearchDropdown.*` 暂留至第 9a 步全部迁移完毕后删除。
    - **第 7 步（`features/timeline`）**：`GanttDeps` / `GanttPanel` / `GanttRow` 新增了同一前置共用竖线、默认淡化仅悬停高亮前后置依赖连线、空心任务条垫底色、月视图日期行复用与计划线顶端标签，迁移样式与交互时须完整保留；另附 **PR #40 审阅遗留待办**（迁 `TaskBar` / `timeline` 时一并处理）：
      1. `taskBarModel.ts` 的“`TODO` 已到计划开始日且有未完成前置”兜底依赖 `task.predecessors`，需核对 `GanttPanel`、`GanttRow` 等所有调用方是否实际传入了前置状态（否则该兜底不会生效），并顺便把 `taskBarModel` 的 5 项场景断言补为正式测试文件；
      2. 后端 `TaskAutoStart.isAutoBlocked()` 当前使用 `detail.contains("阻塞")` 判定，改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 常量精确比对。
