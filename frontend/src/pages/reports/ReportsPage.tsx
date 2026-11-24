@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { reportApi } from "../../api/report";
+import { reportApi } from "../../services/report";
 import { defaultRange, rangeOptions } from "../../shared/constants/reports";
 import { useIssue } from "../../state/issue/useIssue";
 import { useIssueData } from "../../state/issue/useIssueData";

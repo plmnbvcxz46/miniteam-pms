@@ -7,8 +7,8 @@ import type {
   Reports,
   WeeklyCompleted,
 } from "../shared/types/reports";
-import { workloadApi } from "./task";
-import { http } from "./http";
+import { workloadApi } from "../api/task";
+import { http } from "../api/http";
 
 export const reportApi = {
   summary: (projectId: number) =>
