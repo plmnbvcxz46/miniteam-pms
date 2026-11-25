@@ -20,6 +20,9 @@ export interface CardDrag {
 
 interface Press {
   taskId: number;
+  pointerId: number;
+  captureEl: HTMLElement | null;
+  boardEl: HTMLElement | null;
   startX: number;
   startY: number;
   rect: DOMRect;
@@ -54,6 +57,59 @@ function setDraggingCursor(active: boolean) {
   }
 }
 
+function trySetCapture(el: HTMLElement | null, pointerId: number) {
+  try {
+    el?.setPointerCapture?.(pointerId);
+  } catch {
+    // 指针已失效或节点不可捕获时忽略
+  }
+}
+
+function tryReleaseCapture(el: HTMLElement | null, pointerId: number) {
+  try {
+    if (el?.hasPointerCapture?.(pointerId)) {
+      el.releasePointerCapture(pointerId);
+    }
+  } catch {
+    // 捕获已释放或节点已卸载时忽略
+  }
+}
+
+function buildNextDrag(
+  press: Press,
+  prev: CardDrag | null,
+  clientX: number,
+  clientY: number,
+  canDrop: (taskId: number, status: TaskStatus) => boolean,
+): CardDrag {
+  const found = findDropTarget(clientX, clientY);
+  return {
+    taskId: press.taskId,
+    width: press.rect.width,
+    height: press.rect.height,
+    left: press.rect.left + clientX - press.startX,
+    top: press.rect.top + clientY - press.startY,
+    target: !found
+      ? (prev?.target ?? press.target)
+      : canDrop(press.taskId, found.status)
+        ? found
+        : press.target,
+  };
+}
+
+function bindDocumentEvents(
+  entries: ReadonlyArray<readonly [string, EventListener]>,
+): () => void {
+  for (const [type, listener] of entries) {
+    document.addEventListener(type, listener);
+  }
+  return () => {
+    for (const [type, listener] of entries) {
+      document.removeEventListener(type, listener);
+    }
+  };
+}
+
 /**
  * 看板卡片指针拖拽 hook
  * @param canDrop 能不能放进某一列；不能放的列上，占位留在原处，松手等于没拖
@@ -73,32 +129,11 @@ export function useCardDrag(
       setDrag(next);
     };
 
-    const handleMove = (e: globalThis.PointerEvent) => {
-      const press = pressRef.current;
-      if (!press) return;
-      const moved =
-        Math.abs(e.clientX - press.startX) + Math.abs(e.clientY - press.startY);
-      if (!dragRef.current && moved < DRAG_THRESHOLD) return;
-
-      setDraggingCursor(true);
-      const found = findDropTarget(e.clientX, e.clientY);
-      update({
-        taskId: press.taskId,
-        width: press.rect.width,
-        height: press.rect.height,
-        left: press.rect.left + e.clientX - press.startX,
-        top: press.rect.top + e.clientY - press.startY,
-        target: !found
-          ? (dragRef.current?.target ?? press.target)
-          : canDrop(press.taskId, found.status)
-            ? found
-            : press.target,
-      });
-    };
-
     const finish = (cancel: boolean) => {
+      const press = pressRef.current;
       const current = dragRef.current;
       pressRef.current = null;
+      if (press) tryReleaseCapture(press.captureEl, press.pointerId);
       if (!current) return;
       setDraggingCursor(false);
       draggedRef.current = true;
@@ -106,22 +141,41 @@ export function useCardDrag(
       if (!cancel) onDrop(current.taskId, current.target);
     };
 
-    const handleUp = () => finish(false);
-    const handleCancel = () => finish(true);
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") finish(true);
+    const handleMove = (e: globalThis.PointerEvent) => {
+      const press = pressRef.current;
+      if (!press || e.pointerId !== press.pointerId) return;
+      const moved =
+        Math.abs(e.clientX - press.startX) + Math.abs(e.clientY - press.startY);
+      if (!dragRef.current && moved < DRAG_THRESHOLD) return;
+
+      // 源卡片即将从列内移除，提前把捕获切到常驻的看板容器，避免拖出窗口外丢指针
+      if (!dragRef.current && press.boardEl && press.captureEl !== press.boardEl) {
+        press.captureEl = press.boardEl;
+        trySetCapture(press.boardEl, press.pointerId);
+      }
+
+      setDraggingCursor(true);
+      update(buildNextDrag(press, dragRef.current, e.clientX, e.clientY, canDrop));
     };
 
-    document.addEventListener("pointermove", handleMove);
-    document.addEventListener("pointerup", handleUp);
-    document.addEventListener("pointercancel", handleCancel);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("pointermove", handleMove);
-      document.removeEventListener("pointerup", handleUp);
-      document.removeEventListener("pointercancel", handleCancel);
-      document.removeEventListener("keydown", handleKey);
-    };
+    return bindDocumentEvents([
+      ["pointermove", handleMove as EventListener],
+      ["pointerup", ((e: globalThis.PointerEvent) => {
+        if (pressRef.current?.pointerId === e.pointerId) finish(false);
+      }) as EventListener],
+      ["pointercancel", ((e: globalThis.PointerEvent) => {
+        if (pressRef.current?.pointerId === e.pointerId) finish(true);
+      }) as EventListener],
+      ["lostpointercapture", ((e: globalThis.PointerEvent) => {
+        const press = pressRef.current;
+        if (press && e.pointerId === press.pointerId && e.target === press.captureEl) {
+          finish(true);
+        }
+      }) as EventListener],
+      ["keydown", ((e: KeyboardEvent) => {
+        if (e.key === "Escape") finish(true);
+      }) as EventListener],
+    ]);
   }, [onDrop, canDrop]);
 
   useEffect(() => () => setDraggingCursor(false), []);
@@ -131,13 +185,18 @@ export function useCardDrag(
     taskId: number,
     target: DropTarget,
   ) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || pressRef.current !== null) return;
     draggedRef.current = false;
+    const cardEl = e.currentTarget;
+    trySetCapture(cardEl, e.pointerId);
     pressRef.current = {
       taskId,
+      pointerId: e.pointerId,
+      captureEl: cardEl,
+      boardEl: cardEl.closest<HTMLElement>('[data-view="board"]'),
       startX: e.clientX,
       startY: e.clientY,
-      rect: e.currentTarget.getBoundingClientRect(),
+      rect: cardEl.getBoundingClientRect(),
       target,
     };
   };
