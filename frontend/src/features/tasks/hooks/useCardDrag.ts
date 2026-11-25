@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type PointerEvent,
+} from "react";
 import type { TaskStatus } from "../../../shared/types/global";
 
 /** 移动超过这个距离才算拖动，否则按点击处理 */
@@ -75,6 +81,17 @@ function tryReleaseCapture(el: HTMLElement | null, pointerId: number) {
   }
 }
 
+function scheduleDraggedReset(
+  draggedRef: MutableRefObject<boolean>,
+  timerRef: MutableRefObject<number | undefined>,
+) {
+  window.clearTimeout(timerRef.current);
+  timerRef.current = window.setTimeout(() => {
+    draggedRef.current = false;
+    timerRef.current = undefined;
+  }, 0);
+}
+
 function buildNextDrag(
   press: Press,
   prev: CardDrag | null,
@@ -97,16 +114,68 @@ function buildNextDrag(
   };
 }
 
-function bindDocumentEvents(
-  entries: ReadonlyArray<readonly [string, EventListener]>,
-): () => void {
-  for (const [type, listener] of entries) {
-    document.addEventListener(type, listener);
-  }
-  return () => {
-    for (const [type, listener] of entries) {
-      document.removeEventListener(type, listener);
+function bindDocumentDrag(deps: {
+  pressRef: MutableRefObject<Press | null>;
+  dragRef: MutableRefObject<CardDrag | null>;
+  draggedRef: MutableRefObject<boolean>;
+  resetTimerRef: MutableRefObject<number | undefined>;
+  update: (next: CardDrag | null) => void;
+  onDrop: (taskId: number, target: DropTarget) => void;
+  canDrop: (taskId: number, status: TaskStatus) => boolean;
+}): () => void {
+  const finish = (cancel: boolean) => {
+    const press = deps.pressRef.current;
+    const current = deps.dragRef.current;
+    deps.pressRef.current = null;
+    if (press) tryReleaseCapture(press.captureEl, press.pointerId);
+    if (!current) return;
+    setDraggingCursor(false);
+    deps.draggedRef.current = true;
+    // 落点在源卡片外时浏览器不会补发 click，同轮微/宏任务后自动复位标记避免误拦后续打开
+    scheduleDraggedReset(deps.draggedRef, deps.resetTimerRef);
+    deps.update(null);
+    if (!cancel) deps.onDrop(current.taskId, current.target);
+  };
+
+  const handleMove = (e: globalThis.PointerEvent) => {
+    const press = deps.pressRef.current;
+    if (!press || e.pointerId !== press.pointerId) return;
+    const moved =
+      Math.abs(e.clientX - press.startX) + Math.abs(e.clientY - press.startY);
+    if (!deps.dragRef.current && moved < DRAG_THRESHOLD) return;
+
+    // 源卡片即将从列内移除，提前把捕获切到常驻的看板容器，避免拖出窗口外丢指针
+    if (!deps.dragRef.current && press.boardEl && press.captureEl !== press.boardEl) {
+      press.captureEl = press.boardEl;
+      trySetCapture(press.boardEl, press.pointerId);
     }
+
+    setDraggingCursor(true);
+    deps.update(buildNextDrag(press, deps.dragRef.current, e.clientX, e.clientY, deps.canDrop));
+  };
+
+  const entries: ReadonlyArray<readonly [string, EventListener]> = [
+    ["pointermove", handleMove as EventListener],
+    ["pointerup", ((e: globalThis.PointerEvent) => {
+      if (deps.pressRef.current?.pointerId === e.pointerId) finish(false);
+    }) as EventListener],
+    ["pointercancel", ((e: globalThis.PointerEvent) => {
+      if (deps.pressRef.current?.pointerId === e.pointerId) finish(true);
+    }) as EventListener],
+    ["lostpointercapture", ((e: globalThis.PointerEvent) => {
+      const press = deps.pressRef.current;
+      if (press && e.pointerId === press.pointerId && e.target === press.captureEl) {
+        finish(true);
+      }
+    }) as EventListener],
+    ["keydown", ((e: KeyboardEvent) => {
+      if (e.key === "Escape") finish(true);
+    }) as EventListener],
+  ];
+
+  for (const [type, listener] of entries) document.addEventListener(type, listener);
+  return () => {
+    for (const [type, listener] of entries) document.removeEventListener(type, listener);
   };
 }
 
@@ -122,63 +191,32 @@ export function useCardDrag(
   const pressRef = useRef<Press | null>(null);
   const dragRef = useRef<CardDrag | null>(null);
   const draggedRef = useRef(false);
+  const resetTimerRef = useRef<number | undefined>(undefined);
+
+  useEffect(
+    () =>
+      bindDocumentDrag({
+        pressRef,
+        dragRef,
+        draggedRef,
+        resetTimerRef,
+        update: (next) => {
+          dragRef.current = next;
+          setDrag(next);
+        },
+        onDrop,
+        canDrop,
+      }),
+    [onDrop, canDrop],
+  );
 
   useEffect(() => {
-    const update = (next: CardDrag | null) => {
-      dragRef.current = next;
-      setDrag(next);
-    };
-
-    const finish = (cancel: boolean) => {
-      const press = pressRef.current;
-      const current = dragRef.current;
-      pressRef.current = null;
-      if (press) tryReleaseCapture(press.captureEl, press.pointerId);
-      if (!current) return;
+    const timer = resetTimerRef;
+    return () => {
+      window.clearTimeout(timer.current);
       setDraggingCursor(false);
-      draggedRef.current = true;
-      update(null);
-      if (!cancel) onDrop(current.taskId, current.target);
     };
-
-    const handleMove = (e: globalThis.PointerEvent) => {
-      const press = pressRef.current;
-      if (!press || e.pointerId !== press.pointerId) return;
-      const moved =
-        Math.abs(e.clientX - press.startX) + Math.abs(e.clientY - press.startY);
-      if (!dragRef.current && moved < DRAG_THRESHOLD) return;
-
-      // 源卡片即将从列内移除，提前把捕获切到常驻的看板容器，避免拖出窗口外丢指针
-      if (!dragRef.current && press.boardEl && press.captureEl !== press.boardEl) {
-        press.captureEl = press.boardEl;
-        trySetCapture(press.boardEl, press.pointerId);
-      }
-
-      setDraggingCursor(true);
-      update(buildNextDrag(press, dragRef.current, e.clientX, e.clientY, canDrop));
-    };
-
-    return bindDocumentEvents([
-      ["pointermove", handleMove as EventListener],
-      ["pointerup", ((e: globalThis.PointerEvent) => {
-        if (pressRef.current?.pointerId === e.pointerId) finish(false);
-      }) as EventListener],
-      ["pointercancel", ((e: globalThis.PointerEvent) => {
-        if (pressRef.current?.pointerId === e.pointerId) finish(true);
-      }) as EventListener],
-      ["lostpointercapture", ((e: globalThis.PointerEvent) => {
-        const press = pressRef.current;
-        if (press && e.pointerId === press.pointerId && e.target === press.captureEl) {
-          finish(true);
-        }
-      }) as EventListener],
-      ["keydown", ((e: KeyboardEvent) => {
-        if (e.key === "Escape") finish(true);
-      }) as EventListener],
-    ]);
-  }, [onDrop, canDrop]);
-
-  useEffect(() => () => setDraggingCursor(false), []);
+  }, []);
 
   const handlePress = (
     e: PointerEvent<HTMLElement>,
@@ -186,6 +224,7 @@ export function useCardDrag(
     target: DropTarget,
   ) => {
     if (e.button !== 0 || pressRef.current !== null) return;
+    window.clearTimeout(resetTimerRef.current);
     draggedRef.current = false;
     const cardEl = e.currentTarget;
     trySetCapture(cardEl, e.pointerId);
