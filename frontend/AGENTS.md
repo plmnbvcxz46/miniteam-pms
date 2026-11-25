@@ -80,7 +80,7 @@ src/
 | 第 3 批（展示） | `Progress` | `radix-ui` `Progress` | **已实现**（`src/components/ui/Progress/`） | `solid`（含超载斜纹与阈值线）/`dual`（单轨叠加时间斜纹+完成实心，支持 `surface="default"\|"inverse"`）/`segmented`（按周格子，当期空心信号橙粗框，支持 `segmentWidth`），完整 ARIA |
 | 第 3 批（展示） | `Separator` | `radix-ui` `Separator` | **已实现**（`src/components/ui/Separator/`） | `single`（单实线）/`double`（抽屉双线 2px+1.5px）/`masthead`（页头刊头双横线 5px+1.5px）/`dashed`（墨色虚线），支持 `horizontal`/`vertical` |
 
-### 业务范式组件（`src/components/patterns/`，共 16 项：15 项已实现，1 项待建；其余按阶段 4 迁移到首个用到它的模块时按需建立）
+### 业务范式组件（`src/components/patterns/`，共 16 项：16 项已全部实现；其余按阶段 4 迁移到首个用到它的模块时按需建立）
 > 完整归属判定、差异分析与 15 项单模块内部组件清单见 [`custom-components.md`](./custom-components.md)；仅被 1 个模块使用的自定义组件（如 `AppShell`、`AssigneePicker`、`MentionInput`、`FileDropzone`、各图表/拖拽看板）留在各自 `features/<域>/` 或 `layout/` 内部，不进入 `patterns/`。
 
 | 范式组件 | 状态与建立时机 | 职责摘要 |
@@ -91,7 +91,7 @@ src/
 | `Legend` / `HeroCard` / `LoadBar` | **已实现** · 阶段 4 第 4 步（`src/components/patterns/{Legend,HeroCard,LoadBar}/`） | 数据驱动图例（已替换 `BurndownPanel`/`DeviationPanel`）、三态强调卡外壳（`alert`/`calm`/`surface`，已替换 `ForecastHero`）、工时负载轨道（`detailed`/`compact`，`role="meter"`，已替换 `LoadRow`/`MemberLoad`/`SelfLoad`） |
 | `ListRow` / `ActivityFeed` | **已实现** · 阶段 4 第 5 步（`src/components/patterns/{ListRow,ActivityFeed}/`） | 原生语义跳转/选中列表行（已替换 `SelfTasks`）、浅/深面单双列时间线动态流（已替换 `PermLog`/`SelfLog`，`LogsPanel` 4 列按日表保持独立） |
 | `TaskBar` | **已实现** · 阶段 4 第 7 步（`src/components/patterns/TaskBar/`） | 受控任务生命周期时间条（剥离 `useIssue()`，必传 `today` prop，支持 `full`/`compact`/`gantt` 三变体及 `data-taskbar-hit`，已接入 `GanttRow`，旧 `shared/components/TaskBar.tsx` 降为薄兼容层待第 9a/9b 步迁完移除） |
-| `MetricStrip` | **待建** · 阶段 4 第 8 步（`overview`） | 4 格 KPI 指标条（`--font-size-figure`，支持 `unit`/`sub`/`alert`） |
+| `MetricStrip` | **已实现** · 阶段 4 第 8 步（`src/components/patterns/MetricStrip/`） | 4 格 KPI 指标条（`--font-size-figure`，支持 `unit`/`sub`/`alert`，已替换 `overview/FigureStrip`，待第 9a 步替换 `task/TaskFigures`） |
 
 ---
 
@@ -143,21 +143,22 @@ src/
   - 阶段 4 第 4 步：`features/reports`（PR #46，新增 `Legend`/`HeroCard`/`LoadBar`，拆分 `burndownModel.ts` 与 `hooks/useReportsPage.ts`，删除 `pages/reports/` 与 `stylelint.config.mjs` 对应豁免，`api/report.ts` 移入 `services/report.ts`）；
   - 阶段 4 第 5 步：`features/members`（PR #47，新增 `ListRow`/`ActivityFeed`，复用 `LoadBar`/`SearchDropdown`/`FormDrawer`/`Select`/`Switch`/`ToggleGroup`/`Checkbox`，删除 `pages/members/` 与 `stylelint.config.mjs` 对应豁免及 `index.css` 废弃 `.fr .pms` 规则）；
   - 阶段 4 第 6 步：`features/documents`（PR #48，复用 `PageHeader`/`Panel`/`Legend`/`HeroCard`/`SearchDropdown`/`ConfirmDialog`/`FormDrawer`/`ToastHost`，内部落地 `FileDropzone` 与 `DocumentRevisingTimeline`，`api/document.ts` 移入 `services/document.ts`，删除 `pages/documents/`、`shared/constants/legends.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 中的 `.dsec-h > .legend` / `.dz*` 规则）；
-  - 阶段 4 第 7 步：`features/timeline`（新增 `patterns/TaskBar` 剥离 `useIssue()` 并补齐 `scripts/test-taskbar-model.ts` 5 项场景测试，挂载 `/dev/ui` `TimelinePatternsShowcase`，抽共享 `shared/utils/forecast.ts`，`api/progress.ts` 移入 `services/progress.ts`，迁移 `TimelineHeader`/`GanttPanel`/`GanttBody`/`GanttAxis`/`GanttRow`/`GanttDeps`/`CriticalPanel` 至 `features/timeline/`，删除 `pages/timeline/`、`shared/components/TaskBar.css`、`taskBarModel.ts`、`stylelint.config.mjs` 对应豁免与 `index.css` 遗留 `.tbl` 规则；待审阅合并）。
-- **下一步**：**阶段 4 第 8 步 `features/overview`**（构建 `MetricStrip`，迁移 `FigureStrip`/`HeadlinePanel`/`CriticalChainPanel`/`SchedulePanel`/`TodoPanel`/`ProgressPanel`）。
+  - 阶段 4 第 7 步：`features/timeline`（PR #49，已合并；新增 `patterns/TaskBar` 剥离 `useIssue()` 并补齐 `scripts/test-taskbar-model.ts` 5 项场景测试，挂载 `/dev/ui` `TimelinePatternsShowcase`，抽共享 `shared/utils/forecast.ts`，`api/progress.ts` 移入 `services/progress.ts`，迁移 `TimelineHeader`/`GanttPanel`/`GanttBody`/`GanttAxis`/`GanttRow`/`GanttDeps`/`CriticalPanel` 至 `features/timeline/`，删除 `pages/timeline/`、`shared/components/TaskBar.css`、`taskBarModel.ts`、`stylelint.config.mjs` 对应豁免与 `index.css` 遗留 `.tbl` 规则）；
+  - 阶段 4 第 8 步：`features/overview`（新增 `patterns/MetricStrip` 达成 `patterns/` 16/16 全部就位并挂载 `/dev/ui` `OverviewPatternsShowcase`，迁移 `OverviewHeader`/`FigureStrip`/`SchedulePanel`/`ScheduleRow`/`HeadlinePanel`/`TodoPanel`/`ProgressPanel`/`CriticalChainPanel`/`OverviewPage` 至 `features/overview/`，删除 `pages/overview/`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.bar`/`.hero*`/`.ov1`/`.ov2`/`.dg`/`.tl` 规则；待审阅合并）。
+- **下一步**：**阶段 4 第 9a 步 `features/tasks`**（迁移 `TaskDrawer` + `AssigneePicker` + `TaskPage`，同步复用 `patterns/SearchDropdown`、`patterns/ConfirmDialog`、`patterns/MetricStrip`、`patterns/LoadBar`、`patterns/ListRow`、`patterns/ActivityFeed`、`patterns/TaskBar` 并清理旧 `shared/components/SearchDropdown.*` 与 `layout/useDismiss.ts`）。
 - **后续完整顺序**：
-  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → ~~`7. features/timeline`~~ → `8. features/overview` → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
+  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → ~~`7. features/timeline`~~ → ~~`8. features/overview`~~ → `9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）→ `9b. features/tasks-board`（`BoardPage` + `useCardDrag` 4 处缺陷逐一独立提交修复）→ `10. features/collab` → **阶段 4 收尾**（集中迁移 `src/api/http.ts` 与全部 `src/state/*` 至 `src/services/` 与 `src/stores/`，清零并删除 `legacy.css` / `index.css` / `roles.css`）。
 
 ### 已登记待办与遗留状态
 - **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
 - **`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**：`patterns/SearchDropdown` 已在第 3 步建立并先后替换 `PeoplePanel`（第 3 步）、`InviteMemberDrawer`（第 5 步）、`DocumentHeader` 与 `UploadDocDrawer`（第 6 步）；仅余 `AssigneePicker`（第 9a 步）仍在复用旧组件，待第 9a 步换完后删除旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`，并从 `stylelint.config.mjs` 的 `ignoreFiles` 移出。
-- **`src/shared/components/TaskBar.tsx` 过渡薄封装**：第 7 步已新建 `patterns/TaskBar` 替换 `GanttRow` 并删除 `TaskBar.css`/`taskBarModel.ts`；旧 `shared/components/TaskBar.tsx` 保留为读取 `useIssue()` 转发 `patterns/TaskBar` 的薄兼容层，待第 9a 步 `SchedulePanel` 与第 9b 步 `TaskCard` 迁完后直接删除。
+- **`src/shared/components/TaskBar.tsx` 过渡薄封装**：第 7 步已新建 `patterns/TaskBar` 替换 `GanttRow` 并删除 `TaskBar.css`/`taskBarModel.ts`；旧 `shared/components/TaskBar.tsx` 保留为读取 `useIssue()` 转发 `patterns/TaskBar` 的薄兼容层，待第 9a 步任务详情 `SchedulePanel` 与第 9b 步 `TaskCard` 迁完后直接删除。
 - **`ToastHost` 复用**：后续模块的“已保存/已删除/已发布”等操作反馈统一用 `useToast()`；`ConfirmDialog` 已在第 6 步替换 `DocumentsPage` 定稿确认，仅余 `TaskHeader`（第 9a 步）待替换。
 - **PR #40 甘特待办核查状态（详见 `custom-components.md` 第七节）**：
   1. ~~核对 `GanttPanel`/`GanttRow` 前置状态传入并补齐 5 项测试~~：第 7 步已完成（核实 `TaskProvider` 全量加载含 `predecessors` 状态的 `TaskDetail` 并经 `GanttPanel`/`GanttRow` 与 `SchedulePanel` 传入 `TaskBar`，已新增 `scripts/test-taskbar-model.ts` 5 项测试并通过）；
   2. 后端 `TaskAutoStart.isAutoBlocked()`（`backend/.../TaskAutoStart.java:73-79`）从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对——按职责边界红线留待后端分支处理。
 - **`api/http.ts` 与 `state/*` 集中迁移**：留待阶段 4 全部业务模块迁移完成后最后一步统一迁入 `services/` 与 `stores/`。
-- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（`--fs-6xl` 等旧变量仍由 `overview`/`board`/`collab` 引用，暂留；`index.css` 第 7 步已同步删除遗留 `.tbl` 29 行）。
+- **`src/styles/legacy.css` 剩余行数**：当前剩余 **59 行**（`--fs-6xl` 等旧变量仍由 `board`/`task`/`collab` 引用，暂留；`index.css` 第 8 步已同步删除概览遗留规则后剩余 **967 行**）。
 
 ### 每一步的固定流程
 1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
@@ -174,7 +175,8 @@ src/
 - **`HeroCard` & `LoadBar`（阶段 4 第 4 步已批准）**：`ForecastHero` 改用 `patterns/HeroCard` + `ui/Badge(solid)`（`calm` 正常态由原橙底白字统一为反色墨底白字，风险标签统一为黑底白字；大号日期从 56px 对齐 `--font-size-figure` 60px）；`LoadRow` 改用 `patterns/LoadBar(detailed)`（轨道高度统一为 14px，内置 `role="meter"`）。
 - **`features/members` 视觉统一（阶段 4 第 5 步已批准）**：`MemberColumn` 角色下拉换 `ui/Select`（消除原生 `<select>` 双下拉箭头）、权限开关换 `ui/Switch(track)`、`InviteMemberDrawer` 换 `FormDrawer` + `SearchDropdown` + `ToggleGroup(chips)` + `Checkbox`、`MemberLoad`/`SelfLoad` 复用 `LoadBar(detailed)`、`PermLog`/`SelfLog` 复用 `ActivityFeed`、`SelfTasks` 复用 `ListRow`。
 - **`features/documents` 视觉统一（阶段 4 第 6 步已批准）**：`DocumentRevising`/`DocumentFinal` 复用 `Panel(variant="flat")`（原 `.dsec` 修订中黑底刊头统一为全站暖纸底刊头）、`DocumentRevising` 复用 `Legend` 与 `Badge(accent)`、`DocumentDetailHero` 改用独立 `HeroCard(alert/surface)` 置顶（与下方详情卡留 `--space-3` 间距避免双边框粘连，大号数字对齐 `--font-size-figure` 60px）、`DocumentDetail` 底部全宽操作钮居中对齐（不覆盖 `Button` 内部对齐）、定稿操作改 `ConfirmDialog` 替代 `window.confirm`、上传抽屉换 `FormDrawer` + `ToggleGroup(chips)` + `SearchDropdown` + `FileDropzone`、操作反馈接入 `ToastHost`。
-- **`features/timeline` 视觉统一（阶段 4 第 7 步，待审阅）**：`TimelineHeader` 换 `PageHeader` + `ToggleGroup(segmented)` + `Button(accent)`；`GanttPanel` 与 `CriticalPanel` 统一使用 `Panel(variant="flat")` 暖纸底刊头（原 `.cpmp .phd` 黑底刊头与全站面板对齐，`总工期 23 个工作日` 保留高对比橙色数字）；`GanttPanel` 接入 `Legend`、预测完成日期对齐 `--font-size-display-sm`（44px）；`TaskBar` 剥离 Store 支持 `full`/`compact`/`gantt` 三变体并通过 `data-taskbar-hit` 命中悬停，日号今天高亮改为 `--border-width-thick` 橙框，整体页面加载与空/报错态接入 `PageState`。
+- **`features/timeline` 视觉统一（阶段 4 第 7 步已批准）**：`TimelineHeader` 换 `PageHeader` + `ToggleGroup(segmented)` + `Button(accent)`；`GanttPanel` 与 `CriticalPanel` 统一使用 `Panel(variant="flat")` 暖纸底刊头（原 `.cpmp .phd` 黑底刊头与全站面板对齐，`总工期 23 个工作日` 保留高对比橙色数字）；`GanttPanel` 接入 `Legend`、预测完成日期对齐 `--font-size-display-sm`（44px）；`TaskBar` 剥离 Store 支持 `full`/`compact`/`gantt` 三变体并通过 `data-taskbar-hit` 命中悬停，日号今天高亮改为 `--border-width-thick` 橙框，整体页面加载与空/报错态接入 `PageState`。
+- **`features/overview` 视觉统一（阶段 4 第 8 步，待审阅）**：`FigureStrip` 改用 `patterns/MetricStrip`（4 格顶栏标签统一左对齐 `// {label}`，`tone="alert"` 采用 `::before` 5px 信号橙顶条 + `ui/Badge(solid)`）；`SchedulePanel` / `ProgressPanel` 复用 `Panel(default)` + `Legend`；`TodoPanel` 复用 `Panel(flat, scrollable)` + `ListRow(compact)`，下栏网格高度由 `178px` 调整为 `204px` 以完整容纳紧凑 `ListRow`（默认 `1440×900` 一屏零页面滚动）；`HeadlinePanel` 复用 `HeroCard(alert/calm)` + `Badge(solid)` 并将阻塞标签与底部操作条改为原生 `<button type="button">`；`CriticalChainPanel` 复用 `Panel(dark)` 并将节点方格间距对齐 4px 栅格（`--space-1`）。
 - **后续既定视觉统一（`custom-components.md` 第三节已拍板）**：`LoadBar`（`tasks` 后续复用）、`HeroCard`（`overview` 后续复用）、`ActivityFeed` / `ListRow`（`overview` / `tasks` / `collab` 后续复用）、`SearchDropdown`（`tasks` 后续复用）。
 
 ### 下一步启动指令模板（直接复制使用）

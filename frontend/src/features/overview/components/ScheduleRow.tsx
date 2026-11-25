@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { WEEK_DAYS, type ScheduleRowData } from "../utils";
+import styles from "./ScheduleRow.module.css";
 
-/** 一条任务条的高度和叠放时的行间距（px） */
 const BAR_HEIGHT = 26;
 const BAR_GAP = 4;
 
@@ -15,12 +15,12 @@ interface ScheduleRowProps {
 export default function ScheduleRow({ row, now, onOpen }: ScheduleRowProps) {
   const laneHeight = row.lanes * BAR_HEIGHT + (row.lanes - 1) * BAR_GAP;
   const at = (now / WEEK_DAYS) * 100;
+
   return (
-    <div className="row">
-      <span className="who">{row.user.realName}</span>
-      <div className="lane" style={{ height: laneHeight }}>
+    <div className={styles.row}>
+      <span className={styles.who}>{row.user.realName}</span>
+      <div className={styles.lane} style={{ height: laneHeight }}>
         {row.bars.map((bar) => {
-          // 进行中、阻塞的条只涂到今天线，后面还没过去的时间留空框；待开始的不涂
           const fill =
             bar.tone === "next"
               ? 0
@@ -28,7 +28,8 @@ export default function ScheduleRow({ row, now, onOpen }: ScheduleRowProps) {
           return (
             <button
               key={bar.taskId}
-              className={`bar ${bar.tone}`}
+              className={styles.bar}
+              data-tone={bar.tone}
               type="button"
               title={bar.title}
               style={
@@ -42,7 +43,7 @@ export default function ScheduleRow({ row, now, onOpen }: ScheduleRowProps) {
               }
               onClick={() => onOpen(bar.taskId)}
             >
-              <span>{bar.title}</span>
+              <span className={styles.barLabel}>{bar.title}</span>
             </button>
           );
         })}

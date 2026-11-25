@@ -8,6 +8,7 @@ import { PatternsShowcase } from "./sections/PatternsShowcase";
 import { ReportPatternsShowcase } from "./sections/ReportPatternsShowcase";
 import { SearchConfirmShowcase } from "./sections/SearchConfirmShowcase";
 import { TimelinePatternsShowcase } from "./sections/TimelinePatternsShowcase";
+import { OverviewPatternsShowcase } from "./sections/OverviewPatternsShowcase";
 import { RoadmapSection } from "./sections/RoadmapSection";
 import styles from "./UiShowcasePage.module.css";
 
@@ -38,6 +39,7 @@ export default function UiShowcasePage() {
         <ReportPatternsShowcase />
         <MemberPatternsShowcase />
         <TimelinePatternsShowcase />
+        <OverviewPatternsShowcase />
         <RoadmapSection />
       </div>
     </div>

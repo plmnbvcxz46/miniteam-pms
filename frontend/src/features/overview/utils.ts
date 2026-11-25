@@ -1,4 +1,9 @@
-import type { ProjectPeriod, TaskStatus, UserBrief } from "../../shared/types/global";
+import { taskStatusKey } from "../../shared/constants/task";
+import type {
+  ProjectPeriod,
+  TaskStatus,
+  UserBrief,
+} from "../../shared/types/global";
 import type {
   OverviewStats,
   ScheduleRow,
@@ -14,13 +19,12 @@ import {
   toDay,
   weekStartOf,
 } from "../../shared/utils/date";
-import { taskStatusKey } from "../../shared/constants/task";
 import type { TimelineForecast } from "../../shared/utils/forecast";
 
 /** 一周的天数 */
 export const WEEK_DAYS = 7;
 
-/** 此刻是当天的几分之几（0 点为 0，正午为 0.5），按 Asia/Shanghai，只取本地时钟的时分 */
+/** 此刻是当天的几分之几（0 点为 0，正午为 0.5），按 Asia/Shanghai */
 export function getDayProgress(): number {
   const now = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
@@ -28,7 +32,7 @@ export function getDayProgress(): number {
   return (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
 }
 
-/** 页头小标题：第 05/10 周 · 已完成 3 项 · 待推进 8 项 · 逾期 1 项（期号和日期顶栏已有，不重复） */
+/** 页头小标题：第 05/10 周 · 已完成 3 项 · 待推进 8 项 · 逾期 1 项 */
 export function formatKicker(
   stats: OverviewStats,
   today: string,
@@ -39,16 +43,12 @@ export function formatKicker(
   return `第 ${formatWeekNo(week, weeks)} 周 · 已完成 ${stats.done} 项 · 待推进 ${stats.remaining} 项 · 逾期 ${stats.overdue} 项`;
 }
 
-/* ---------- 今日待办 ---------- */
-
 export interface TodoRow {
   id: number;
   title: string;
   /** 任务现在的状态，决定前面小方块的颜色；任务表里还没有这个任务时为空 */
   status: TaskStatus | null;
-  /** 标签文字 */
   tag: string;
-  /** late 已逾期 / now 今天截止 */
   tone: "late" | "now" | "";
 }
 
@@ -66,11 +66,8 @@ export function toTodoRows(
   }));
 }
 
-/* ---------- 本周成员排期 ---------- */
-
 export interface WeekDay {
   date: string;
-  /** 几号 */
   label: string;
   weekend: boolean;
   today: boolean;
@@ -93,10 +90,8 @@ export function getWeek(today: string): WeekDay[] {
 export interface ScheduleBarView {
   taskId: number;
   title: string;
-  /** 占一周的百分比 */
   left: number;
   width: number;
-  /** 同一个人同时有几件事时往下叠，从 0 开始 */
   lane: number;
   tone: "on" | "next" | "stuck";
 }
@@ -107,10 +102,7 @@ export interface ScheduleRowData {
   lanes: number;
 }
 
-/**
- * 接口给的是每个成员本周的任务条（起止日期都含），这里换算成一周里的位置，
- * 同一个人的任务重叠时往下叠一行
- */
+/** 接口给的成员本周任务条换算成一周里的位置，同成员任务重叠时往下叠行 */
 export function toScheduleRows(
   rows: ScheduleRow[],
   week: WeekDay[],
@@ -138,15 +130,12 @@ export function toScheduleRows(
         left: ((start - weekStart) / WEEK_DAYS) * 100,
         width: ((end - start) / WEEK_DAYS) * 100,
         lane,
-        // 色块沿用任务状态的 .key 颜色：进行中 on、阻塞 stuck，其余是 next
         tone: key === "on" || key === "stuck" ? key : "next",
       };
     });
     return { user: row.user, bars, lanes: Math.max(1, laneEnds.length) };
   });
 }
-
-/* ---------- 预测 ---------- */
 
 /** 预测比计划晚了没有 */
 export function isLate(forecast: { delayDays: number }): boolean {

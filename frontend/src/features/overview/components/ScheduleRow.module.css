@@ -1,0 +1,100 @@
+.row {
+  flex: 1 0 auto;
+  padding: var(--space-1) var(--space-0);
+  display: flex;
+  align-items: center;
+  border-bottom: var(--border-width-hair) dashed var(--color-border-strong);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.who {
+  width: 96px;
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.lane {
+  position: relative;
+  flex: 1;
+  height: 26px;
+}
+
+.bar {
+  position: absolute;
+  top: var(--space-0);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: var(--space-0) var(--space-1) var(--space-0) var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-none);
+  white-space: nowrap;
+  overflow: hidden;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  isolation: isolate;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.bar::before {
+  content: "";
+  position: absolute;
+  top: var(--space-0);
+  bottom: var(--space-0);
+  left: var(--space-0);
+  width: max(0px, calc((100% + 3px) * var(--fill, 0) - 0.75px));
+  z-index: var(--z-base);
+}
+
+.barLabel {
+  position: relative;
+  z-index: var(--z-base);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar[data-tone="on"]::before {
+  background-color: var(--color-border-strong);
+}
+
+.bar[data-tone="on"] .barLabel {
+  color: var(--comp-inverse-text);
+  mix-blend-mode: difference;
+}
+
+.bar[data-tone="next"] {
+  font-weight: var(--font-weight-regular);
+}
+
+.bar[data-tone="stuck"] {
+  padding-left: var(--space-1-5);
+}
+
+.bar[data-tone="stuck"]::before {
+  background-image: var(--comp-pattern-warn);
+}
+
+.bar[data-tone="stuck"] .barLabel {
+  background-color: var(--color-surface);
+  padding: var(--space-0) var(--space-1);
+}
+
+.bar:hover {
+  outline: var(--border-width-thin) solid var(--color-border-strong);
+  outline-offset: var(--space-0-5);
+}
+
+.bar:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
