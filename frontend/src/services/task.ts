@@ -7,7 +7,7 @@ import type {
   TaskDetail,
   TaskUpdate,
 } from "../shared/types/task";
-import { http } from "./http";
+import { http } from "../api/http";
 
 export const taskApi = {
   /** detail=true：每项带 TaskDetail 的全部字段，一次取完整任务表 */
@@ -25,9 +25,11 @@ export const taskApi = {
     http.put<TaskCard>(`/tasks/${taskId}/position`, { status, index }),
   setPredecessors: (taskId: number, preTaskIds: number[]) =>
     http.put<DependencyTask[]>(`/tasks/${taskId}/predecessors`, { preTaskIds }),
-  activities: (taskId: number) => http.get<Activity[]>(`/tasks/${taskId}/activities`),
+  activities: (taskId: number) =>
+    http.get<Activity[]>(`/tasks/${taskId}/activities`),
 };
 
 export const workloadApi = {
-  get: (projectId: number) => http.get<Workload>(`/projects/${projectId}/workload`),
+  get: (projectId: number) =>
+    http.get<Workload>(`/projects/${projectId}/workload`),
 };

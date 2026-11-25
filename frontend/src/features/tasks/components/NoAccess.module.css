@@ -1,0 +1,12 @@
+/* 无权查看任务详情占位页 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.message {
+  margin: var(--space-0);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}

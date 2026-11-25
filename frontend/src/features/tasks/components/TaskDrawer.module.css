@@ -1,0 +1,27 @@
+/* 任务编辑/新建抽屉表单行局部布局（仅控制宽度与排期对齐） */
+.scheduleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.scheduleText {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+}
+
+.dateInput {
+  width: 150px;
+}
+
+.daysInput {
+  width: 64px;
+}
+
+.emptyText {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding-top: var(--space-1-5);
+}

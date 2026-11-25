@@ -1,0 +1,34 @@
+/* 任务状态色块指示符（与旧版 .key 保持同等尺寸与语义纹理） */
+.key {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 8px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: transparent;
+}
+
+.key[data-status="on"] {
+  background-color: var(--color-surface-inverse);
+}
+
+.key[data-status="stuck"] {
+  background-image: var(--comp-pattern-warn);
+}
+
+.key[data-status="done"] {
+  border-style: dashed;
+}
+
+.key[data-inverted="true"] {
+  border-color: var(--comp-inverse-border);
+}
+
+.key[data-inverted="true"][data-status="on"] {
+  background-color: var(--comp-inverse-border);
+}
+
+.key[data-inverted="true"][data-status="stuck"] {
+  background-image: var(--comp-pattern-warn-inverse);
+}

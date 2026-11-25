@@ -1,17 +1,21 @@
-import TaskBar from "../../../shared/components/TaskBar";
+import { Panel } from "../../../components/patterns/Panel";
+import { TaskBar } from "../../../components/patterns/TaskBar";
 import type { Activity } from "../../../shared/types/global";
 import type { DependencyTask, TaskDetail } from "../../../shared/types/task";
 import DependencyRow from "./DependencyRow";
+import styles from "./SchedulePanel.module.css";
 
 interface SchedulePanelProps {
   task: TaskDetail;
   activities: Activity[];
+  today: string;
   onOpenTask: (taskId: number) => void;
 }
 
 export default function SchedulePanel({
   task,
   activities,
+  today,
   onOpenTask,
 }: SchedulePanelProps) {
   const renderDeps = (deps: DependencyTask[], emptyText: string) =>
@@ -24,27 +28,24 @@ export default function SchedulePanel({
         />
       ))
     ) : (
-      <div className="dep-none">{emptyText}</div>
+      <div className={styles.empty}>{emptyText}</div>
     );
 
   return (
-    <section className="pnl">
-      <div className="phd">
-        <div>
-          <span className="k t-kicker">// SCHEDULE</span>
-          <h2 className="t-section-title">排期与依赖</h2>
-        </div>
-        <span className="u">单位（天）</span>
+    <Panel
+      kicker="// SCHEDULE"
+      title="排期与依赖"
+      headerRight={<span className={styles.unit}>单位（天）</span>}
+    >
+      <div className={styles.taskBarWrap}>
+        <TaskBar task={task} activities={activities} today={today} />
       </div>
-      <div className="tt">
-        <TaskBar task={task} activities={activities} />
-      </div>
-      <div className="scroll-y">
-        <div className="dep-h">PREDECESSORS</div>
+      <div className={styles.deps}>
+        <div className={styles.depHeading}>// PREDECESSORS</div>
         {renderDeps(task.predecessors, "没有前置任务")}
-        <div className="dep-h">SUCCESSORS</div>
+        <div className={styles.depHeading}>// SUCCESSORS</div>
         {renderDeps(task.successors, "没有后续任务")}
       </div>
-    </section>
+    </Panel>
   );
 }

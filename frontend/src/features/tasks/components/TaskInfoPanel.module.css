@@ -1,0 +1,51 @@
+/* 任务说明与文档讨论面板 */
+.desc {
+  margin: var(--space-3) var(--space-0) var(--space-0);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.linksHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin-top: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+}
+
+.linksKicker {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.linksTitle {
+  margin: var(--space-0);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-0);
+}
+
+.adds {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-0) var(--space-1);
+}
+
+.addBtn {
+  flex: 1;
+}
