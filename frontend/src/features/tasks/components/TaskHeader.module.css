@@ -1,0 +1,67 @@
+/* 任务详情头部：返回面包屑、任务状态/优先级元数据与操作栏 */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sep,
+.slash {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  user-select: none;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-semibold);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1-5) var(--space-4);
+  margin-top: var(--space-1);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-weight: var(--font-weight-heavy);
+}
+
+.critical {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-weight: var(--font-weight-semibold);
+}
+
+.critical::before {
+  content: "";
+  width: 16px;
+  height: 5px;
+  background-color: var(--color-surface-inverse);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}

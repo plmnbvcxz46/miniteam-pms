@@ -336,76 +336,6 @@ code {
   cursor: pointer;
 }
 
-/* figures strip (overview KPI, task detail) */
-.figures {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border: 1.5px solid var(--ink);
-  background: var(--paper);
-  height: 112px;
-  flex-shrink: 0;
-}
-.figure {
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  min-width: 0;
-}
-.figure + .figure {
-  border-left: 1.5px solid var(--ink);
-}
-.figure:first-child {
-  background: var(--ink);
-  color: var(--text-inverse);
-}
-.figure .lbl {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
-}
-.figure .lbl::before {
-  content: "// ";
-  white-space: pre;
-}
-.figure .lbl .chip {
-  display: none;
-  margin-left: auto;
-}
-.figure .num {
-  font-family: var(--font-mono);
-  font-weight: var(--fw-heavy);
-  font-size: var(--fs-6xl);
-  line-height: var(--lh-solid);
-  letter-spacing: var(--ls-tighter);
-}
-.figure .num small {
-  font-size: var(--fs-3xl);
-  letter-spacing: 0;
-  margin-left: 2px;
-  font-weight: var(--fw-bold);
-  color: var(--text-mute);
-}
-.figure:first-child .num small {
-  color: var(--text-inverse-mute);
-}
-.figure.alert {
-  box-shadow: inset 0 5px 0 var(--signal);
-}
-.figure.alert .num {
-  color: var(--text-accent);
-}
-.figure.alert .lbl {
-  color: var(--text-alert);
-}
-.figure.alert .lbl .chip {
-  display: inline-block;
-}
-
 /* ---------- board (styles moved to src/pages/board/css/board.css) ---------- */
 
 /* ---------- reports (styles moved to src/pages/reports/css/reports.css；.span2、.track 为多页共用，保留在此) ---------- */
@@ -446,8 +376,6 @@ code {
 }
 
 /* ---------- team (styles moved to src/pages/collab/css/collab.css) ---------- */
-
-/* ---------- task detail (styles moved to src/pages/task/css/task.css) ---------- */
 
 /* ---------- chips ---------- */
 .chips {
@@ -702,146 +630,6 @@ select.in {
 .fr .err {
   grid-column: 2;
 }
-/* 负责人选择器（任务抽屉）：输入框、面板、行外壳在 shared/components/SearchDropdown.css，这里只留成员行特有的 */
-.ap-val {
-  font-weight: var(--fw-bold);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ap-val.none {
-  font-weight: var(--fw-regular);
-  color: var(--text-mute);
-}
-.ap-opt {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 108px;
-  align-items: center;
-  gap: 12px;
-  height: 36px;
-  padding: 0 14px;
-}
-.ap-opt.hit:has(+ .ap-opt.miss) {
-  border-bottom: 1.5px solid var(--ink);
-}
-.ap-opt.miss .ap-nm,
-.ap-opt.miss .ap-tags,
-.ap-opt.miss .ap-load {
-  opacity: 0.5;
-}
-.ap-opt.miss .ap-nm {
-  font-weight: var(--fw-regular);
-}
-.ap-nm {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  font-weight: var(--fw-bold);
-}
-.ap-nm > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ap-nm mark {
-  background: none;
-  color: inherit;
-  text-decoration: underline 2px var(--signal);
-  text-underline-offset: 3px;
-}
-.ap-nm .chip {
-  flex: none;
-  background: var(--signal);
-  color: var(--text);
-}
-.ap-tags {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-  overflow: hidden;
-}
-.ap-tag {
-  flex: 0 1 auto;
-  min-width: 0;
-  max-width: 96px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 5px;
-  line-height: 18px;
-  font-size: var(--fs-xs);
-  color: var(--text-mute);
-  border: 1px solid var(--hair);
-}
-.ap-tag.hit {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--text-inverse);
-  font-weight: var(--fw-bold);
-}
-.ap-more {
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
-  color: var(--text-mute);
-}
-.ap-load {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-none);
-  white-space: nowrap;
-}
-.ap-bar {
-  flex: none;
-  width: 48px;
-  height: 6px;
-  background: var(--wash);
-}
-.ap-bar i {
-  display: block;
-  height: 100%;
-  background: var(--ink);
-}
-.ap-load.over {
-  color: var(--text-alert);
-}
-.ap-load.over .ap-bar {
-  background: var(--over);
-}
-.ap-load.over .ap-bar i {
-  display: none;
-}
-.ap-none {
-  color: var(--text-mute);
-}
-.ap-none[aria-selected="true"] {
-  color: var(--text);
-  font-weight: var(--fw-bold);
-}
-@media (max-width: 900px) {
-  .ap-opt {
-    grid-template-columns: minmax(0, 1fr) auto;
-    height: auto;
-    min-height: 36px;
-    padding: 7px 14px;
-    row-gap: 5px;
-  }
-  .ap-tags {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-  .ap-tags:empty {
-    display: none;
-  }
-}
 .fx-acts {
   display: flex;
   align-items: center;
@@ -926,19 +714,6 @@ select.in {
     gap: 12px;
   }
   .vt {
-  }
-  .figures {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    height: auto;
-  }
-  .figure {
-    min-height: 96px;
-  }
-  .figure:nth-child(3) {
-    border-left: 0;
-  }
-  .figure:nth-child(n + 3) {
-    border-top: 1.5px solid var(--ink);
   }
   .tg {
     grid-template-columns: minmax(0, 1fr);

@@ -4,7 +4,7 @@ import { ToastHost } from "../components/patterns/ToastHost";
 import { NotificationBell, useNotifications } from "../features/notifications";
 import { NewProjectDrawer } from "../features/projects";
 import { SettingsDrawer, type SettingsSection } from "../features/settings";
-import TaskDrawer from "../overlays/task/TaskDrawer";
+import { TaskDrawer } from "../features/tasks";
 import type { ProjectSave } from "../shared/types/global";
 import { useAccess } from "../state/access/useAccess";
 import { useMe } from "../state/auth/useAuth";

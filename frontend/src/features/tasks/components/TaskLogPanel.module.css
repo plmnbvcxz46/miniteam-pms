@@ -1,0 +1,5 @@
+/* 操作记录深色面板：让列表分隔线贴齐面板内壁与底边 */
+.feed {
+  flex: 1;
+  margin: var(--space-0) calc(var(--space-4) * -1) calc(var(--space-3) * -1);
+}

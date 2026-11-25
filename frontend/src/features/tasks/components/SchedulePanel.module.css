@@ -1,0 +1,35 @@
+/* 排期与依赖面板：任务进度条与上下游依赖列表 */
+.unit {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.taskBarWrap {
+  flex-shrink: 0;
+  padding-top: var(--space-2);
+}
+
+.deps {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.depHeading {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  padding: var(--space-3) var(--space-0) var(--space-0-5);
+}
+
+.empty {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-0);
+}

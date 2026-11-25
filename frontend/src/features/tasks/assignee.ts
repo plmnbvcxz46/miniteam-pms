@@ -26,14 +26,8 @@ export function isOverloaded(candidate: AssigneeCandidate): boolean {
   return candidate.load > candidate.capacity;
 }
 
-/** 负载条填充比例，0 到 1 */
-export function loadRatio(candidate: AssigneeCandidate): number {
-  if (candidate.capacity <= 0) return candidate.load > 0 ? 1 : 0;
-  return Math.min(candidate.load / candidate.capacity, 1);
-}
-
 /**
- * 按关键词给候选人排序，写法和老式搜索一致：
+ * 按关键词给候选人排序：
  * - +词：必须包含（姓名或任一技能标签里有）
  * - -词：必须不含
  * - 普通词：含其中任一个即可，命中越多越靠前

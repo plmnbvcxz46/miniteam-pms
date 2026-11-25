@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useAccess } from "../access/useAccess";
 import { activityApi } from "../../api/project";
-import { taskApi } from "../../api/task";
+import { taskApi } from "../../services/task";
 import { useIssue } from "../issue/useIssue";
 import type { Activity, TaskStatus } from "../../shared/types/global";
 import type { TaskDetail, TaskFormValues } from "../../shared/types/task";
