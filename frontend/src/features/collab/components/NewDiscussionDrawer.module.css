@@ -1,0 +1,6 @@
+.notice {
+  margin: var(--space-1) var(--space-0) var(--space-0);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-text);
+  line-height: var(--line-height-normal);
+}

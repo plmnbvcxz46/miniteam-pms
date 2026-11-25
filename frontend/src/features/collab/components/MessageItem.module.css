@@ -1,0 +1,118 @@
+@keyframes comment-flash {
+  0% {
+    background-color: var(--color-flash-peak);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.message {
+  border-bottom: var(--border-width-hair) dashed var(--color-border);
+  outline: none;
+}
+
+.message:last-child {
+  border-bottom: 0;
+}
+
+.message:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset-inset);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  padding: var(--space-3) var(--space-4);
+}
+
+.inner[data-flash="true"] {
+  animation: comment-flash calc(var(--duration-normal) * 5) var(--ease-standard)
+    forwards;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.user {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text);
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.body {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.em {
+  font-style: normal;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent-text);
+}
+
+.mention {
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.docTag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0) var(--space-1-5);
+  margin: var(--space-0) var(--space-0-5);
+  border: var(--border-width-hair) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  cursor: pointer;
+  vertical-align: baseline;
+  transition-property: background-color, color;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.docTag:hover {
+  background-color: var(--color-surface-inverse);
+  color: var(--comp-inverse-text);
+}
+
+.docTag:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.docGone {
+  display: inline-block;
+  padding: var(--space-0) var(--space-1-5);
+  margin: var(--space-0) var(--space-0-5);
+  border: var(--border-width-hair) dashed var(--color-border);
+  color: var(--color-text-faint);
+  font-size: var(--font-size-xs);
+  text-decoration: line-through;
+  cursor: default;
+}
