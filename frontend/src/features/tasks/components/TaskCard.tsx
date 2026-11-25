@@ -1,4 +1,4 @@
-import type { CSSProperties, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
 import { TaskBar } from "../../../components/patterns/TaskBar";
 import { Badge } from "../../../components/ui/Badge";
 import type { Activity } from "../../../shared/types/global";
@@ -57,10 +57,21 @@ export default function TaskCard({
   onClick,
 }: TaskCardProps) {
   const { label, score } = task.priority;
+  const interactive = !floating && Boolean(onClick);
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (!interactive) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
 
   return (
     <article
       className={styles.card}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
       data-drag-card="true"
       data-status={task.status}
       data-critical={task.critical ? "true" : undefined}
@@ -73,6 +84,7 @@ export default function TaskCard({
       style={style}
       onPointerDown={onPointerDown}
       onClick={onClick}
+      onKeyDown={interactive ? handleKeyDown : undefined}
     >
       <div className={styles.top}>
         {task.critical ? (

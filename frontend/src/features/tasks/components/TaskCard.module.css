@@ -45,6 +45,11 @@
   opacity: 0.22;
 }
 
+.card:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
 @media (hover: hover) {
   .card:not([data-locked="true"], [data-board-dragging="true"]):hover {
     transform: translate(-3px, -3px);
@@ -76,10 +81,6 @@
   font-family: var(--font-mono);
   font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-heavy);
-}
-
-.score small {
-  font-size: var(--font-size-2xs);
 }
 
 .score small::before {
@@ -123,11 +124,6 @@
   background-color: var(--color-surface);
   padding: var(--space-0) var(--space-1);
   font-weight: var(--font-weight-heavy);
-}
-
-.assignee,
-.dueText {
-  min-width: 0;
 }
 
 /* 阻塞状态卡片保持黑色斜纹容器底纹与浅纸衬底文字块 */
