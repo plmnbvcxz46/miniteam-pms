@@ -14,7 +14,7 @@
 | 归属层 | 数量 | 说明 |
 |---|---:|---|
 | **`components/ui/`（新增待建）** | **0 项** | 现有 19 项基础组件已覆盖全部无业务通用原语（含 `Progress` 承接阶段/周进度条、`Popover`/`DropdownMenu`/`Drawer`/`AlertDialog`/`Toast` 承接浮层与反馈）；模糊搜索下拉已在另一工作目录的后续提交中抽为 `SearchDropdown`（跨 4 模块复用），作为组合范式进入 `components/patterns/SearchDropdown`（基于 `ui/Popover` + `ui/Input` + `ui/Spinner`，不引入 `cmdk`/`downshift`）。 |
-| **`components/patterns/`** | **16 项（16 已全部实现；含第 3 步补充的 `ToastHost`）** | 严格满足 ≥ 2 个模块复用；第 1–8 步全部 16 项 `patterns/` 组件已悉数落位，第 9a 步已进一步复用 `SearchDropdown` / `ConfirmDialog` / `LoadBar` / `MetricStrip` / `TaskBar` / `ListRow` / `ActivityFeed` / `FormDrawer` / `PageHeader` / `Panel` / `ToastHost` 完成任务详情与抽屉迁移；仅余第 9b 步 `tasks-board`（`BoardPage` + `useCardDrag` 4 处独立修复）与第 10 步 `collab` 待继续推进复用。 |
+| **`components/patterns/`** | **16 项（16 已全部实现；含第 3 步补充的 `ToastHost`）** | 严格满足 ≥ 2 个模块复用；第 1–9b 步全部 16 项 `patterns/` 组件已悉数落位并覆盖任务看板/详情/抽屉等 8 个业务域，仅余最后 1 个业务模块（第 10 步 `collab`）待收尾复用。 |
 | **`features/<模块>` / `layout` 内部保留** | **15 项** | 仅单一业务模块使用的图表、矩阵、拖拽看板、富文本 `@提及`、负责人选择器、文件拖放区与外壳部件，严禁提前抽象至 `patterns/`。 |
 | **合计盘点项** | **30 项** | 完整覆盖 `src/` 下所有非 `components/ui/` 自定义组件与交互。 |
 
@@ -39,9 +39,9 @@
 | 8 | **`Legend`** | `src/components/patterns/Legend/`（已全部替换 `BurndownPanel`、`DeviationPanel`、`DocumentRevising`、`GanttPanel`、`SchedulePanel`、`ProgressPanel`） | `reports`、`documents`、`timeline`、`overview`（4 模块） | 低 | `components/patterns` | A. 纯展示组件 + CSS Modules | **阶段 4 第 4 步实现 · 第 8 步完成全站替换** |
 | 9 | **`HeroCard`** | `src/components/patterns/HeroCard/`（已全部替换 `ForecastHero`、`DocumentDetailHero`、`HeadlinePanel`） | `reports`、`documents`、`overview`（3 模块） | 低 | `components/patterns` | A. CSS Modules（外壳与顶栏，`alert`/`calm`/`surface` 三态） | **阶段 4 第 4 步实现 · 第 8 步完成全站替换** |
 | 10 | **`LoadBar`** | `src/components/patterns/LoadBar/`（已全部替换 `LoadRow`、`MemberLoad`、`SelfLoad`、`AssigneePicker.LoadMeter`） | `reports`、`members`、`tasks`（3 模块） | 低 | `components/patterns` | A. `shared/utils/load` + CSS Modules（`detailed`/`compact` + `role="meter"`） | **阶段 4 第 4 步实现 · 第 9a 步完成全站替换** |
-| 11 | **`ListRow`** | `src/components/patterns/ListRow/`（已替换 `SelfTasks`、`TodoPanel`、`DependencyRow`、`LinkRow`；待替换 `BlockedBy`、`ThreadItem`） | `members`、`overview`、`tasks`、`collab`（4 模块） | 低 | `components/patterns` | A. 原生 `<button>`/`<Link>`/`<div>` + CSS Modules | **阶段 4 第 5 步（已实现）** |
+| 11 | **`ListRow`** | `src/components/patterns/ListRow/`（已替换 `SelfTasks`、`TodoPanel`、`DependencyRow`、`LinkRow`、`BlockedBy`；待替换 `ThreadItem`） | `members`、`overview`、`tasks`、`collab`（4 模块） | 低 | `components/patterns` | A. 原生 `<button>`/`<Link>`/`<div>` + CSS Modules | **阶段 4 第 5 步（已实现）** |
 | 12 | **`ActivityFeed`** | `src/components/patterns/ActivityFeed/`（已替换 `PermLog`、`SelfLog`、`TaskLogPanel`；待替换 `ActivityFeedPanel/Item`） | `members`、`tasks`、`collab`（3 模块） | 低-中 | `components/patterns` | A. 原生 `<button>` 交互 + CSS Modules（`light`/`dark`、`1`/`2` 列） | **阶段 4 第 5 步（已实现）** |
-| 13 | **`TaskBar`** | `src/components/patterns/TaskBar/`（已接入 `GanttRow` 与任务详情 `SchedulePanel`，仅余看板 `TaskCard` 仍经过渡兼容层） | `timeline`、`tasks`（含详情与看板，2 模块 3 处） | 高 | `components/patterns` | C. 保留现有手写实现（剥离 `useIssue()` 改为必传 `today` prop，迁入 CSS Modules） | **阶段 4 第 7 步（已实现）** |
+| 13 | **`TaskBar`** | `src/components/patterns/TaskBar/`（全站 `GanttRow`、`SchedulePanel`、`TaskCard` 3 处已全部接入；过渡兼容层已于第 9b 步删除） | `timeline`、`tasks`（含详情与看板，2 模块 3 处） | 高 | `components/patterns` | C. 保留现有手写实现（剥离 `useIssue()` 改为必传 `today` prop，迁入 CSS Modules） | **阶段 4 第 7 步实现 · 第 9b 步完成全站替换** |
 | 14 | **`MetricStrip`** | `src/components/patterns/MetricStrip/`（已全部替换 `overview/FigureStrip` 与 `task/TaskFigures`） | `overview`、`tasks`（2 模块） | 低 | `components/patterns` | A. `radix-ui` / 现有 `ui` 组合（`Badge` + 4 格 KPI 网格，`--font-size-figure`） | **阶段 4 第 8 步实现 · 第 9a 步完成全站替换** |
 
 ### B. 留在 `features/<模块>` 或 `layout/` 内部（15 项，不往上抽象）
@@ -62,7 +62,7 @@
 | 26 | **`MemberScheduleBoard`**（`SchedulePanel`/`ScheduleRow`） | `overview/components/SchedulePanel.tsx:1-75`、`ScheduleRow.tsx:1-52` | `overview`（仅 1 模块） | 中 | `features/overview` | C. 保留现有手写实现（多泳道排期 + 精确到此刻的今天线；外层复用 `Panel` + `Legend`） | 阶段 4 第 8 步（`overview`） |
 | 27 | **`CriticalChainPanel`** | `overview/components/CriticalChainPanel.tsx:1-65` | `overview`（仅 1 模块） | 低 | `features/overview` | A. 现有 `ui` / `patterns` 组合（`Panel(dark)` + `Badge`） | 阶段 4 第 8 步（`overview`） |
 | 28 | **`AssigneePicker`** | `features/tasks/components/AssigneePicker.tsx` + `features/tasks/assignee.ts` | `tasks`（仅 `TaskDrawer`，1 模块） | 中 | `features/tasks` | A. 组合 `patterns/SearchDropdown` + `patterns/LoadBar(compact)` + `ui/Badge` + 保留 `assignee.ts` 检索与推荐算法 | **阶段 4 第 9a 步（已实现）** |
-| 29 | **`DraggableBoard`（`TaskCard` + `useCardDrag`）** | `BoardPage.tsx:32-123`、`BoardColumn.tsx:1-79`、`TaskCard.tsx:1-82`、`useCardDrag.ts:1-139` | `tasks`（仅看板，1 模块） | 高 | `features/tasks` | C. 保留现有手写指针拖拽实现（只迁位置并改 `data-*` 选择器；内部条复用 `patterns/TaskBar(compact)`，详见第五节 Bug 清单） | 阶段 4 第 9b 步（`tasks-board`） |
+| 29 | **`DraggableBoard`（`TaskCard` + `useCardDrag`）** | `features/tasks/components/{BoardPage,BoardColumn,TaskCard}.tsx` + `features/tasks/hooks/useCardDrag.ts` | `tasks`（仅看板，1 模块） | 高 | `features/tasks` | C. 保留手写指针拖拽并完成 4 项缺陷独立提交修复；内部条直连 `patterns/TaskBar(compact, today)` | **阶段 4 第 9b 步（已实现）** |
 | *(附)* | **`MentionInput` & `MessageItem`** | `MentionInput.tsx:1-211`、`MessageItem.tsx:1-80` | `collab`（`ReplyForm` 与 `NewDiscussionDrawer` 同属 1 模块） | 高 | `features/collab` | C. 保留现有手写 `@` 光标触发与键盘导航逻辑（外框复用 `ui/Textarea` 与 `Popover` 浮层视觉 Token） | 阶段 4 第 10 步（`collab`） |
 
 > 注：以上 `B` 表含 15 组（计入 `MentionInput` 共 16 项，与 `A` 表 15 项合计覆盖全部非 `ui/` 自定义组件；`ProgressPanel` `.pbar` 已直接由阶段 3 `ui/Progress(solid)` 覆盖，无需额外自定义）。
@@ -201,11 +201,11 @@
 
 ## 五、现有拖拽实现（`useCardDrag.ts`）保留策略与阶段 4 修复计划（已拍板）
 
-- **已确认策略**：阶段 4 第 9b 步迁移 `BoardPage` 时，**保留 `useCardDrag.ts` 手写指针拖拽逻辑**，迁至 `features/tasks/hooks/useCardDrag.ts`（不引入第三方拖拽库），并将以下 **4 处缺陷逐一修复，每处单独提交**；修复完成后提供**手动拖拽验证步骤**供用户实测确认：
-  1. **提交 ①**：将 `useCardDrag.ts:33, 36` 硬编码的全局类名选择器 `.drop[data-status]` / `.card` 改为 `data-drop-zone` / `data-drag-card` 属性选择器，适配 CSS Modules。
-  2. **提交 ②**：补齐 `pointerId` 追踪与 `setPointerCapture`（及 `lostpointercapture` 处理），修复指针拖出浏览器窗口外松手或多触点时残留悬浮浮卡与 `body.dragging` 的 Bug。
-  3. **提交 ③**：修复拖放落点在源卡片外后紧接用键盘打开卡片时 `wasDragged()` 仍返回 `true` 造成误拦截的 Bug。
-  4. **提交 ④**：`TaskCard.tsx:45` 补齐键盘可达性（`Tab` 聚焦、`Enter`/`Space` 打开详情），拖拽本身仍保持纯指针操作。
+- **执行状态（第 9b 步已逐一独立提交修复完成，待手动拖拽验收）**：
+  1. **提交 ①**（`dfbfec1`）：将 `useCardDrag` 硬编码全局类名选择器 `.drop[data-status]` / `.card` 改为 `[data-drop-zone][data-status]` / `[data-drag-card]`，拖拽体态切换为 `data-card-dragging`，适配 CSS Modules。
+  2. **提交 ②**（`3e3bb8d`）：补齐 `pointerId` 追踪与 `setPointerCapture`（越过阈值隐藏源卡前将捕获切换至常驻 `[data-view="board"]` 容器并处理 `lostpointercapture`），防止指针拖出浏览器窗口外松手或多触点时残留浮卡与拖拽光标。
+  3. **提交 ③**（`ba9b445`）：拖拽 `finish` 后调度同轮异步复位 `draggedRef`（并在新按压和卸载时清理定时器），修复落点在源卡片外未触发 `click` 造成误拦截后续键盘打开或再次点击。
+  4. **提交 ④**（`9c0c76e`）：`TaskCard` 补齐键盘可达性（非悬浮态且可点时赋予 `role="button"`、`tabIndex={0}`、`Enter`/`Space` 打开及 `:focus-visible` 焦点环），拖拽本身仍保持纯指针操作。
 
 ---
 
@@ -237,7 +237,8 @@
      1. **已完成**：核实 `TaskProvider`（`GET /projects/{projectId}/tasks?detail=true`）已将带 `predecessors` 状态的 `TaskDetail` 经 `GanttPanel`/`GanttRow` 与 `SchedulePanel` 真实传入 `TaskBar`，且已补齐 `scripts/test-taskbar-model.ts`（`pnpm test` 5 项场景断言全过）；
      2. **后端待办保留**：`backend/src/main/java/org/miniteam/pms/task/TaskAutoStart.java:73-79` 的 `isAutoBlocked()` 当前仍使用 `detail.contains("阻塞")`，按前后端边界红线不在本前端 PR 中跨目录修改，留待后端分支精确比对 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED`。
    - **第 8 步（`features/overview`，PR #50，已合并）**：已新建 `patterns/MetricStrip` 并挂载 `/dev/ui` `OverviewPatternsShowcase`，迁移 `OverviewHeader`/`FigureStrip`/`SchedulePanel`/`ScheduleRow`/`HeadlinePanel`/`TodoPanel`/`ProgressPanel`/`CriticalChainPanel`/`OverviewPage` 至 `features/overview/`；`FigureStrip`/`CriticalChainPanel`/`SchedulePanel` 已按最新 `main` 行为迁移并对齐 4px 栅格（`--space-1`）与 `HeroCard`/`Legend`/`ListRow`/`Panel`，同步删除 `pages/overview/`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留规则。
-   - **第 9a 步（`features/tasks`，已完成待审阅）**：`TaskDrawer` 迁入 `features/tasks/` 并切换至 `patterns/FormDrawer(md)` + `ui/Field` + `ui/ToggleGroup(multiple, chips)`；`AssigneePicker` 直接切换调用 `patterns/SearchDropdown` + `patterns/LoadBar(compact)` + `ui/Badge(accent)`；`TaskPage` 及其子组件全部迁入 `features/tasks/`，分别复用 `PageHeader(compact)`、`ToggleGroup(single, chips)`、`ConfirmDialog`、`MetricStrip`、`Panel`、`TaskBar(today)`、`ListRow`、`ActivityFeed(dark)`、`Button(dashed)` 与 `useToast()`；同步将 `api/task.ts` 移入 `services/task.ts`，删除 `pages/task/`、`overlays/task/`、旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.figures`/`.figure`/`.ap-*` 规则。
+   - **第 9a 步（`features/tasks`，PR #51，已合并）**：`TaskDrawer` 迁入 `features/tasks/` 并切换至 `patterns/FormDrawer(md)` + `ui/Field` + `ui/ToggleGroup(multiple, chips)`；`AssigneePicker` 直接切换调用 `patterns/SearchDropdown` + `patterns/LoadBar(compact)` + `ui/Badge(accent)`；`TaskPage` 及其子组件全部迁入 `features/tasks/`，分别复用 `PageHeader(compact)`、`ToggleGroup(single, chips)`、`ConfirmDialog`、`MetricStrip`、`Panel`、`TaskBar(today)`、`ListRow`、`ActivityFeed(dark)`、`Button(dashed)` 与 `useToast()`；同步将 `api/task.ts` 移入 `services/task.ts`，删除 `pages/task/`、`overlays/task/`、旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.figures`/`.figure`/`.ap-*` 规则。
+   - **第 9b 步（`features/tasks-board`，已完成待审阅）**：`BoardPage`、`BoardHeader`、`BoardColumn`、`TaskCard`、`BlockedBy`、`hooks/useBoardPage.ts`、`hooks/useCardDrag.ts` 迁入 `features/tasks/`，`TaskCard` 直连 `patterns/TaskBar(compact, today)` 并删除 `shared/components/TaskBar.tsx` 过渡层；同步删除 `pages/board/`、`stylelint.config.mjs` 对应豁免与 `index.css` `.card` 残留；按第 5 节方案分 4 笔独立提交修复 `useCardDrag` 4 处缺陷。
 3. **26 个提交中新增/修改 CSS 的硬编码扫描结论（阶段 4 收敛清单）**：
    - **硬编码颜色**：共改动 12 个旧 CSS 文件，**0 处新增硬编码 hex / `rgb()` / `rgba()` 颜色**（均沿用既有 CSS 变量）；全部 12 个文件均已在 `stylelint.config.mjs` 的 `ignoreFiles` 过渡豁免清单中（含新增的 `src/shared/components/SearchDropdown.css`）。
    - **需在阶段 4 迁入 CSS Modules 时收敛为 Token 的硬编码间距 / 阴影 / 层级**：

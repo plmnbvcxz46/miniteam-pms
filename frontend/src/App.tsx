@@ -10,7 +10,6 @@ import ProjectProvider from "./state/project/ProjectProvider";
 import { LoginPage } from "./features/auth";
 import Shell from "./layout/Shell";
 import { OverviewPage } from "./features/overview";
-import BoardPage from "./pages/board/BoardPage";
 import TaskProvider from "./state/task/TaskProvider";
 import DocumentProvider from "./state/document/DocumentProvider";
 import { ReportsPage } from "./features/reports";
@@ -18,7 +17,7 @@ import { DocumentsPage } from "./features/documents";
 import { MembersPage } from "./features/members";
 import { TimelinePage } from "./features/timeline";
 import CollabPage from "./pages/collab/CollabPage";
-import { TaskPage } from "./features/tasks";
+import { BoardPage, TaskPage } from "./features/tasks";
 
 const router = createHashRouter([
   {

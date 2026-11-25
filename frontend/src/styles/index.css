@@ -336,8 +336,6 @@ code {
   cursor: pointer;
 }
 
-/* ---------- board (styles moved to src/pages/board/css/board.css) ---------- */
-
 /* ---------- reports (styles moved to src/pages/reports/css/reports.css；.span2、.track 为多页共用，保留在此) ---------- */
 .span2 {
   grid-column: span 2;
@@ -701,9 +699,6 @@ select.in {
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
-  }
-  .card {
-    transition: none;
   }
 }
 
