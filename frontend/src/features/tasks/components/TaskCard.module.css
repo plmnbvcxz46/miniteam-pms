@@ -1,0 +1,177 @@
+/* 看板任务卡片（保留手写拖拽标识与阻塞黑色斜纹，全部使用语义 Token） */
+.card {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition-property: transform, box-shadow;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+.card[data-locked="true"] {
+  cursor: pointer;
+  touch-action: auto;
+}
+
+.card[data-lifted="true"] {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-lg);
+  cursor: grabbing;
+}
+
+.card[data-floating="true"] {
+  position: fixed;
+  z-index: var(--z-drag);
+  pointer-events: none;
+  margin: var(--space-0);
+  cursor: grabbing;
+}
+
+.card[data-fresh="true"] {
+  outline: var(--border-width-thick) solid var(--color-accent);
+  outline-offset: var(--space-1);
+}
+
+.card[data-dimmed="true"] {
+  opacity: 0.22;
+}
+
+@media (hover: hover) {
+  .card:not([data-locked="true"], [data-board-dragging="true"]):hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  padding: var(--space-0-5) var(--space-1);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-heavy);
+}
+
+.score small {
+  font-size: var(--font-size-2xs);
+}
+
+.score small::before {
+  content: "· ";
+}
+
+.score[data-level="high"] {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.score[data-level="low"] {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  border-width: var(--border-width-hair);
+  border-color: var(--color-text-muted);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+}
+
+.dueToday {
+  border: var(--border-width-thin) solid var(--color-accent);
+  background-color: var(--color-surface);
+  padding: var(--space-0) var(--space-1);
+  font-weight: var(--font-weight-heavy);
+}
+
+.assignee,
+.dueText {
+  min-width: 0;
+}
+
+/* 阻塞状态卡片保持黑色斜纹容器底纹与浅纸衬底文字块 */
+.card[data-status="BLOCKED"] {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-border-strong) 0 2px,
+    var(--color-surface) 2px 7px
+  );
+}
+
+.card[data-status="BLOCKED"] .title {
+  align-self: flex-start;
+  background-color: var(--color-surface);
+  padding: var(--space-0-5) var(--space-1-5);
+}
+
+.card[data-status="BLOCKED"] .tag,
+.card[data-status="BLOCKED"] .assignee,
+.card[data-status="BLOCKED"] .dueText {
+  background-color: var(--color-surface);
+  padding: var(--space-0-5) var(--space-1);
+}
+
+.card[data-status="DONE"] {
+  border-width: var(--border-width-hair);
+  border-style: dashed;
+}
+
+.card[data-status="DONE"] .tag {
+  display: none;
+}
+
+.card[data-status="DONE"] .title {
+  text-decoration: line-through;
+  font-weight: var(--font-weight-medium);
+}
+
+.card[data-status="DONE"] .meta {
+  color: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition-property: none;
+  }
+}

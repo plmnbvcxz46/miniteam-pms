@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import type { TaskStatus } from "../../shared/types/global";
+import type { TaskStatus } from "../../../shared/types/global";
 
 /** 移动超过这个距离才算拖动，否则按点击处理 */
 const DRAG_THRESHOLD = 5;
@@ -30,10 +30,10 @@ interface Press {
 function findDropTarget(x: number, y: number): DropTarget | null {
   const drop = document
     .elementFromPoint(x, y)
-    ?.closest<HTMLElement>(".drop[data-status]");
+    ?.closest<HTMLElement>("[data-drop-zone][data-status]");
   if (!drop) return null;
 
-  const cards = [...drop.querySelectorAll(".card")];
+  const cards = [...drop.querySelectorAll("[data-drag-card]")];
   const before = cards.findIndex((card) => {
     const rect = card.getBoundingClientRect();
     return y < rect.top + rect.height / 2;
@@ -44,7 +44,18 @@ function findDropTarget(x: number, y: number): DropTarget | null {
   };
 }
 
+function setDraggingCursor(active: boolean) {
+  if (active) {
+    document.body.dataset.cardDragging = "true";
+    document.body.style.cursor = "grabbing";
+  } else {
+    delete document.body.dataset.cardDragging;
+    document.body.style.cursor = "";
+  }
+}
+
 /**
+ * 看板卡片指针拖拽 hook
  * @param canDrop 能不能放进某一列；不能放的列上，占位留在原处，松手等于没拖
  */
 export function useCardDrag(
@@ -69,7 +80,7 @@ export function useCardDrag(
         Math.abs(e.clientX - press.startX) + Math.abs(e.clientY - press.startY);
       if (!dragRef.current && moved < DRAG_THRESHOLD) return;
 
-      document.body.classList.add("dragging");
+      setDraggingCursor(true);
       const found = findDropTarget(e.clientX, e.clientY);
       update({
         taskId: press.taskId,
@@ -89,7 +100,7 @@ export function useCardDrag(
       const current = dragRef.current;
       pressRef.current = null;
       if (!current) return;
-      document.body.classList.remove("dragging");
+      setDraggingCursor(false);
       draggedRef.current = true;
       update(null);
       if (!cancel) onDrop(current.taskId, current.target);
@@ -113,8 +124,7 @@ export function useCardDrag(
     };
   }, [onDrop, canDrop]);
 
-  // 离开页面时清掉拖动中的全局样式
-  useEffect(() => () => document.body.classList.remove("dragging"), []);
+  useEffect(() => () => setDraggingCursor(false), []);
 
   const handlePress = (
     e: PointerEvent<HTMLElement>,
