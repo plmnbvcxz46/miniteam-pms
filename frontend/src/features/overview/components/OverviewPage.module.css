@@ -26,6 +26,19 @@
   flex-shrink: 0;
 }
 
+@media (height <= 820px) {
+  .page {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .rowTop {
+    flex: none;
+    grid-template-rows: minmax(260px, auto);
+  }
+}
+
 @media (width <= 900px) {
   .page {
     height: auto;

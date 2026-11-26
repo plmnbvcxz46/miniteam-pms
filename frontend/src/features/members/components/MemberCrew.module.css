@@ -65,8 +65,9 @@
 .whoCell {
   border-top: var(--border-width-thin) solid var(--color-border-strong);
   border-bottom: var(--border-width-thin) solid var(--color-border-strong);
-  justify-content: flex-end;
-  padding-bottom: var(--space-3);
+  justify-content: flex-start;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-2);
   gap: var(--space-1);
 }
 
@@ -79,12 +80,20 @@
   font-size: var(--font-size-2xl);
   letter-spacing: var(--letter-spacing-snug);
   line-height: var(--line-height-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .whoMeta {
   font-family: var(--font-mono);
   font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .whoUser {

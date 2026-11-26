@@ -1,4 +1,4 @@
-/* 刊头列表浮层壳：黑底 // TITLE 刊头 + 可滚动列表 + 通栏底部操作行 */
+/* 刊头列表浮层壳：// TITLE 刊头 + 可滚动列表 + 通栏底部操作行 */
 .popover[data-width="sm"] {
   width: 360px;
 }
@@ -21,8 +21,9 @@
   font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wider);
-  background-color: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
 }
 
 .header::before {
@@ -32,7 +33,7 @@
 .meta {
   margin-left: auto;
   font-style: normal;
-  color: var(--color-text-inverse-muted);
+  color: var(--color-text-muted);
 }
 
 .list {

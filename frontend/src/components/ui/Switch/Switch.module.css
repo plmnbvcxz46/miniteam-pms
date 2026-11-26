@@ -53,21 +53,21 @@
 
 .bar {
   position: relative;
-  width: 28px;
-  height: 12px;
+  width: 30px;
+  height: 15px;
+  padding: var(--space-0-5);
   border: var(--border-width-thin) solid var(--color-border-strong);
   background-color: var(--color-surface);
   transition-property: background-color, border-color;
 }
 
 .thumb {
-  position: absolute;
-  top: 50%;
-  left: 1px;
+  display: block;
+  flex-shrink: 0;
   width: 8px;
   height: 8px;
   background-color: var(--color-text);
-  transform: translate(0, -50%);
+  transform: translateX(0);
   transition-property: background-color, transform;
 }
 
@@ -91,7 +91,7 @@
 
 .root[data-state="checked"] .thumb {
   background-color: var(--color-surface);
-  transform: translate(15px, -50%);
+  transform: translateX(15px);
 }
 
 .root[data-state="checked"] .offText,
