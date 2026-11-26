@@ -28,6 +28,21 @@
 
 @media (height <= 820px) {
   .page {
+    gap: var(--space-3);
+  }
+
+  .rowTop {
+    gap: var(--space-3);
+  }
+
+  .rowBottom {
+    gap: var(--space-3);
+    height: 176px;
+  }
+}
+
+@media (height <= 640px) {
+  .page {
     height: auto;
     max-height: none;
     overflow: visible;
@@ -35,7 +50,7 @@
 
   .rowTop {
     flex: none;
-    grid-template-rows: minmax(260px, auto);
+    grid-template-rows: minmax(220px, auto);
   }
 }
 

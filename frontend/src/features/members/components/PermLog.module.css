@@ -32,6 +32,12 @@
   padding-right: var(--space-2);
 }
 
+@media (height <= 820px) {
+  .feed {
+    max-height: 72px;
+  }
+}
+
 @media (width <= 900px) {
   .wrap {
     grid-template-columns: minmax(0, 1fr);

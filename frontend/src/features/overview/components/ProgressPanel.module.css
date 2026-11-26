@@ -54,3 +54,14 @@
 .legendCount {
   font-weight: var(--font-weight-heavy);
 }
+
+@media (height <= 820px) {
+  .percent {
+    font-size: var(--font-size-display-sm);
+    margin-top: var(--space-1);
+  }
+
+  .legendWrap {
+    margin-top: var(--space-1-5);
+  }
+}

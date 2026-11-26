@@ -92,7 +92,11 @@
   }
 }
 
-@media (height <= 700px) {
+@media (height <= 820px) {
+  .pageHeader {
+    gap: var(--space-2);
+  }
+
   .title {
     font-size: var(--font-size-display-sm);
   }

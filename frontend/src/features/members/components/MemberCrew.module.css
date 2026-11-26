@@ -162,3 +162,23 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
+
+@media (height <= 820px) {
+  .crew {
+    grid-template-rows: 74px 86px 40px 42px repeat(4, 40px);
+  }
+
+  .whoCell {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-1-5);
+    gap: var(--space-0-5);
+  }
+
+  .whoName {
+    font-size: var(--font-size-xl);
+  }
+
+  .loadNumber {
+    font-size: var(--font-size-display-sm);
+  }
+}
