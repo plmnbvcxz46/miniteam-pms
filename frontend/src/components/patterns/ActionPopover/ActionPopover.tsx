@@ -11,7 +11,7 @@ export interface ActionPopoverProps {
   onOpenChange?: (open: boolean) => void;
   /** 触发按钮（须支持 ref 转发与点击事件） */
   trigger: ReactNode;
-  /** 黑色刊头标题（自动加 // 前缀） */
+  /** 刊头标题（自动加 // 前缀） */
   title: ReactNode;
   /** 可选刊头右侧计数或状态 */
   meta?: ReactNode;

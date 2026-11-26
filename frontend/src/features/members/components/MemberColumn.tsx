@@ -22,6 +22,31 @@ interface MemberColumnProps {
   onChangeRole: (role: ProjectRole) => void;
 }
 
+function MemberIdentityCell({
+  member,
+  roleName,
+}: {
+  member: Member;
+  roleName: string;
+}) {
+  return (
+    <div
+      className={`${styles.cell} ${styles.whoCell}`}
+      data-hot={member.overCapacity ? "true" : undefined}
+    >
+      <b className={styles.whoName} title={member.user.realName}>
+        {member.user.realName}
+      </b>
+      <span
+        className={styles.whoMeta}
+        title={`${roleName} · ${member.user.username}`}
+      >
+        {roleName} <em className={styles.whoUser}>· {member.user.username}</em>
+      </span>
+    </div>
+  );
+}
+
 export default function MemberColumn({
   member,
   loadScale,
@@ -36,15 +61,7 @@ export default function MemberColumn({
 
   return (
     <>
-      <div
-        className={`${styles.cell} ${styles.whoCell}`}
-        data-hot={member.overCapacity ? "true" : undefined}
-      >
-        <b className={styles.whoName}>{member.user.realName}</b>
-        <span className={styles.whoMeta}>
-          {roleName} <em className={styles.whoUser}>· {member.user.username}</em>
-        </span>
-      </div>
+      <MemberIdentityCell member={member} roleName={roleName} />
 
       <MemberLoad
         memberName={member.user.realName}

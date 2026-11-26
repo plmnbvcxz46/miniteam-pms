@@ -2,6 +2,14 @@
   min-height: 0;
 }
 
+.scheduleScroll {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .schedule {
   display: flex;
   flex-direction: column;
