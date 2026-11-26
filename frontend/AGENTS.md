@@ -6,27 +6,24 @@
 
 ## 重构目录结构与单向分层规则
 
-当前正处于设计系统与架构重构期（已完成阶段 0 审计、阶段 1 规范、阶段 2 基础设施、阶段 3 基础组件、阶段 3.5 自定义组件盘点），新旧目录并行过渡，**新代码一律按目标结构落位**，旧目录在阶段 4 逐步迁出并删除：
+已完成设计系统与架构重构（阶段 0 审计、阶段 1 规范、阶段 2 基础设施、阶段 3 基础组件、阶段 3.5 自定义组件盘点与阶段 4 全量 11 个业务模块及收尾均已落位，旧目录 `api/`、`state/`、`pages/`、`overlays/`、`shared/components/` 及过渡旧样式已全部清零移除），新代码一律按目标结构落位：
 
 ```text
 src/
 ├── App.tsx、main.tsx              # 入口、路由
-├── styles/                        # 全局样式底座（阶段 2 已就位）
+├── styles/                        # 全局样式底座
 │   ├── tokens/                    # 仅允许 CSS 自定义属性定义（primitives/semantic/components/layout/typography/motion）
 │   ├── base.css                   # Reset、color-scheme、body、:focus-visible、.sr-only、reduced-motion
-│   ├── main.css                   # 统一入口：tokens/*.css → base.css → 过渡旧样式
-│   ├── legacy.css                 # [过渡] 旧 CSS 变量兼容别名，阶段 4 全部模块迁移完成后必须为空并删除
-│   ├── index.css                  # [过渡] 遗留全局样式，禁止新增规则，阶段 4 迁完删除
-│   └── typography/roles.css       # [过渡] 旧 .t-* 排版角色类（非 Token），按 DESIGN.md 2.5 E 迁入组件后删除
+│   └── main.css                   # 统一入口：tokens/*.css → base.css
 ├── components/                    # 通用组件层
-│   ├── ui/                        # 阶段 3 封装：基于原生语义元素与 radix-ui 单包的无业务基础组件
-│   └── patterns/                  # 阶段 4 按需建立：迁移到首个用到它的模块时再建
+│   ├── ui/                        # 19 项无业务基础组件：基于原生语义元素与 radix-ui 单包
+│   └── patterns/                  # 16 项跨模块业务范式组件
 ├── dev/                           # 仅开发环境（import.meta.env.DEV）组件样式手册页 /dev/ui，生产构建彻底排除
-├── features/<业务域>/              # 按业务域收敛的页面与领域 hooks（阶段 4 逐模块从 pages/layout/overlays 迁入）
-├── services/                      # 接口请求层（阶段 3 由 api/ 演进）
-├── stores/                        # 全局状态层（阶段 3 由 state/ 演进）
-├── shared/                        # 跨层通用纯函数、常量、类型（严禁反向依赖 state/stores/services）
-└── [过渡旧目录] api/、state/、layout/、overlays/、pages/
+├── features/<业务域>/              # 按业务域收敛的页面、局部组件、领域 hooks 与工具函数
+├── layout/                        # 主应用外壳（AppShell、SidebarNav、SummaryCard、AccountMenu 等）
+├── services/                      # 接口请求层（http.ts 及各模块 API）
+├── stores/                        # 全局状态层（auth、access、config、project、issue、document、task）
+└── shared/                        # 跨层通用纯函数、常量、类型（严禁反向依赖 stores/services）
 ```
 
 ### 硬性依赖方向红线（`eslint.config.js` 强制拦截）
@@ -147,22 +144,23 @@ src/
   - 阶段 4 第 8 步：`features/overview`（PR #50，已合并；新增 `patterns/MetricStrip` 达成 `patterns/` 16/16 全部就位并挂载 `/dev/ui` `OverviewPatternsShowcase`，迁移 `OverviewHeader`/`FigureStrip`/`SchedulePanel`/`ScheduleRow`/`HeadlinePanel`/`TodoPanel`/`ProgressPanel`/`CriticalChainPanel`/`OverviewPage` 至 `features/overview/`，删除 `pages/overview/`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.bar`/`.hero*`/`.ov1`/`.ov2`/`.dg`/`.tl` 规则）；
   - 阶段 4 第 9a 步：`features/tasks`（PR #51，已合并；迁移 `TaskDrawer`、`AssigneePicker` 与 `TaskPage` 及其子面板至 `features/tasks/`，`api/task.ts` 移入 `services/task.ts`；全量复用 `PageHeader(compact)`、`Panel`、`FormDrawer`、`SearchDropdown`、`ConfirmDialog`、`MetricStrip`、`LoadBar(compact)`、`ListRow`、`ActivityFeed(dark)`、`TaskBar(today)`、`ToastHost` 与 `ToggleGroup`/`Field`/`Input`/`Textarea`/`Badge`/`Button`；删除 `pages/task/`、`overlays/task/`、旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.figures`/`.figure`/`.ap-*` 规则）；
   - 阶段 4 第 9b 步：`features/tasks-board`（PR #52，已合并；迁移 `BoardPage`、`BoardHeader`、`BoardColumn`、`TaskCard`、`BlockedBy`、`hooks/useBoardPage.ts` 与 `hooks/useCardDrag.ts` 至 `features/tasks/`，删除 `pages/board/`、`src/shared/components/TaskBar.tsx` 薄兼容层、`stylelint.config.mjs` 对应豁免及 `index.css` 中遗留 `.card` 规则；并按每处独立提交修复 `useCardDrag` 4 处缺陷：属性选择器、指针捕获防残留、`wasDragged` 定时复位及 `TaskCard` 键盘可达性）；
-  - 阶段 4 第 10 步：`features/collab`（待审阅合并；迁移 `CollabPage`、`CollabHeader`、`ThreadsPanel`/`ThreadItem`/`ThreadDetailPanel`/`ThreadTaskMeta`/`MessageItem`/`ReplyForm`/`MentionInput`/`ActivityFeedPanel`/`NewDiscussionDrawer` 及 `hooks/`/`utils/` 至 `features/collab/`，将 `api/collab.ts` 移入 `services/collab.ts`；全量复用 `PageHeader`、`Panel(flat/dark)`、`FormDrawer`、`ActivityFeed(dark)`、`PageState` 及 `Badge`/`Button`/`Field`/`Input`/`Textarea`/`ToggleGroup(chips)`/`Separator`/`Alert`；在 `useMentionInput` 中增加 `window` capture 阶段 `Escape` 拦截以防穿透关闭抽屉；删除 `pages/collab/`、`shared/components/Drawer.tsx`、`stylelint.config.mjs` 对应豁免与 `index.css` 遗留 `.chips`/`.ov*`/`.fx*`/`.fr*`/`.double`/`.inl`/`.in` 规则；至此全部 11 个业务模块迁移完成、`src/pages/` 与 `src/shared/components/` 已清空）。
-- **下一步**：**阶段 4 收尾**（集中将 `src/api/http.ts`、`src/api/project.ts` 与全部 `src/state/*` 迁入 `src/services/` 与 `src/stores/`，替换 `ProjectProvider`/`TaskProvider` 遗留的全局 `.msg.err`/`.btn` 后备错误提示，清零并删除 `legacy.css` / `index.css` / `roles.css` 及 `stylelint.config.mjs` 过渡 `ignoreFiles` 豁免）。
-- **后续完整顺序**：
-  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → ~~`7. features/timeline`~~ → ~~`8. features/overview`~~ → ~~`9a. features/tasks`~~ → ~~`9b. features/tasks-board`~~ → ~~`10. features/collab`~~ → **阶段 4 收尾**（`services/` + `stores/` + 删除 `legacy.css` / `index.css` / `roles.css`）。
+  - 阶段 4 第 10 步：`features/collab`（PR #53，已合并；迁移 `CollabPage`、`CollabHeader`、`ThreadsPanel`/`ThreadItem`/`ThreadDetailPanel`/`ThreadTaskMeta`/`MessageItem`/`ReplyForm`/`MentionInput`/`ActivityFeedPanel`/`NewDiscussionDrawer` 及 `hooks/`/`utils/` 至 `features/collab/`，将 `api/collab.ts` 移入 `services/collab.ts`；全量复用 `PageHeader`、`Panel(flat/dark)`、`FormDrawer`、`ActivityFeed(dark)`、`PageState` 及 `Badge`/`Button`/`Field`/`Input`/`Textarea`/`ToggleGroup(chips)`/`Separator`/`Alert`；在 `useMentionInput` 中增加 `window` capture 阶段 `Escape` 拦截以防穿透关闭抽屉；删除 `pages/collab/`、`shared/components/Drawer.tsx`、`stylelint.config.mjs` 对应豁免与 `index.css` 遗留 `.chips`/`.ov*`/`.fx*`/`.fr*`/`.double`/`.inl`/`.in` 规则；全部 11 个业务模块迁移完成）；
+  - **阶段 4 收尾**（待审阅合并；将 `api/http.ts` 迁至 `services/http.ts`，将 `api/project.ts` 合并入 `services/projects.ts` 并删除 `src/api/`；将全部 `src/state/*` 迁入 `src/stores/*` 并删除 `src/state/`；抽取 `ProviderError.tsx` 以 `patterns/PageState` 替换 `ProjectProvider`/`TaskProvider` 遗留 `.msg.err`/`.btn` 全局错误兜底提示，同时拆分超 80 行 Provider/动作以通过 `eslint.config.js` 函数体量门禁；移除 `main.css` 旧样式导入，彻底删除 `src/styles/legacy.css`、`src/styles/index.css`、`src/styles/typography/roles.css` 并清空 `stylelint.config.mjs` 的 `ignoreFiles` 过渡豁免，仅保留 `["dist/**"]`）。
+- **当前状态**：**阶段 0 ～ 阶段 4 前端设计系统与架构重构已全量完成**（除保留跨后端边界待办 `TaskAutoStart.isAutoBlocked()` 及 `frontend/prototype/` 参考决策外，前端已无过渡目录与遗留样式）。
+- **完整执行轨迹**：
+  ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → ~~`7. features/timeline`~~ → ~~`8. features/overview`~~ → ~~`9a. features/tasks`~~ → ~~`9b. features/tasks-board`~~ → ~~`10. features/collab`~~ → ~~**阶段 4 收尾**~~（全部完成）。
 
 ### 已登记待办与遗留状态
 - **`LoginHeader` 复用 `PageHeader`**：已在第 2 步完成并清理原 TODO。
-- ~~**`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**~~：已在第 9a 步随 `AssigneePicker` 迁完 `patterns/SearchDropdown` 后**全部删除**，并从 `stylelint.config.mjs` 的 `ignoreFiles` 移出。
-- ~~**`src/shared/components/TaskBar.tsx` 过渡薄封装**~~：第 9b 步已让 `TaskCard` 直连 `patterns/TaskBar` 并**删除**该薄兼容层，现全站已彻底清零对 `shared/components/TaskBar` 的依赖。
-- ~~**`src/shared/components/Drawer.tsx` 过渡抽屉壳**~~：已在第 10 步随 `NewDiscussionDrawer` 改用 `patterns/FormDrawer` 后**删除**，目前 `src/shared/components/` 与 `src/pages/` 均已清空移除。
-- **`ToastHost` / `ConfirmDialog` 复用**：全站 4 处 `ConfirmDialog` 替换与需 Toast 轻提示的交互均已按模块迁完（`collab` 表单/回复提交错误保留行内 `Field` 与 `Alert(danger)`，加载失败使用 `PageState`）。
+- ~~**`src/layout/useDismiss.ts` 与旧 `SearchDropdown.*` 暂留**~~：已在第 9a 步全部删除。
+- ~~**`src/shared/components/TaskBar.tsx` 过渡薄封装**~~：已在第 9b 步删除。
+- ~~**`src/shared/components/Drawer.tsx` 过渡抽屉壳**~~：已在第 10 步删除，`src/shared/components/` 与 `src/pages/` 均已清空移除。
+- **`ToastHost` / `ConfirmDialog` 复用**：全站 4 处 `ConfirmDialog` 替换与需 Toast 轻提示的交互均已按模块迁完（`collab` 表单/回复提交错误保留行内 `Field` 与 `Alert(danger)`，加载与 `ProjectProvider`/`TaskProvider` 失败统一使用 `PageState`）。
 - **PR #40 甘特待办核查状态（详见 `custom-components.md` 第七节）**：
-  1. ~~核对 `GanttPanel`/`GanttRow` 前置状态传入并补齐 5 项测试~~：第 7 步已完成（核实 `TaskProvider` 全量加载含 `predecessors` 状态的 `TaskDetail` 并经 `GanttPanel`/`GanttRow` 与 `SchedulePanel` 传入 `TaskBar`，已新增 `scripts/test-taskbar-model.ts` 5 项测试并通过）；
+  1. ~~核对 `GanttPanel`/`GanttRow` 前置状态传入并补齐 5 项测试~~：第 7 步已完成（已新增 `scripts/test-taskbar-model.ts` 5 项测试并通过）；
   2. 后端 `TaskAutoStart.isAutoBlocked()`（`backend/.../TaskAutoStart.java:73-79`）从 `detail.contains("阻塞")` 改为与 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED` 精确比对——按职责边界红线留待后端分支处理。
-- **`api/http.ts` 与 `state/*` 集中迁移**：仅余 `src/api/{http,project}.ts` 与 `src/state/*`，下一步进入**阶段 4 收尾**统一迁入 `services/` 与 `stores/`。
-- **`src/styles/legacy.css` 与过渡样式剩余行数**：`legacy.css` 剩余 **59 行**、`index.css` 第 10 步清理 `collab` / `chips` / `overlays` 规则后已降至 **451 行**（`roles.css` 剩余 **98 行**，留待阶段 4 收尾清零删除）。
+- ~~**`api/http.ts` 与 `state/*` 集中迁移**~~：已在**阶段 4 收尾**全部迁入 `services/` 与 `stores/`，`src/api/` 与 `src/state/` 已清空删除。
+- ~~**`src/styles/legacy.css`、`index.css`、`typography/roles.css`**~~：已在**阶段 4 收尾**全部清零并删除（当前剩余 **0 行**）。
 
 ### 每一步的固定流程
 1. 从最新 `main` 切出短分支 `refactor/migrate-<模块>`（确认本地只保留 `main` 与当前 1 个短分支、工作区干净）；
@@ -183,7 +181,8 @@ src/
 - **`features/overview` 视觉统一（阶段 4 第 8 步，已合并）**：`FigureStrip` 改用 `patterns/MetricStrip`（4 格顶栏标签统一左对齐 `// {label}`，`tone="alert"` 采用 `::before` 5px 信号橙顶条 + `ui/Badge(solid)`）；`SchedulePanel` / `ProgressPanel` 复用 `Panel(default)` + `Legend`；`TodoPanel` 复用 `Panel(flat, scrollable)` + `ListRow(compact)`，下栏网格高度由 `178px` 调整为 `204px` 以完整容纳紧凑 `ListRow`（默认 `1440×900` 一屏零页面滚动）；`HeadlinePanel` 复用 `HeroCard(alert/calm)` + `Badge(solid)` 并将阻塞标签与底部操作条改为原生 `<button type="button">`；`CriticalChainPanel` 复用 `Panel(dark)` 并将节点方格间距对齐 4px 栅格（`--space-1`）。
 - **`features/tasks` 视觉统一（阶段 4 第 9a 步，已合并）**：`TaskDrawer` 统一收归 `patterns/FormDrawer(md)` `640px` 抽屉、表单行用 `ui/Field` + `Separator(dashed)`，前置任务用 `ToggleGroup(multiple, chips)`；`AssigneePicker` 切至 `patterns/SearchDropdown` + `patterns/LoadBar(compact)`（超载为信号橙单轨）+ `ui/Badge(accent)` 推荐标识，清除命中与未命中行间手写分割判断与全局 `.ap-*` 样式；`TaskHeader` 改用 `PageHeader(compact)` + `StatusChips`/`ToggleGroup(single, chips)`，删除任务由“双击确认”改为 `ConfirmDialog` 居中模态确认（默认聚焦“取消”），操作拦截提示改 `Toast` 轻提示；`TaskFigures` 复用 `patterns/MetricStrip`、`DependencyRow`/`LinkRow` 复用 `ListRow(compact)`、`TaskInfoPanel` 虚线操作钮改用 `Button(dashed, sm)`、`TaskLogPanel` 复用 `Panel(dark)` + `ActivityFeed(dark)`。
 - **`features/tasks-board` 视觉与交互统一（阶段 4 第 9b 步，PR #52 已合并）**：`BoardHeader` 改用 `PageHeader` + `ToggleGroup(segmented)` + `Button(accent)`；`BoardColumn` 列头计数统一 `--font-size-figure`（`60px`），`TODO` 列顶部虚线新增钮改用 `Button(dashed, fullWidth)`；`BlockedBy` 改用 `ListRow(compact)` 修复非语义 `<div onClick>`；`TaskCard` 直连 `patterns/TaskBar(compact, today)`、优先级/逾期接入 `Badge`、拖拽报错接入 `Toast`，并按计划分 4 笔独立提交修复 `useCardDrag` 选择器、指针捕获、`wasDragged` 复位与 `TaskCard` 键盘可达性（`role="button"` + `tabIndex={0}` + `Enter`/`Space` + `:focus-visible`）。
-- **`features/collab` 视觉与交互统一（阶段 4 第 10 步，待审阅合并）**：`CollabHeader` 改用 `PageHeader` + `Button(accent)`；`ThreadsPanel`/`ThreadDetailPanel`/`ActivityFeedPanel` 统一收归 `Panel(flat/dark)`，`ActivityFeedPanel` 接入 `patterns/ActivityFeed(surface="dark")` 与 `parseRichInline` 富文本片段；`ThreadItem` 保持两行标题 + 元信息布局并改用原生 `<button aria-current>` + `Badge(accent, sm)`；`ThreadTaskMeta` 任务跳转改为原生 `<button>`；`MessageItem` 闪动动画收敛为 `--color-flash-peak` + `calc(var(--duration-normal) * 5)`；`ReplyForm` 使用 `MentionInput(boxed)` + `Button(primary, loading)` + `Alert(danger)`；`NewDiscussionDrawer` 切至 `patterns/FormDrawer(md)` + `Field` + `Input(underline)` + `ToggleGroup(single, chips)` + `MentionInput(underline)`，并在 `window` capture 阶段拦截 `@` 弹层态的 `Escape` 以防关闭外层抽屉。
+- **`features/collab` 视觉与交互统一（阶段 4 第 10 步，PR #53 已合并）**：`CollabHeader` 改用 `PageHeader` + `Button(accent)`；`ThreadsPanel`/`ThreadDetailPanel`/`ActivityFeedPanel` 统一收归 `Panel(flat/dark)`，`ActivityFeedPanel` 接入 `patterns/ActivityFeed(surface="dark")` 与 `parseRichInline` 富文本片段；`ThreadItem` 保持两行标题 + 元信息布局并改用原生 `<button aria-current>` + `Badge(accent, sm)`；`ThreadTaskMeta` 任务跳转改为原生 `<button>`；`MessageItem` 闪动动画收敛为 `--color-flash-peak` + `calc(var(--duration-normal) * 5)`；`ReplyForm` 使用 `MentionInput(boxed)` + `Button(primary, loading)` + `Alert(danger)`；`NewDiscussionDrawer` 切至 `patterns/FormDrawer(md)` + `Field` + `Input(underline)` + `ToggleGroup(single, chips)` + `MentionInput(underline)`，并在 `window` capture 阶段拦截 `@` 弹层态的 `Escape` 以防关闭外层抽屉。
+- **阶段 4 收尾全局底座统一（待审阅合并）**：`ProjectProvider` 与 `TaskProvider` 数据加载失败的后备 UI（原 `<div className="msg err">` + `.btn`）已统一收归 `ProviderError`（`patterns/PageState(error)`），彻底移除旧全局样式依赖。
 
 ### 下一步启动指令模板（直接复制使用）
 ```text
@@ -202,9 +201,9 @@ src/
 
 ---
 
-## 过渡期旧样式与遗留文件说明
+## 遗留文件与开发期辅助说明
 
-- **旧 CSS 过渡豁免清单**：`src/styles/index.css`、`src/styles/legacy.css` 与 `src/styles/typography/roles.css` 当前仍保留在 `stylelint.config.mjs` 的 `ignoreFiles` 中供尚未迁完的 `ProjectProvider`/`TaskProvider` 与外壳过渡；**严禁向这些旧文件新增规则**，阶段 4 收尾将全部 `src/pages/` 外残余旧样式清零并连同 `ignoreFiles` 豁免一并移除。**`src/pages/` 下所有模块 CSS 豁免及目录已于第 10 步全部清零删除**。
+- **旧 CSS 过渡豁免已全部清零**：原 `stylelint.config.mjs` 的 `ignoreFiles` 中登记的所有业务模块 CSS 及 `index.css` / `legacy.css` / `typography/roles.css` 已于**阶段 4 收尾**全部移出并删除，当前 `ignoreFiles` 仅保留 `["dist/**"]`。
 - **过渡期公共下拉搜索组件（`SearchDropdown`）**：`src/shared/components/SearchDropdown.tsx` / `SearchDropdown.css` 原 5 处调用方（`PeoplePanel`、`InviteMemberDrawer`、`DocumentHeader`、`UploadDocDrawer`、`AssigneePicker`）已全部迁至 `components/patterns/SearchDropdown`，旧文件与 `layout/useDismiss.ts` 已在第 9a 步删除并移出 `ignoreFiles`。
 - **组件样式手册 `/dev/ui`**：位于 `src/dev/UiShowcasePage.tsx`，通过 `import.meta.env.DEV` + 懒加载挂在免登录路由 `/dev/ui`，供本地 `pnpm dev` 验收基础组件视觉与交互态，生产构建自动排除。
 - **`frontend/prototype/`**：包含旧静态原型 `global.html` / `global.js`（`global.js:3291-3309` 含文档拖拽上传原始实现，仍登记于 `tsconfig.app.json:25`）。第 6 步已将文档拖拽上传收归 `features/documents/components/FileDropzone`，暂留 `prototype/` 待第 6 步审阅确认不再参考后统一决策清理（已在 `knip.json` 中忽略 `prototype/**`）。
@@ -220,18 +219,18 @@ src/
 
 ## 常量、类型与数据来源
 
-常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据一律来自后端接口（现有 `src/api/`，阶段 3 演进为 `src/services/`），不写假数据。
+常量放 `src/shared/constants/`，类型放 `src/shared/types/`（全局共享的在 `global.ts`，其余按模块），字段名和结构**严格对齐** `docs/api/openapi.yaml`。页面数据一律来自后端接口（统一收口在 `src/services/`），不写假数据。
 
-### 全局上下文（`shared/types/global.ts`、`state/`）
+### 全局上下文（`shared/types/global.ts`、`stores/`）
 
 多个模块共用的登录态和项目上下文统一放这里，**不要在模块文件里重复定义**：
 
 | 内容 | 来源 |
 |---|---|
 | `UserBrief`、`TaskRef`、`ProjectRole`、`MemberPermissions`、`PermKey`、`Activity` 等共享接口结构 | `shared/types/global.ts`，对应 OpenAPI 公共 schema |
-| 当前登录身份（用户、系统角色） | `src/state/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`，已接真实接口，token 存在 `sessionStorage`（`src/api/http.ts`） |
-| 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/state/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。项目、成员、权限变更记录来自接口（`src/state/project/` 的 `ProjectProvider` 取 `GET /projects`、`/projects/{id}`、`/members`、`/activities`），`useAccess()` 在上面加“看过去的期和已归档项目只读”。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目；权限以接口的 `myPermissions` 为准 |
-| 正在看哪一期、各页面的“今天” | `src/state/issue/` 的 `useIssue()`。过去的期只读；期列表来自 `GET /projects/{projectId}/issues`（期号按项目开始日期每天一期），某期快照 `GET /projects/{projectId}/issues/{issueDate}` 由 `IssueProvider` 取回 |
+| 当前登录身份（用户、系统角色） | `src/stores/auth/` 的 `useAuth()` / `useMe()`，数据来自 `GET /auth/me`，已接真实接口，token 存在 `sessionStorage`（`src/services/http.ts`） |
+| 能进哪些项目、在当前项目里的角色和权限、任务能不能看和改 | `src/stores/access/` 的 `useAccess()`，全站只在这里判断，页面只问不算。项目、成员、权限变更记录来自接口（`src/stores/project/` 的 `ProjectProvider` 取 `GET /projects`、`/projects/{id}`、`/members`、`/activities`），`useAccess()` 在上面加“看过去的期和已归档项目只读”。系统管理员所有项目都能进、所有权限都有，其他人只能进自己加入的项目；权限以接口的 `myPermissions` 为准 |
+| 正在看哪一期、各页面的“今天” | `src/stores/issue/` 的 `useIssue()`。过去的期只读；期列表来自 `GET /projects/{projectId}/issues`（期号按项目开始日期每天一期），某期快照 `GET /projects/{projectId}/issues/{issueDate}` 由 `IssueProvider` 取回 |
 | `roleLabel` 等枚举中文名 | `shared/constants/labels.ts` |
 
 ### 前端替身
@@ -240,4 +239,4 @@ src/
 
 ### 已接真实接口的部分
 
-请求统一走 `src/api/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts` 等。接通一个模块的做法：页面里的假数据换成 `src/api/` 的调用，加载中和失败要有提示，删掉对应的假数据和不再用的替身。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载、甘特图和关键路径（`/gantt`、`/critical-path`）、总览（`/overview`）、统计报表（`/reports/*`，含 Excel 导出）、往期快照（`/issues/{issueDate}`）、文档（列表、详情、上传新文档、传新版本、定稿、下载，往期读快照里的 `documents`）、讨论和评论（发起、回复、@ 成员和任务下的文档，往期读快照里的 `discussions`）、项目动态、通知（铃铛）。文档数据在 `state/document/DocumentProvider.tsx`：列表接口不带版本记录，所以逐份取详情，再由 `state/document/utils.ts` 的 `toDocumentItem` 转成页面用的格式（日期是 MM.DD）；上传走 `http.upload`（multipart，单个文件 ≤ 20MB，只收 doc、docx、pdf、md，提交前先校验，失败显示后端 `message`）。“文档没定稿不能完成任务”由后端检查（`PUT /tasks/{id}/status` 和 `/position` 返回 409），前端只显示它的提示；文档有写操作后任务表会跟着重新取。讨论数据在 `pages/collab/useCollabData.ts`：列表接口不带评论，所以逐个取详情，动态一直取接口（过去的期按日期筛）；发起和回复成功后重新取讨论、动态和任务表（任务详情里带着讨论），失败时回复框和抽屉里显示后端 `message`。通知在 `features/notifications/hooks/useNotifications.ts`：登录后取一次、之后每分钟取一次，未读数用 `GET /notifications/unread-count`（列表只取最近 30 条），点通知标为已读并跳转（通知属于别的项目时先切过去），@ 通知带 `?discussionId=&commentId=`，协作页等数据取到后定位到那条消息。进度和报表的数据由后端算，页面用 `state/issue/useIssueData.ts` 取：看今天调实时接口（任务表每变一次重新取），看过去的期读 `state/issue/IssueProvider` 里取回的快照（没有存档时页面提示“这一期没有存档”）。任务数据在 `state/task/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。开始过的任务不能回到待开始（`state/task/utils.ts` 的 `canMoveStatus`，看板拖不进去、详情页按钮置灰，后端也会 409）；待开始的任务到了计划开始日由后端自动开始（前置都完成了进行中，否则阻塞）。任务条（`shared/components/taskBarModel.ts`）从计划开始日涂黑，不单独画晚开工（要晚开工由项目经理改计划开始日），系统自动移到阻塞的那条动态从实际开始日算阻塞。按天画的图（任务条、时间线、文档修订、侧栏时间进度）都把今天算作已过完：今天线、填充、逾期段都到今天 24:00，和逾期天数、已用天数（含今天）对得上；只有总览的成员排期精确到此刻，今天线和填充按当前时间画。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。
+请求统一走 `src/services/`：`http.ts` 是封装（自动加 token、解 `{code,message,data}`、失败抛 `ApiError`、401 回登录页），按模块拆 `auth.ts`、`system.ts`、`projects.ts`、`task.ts`、`document.ts`、`progress.ts`、`report.ts`、`collab.ts`、`notifications.ts`。接通一个模块的做法：调用 `src/services/` 的封装，加载中和失败要有提示。已接通：认证、人员、系统角色、系统参数、操作日志、项目（新建、修改、归档、切换）、项目成员（邀请、改角色、改权限）、权限变更记录、期列表、任务（看板、详情、新建、修改、删除、改状态、拖动排序、前置任务、任务动态）、成员负载、甘特图和关键路径（`/gantt`、`/critical-path`）、总览（`/overview`）、统计报表（`/reports/*`，含 Excel 导出）、往期快照（`/issues/{issueDate}`）、文档（列表、详情、上传新文档、传新版本、定稿、下载，往期读快照里的 `documents`）、讨论和评论（发起、回复、@ 成员和任务下的文档，往期读快照里的 `discussions`）、项目动态、通知（铃铛）。文档数据在 `stores/document/DocumentProvider.tsx`：列表接口不带版本记录，所以逐份取详情，再由 `stores/document/utils.ts` 的 `toDocumentItem` 转成页面用的格式（日期是 MM.DD）；上传走 `http.upload`（multipart，单个文件 ≤ 20MB，只收 doc、docx、pdf、md，提交前先校验，失败显示后端 `message`）。“文档没定稿不能完成任务”由后端检查（`PUT /tasks/{id}/status` 和 `/position` 返回 409），前端只显示它的提示；文档有写操作后任务表会跟着重新取。讨论数据在 `features/collab/hooks/useCollabData.ts`：列表接口不带评论，所以逐个取详情，动态一直取接口（过去的期按日期筛）；发起和回复成功后重新取讨论、动态和任务表（任务详情里带着讨论），失败时回复框和抽屉里显示后端 `message`。通知在 `features/notifications/hooks/useNotifications.ts`：登录后取一次、之后每分钟取一次，未读数用 `GET /notifications/unread-count`（列表只取最近 30 条），点通知标为已读并跳转（通知属于别的项目时先切过去），@ 通知带 `?discussionId=&commentId=`，协作页等数据取到后定位到那条消息。进度和报表的数据由后端算，页面用 `stores/issue/useIssueData.ts` 取：看今天调实时接口（任务表每变一次重新取），看过去的期读 `stores/issue/IssueProvider` 里取回的快照（没有存档时页面提示“这一期没有存档”）。任务数据在 `stores/task/TaskProvider.tsx`：用 `GET /projects/{projectId}/tasks?detail=true` 一次取完整任务表，写操作成功后整表重新取一遍，拖动先在页面上移动、接口失败再退回。开始过的任务不能回到待开始（`stores/task/utils.ts` 的 `canMoveStatus`，看板拖不进去、详情页按钮置灰，后端也会 409）；待开始的任务到了计划开始日由后端自动开始（前置都完成了进行中，否则阻塞）。任务条（`components/patterns/TaskBar/`）从计划开始日涂黑，不单独画晚开工（要晚开工由项目经理改计划开始日），系统自动移到阻塞的那条动态从实际开始日算阻塞。按天画的图（任务条、时间线、文档修订、侧栏时间进度）都把今天算作已过完：今天线、填充、逾期段都到今天 24:00，和逾期天数、已用天数（含今天）对得上；只有总览的成员排期精确到此刻，今天线和填充按当前时间画。新建项目任何登录用户都可以，权限不足、项目已归档等失败的情况把接口的 `message` 显示给用户。

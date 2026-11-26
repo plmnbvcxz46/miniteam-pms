@@ -523,8 +523,8 @@
 
 ## 附录：目标样式目录与工程检查约定
 
-### A. 样式文件分层与加载顺序（阶段 2 落位）
-> **纯净度红线**：`src/styles/tokens/*.css` **只能包含 CSS 自定义属性定义**（`:root` 及预留 `[data-theme="dark"]`），禁止写入任何普通选择器或非 `--*` 声明（`color-scheme: light`、`prefers-reduced-motion` 等统一归入 `base.css`）。`roles.css` 不再作为长期全局样式层，仅在迁移期过渡保留，全站迁移完成后删除。
+### A. 样式文件分层与加载顺序（阶段 2 落位，阶段 4 收尾已清除过渡旧样式）
+> **纯净度红线**：`src/styles/tokens/*.css` **只能包含 CSS 自定义属性定义**（`:root` 及预留 `[data-theme="dark"]`），禁止写入任何普通选择器或非 `--*` 声明（`color-scheme: light`、`prefers-reduced-motion` 等统一归入 `base.css`）。原过渡期保留的 `legacy.css`、`index.css` 与 `typography/roles.css` 已于**阶段 4 收尾**全量清理删除。
 
 ```text
 frontend/src/styles/
@@ -536,9 +536,7 @@ frontend/src/styles/
 │   ├── typography.css   # 字体族、字号、字重、行高、字距（仅 CSS 变量）
 │   └── motion.css       # 动效时长与缓动（仅 CSS 变量）
 ├── base.css             # Reset、:root color-scheme、body 基础排版、:focus-visible、.sr-only、prefers-reduced-motion
-├── main.css             # 统一入口：严格按 tokens/*.css → base.css → 过渡旧样式顺序导入
-├── index.css            # [过渡旧样式，阶段 4 迁完删除] 含旧变量兼容别名映射与尚未迁出的旧全局类
-└── typography/roles.css # [过渡旧样式，阶段 4 迁完删除] 11 个 .t-* 角色类按 2.5 E 逐一迁入组件
+└── main.css             # 统一入口：按 tokens/*.css → base.css 顺序导入
 ```
 
 ### B. 阶段 2–3 质量门禁与开发环境样式手册约定（替代 husky）
