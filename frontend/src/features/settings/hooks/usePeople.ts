@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMe } from "../../../state/auth/useAuth";
+import { useMe } from "../../../stores/auth/useAuth";
 import { usePeopleData } from "./usePeopleData";
 import { usePersonActions } from "./usePersonActions";
 

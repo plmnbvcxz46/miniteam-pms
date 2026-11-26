@@ -3,10 +3,10 @@ import { reportApi } from "../../../services/report";
 import { defaultRange, rangeOptions } from "../../../shared/constants/reports";
 import type { BurndownRange } from "../../../shared/types/reports";
 import { downloadBlob } from "../../../shared/utils/download";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useIssueData } from "../../../state/issue/useIssueData";
-import { useProject } from "../../../state/project/useProject";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useIssueData } from "../../../stores/issue/useIssueData";
+import { useProject } from "../../../stores/project/useProject";
+import { useTaskStore } from "../../../stores/task/taskStore";
 
 export function useReportsPage() {
   const [range, setRange] = useState<BurndownRange>(defaultRange);

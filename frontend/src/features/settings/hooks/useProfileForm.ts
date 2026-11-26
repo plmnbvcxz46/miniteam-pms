@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useToast } from "../../../components/patterns/ToastHost";
 import type { ProfileUpdate } from "../../../shared/types/settings";
-import { useAuth, useMe } from "../../../state/auth/useAuth";
+import { useAuth, useMe } from "../../../stores/auth/useAuth";
 import { addSkillTag, validateEmail, validateName } from "../validation";
 
 /** 个人资料：姓名、邮箱、技能标签；保存走 PUT /auth/me（由 AuthProvider 提供） */

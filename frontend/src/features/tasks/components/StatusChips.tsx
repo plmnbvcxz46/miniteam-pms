@@ -1,7 +1,7 @@
 import { ToggleGroup, ToggleGroupItem } from "../../../components/ui/ToggleGroup";
 import { taskStatusLabel, taskStatusOrder } from "../../../shared/constants/task";
 import type { TaskStatus } from "../../../shared/types/global";
-import { canMoveStatus } from "../../../state/task/utils";
+import { canMoveStatus } from "../../../stores/task/utils";
 import StatusKey from "./StatusKey";
 
 interface StatusChipsProps {

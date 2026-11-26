@@ -1,7 +1,6 @@
 /* 全局样式统一入口，严格按以下层级顺序导入：
    1. tokens/      Design Tokens（仅含 CSS 自定义属性，不产生任何样式规则）
-   2. base.css     Reset、body 基础排版、全局 :focus-visible、.sr-only、reduced-motion
-   3. 过渡旧样式   legacy.css / index.css / typography/roles.css（阶段 4 逐模块迁移完毕后删除） */
+   2. base.css     Reset、body 基础排版、全局 :focus-visible、.sr-only、reduced-motion */
 @import "./tokens/primitives.css";
 @import "./tokens/semantic.css";
 @import "./tokens/components.css";
@@ -11,8 +10,3 @@
 
 /* 基础全局样式 */
 @import "./base.css";
-
-/* 过渡旧样式（阶段 4 全站迁移完毕后移除） */
-@import "./legacy.css";
-@import "./index.css";
-@import "./typography/roles.css";

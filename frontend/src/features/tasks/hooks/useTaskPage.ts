@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "../../../components/patterns/ToastHost";
 import type { TaskStatus } from "../../../shared/types/global";
-import { useAccess } from "../../../state/access/useAccess";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useTaskStore } from "../../../stores/task/taskStore";
 
 export function useTaskPage() {
   const navigate = useNavigate();

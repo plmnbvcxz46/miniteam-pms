@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/DropdownMenu";
-import { useAuth, useMe } from "../../state/auth/useAuth";
+import { useAuth, useMe } from "../../stores/auth/useAuth";
 import styles from "./AccountMenu.module.css";
 
 interface AccountMenuProps {

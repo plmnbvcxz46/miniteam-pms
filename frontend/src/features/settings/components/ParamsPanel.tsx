@@ -1,6 +1,6 @@
 import { Alert } from "../../../components/ui/Alert";
 import { PageState } from "../../../components/patterns/PageState";
-import { useConfigs } from "../../../state/config/useConfigs";
+import { useConfigs } from "../../../stores/config/useConfigs";
 import { ParamsForm } from "./ParamsForm";
 
 /** 系统参数：读取中、读取失败时只显示提示，读到了才显示表单 */

@@ -8,8 +8,8 @@ import type {
 } from "../../../shared/types/global";
 import type { Member, MemberAdd } from "../../../shared/types/members";
 import { getLoadScale } from "../../../shared/utils/load";
-import { useAccess } from "../../../state/access/useAccess";
-import { useIssue } from "../../../state/issue/useIssue";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useIssue } from "../../../stores/issue/useIssue";
 import { formatCapacity, getOverCapacityCount } from "../utils";
 
 function filterMembers(members: Member[], keyword: string): Member[] {

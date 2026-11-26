@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useAccess } from "../../../state/access/useAccess";
-import { useMe } from "../../../state/auth/useAuth";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useMe } from "../../../stores/auth/useAuth";
+import { useTaskStore } from "../../../stores/task/taskStore";
 import styles from "./MemberSelfView.module.css";
 import SelfHeader from "./SelfHeader";
 import SelfIdentity from "./SelfIdentity";

@@ -1,6 +1,6 @@
 import { Progress, type ProgressSegment } from "../../components/ui/Progress";
 import type { ProjectPeriod } from "../../shared/types/global";
-import { useIssue } from "../../state/issue/useIssue";
+import { useIssue } from "../../stores/issue/useIssue";
 import { getWeekProgress } from "../utils";
 import styles from "./WeekLine.module.css";
 

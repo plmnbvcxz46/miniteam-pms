@@ -6,7 +6,7 @@ import type {
   DiscussionDetail,
 } from "../shared/types/collab";
 import type { Activity } from "../shared/types/global";
-import { http } from "../api/http";
+import { http } from "./http";
 
 export const collabApi = {
   /** 项目里的讨论，最近有回复的在前；taskId 只取这个任务的 */

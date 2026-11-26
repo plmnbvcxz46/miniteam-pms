@@ -3,7 +3,7 @@ import { ActionPopover } from "../../components/patterns/ActionPopover";
 import { Button } from "../../components/ui/Button";
 import type { IssueSummary } from "../../shared/types/global";
 import { formatDayLabel, formatFullDate } from "../../shared/utils/date";
-import { useIssue } from "../../state/issue/useIssue";
+import { useIssue } from "../../stores/issue/useIssue";
 import styles from "./IssueSwitch.module.css";
 
 function IssueRow({
