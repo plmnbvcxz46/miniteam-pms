@@ -39,7 +39,6 @@ frontend/
 ├── scripts/
 │   ├── check-css-lines.mjs          # CSS / CSS Modules 有效行数门禁（建议 ≤150，硬上限 ≤250）
 │   └── test-taskbar-model.ts        # TaskBar 几何与阻塞状态计算单元测试
-├── prototype/                       # 原型 global.html / global.js，仅作历史参考，不参与构建
 └── src/
     ├── App.tsx、main.tsx            # 应用入口、Hash 路由、Provider 装配与 /dev/ui 拦截
     ├── styles/                      # 全局样式底座（已彻底清零旧过渡样式）
