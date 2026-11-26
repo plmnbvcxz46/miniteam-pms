@@ -1,0 +1,92 @@
+.root {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.popover {
+  position: absolute;
+  bottom: calc(100% + var(--space-1));
+  left: var(--space-0);
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  max-width: min(380px, 100%);
+  max-height: 220px;
+  overflow-y: auto;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.popHead {
+  padding: var(--space-1-5) var(--space-3);
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: var(--border-width-hair) solid var(--color-border);
+  border-radius: var(--radius-none);
+  background-color: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:last-child {
+  border-bottom: 0;
+}
+
+.option:hover,
+.option[aria-selected="true"] {
+  background-color: var(--color-surface-inverse);
+  color: var(--comp-inverse-text);
+}
+
+.kindTag {
+  flex-shrink: 0;
+  padding: var(--space-0) var(--space-1);
+  border: var(--border-width-hair) solid currentColor;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.optName {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optSub {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+}
+
+.option:hover .optSub,
+.option[aria-selected="true"] .optSub {
+  color: var(--comp-inverse-text-muted);
+}

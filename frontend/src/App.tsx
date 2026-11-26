@@ -16,7 +16,7 @@ import { ReportsPage } from "./features/reports";
 import { DocumentsPage } from "./features/documents";
 import { MembersPage } from "./features/members";
 import { TimelinePage } from "./features/timeline";
-import CollabPage from "./pages/collab/CollabPage";
+import { CollabPage } from "./features/collab";
 import { BoardPage, TaskPage } from "./features/tasks";
 
 const router = createHashRouter([

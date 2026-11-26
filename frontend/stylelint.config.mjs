@@ -8,7 +8,6 @@ export default {
     "src/styles/index.css",
     "src/styles/legacy.css",
     "src/styles/typography/roles.css",
-    "src/pages/collab/css/**/*.css",
   ],
   rules: {
     // 兼容 DESIGN.md 中 rgba(..., 0.12) 与现代 rgb(... / 12%) 两种写法

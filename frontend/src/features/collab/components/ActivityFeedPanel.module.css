@@ -1,0 +1,22 @@
+.count {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-none);
+  color: var(--comp-inverse-text);
+}
+
+.feed {
+  margin: var(--space-0) calc(var(--space-4) * -1) calc(var(--space-3) * -1);
+  flex: 1;
+}
+
+.bold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.em {
+  font-style: normal;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent);
+}

@@ -201,7 +201,7 @@
 
 ## 五、现有拖拽实现（`useCardDrag.ts`）保留策略与阶段 4 修复计划（已拍板）
 
-- **执行状态（第 9b 步已逐一独立提交修复完成，待手动拖拽验收）**：
+- **执行状态（第 9b 步 PR #52 已逐一独立提交修复并合入 `main`）**：
   1. **提交 ①**（`dfbfec1`）：将 `useCardDrag` 硬编码全局类名选择器 `.drop[data-status]` / `.card` 改为 `[data-drop-zone][data-status]` / `[data-drag-card]`，拖拽体态切换为 `data-card-dragging`，适配 CSS Modules。
   2. **提交 ②**（`3e3bb8d`）：补齐 `pointerId` 追踪与 `setPointerCapture`（越过阈值隐藏源卡前将捕获切换至常驻 `[data-view="board"]` 容器并处理 `lostpointercapture`），防止指针拖出浏览器窗口外松手或多触点时残留浮卡与拖拽光标。
   3. **提交 ③**（`ba9b445`）：拖拽 `finish` 后调度同轮异步复位 `draggedRef`（并在新按压和卸载时清理定时器），修复落点在源卡片外未触发 `click` 造成误拦截后续键盘打开或再次点击。
@@ -214,8 +214,8 @@
 1. **依赖政策（定稿）**：全程 **0 新增第三方依赖**；`AssigneePicker` 采用方案 A（`radix-ui` `Popover` + `ui/Input` + 保留 `assignee.ts`），图表、甘特、拖拽均保留手写实现。
 2. **6 处视觉统一（定稿）**：全部同意在阶段 4 对应步骤执行（`FormDrawer`、`Panel`、`LoadBar`、`HeroCard`、`ActivityFeed`/`ListRow`、`SearchInput`）；**其中 `LoadBar` 与 `HeroCard` 统一时，必须提供修改前后对比截图由用户确认**。
 3. **阶段进度条外层包装（定稿）**：经实测核查，`WeekLine`、`SummaryCard`、`ProgressPanel`、`ForecastHero` 4 处外层无任何两处重复，**维持各自直接复用 `ui/Progress`**，不新增 `patterns`。
-4. **阶段 4 最终迁移顺序（11 步定稿）**：
-   - `1. features/auth` → `2. layout + features/projects + features/notifications` → `3. features/settings` → `4. features/reports` → `5. features/members` → `6. features/documents` → `7. features/timeline` → `8. features/overview` → **`9a. features/tasks`（`TaskDrawer` + `AssigneePicker` + `TaskPage`）** → **`9b. features/tasks-board`（`BoardPage` + `BoardColumn` + `TaskCard` + `useCardDrag` 4 处独立修复）** → `10. features/collab`。
+4. **阶段 4 最终迁移顺序（11 步全部完成，下接阶段 4 收尾）**：
+   - ~~`1. features/auth`~~ → ~~`2. layout + features/projects + features/notifications`~~ → ~~`3. features/settings`~~ → ~~`4. features/reports`~~ → ~~`5. features/members`~~ → ~~`6. features/documents`~~ → ~~`7. features/timeline`~~ → ~~`8. features/overview`~~ → ~~`9a. features/tasks`~~ → ~~`9b. features/tasks-board`~~ → ~~`10. features/collab`~~ → **`阶段 4 收尾`（`services/` + `stores/` + 删除 `legacy.css` / `index.css` / `roles.css`）**。
 5. **`api/http.ts` 与 `state/*` 统一迁移时机（定稿）**：
    - 被多模块跨层共用的基础请求封装 `src/api/http.ts` 与全部 `src/state/*`（含 `state/auth`、`state/access`、`state/project`、`state/issue`、`state/task`、`state/document`、`state/config`）**统一留待阶段 4 全部业务模块迁移完成后的最后一步集中迁入 `src/services/` 与 `src/stores/`**，避免单模块迁移期间跨 8+ 个未迁移页面引发大面积无关改动；各模块迁移时仅将自身独有的 `*Api`（如 `services/auth.ts`）先行落位 `services/`。
 
@@ -238,7 +238,8 @@
      2. **后端待办保留**：`backend/src/main/java/org/miniteam/pms/task/TaskAutoStart.java:73-79` 的 `isAutoBlocked()` 当前仍使用 `detail.contains("阻塞")`，按前后端边界红线不在本前端 PR 中跨目录修改，留待后端分支精确比对 `DETAIL_AUTO_BLOCKED` / `DETAIL_AUTO_REBLOCKED`。
    - **第 8 步（`features/overview`，PR #50，已合并）**：已新建 `patterns/MetricStrip` 并挂载 `/dev/ui` `OverviewPatternsShowcase`，迁移 `OverviewHeader`/`FigureStrip`/`SchedulePanel`/`ScheduleRow`/`HeadlinePanel`/`TodoPanel`/`ProgressPanel`/`CriticalChainPanel`/`OverviewPage` 至 `features/overview/`；`FigureStrip`/`CriticalChainPanel`/`SchedulePanel` 已按最新 `main` 行为迁移并对齐 4px 栅格（`--space-1`）与 `HeroCard`/`Legend`/`ListRow`/`Panel`，同步删除 `pages/overview/`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留规则。
    - **第 9a 步（`features/tasks`，PR #51，已合并）**：`TaskDrawer` 迁入 `features/tasks/` 并切换至 `patterns/FormDrawer(md)` + `ui/Field` + `ui/ToggleGroup(multiple, chips)`；`AssigneePicker` 直接切换调用 `patterns/SearchDropdown` + `patterns/LoadBar(compact)` + `ui/Badge(accent)`；`TaskPage` 及其子组件全部迁入 `features/tasks/`，分别复用 `PageHeader(compact)`、`ToggleGroup(single, chips)`、`ConfirmDialog`、`MetricStrip`、`Panel`、`TaskBar(today)`、`ListRow`、`ActivityFeed(dark)`、`Button(dashed)` 与 `useToast()`；同步将 `api/task.ts` 移入 `services/task.ts`，删除 `pages/task/`、`overlays/task/`、旧 `shared/components/SearchDropdown.*`、`layout/useDismiss.ts`、`stylelint.config.mjs` 对应豁免及 `index.css` 遗留 `.figures`/`.figure`/`.ap-*` 规则。
-   - **第 9b 步（`features/tasks-board`，已完成待审阅）**：`BoardPage`、`BoardHeader`、`BoardColumn`、`TaskCard`、`BlockedBy`、`hooks/useBoardPage.ts`、`hooks/useCardDrag.ts` 迁入 `features/tasks/`，`TaskCard` 直连 `patterns/TaskBar(compact, today)` 并删除 `shared/components/TaskBar.tsx` 过渡层；同步删除 `pages/board/`、`stylelint.config.mjs` 对应豁免与 `index.css` `.card` 残留；按第 5 节方案分 4 笔独立提交修复 `useCardDrag` 4 处缺陷。
+   - **第 9b 步（`features/tasks-board`，PR #52，已合并）**：`BoardPage`、`BoardHeader`、`BoardColumn`、`TaskCard`、`BlockedBy`、`hooks/useBoardPage.ts`、`hooks/useCardDrag.ts` 迁入 `features/tasks/`，`TaskCard` 直连 `patterns/TaskBar(compact, today)` 并删除 `shared/components/TaskBar.tsx` 过渡层；同步删除 `pages/board/`、`stylelint.config.mjs` 对应豁免与 `index.css` `.card` 残留；按第 5 节方案分 4 笔独立提交修复 `useCardDrag` 4 处缺陷。
+   - **第 10 步（`features/collab`，已完成待审阅）**：迁移 `CollabPage`、`CollabHeader`、`ThreadsPanel`/`ThreadItem`/`ThreadDetailPanel`/`ThreadTaskMeta`/`MessageItem`/`ReplyForm`/`MentionInput`/`ActivityFeedPanel`/`NewDiscussionDrawer` 至 `features/collab/`（`useCollabData`/`useCollabJump`/`useCollabActions`/`useCollabPage`/`useNewDiscussionForm`/`useMentionInput` 与 `utils/{format,activityLink,mention}.ts` 独立分层），将 `api/collab.ts` 移入 `services/collab.ts`；全量复用 `PageHeader`、`Panel(flat/dark)`、`FormDrawer`、`ActivityFeed(dark)`、`PageState` 及基础 UI 组件，`ThreadItem` 保持两行标题 + 底部元信息并改用原生 `<button aria-current>` + `Badge(accent, sm)`，`useMentionInput` 在 `window` capture 阶段拦截 `@` 弹层开启时的 `Escape` 避免穿透关闭抽屉；删除 `pages/collab/`、`shared/components/Drawer.tsx`、`stylelint.config.mjs` 对应豁免及 `index.css` 废弃 `.chips`/`.ov*`/`.fx*`/`.fr*`/`.double`/`.inl`/`.in` 规则，全部 11 个业务模块迁移完毕、`src/pages/` 与 `src/shared/components/` 清空移除。
 3. **26 个提交中新增/修改 CSS 的硬编码扫描结论（阶段 4 收敛清单）**：
    - **硬编码颜色**：共改动 12 个旧 CSS 文件，**0 处新增硬编码 hex / `rgb()` / `rgba()` 颜色**（均沿用既有 CSS 变量）；全部 12 个文件均已在 `stylelint.config.mjs` 的 `ignoreFiles` 过渡豁免清单中（含新增的 `src/shared/components/SearchDropdown.css`）。
    - **需在阶段 4 迁入 CSS Modules 时收敛为 Token 的硬编码间距 / 阴影 / 层级**：
