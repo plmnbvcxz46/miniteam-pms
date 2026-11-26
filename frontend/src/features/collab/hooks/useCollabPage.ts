@@ -2,12 +2,12 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { DiscussionDetail, MentionValue } from "../../../shared/types/collab";
 import type { Member } from "../../../shared/types/members";
-import { useAccess } from "../../../state/access/useAccess";
-import { useMe } from "../../../state/auth/useAuth";
-import { useDocumentStore } from "../../../state/document/documentStore";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useProject } from "../../../state/project/useProject";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useMe } from "../../../stores/auth/useAuth";
+import { useDocumentStore } from "../../../stores/document/documentStore";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useProject } from "../../../stores/project/useProject";
+import { useTaskStore } from "../../../stores/task/taskStore";
 import {
   activitiesUpTo,
   getTaskDocumentRefs,

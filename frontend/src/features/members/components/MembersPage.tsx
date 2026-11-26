@@ -1,4 +1,4 @@
-import { useAccess } from "../../../state/access/useAccess";
+import { useAccess } from "../../../stores/access/useAccess";
 import MemberAdminView from "./MemberAdminView";
 import MemberSelfView from "./MemberSelfView";
 

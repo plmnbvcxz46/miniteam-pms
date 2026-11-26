@@ -1,5 +1,5 @@
 import type { DocumentDetailApi, DocumentItemApi, DocumentVersionApi } from "../shared/types/documents";
-import { http } from "../api/http";
+import { http } from "./http";
 
 export const documentApi = {
   list: (projectId: number) => http.get<DocumentItemApi[]>(`/projects/${projectId}/documents`),

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "../../../components/patterns/ToastHost";
-import { useConfigs } from "../../../state/config/useConfigs";
+import { useConfigs } from "../../../stores/config/useConfigs";
 import { isWeightSumOk, validateParams, weightSumOf } from "../validation";
 
 /** 系统参数表单：逐项校验后保存（PUT /configs/{key}，由 ConfigProvider 提供） */

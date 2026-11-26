@@ -7,7 +7,7 @@ import type {
   UserUpdate,
 } from "../shared/types/settings";
 import type { PageResult, UserBrief } from "../shared/types/global";
-import { http } from "../api/http";
+import { http } from "./http";
 
 export const userApi = {
   /** 邀请成员时搜人：任何登录用户可用，只搜启用的账号 */

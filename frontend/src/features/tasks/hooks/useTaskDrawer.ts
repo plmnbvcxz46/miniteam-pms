@@ -5,9 +5,9 @@ import type {
   TaskDetail,
   TaskFormValues,
 } from "../../../shared/types/task";
-import { useAccess } from "../../../state/access/useAccess";
-import { useIssue } from "../../../state/issue/useIssue";
-import { getPredecessorOptions } from "../../../state/task/utils";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { getPredecessorOptions } from "../../../stores/task/utils";
 
 interface UseTaskDrawerParams {
   taskId: number | null;

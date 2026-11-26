@@ -1,7 +1,7 @@
 import { Progress } from "../../components/ui/Progress";
 import type { ProjectPeriod } from "../../shared/types/global";
-import { useIssue } from "../../state/issue/useIssue";
-import { useTaskStore } from "../../state/task/taskStore";
+import { useIssue } from "../../stores/issue/useIssue";
+import { useTaskStore } from "../../stores/task/taskStore";
 import { getPeriodProgress } from "../utils";
 import styles from "./SummaryCard.module.css";
 

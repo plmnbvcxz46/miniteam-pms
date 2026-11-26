@@ -4,10 +4,10 @@ import type {
   BoundDocument,
   DocumentItem,
 } from "../../../shared/types/documents";
-import { useAccess } from "../../../state/access/useAccess";
-import { useDocumentStore } from "../../../state/document/documentStore";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useDocumentStore } from "../../../stores/document/documentStore";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useTaskStore } from "../../../stores/task/taskStore";
 import { getDocStatus, withTaskTitle } from "../utils";
 import { useDocumentActions } from "./useDocumentActions";
 

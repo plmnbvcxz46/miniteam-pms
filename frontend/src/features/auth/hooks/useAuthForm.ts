@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
-import { useAuth } from "../../../state/auth/useAuth";
+import { useAuth } from "../../../stores/auth/useAuth";
 import type { AuthField } from "../../../shared/types/auth";
 
 const REMEMBER_KEY = "pms.rememberedUsername";

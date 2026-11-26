@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Drawer, DrawerContent } from "../../../components/ui/Drawer";
 import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/Tabs";
-import { useAccess } from "../../../state/access/useAccess";
+import { useAccess } from "../../../stores/access/useAccess";
 import {
   getVisibleSections,
   resolveSection,

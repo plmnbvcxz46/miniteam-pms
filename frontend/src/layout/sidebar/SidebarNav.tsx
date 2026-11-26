@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Badge } from "../../components/ui/Badge";
-import { useAccess } from "../../state/access/useAccess";
+import { useAccess } from "../../stores/access/useAccess";
 import { navGroups } from "../nav";
 import NavIcon from "./NavIcon";
 import styles from "./SidebarNav.module.css";

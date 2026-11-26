@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { progressApi } from "../../../services/progress";
-import { useAccess } from "../../../state/access/useAccess";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useIssueData } from "../../../state/issue/useIssueData";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useIssueData } from "../../../stores/issue/useIssueData";
+import { useTaskStore } from "../../../stores/task/taskStore";
 import {
   getTimelineRange,
   getTimelineTasks,

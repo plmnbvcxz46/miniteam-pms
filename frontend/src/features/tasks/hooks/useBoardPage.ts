@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/patterns/ToastHost";
 import { taskStatusOrder } from "../../../shared/constants/task";
 import type { TaskDetail } from "../../../shared/types/task";
-import { useAccess } from "../../../state/access/useAccess";
-import { useMe } from "../../../state/auth/useAuth";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useAccess } from "../../../stores/access/useAccess";
+import { useMe } from "../../../stores/auth/useAuth";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useTaskStore } from "../../../stores/task/taskStore";
 import {
   canMoveStatus,
   getBlockedTasks,
   getColumnTasks,
   toFullIndex,
-} from "../../../state/task/utils";
+} from "../../../stores/task/utils";
 import type { BoardFilter } from "../components/BoardHeader";
 import { useCardDrag, type DropTarget } from "./useCardDrag";
 

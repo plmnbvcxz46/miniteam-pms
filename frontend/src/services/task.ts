@@ -7,7 +7,7 @@ import type {
   TaskDetail,
   TaskUpdate,
 } from "../shared/types/task";
-import { http } from "../api/http";
+import { http } from "./http";
 
 export const taskApi = {
   /** detail=true：每项带 TaskDetail 的全部字段，一次取完整任务表 */

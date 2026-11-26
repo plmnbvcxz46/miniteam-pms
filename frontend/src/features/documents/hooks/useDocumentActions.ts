@@ -4,8 +4,8 @@ import type {
   BoundDocument,
   DocumentVersionItem,
 } from "../../../shared/types/documents";
-import { useDocumentStore } from "../../../state/document/documentStore";
-import { useTaskStore } from "../../../state/task/taskStore";
+import { useDocumentStore } from "../../../stores/document/documentStore";
+import { useTaskStore } from "../../../stores/task/taskStore";
 
 export interface UploadSubmitPayload {
   targetDocId: number | null;

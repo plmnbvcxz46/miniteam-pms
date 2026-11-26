@@ -1,5 +1,5 @@
 import type { Notification } from "../shared/types/global";
-import { http } from "../api/http";
+import { http } from "./http";
 
 export const notificationApi = {
   list: (query: { unreadOnly?: boolean; page?: number; size?: number } = {}) =>

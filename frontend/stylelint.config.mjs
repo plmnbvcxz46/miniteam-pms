@@ -2,13 +2,8 @@
 export default {
   extends: ["stylelint-config-standard"],
   plugins: ["stylelint-declaration-strict-value"],
-  // 阶段 4 逐模块迁移清理清单：每迁完一个模块，即从下方移出对应路径
-  ignoreFiles: [
-    "dist/**",
-    "src/styles/index.css",
-    "src/styles/legacy.css",
-    "src/styles/typography/roles.css",
-  ],
+  // 仅忽略构建产物；阶段 4 全部旧样式文件已清零移除
+  ignoreFiles: ["dist/**"],
   rules: {
     // 兼容 DESIGN.md 中 rgba(..., 0.12) 与现代 rgb(... / 12%) 两种写法
     "color-function-notation": null,

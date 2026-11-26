@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { collabApi } from "../../../services/collab";
 import type { DiscussionDetail } from "../../../shared/types/collab";
 import type { Activity } from "../../../shared/types/global";
-import { useIssue } from "../../../state/issue/useIssue";
-import { useProject } from "../../../state/project/useProject";
+import { useIssue } from "../../../stores/issue/useIssue";
+import { useProject } from "../../../stores/project/useProject";
 
 interface Live {
   projectId: number;
